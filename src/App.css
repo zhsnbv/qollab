@@ -2,7 +2,11 @@
    ухода сплэша (см. Splash.css) плавно проявиться — из 0 прозрачности с
    лёгким скейлом, синхронно с slide-out. */
 .app-reveal {
+  /* flex:column — как раньше у .device напрямую, иначе .scroll-area внутри
+     TabLayout теряет flex:1 от родителя и боттом-навбар/скролл ломаются. */
   height: 100%;
+  display: flex;
+  flex-direction: column;
   opacity: 0;
   transform: scale(0.96);
 }
