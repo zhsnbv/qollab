@@ -1,0 +1,13 @@
+/* Контент под сплэшем стартует невидимым и чуть уменьшенным, чтобы в момент
+   ухода сплэша (см. Splash.css) плавно проявиться — из 0 прозрачности с
+   лёгким скейлом, синхронно с slide-out. */
+.app-reveal {
+  height: 100%;
+  opacity: 0;
+  transform: scale(0.96);
+}
+.app-reveal--in {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 1120ms cubic-bezier(0.33, 1, 0.68, 1), transform 1120ms cubic-bezier(0.33, 1, 0.68, 1);
+}
