@@ -1,0 +1,197 @@
+:root {
+  /* Цвета — единый источник, тянутся из Figma-переменных Qollab.
+     --color-white семантически = «поверхность» (карточки, бары) — в тёмной теме темнеет. */
+  --color-white: #ffffff;
+  --color-heading: rgba(0, 0, 0, 0.88);
+  --color-weak: #999999;
+  --color-background: #f5f5f5;
+  --color-text: #333333;
+  --color-primary: #ef7f1a;
+  --color-primary-bg: #fdf2e8;
+  --color-primary-border: #f8c89d;
+  --color-primary-bg-hover: #fbe0c8;
+  --color-border: #eeeeee;
+  --color-light: #cccccc;
+  --color-success: #00b578;
+  --color-danger: #f04438;
+  --page-bg: #f3f3f3;
+  --story-seen: #d9d9d9;
+  --sk-a: #ececec;
+  --sk-b: #f8f8f8;
+
+  /* Радиусы */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* Отступы (сетка 4px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Типографика */
+  --font-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root { height: 100%; }
+#root { width: 100%; }
+
+/* Полностью блокируем скролл на уровне страницы: прокручивается только
+   .scroll-area внутри каркаса. Иначе на iPhone «резинка» body уносит бары. */
+html, body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font-base);
+  color: var(--color-text);
+  /* Белый, а не --page-bg: Safari подкрашивает свою адресную строку/статус-бар
+     цветом фона body (не тем, что реально нарисовано поверх), поэтому серый
+     background здесь давал серую полосу сверху, даже когда топбар белый. */
+  background: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Ведём себя как нативное приложение: нет выделения текста, нет зума по
+     двойному тапу, нет меню при долгом нажатии. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+/* Поля ввода/textarea оставляем выделяемыми (когда появятся) */
+input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
+
+/* Скрытие скроллбаров у горизонтальных лент */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* Горизонтальная лента, уходящая вровень с краями карточки */
+.edge-scroll {
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+button { font-family: inherit; border: none; background: none; cursor: pointer; }
+
+/* Тактильность: кликабельные элементы гаснут по прозрачности при нажатии.
+   Помечаются классом .pressable (или это делают точечные правила экранов). */
+.pressable { transition: opacity 0.12s ease, transform 0.12s ease; -webkit-tap-highlight-color: transparent; }
+.pressable:active { opacity: 0.55; }
+/* вариант со «вдавливанием» для карточек/плиток */
+.press-scale:active { opacity: 0.7; transform: scale(0.97); }
+
+/* Каркас "телефона": на десктопе — рамка по центру, на телефоне — весь экран */
+.device {
+  /* фиксированная ширина независимо от контента: иначе flex-центровка body
+     сжимает каркас до min-content (скелетоны на процентах «сужали» экран) */
+  width: 100%;
+  max-width: 402px;
+  margin: 0 auto;
+  height: 100dvh;
+  background: var(--page-bg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+@media (min-width: 440px) {
+  body { display: flex; align-items: center; justify-content: center; background: #d8d8d8; padding: 24px 0; }
+  .device {
+    height: 874px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+}
+
+/* Область прокрутки контента между топбаром и навбаром.
+   Скроллбар скрыт, как на телефоне — иначе его появление/исчезание
+   меняет ширину контента (экраны «сужались» при скелетоне). */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scroll-area::-webkit-scrollbar { display: none; width: 0; }
+
+/* Спиннер подгрузки (инфинити-скролл) */
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  border: 2.5px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner-row { display: flex; justify-content: center; padding: var(--space-4) 0 var(--space-5); }
+
+/* ============================================================
+   ТЁМНАЯ ТЕМА — тёплые оттенки как в Claude iOS.
+   Включается по системной настройке: инлайн-скрипт в index.html
+   ставит data-theme="dark" на <html>.
+   ============================================================ */
+html[data-theme="dark"] {
+  --color-white: #2b2a27;          /* поверхности: карточки, бары */
+  --color-heading: rgba(255, 250, 242, 0.92);
+  --color-weak: #a5a096;
+  --color-background: #3a3833;     /* пилюли поиска, чипы, теги */
+  --color-text: #f0eee6;
+  --color-primary: #f08a2c;        /* чуть светлее для контраста на тёмном */
+  --color-primary-bg: #3a2a18;
+  --color-primary-border: #7a4d1f;
+  --color-primary-bg-hover: #46301a;
+  --color-border: #3d3b36;
+  --color-light: #6b675f;
+  --page-bg: #1f1e1b;              /* фон за карточками */
+  --story-seen: #4a4740;
+  --sk-a: #34322e;
+  --sk-b: #3e3c37;
+}
+
+/* Точечные оверрайды компонентов в тёмной теме */
+html[data-theme="dark"] .story-inner { background: var(--color-white); }
+html[data-theme="dark"] .bottomnav {
+  border-top-color: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.35);
+}
+html[data-theme="dark"] .topbar-slot.scrolled {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+/* Серые SVG-глифы (#999) подсветлить на тёмном */
+html[data-theme="dark"] .topbar-btn img,
+html[data-theme="dark"] .fav-gear img,
+html[data-theme="dark"] .posts-bookmark svg { filter: brightness(1.35); }
+/* Карточки уровня/ранга в профиле: тёмное «стекло» вместо белого */
+html[data-theme="dark"] .gamify-card--level {
+  border-color: #8a6a1d;
+  background: linear-gradient(120deg, rgba(43,42,39,0.75), rgba(74,58,25,0.6) 47%, rgba(58,48,26,0.65) 49%, rgba(43,42,39,0.75));
+}
+html[data-theme="dark"] .gamify-card--rank {
+  border-color: #4e6470;
+  background: linear-gradient(120deg, rgba(43,42,39,0.75), rgba(42,52,58,0.6) 47%, rgba(46,56,62,0.65) 49%, rgba(43,42,39,0.75));
+}
+html[data-theme="dark"] .gamify-bar { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.06); }
+/* Белая шапка профиля под волной остаётся поверхностью — ок; синий тег в тёмный вариант */
+html[data-theme="dark"] .data-tag { background: #15263a; border-color: #2a4a6e; color: #6aaaf5; }
+/* Скелетон-карточки уже на var(--color-white) — ок. Пилюля тумблера в сервисах: */
+html[data-theme="dark"] .view-toggle-btn.active { background: #4a4740; }
+/* Промо-баннеры остаются цветными островками — их не трогаем */

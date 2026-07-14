@@ -1,0 +1,200 @@
+/* Экран статьи — Medium/Notion-style чтение, выезжает справа поверх ленты */
+.article {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  animation: ar-slide-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.article.closing { animation: ar-slide-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes ar-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes ar-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.ar-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  padding-top: max(var(--space-2), env(safe-area-inset-top));
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-white);
+  position: relative;
+  z-index: 2;
+}
+.ar-back {
+  width: 24px; height: 40px; display: flex; align-items: center; justify-content: center;
+  color: var(--color-text); flex-shrink: 0;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ar-back:active { opacity: 0.5; }
+.ar-header-chan { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--space-2); }
+.ar-header-avatar { width: 24px; height: 24px; border-radius: var(--radius-pill); overflow: hidden; flex-shrink: 0; }
+.ar-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.ar-header-name { font-size: 14px; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ar-header-save {
+  width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--color-background);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-weak); flex-shrink: 0; transition: opacity 0.12s, color 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ar-header-save:active { opacity: 0.6; }
+.ar-header-save.active { color: var(--color-primary); }
+
+.ar-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.ar-body::-webkit-scrollbar { display: none; }
+
+.ar-cover { width: 100%; aspect-ratio: 16 / 10; background: var(--color-background); }
+.ar-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.ar-content {
+  padding: var(--space-4);
+  padding-bottom: 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-text);
+}
+.ar-meta { font-size: 13px; font-weight: 500; color: var(--color-weak); margin-bottom: var(--space-2); }
+.ar-title {
+  font-size: 24px; font-weight: 700; line-height: 1.3; letter-spacing: -0.3px;
+  color: var(--color-heading, var(--color-text)); margin-bottom: var(--space-3);
+}
+.ar-lead { font-size: 17px; font-weight: 500; color: var(--color-text); margin-bottom: var(--space-4); }
+.ar-content p { margin-bottom: var(--space-4); }
+.ar-content h2 {
+  font-size: 19px; font-weight: 700; margin: var(--space-2) 0 var(--space-3);
+}
+.ar-quote {
+  border-left: 3px solid var(--color-primary);
+  padding: 2px var(--space-4);
+  margin: 0 0 var(--space-4);
+  font-size: 16px; font-style: italic; color: var(--color-weak);
+}
+.ar-inline-img {
+  width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: var(--space-4);
+  border: 1px solid var(--color-border);
+}
+.ar-inline-img img { width: 100%; display: block; object-fit: cover; max-height: 220px; }
+.ar-list { margin: 0 0 var(--space-4); padding-left: 20px; }
+.ar-list li { margin-bottom: var(--space-2); }
+
+.ar-actions {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-border);
+  background: var(--color-white);
+}
+.ar-act {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 500; color: var(--color-weak);
+  transition: opacity 0.12s, color 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ar-act:active { opacity: 0.6; }
+.ar-act.liked { color: #f5222d; }
+.ar-act--icon { padding: 0; }
+.ar-actions-gap { flex: 1; }
+
+/* Боттом-шит комментариев (а-ля Medium) */
+.comments-overlay {
+  position: absolute; inset: 0; z-index: 60;
+  background: rgba(0, 0, 0, 0);
+  display: flex; align-items: flex-end; justify-content: center;
+  pointer-events: none;
+  transition: background 0.22s ease;
+}
+.comments-overlay.open { background: rgba(0, 0, 0, 0.4); pointer-events: auto; }
+
+.comments-sheet {
+  width: 100%; max-height: 78%;
+  background: var(--color-white);
+  border-radius: 20px 20px 0 0;
+  display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.comments-overlay.open .comments-sheet { transform: translateY(0); }
+/* Клавиатура открыта: резервируем её высоту паддингом снизу шита — список
+   комментов ужимается (flex:1), а поле ввода остаётся прибитым прямо над
+   клавиатурой; хедер и остальной шит никуда не «уезжают». */
+html.kb .comments-sheet { padding-bottom: var(--kb, 0px); }
+html.kb .comments-input-row { padding-bottom: var(--space-2); }
+
+.comments-handle {
+  width: 36px; height: 4px; border-radius: var(--radius-pill);
+  background: var(--color-border); margin: var(--space-3) auto var(--space-2);
+  flex-shrink: 0;
+}
+
+.comments-header {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--space-4) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+.comments-title { font-size: 17px; font-weight: 700; color: var(--color-heading, var(--color-text)); }
+.comments-title span { color: var(--color-weak); font-weight: 500; }
+.comments-close {
+  width: 32px; height: 32px; border-radius: var(--radius-pill); background: var(--color-background);
+  display: flex; align-items: center; justify-content: center; color: var(--color-text);
+  flex-shrink: 0; transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.comments-close:active { opacity: 0.6; }
+
+.comments-list {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: var(--space-3) var(--space-4) var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+.comment-row { display: flex; gap: var(--space-3); }
+.comment-avatar {
+  width: 36px; height: 36px; border-radius: var(--radius-pill); overflow: hidden; flex-shrink: 0;
+  background: var(--color-background);
+}
+.comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.comment-body { flex: 1; min-width: 0; }
+.comment-meta { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: 2px; }
+.comment-author { font-size: 14px; font-weight: 600; color: var(--color-text); }
+.comment-time { font-size: 12px; color: var(--color-weak); }
+.comment-text { font-size: 14px; line-height: 1.45; color: var(--color-text); margin-bottom: var(--space-2); }
+.comment-like {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 500; color: var(--color-weak);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.comment-like:active { opacity: 0.6; }
+
+/* Поле добавления комментария — низ шита */
+.comments-input-row {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-border);
+  background: var(--color-white);
+}
+.comment-avatar--me { flex-shrink: 0; }
+.comments-input {
+  flex: 1; min-width: 0; background: var(--color-background); border-radius: var(--radius-pill);
+  padding: 0 var(--space-4); display: flex; align-items: center; height: 40px;
+}
+.comments-input input {
+  width: 100%; border: none; background: none; outline: none;
+  font-family: inherit; font-size: 15px; color: var(--color-text); letter-spacing: -0.32px;
+}
+.comments-input input::placeholder { color: var(--color-weak); }
+.comments-send {
+  width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--color-primary);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.comments-send:active { transform: scale(0.92); }
+.comments-send:disabled { background: var(--color-light); }

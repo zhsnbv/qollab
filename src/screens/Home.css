@@ -1,0 +1,133 @@
+.home { padding-bottom: var(--space-4); }
+
+/* Карточки идут во всю ширину, без боковых отступов (как в макете) */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  margin: var(--space-2) 0 0;
+  padding: var(--space-5) var(--space-4);
+}
+.card--first {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  margin-top: 0;
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  overflow: hidden;
+}
+.card > .block { margin-bottom: var(--space-8); }
+.card > .block:last-child { margin-bottom: 0; }
+
+.search-pill {
+  background: var(--color-background);
+  border-radius: var(--radius-pill);
+  padding: 10px var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-weak);
+  font-size: 18px;
+  margin-bottom: var(--space-4);
+}
+
+/* Сторис */
+.story-row { display: flex; gap: 10px; overflow-x: auto; }
+.story-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); flex-shrink: 0; width: 75px; }
+.story-ring {
+  width: 75px; height: 75px; border-radius: var(--radius-pill);
+  padding: 2.5px; display: flex; align-items: center; justify-content: center;
+}
+.story-ring.unseen { background: var(--color-primary); }
+.story-ring.seen { background: var(--story-seen); }
+.story-inner { width: 100%; height: 100%; border-radius: var(--radius-pill); padding: 2.5px; background: #fff; }
+.story-avatar { display: block; width: 100%; height: 100%; border-radius: var(--radius-pill); overflow: hidden; background: #eee; }
+.story-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.story-name {
+  font-size: 12px; font-weight: 600; color: var(--color-text); text-align: center;
+  letter-spacing: -0.24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 75px;
+}
+
+.section-title { font-size: 16px; font-weight: 600; color: var(--color-text); line-height: 1.2; margin-bottom: var(--space-4); }
+
+.row-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); }
+.link { color: var(--color-primary); font-size: 14px; font-weight: 500; }
+.fav-gear { display: flex; align-items: center; justify-content: center; opacity: 0.75; }
+
+/* Сервисы */
+.services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5) var(--space-4); }
+.service-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent; }
+.service-item:active { opacity: 0.7; transform: scale(0.95); }
+/* Тактильность прочих кликабельных строк/карточек Главной */
+.story-item, .fav-card, .promo-card, .actual-row, .all-pub-btn, .fav-gear, .link, .search-pill, .tab {
+  transition: opacity 0.12s ease; -webkit-tap-highlight-color: transparent;
+}
+.story-item:active, .fav-card:active, .promo-card:active, .actual-row:active,
+.all-pub-btn:active, .fav-gear:active, .link:active, .search-pill:active, .tab:active { opacity: 0.6; }
+/* Плитки запечены с фоном в самой картинке — без рамок и подложек */
+.service-icon {
+  width: 60px; height: 60px; border-radius: var(--radius-xl); overflow: hidden; position: relative;
+}
+/* Иконки экспортированы из Figma целыми плитками 60×60 (фон и рамка запечены) */
+.service-icon img { width: 100%; height: 100%; object-fit: cover; }
+.service-item span { font-size: 12px; font-weight: 600; color: var(--color-text); text-align: center; line-height: 1; letter-spacing: -0.24px; }
+.service-icon--all {
+  background: var(--color-primary-bg);
+  border: 1.15px solid var(--color-primary-border);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Избранное */
+.fav-row { display: flex; gap: var(--space-3); overflow-x: auto; }
+.fav-card {
+  flex-shrink: 0; background: var(--color-white); border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); padding: 10px var(--space-4);
+  display: flex; align-items: center; gap: var(--space-4);
+}
+.fav-label { font-size: 12px; color: var(--color-weak); font-weight: 500; line-height: 20px; }
+.fav-value { font-size: 14px; color: var(--color-text); font-weight: 600; white-space: nowrap; }
+
+/* Промо: теперь внутри card--first, под поиском. Горизонтальный вылет
+   до края карточки даёт .edge-scroll — свою горизонтальную padding не дублируем. */
+.promo-row { display: flex; gap: var(--space-4); overflow-x: auto; margin-top: var(--space-4); }
+.promo-card {
+  flex-shrink: 0; width: 202px; height: 106px; border-radius: var(--radius-lg); padding: 14px;
+  display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;
+}
+.promo-badge { align-self: flex-start; background: #fff; color: #000; font-size: 10px; font-weight: 600; padding: var(--space-1) 6px; border-radius: 6px; }
+.promo-badge.alert { background: #ff4d4f; color: #fff; }
+.promo-title { font-size: 13px; font-weight: 600; color: #000; line-height: 1.2; }
+.promo-sub { font-size: 9px; font-weight: 500; color: #000; margin-top: var(--space-1); }
+.promo-1 { background: #fcd155; }
+.promo-2 { background: linear-gradient(180deg, #b8e5f6, #bee7f7); }
+.promo-3 { background: linear-gradient(180deg, #e8c7a6, #e4c29f); }
+.promo-4 { background: linear-gradient(180deg, #8a99a8, #5b6b7a); }
+.promo-4 .promo-title { color: #fff; }
+
+/* Миссия и ценности */
+.card--mission { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+.mission-img { width: 100%; max-width: 370px; height: auto; }
+.mission-title { font-size: 16px; font-weight: 600; color: var(--color-text); text-align: center; }
+.mission-text { font-size: 14px; color: var(--color-weak); text-align: center; line-height: 1.45; }
+
+/* Публикации / Мероприятия на Главной — общий вид ленты (карточки в components/Feed.css) */
+.home-feed { display: flex; flex-direction: column; margin-top: var(--space-2); }
+.home-feed-item { border-bottom: 1px solid var(--color-border); }
+.home-feed-item:last-child { border-bottom: none; }
+.home-events { display: flex; flex-direction: column; gap: var(--space-4); margin: var(--space-4) 0; }
+
+.all-pub-btn {
+  width: 100%; border: 1px solid var(--color-border); border-radius: 40px;
+  padding: var(--space-4) var(--space-5);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 16px; font-weight: 600; color: var(--color-text); letter-spacing: -0.16px;
+  margin-top: var(--space-3);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.all-pub-btn:active { opacity: 0.6; }
+
+/* Актуальное */
+.card--actual { padding: var(--space-5) 0 var(--space-2); }
+.card--actual .section-title { padding: 0 var(--space-4); }
+.actual-row { display: flex; align-items: center; gap: var(--space-5); padding: 14px var(--space-4); border-bottom: 1px solid var(--color-border); }
+.actual-row:last-child { border-bottom: none; }
+.actual-body { flex: 1; }
+.actual-title { font-size: 14px; font-weight: 600; color: var(--color-text); }
+.actual-sub { font-size: 14px; color: var(--color-weak); }

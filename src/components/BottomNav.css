@@ -1,0 +1,78 @@
+.bottomnav {
+  background: var(--color-white);
+  position: relative;
+  /* тонкая граница + одна чистая мягкая тень — отделяет навбар от контента, без «грязи» */
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+  /* небольшой запас снизу под домашний индикатор iPhone (safe-area) */
+  padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
+}
+
+.bottomnav-row {
+  display: flex;
+  padding: var(--space-1);
+}
+
+.navtab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  text-decoration: none;
+  color: var(--color-weak);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Иконка + подпись баунсят вместе, слегка и плавно, ПОСЛЕ нажатия */
+.navtab-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.navtab.bounce .navtab-inner { animation: navtab-bounce 0.34s ease; }
+@keyframes navtab-bounce {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(0.92); }
+  70%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.navtab-icon-wrap {
+  position: relative;
+  display: flex;
+}
+
+/* Иконки — плоские монохромные из Figma (public/img/nav): активные оранжевые,
+   неактивные серые. Экспортированы на белом фоне (= фон навбара), поэтому
+   светлый градиент низа не съедается ключеванием и иконки не обрезаются. */
+.navtab-icon { width: 24px; height: 24px; }
+.navtab.active .navtab-label { color: var(--color-text); }
+
+.navtab-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-weak);
+}
+
+.navtab-badge {
+  position: absolute;
+  top: -5px;
+  left: 15.7px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+

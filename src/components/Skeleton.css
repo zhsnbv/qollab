@@ -1,0 +1,30 @@
+/* Скелетоны загрузки: блоки с бегущим шиммером */
+.sk {
+  display: block;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, var(--sk-a) 25%, var(--sk-b) 40%, var(--sk-a) 55%);
+  background-size: 300% 100%;
+  animation: sk-shimmer 1.3s ease-in-out infinite;
+}
+@keyframes sk-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.sk-screen { padding-bottom: 16px; animation: sk-fade 0.25s ease; }
+.sk-screen--white { background: var(--color-white); min-height: 100%; }
+@keyframes sk-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Плавное проявление готового контента при каждом монтировании экрана
+   (первый раз — после скелетона, дальше — сразу, вместо резкого появления) */
+.fade-in { height: 100%; animation: sk-fade 0.22s ease; }
+
+.sk-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+}
+
+.sk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 16px; }
+.sk-grid--2 { grid-template-columns: 1fr 1fr; gap: 16px; }

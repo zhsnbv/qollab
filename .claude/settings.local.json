@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sL -o public/img/posts/ch-all.png \"https://www.figma.com/api/mcp/asset/66bdec7e-f5c8-453d-848f-a7ac4a5a8a20\")",
+      "Bash(curl -sL -o public/img/posts/ch-erg-news.png \"https://www.figma.com/api/mcp/asset/e41a80a7-c94d-4358-b8cd-6adb78f270c0\")",
+      "Bash(curl -sL -o public/img/posts/ch-erg-blog.png \"https://www.figma.com/api/mcp/asset/47a1abc4-65a0-41aa-be08-3551a9f50e9f\")",
+      "Bash(curl -sL -o public/img/posts/ch-erg-sport.png \"https://www.figma.com/api/mcp/asset/490adbe6-b918-4089-bade-edf87ef656ff\")",
+      "Bash(curl -sL -o public/img/posts/ch-bts-news.png \"https://www.figma.com/api/mcp/asset/f36b8e8b-be19-41f6-b743-894eb05b76a2\")"
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Отключаем зум (pinch/double-tap) и учитываем вырез экрана -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
+    <!-- Тёмная тема ПОКА ОТКЛЮЧЕНА: принудительно светлая.
+         Вернуть: content="light dark", раскомментить theme-color для dark
+         и блок определения системной темы в скрипте ниже. -->
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#ffffff" />
+    <!-- <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" /> -->
+    <!-- <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2b2a27" /> -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Qollab" />
+    <title>Qollab</title>
+    <script>
+      // Тёмная тема временно выключена — всегда светлая.
+      document.documentElement.dataset.theme = 'light';
+      /* Вернуть системную тему (как Claude iOS):
+      (function () {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        function apply() { document.documentElement.dataset.theme = mq.matches ? 'dark' : 'light'; }
+        apply();
+        mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
+      })();
+      */
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

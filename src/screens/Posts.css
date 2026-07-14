@@ -1,0 +1,85 @@
+/* Экран «Лента» (Новости) — фон весь белый */
+.posts { background: var(--color-white); min-height: 100%; }
+
+.posts-search-wrap { padding: var(--space-2) var(--space-4) var(--space-3); }
+.posts-search {
+  background: var(--color-background);
+  border-radius: var(--radius-pill);
+  padding: 10px var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-weak);
+  font-size: 18px;
+}
+
+/* Бейдж закладок в топбаре — серый, как три точки */
+.posts-bookmark { position: relative; display: flex; }
+.posts-bookmark-dot {
+  position: absolute; top: -1px; right: -2px;
+  width: 8px; height: 8px; border-radius: var(--radius-pill);
+  background: var(--color-primary); border: 1.5px solid var(--color-white);
+}
+
+.posts-tabs-wrap { padding: var(--space-2) var(--space-4) var(--space-3); }
+
+/* Лента каналов */
+.channel-row {
+  display: flex; gap: 10px; overflow-x: auto;
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.channel-item {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  flex-shrink: 0; min-width: 68px;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.channel-item:active { opacity: 0.65; }
+/* Круглое кольцо выбранного канала с отступом 4px (как в Medium) */
+.channel-ring {
+  border: 1.5px solid transparent; border-radius: var(--radius-pill);
+  padding: 4px; display: flex;
+}
+.channel-ring.active { border-color: var(--color-primary); }
+.channel-avatar {
+  width: 60px; height: 60px; border-radius: var(--radius-pill); overflow: hidden;
+  background: var(--color-background); border: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+}
+.channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
+/* «Все каналы» — квадратная плашка с закруглением, рамка тоже квадратная */
+.channel-ring--square { border-radius: var(--radius-xl); }
+.channel-avatar--all { border-radius: var(--radius-lg); }
+.channel-avatar--cu { background: var(--color-background); }
+.channel-avatar--cu img { width: 43px; height: auto; object-fit: contain; }
+.channel-name {
+  font-size: 12px; font-weight: 600; color: var(--color-text); text-align: center;
+  line-height: 1; letter-spacing: -0.24px;
+  max-width: 76px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Шапка выбранного канала (Medium: имя канала + «Перейти в канал») */
+.channel-header {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.channel-header-avatar {
+  width: 32px; height: 32px; border-radius: var(--radius-pill); overflow: hidden; flex-shrink: 0;
+  background: var(--color-background);
+}
+.channel-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.channel-header-name { flex: 1; font-size: 16px; font-weight: 600; color: var(--color-text); }
+.channel-header-link {
+  font-size: 14px; font-weight: 500; color: var(--color-primary);
+  display: flex; align-items: center; gap: 2px;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.channel-header-link:active { opacity: 0.6; }
+
+/* Обёртки лент (разметка карточек — в components/Feed.css) */
+.post-list { display: flex; flex-direction: column; padding: var(--space-3) var(--space-4) var(--space-5); }
+.post-list .post-item { border-bottom: 1px solid var(--color-border); }
+.post-list .post-item:last-of-type { border-bottom: none; }
+.posts .spinner-row { padding-top: 0; }
+.event-list { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-4); }

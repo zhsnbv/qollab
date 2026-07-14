@@ -1,0 +1,153 @@
+/* Экран «Профиль»: серый фон, белые блоки во всю ширину с зазором 8px */
+.profile { background: var(--color-background); min-height: 100%; display: flex; flex-direction: column; gap: var(--space-2); padding-bottom: var(--space-2); }
+
+/* Кнопка «Мой QR» в топбаре */
+.qr-btn {
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Шапка: белый фон до верхней трети карточек уровня/ранга, ниже — серый фон страницы.
+   Оранжевая волна (прозрачный PNG) лежит поверх фонов, но под контентом и карточками. */
+.profile-hero {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: var(--space-6);
+}
+.profile-decor {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: fill;
+  pointer-events: none; z-index: 1;
+}
+.profile-head {
+  background: var(--color-white);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  /* белое заходит за верх карточек (48px), карточки наезжают отрицательным маргином */
+  padding: var(--space-6) var(--space-4) 80px;
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+.profile-head > * { position: relative; z-index: 2; }
+/* Аватар: фото — картинка, кольцо и кнопка камеры сверстаны */
+.profile-avatar-wrap { position: relative; width: 128px; height: 128px; margin-bottom: var(--space-5); align-self: flex-start; }
+.profile-avatar {
+  width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;
+  border: 8px solid var(--color-primary); box-sizing: border-box;
+}
+.profile-avatar-cam {
+  position: absolute; right: -6px; bottom: -6px; width: 32px; height: 32px;
+  border-radius: 50%; background: var(--color-primary); border: 3px solid var(--color-white);
+  display: flex; align-items: center; justify-content: center;
+}
+.profile-name { font-size: 25px; font-weight: 600; letter-spacing: -0.5px; color: var(--color-heading); }
+.profile-role { font-size: 16px; font-weight: 500; color: var(--color-weak); margin-top: var(--space-1); }
+
+/* Карточки уровня и ранга — полупрозрачные, наезжают на белую шапку (граница фона под ними) */
+.gamify-row { display: flex; gap: var(--space-4); overflow-x: auto; padding: 0 var(--space-4); margin-top: -48px; position: relative; z-index: 2; }
+.gamify-card {
+  flex-shrink: 0; width: 213px; border-radius: var(--radius-lg); padding: var(--space-4);
+  display: flex; flex-direction: column; gap: 10px;
+  backdrop-filter: blur(2px);
+}
+.gamify-card--level {
+  border: 1px solid #ffdb3a;
+  background: linear-gradient(120deg, rgba(255,255,255,0.6), rgba(251,242,207,0.6) 47%, rgba(253,252,232,0.6) 49%, rgba(255,255,255,0.6));
+}
+.gamify-card--rank {
+  border: 1px solid #8aa8b5;
+  background: linear-gradient(120deg, rgba(255,255,255,0.6), rgba(224,231,234,0.6) 47%, rgba(233,240,243,0.6) 49%, rgba(255,255,255,0.6));
+}
+.gamify-title { font-size: 13px; font-weight: 500; color: var(--color-text); }
+.gamify-line { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+.gamify-line b { font-weight: 600; color: var(--color-text); }
+.gamify-pct { flex: 1; text-align: right; }
+.gamify-bar {
+  width: 100%; height: 10px; border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.06); border: 1px solid rgba(77, 43, 13, 0.1); overflow: hidden;
+}
+.gamify-bar-fill { display: block; height: 100%; border-radius: 5px; }
+.gamify-bar-fill.level { background: linear-gradient(90deg, #ef5a1a, #f3823a 25%, #f7aa59 50%, #fbd279 75%, #fffa98); box-shadow: inset -3px 0 4px 1px #ffd271; }
+.gamify-bar-fill.rank { background: linear-gradient(90deg, #a2bac4, #d7e1e5); box-shadow: inset -3px 0 4px 1px #e2eaed; }
+.gamify-rank-line { display: flex; align-items: center; gap: var(--space-4); }
+.gamify-rank-left { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.gamify-rank-left b { font-size: 14px; font-weight: 600; color: var(--color-text); white-space: nowrap; }
+.gamify-rank-badge { width: 48px; height: 48px; object-fit: contain; }
+
+/* Мои профили — с боковыми полями и воздухом от волны, как в макете */
+.profiles-row-wrap { padding: 0 var(--space-4); margin-bottom: var(--space-2); }
+.profiles-row {
+  background: var(--color-white); border-radius: var(--radius-lg); padding: var(--space-3);
+  display: flex; align-items: center; gap: var(--space-3); width: 100%; text-align: left;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.profiles-row:active { opacity: 0.6; }
+.stat-card { transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent; }
+.stat-card:active { opacity: 0.75; transform: scale(0.98); }
+.qr-btn, .topbar-btn, .refresh-btn, .data-more, .link { transition: opacity 0.12s; -webkit-tap-highlight-color: transparent; }
+.qr-btn:active, .topbar-btn:active, .refresh-btn:active, .data-more:active, .link:active { opacity: 0.6; }
+.profiles-row-icon {
+  background: var(--color-primary); border-radius: 10px; padding: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.profiles-row-title { flex: 1; font-size: 15px; font-weight: 500; color: var(--color-text); }
+
+/* Белые блоки */
+.pcard { background: var(--color-white); border-radius: var(--radius-lg); padding: var(--space-5); }
+.pcard-head { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); }
+.pcard-head h3 { flex: 1; font-size: 16px; font-weight: 600; color: var(--color-text); }
+.pcard-note { font-size: 14px; font-weight: 500; color: var(--color-weak); }
+.refresh-btn {
+  display: flex; align-items: center; gap: var(--space-1);
+  border: 1px solid var(--color-border); border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3); font-size: 13px; color: var(--color-text);
+}
+
+/* Сетка мини-карточек 2xN */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.stat-card {
+  background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  padding: var(--space-4); display: flex; flex-direction: column; gap: 6px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.02);
+}
+.stat-card-top { display: flex; align-items: center; gap: var(--space-2); }
+.stat-icon { font-size: 16px; line-height: 1; display: flex; }
+.stat-icon-img { width: 16px; height: 16px; object-fit: contain; }
+.stat-value { flex: 1; font-size: 16px; font-weight: 600; color: var(--color-text); }
+.stat-label { font-size: 13px; font-weight: 500; color: var(--color-weak); }
+
+/* Списки данных */
+.data-list { display: flex; flex-direction: column; gap: var(--space-3); }
+.data-row { border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-3); }
+.data-row.last { border-bottom: none; padding-bottom: 0; }
+.data-label { font-size: 13px; font-weight: 500; color: var(--color-weak); margin-bottom: var(--space-1); }
+.data-value { font-size: 14px; color: var(--color-text); }
+.data-value.link { color: var(--color-primary); font-weight: 500; }
+.data-value-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.data-tag {
+  background: #e6f4ff; border: 1px solid #91caff; color: #1677ff;
+  font-size: 12px; line-height: 20px; padding: 0 var(--space-2); border-radius: var(--radius-pill);
+}
+.data-about { font-size: 14px; color: var(--color-text); line-height: 1.4; }
+.data-more { font-size: 14px; font-weight: 500; color: var(--color-primary); margin-top: var(--space-1); padding: 0; }
+.tags-row { display: flex; flex-wrap: wrap; gap: 6px; padding-top: var(--space-1); }
+.tag {
+  background: var(--color-background); border-radius: var(--radius-pill);
+  padding: 6px 10px; font-size: 13px; font-weight: 500; color: var(--color-text);
+}
+
+/* Сертификаты */
+.cert-card { background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: var(--space-4); }
+.cert-head { display: flex; align-items: center; gap: var(--space-4); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-4); margin-bottom: var(--space-4); }
+.cert-texts { display: flex; flex-direction: column; gap: var(--space-2); font-size: 14px; }
+.cert-texts b { font-weight: 600; color: var(--color-text); }
+.cert-texts span { color: var(--color-text); }
+.cert-dates { display: flex; gap: var(--space-4); }
+.cert-dates > div { flex: 1; }
