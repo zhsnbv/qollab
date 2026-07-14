@@ -185,7 +185,7 @@ html.kb .cr-writebar { padding-bottom: var(--space-2); }
 }
 .msg-quote-head { font-weight: 600; }
 .msg-quote-text {
-  color: #475467; letter-spacing: 0.04px; margin-top: 2px;
+  color: var(--color-weak); letter-spacing: 0.04px; margin-top: 2px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;
 }
 

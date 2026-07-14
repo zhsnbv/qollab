@@ -24,7 +24,7 @@
 /* Не медленный, но очень плавный slide-out вниз — выход экспоненциальным
    деселерацией (cubic-bezier "ease-out-expo"-like). */
 .splash--exit {
-  animation: splash-slide-down 1120ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: splash-slide-down 747ms cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 @keyframes splash-slide-down {
   to { transform: translateY(100%); }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
 import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
+import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { basePosts, events } from '../data/feed';
 import {
@@ -61,11 +62,11 @@ export default function Home() {
   );
 
   if (loading) {
-    return <TabLayout topbar={<TopBar logo actions={actions} />}><HomeSkeleton /></TabLayout>;
+    return <TabLayout topbar={<TopBar logo actions={actions} onLogoClick={toggleTheme} />}><HomeSkeleton /></TabLayout>;
   }
 
   return (
-    <TabLayout topbar={<TopBar logo actions={actions} />}>
+    <TabLayout topbar={<TopBar logo actions={actions} onLogoClick={toggleTheme} />}>
       <FadeIn><div className="home">
         {/* Поиск + баннеры в одной карточке — сторис пока скрыты по просьбе заказчика (вернуть: убрать false &&) */}
         <section className="card card--first">

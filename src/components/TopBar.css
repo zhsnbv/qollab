@@ -34,7 +34,10 @@
   width: 88px;
   height: 32px;
   object-fit: contain;
+  display: block;
 }
+/* Лого-кнопка (тап по логотипу переключает тему на «Главной») */
+.topbar-logo-btn { padding: 0; display: flex; align-items: center; }
 
 .topbar-actions {
   display: flex;
