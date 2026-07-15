@@ -5,8 +5,8 @@ import './Splash.css';
 export default function Splash({ exiting }) {
   return (
     <div className={`splash${exiting ? ' splash--exit' : ''}`}>
-      <img className="splash-wordmark" src="/img/splash/qollab-wordmark-white.svg" alt="qollab" />
-      <img className="splash-mark" src="/img/splash/erg-mark-white.svg" alt="" />
+      <img className="splash-wordmark" src="/img/splash/qollab-wordmark.svg" alt="qollab" />
+      <img className="splash-mark" src="/img/splash/erg-mark.svg" alt="" />
     </div>
   );
 }
