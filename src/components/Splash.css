@@ -6,7 +6,7 @@
   background: var(--color-white);
   /* Тень-затемнение под сплэшем — едет вместе с ним при слайде вниз и
      подсвечивает передний край, как у выдвигаемой шторки. */
-  box-shadow: 0 32px 40px -8px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 32px 40px -8px rgba(0, 0, 0, 0.7);
   will-change: transform;
 }
 .splash-wordmark {
