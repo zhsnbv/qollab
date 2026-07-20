@@ -85,23 +85,27 @@
   white-space: nowrap;
 }
 
+/* Бейдж как в нативном таб-баре iOS: круг 18pt, 12pt текст, без обводки —
+   он лежит прямо на баре. Сидит на верхнем правом углу иконки (24pt), выступая
+   за него примерно наполовину. Многозначные числа растягивают его в пилюлю
+   за счёт min-width + горизонтального паддинга. */
 .navtab-badge {
   position: absolute;
-  top: -5px;
-  left: 15.7px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 3px;
+  top: -6px;
+  left: 13px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
   background: var(--color-danger);
-  color: #fff;
+  color: var(--color-white);
   font-size: 12px;
   font-weight: 600;
   border-radius: var(--radius-pill);
-  border: 2px solid var(--color-white);
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {
