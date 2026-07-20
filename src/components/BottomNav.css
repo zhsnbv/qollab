@@ -47,15 +47,21 @@
   will-change: transform;
 }
 
+/* Центрируется вся группа «иконка + подпись», а не иконка отдельно.
+   Цвет держим на самом табе: иконка рисуется currentColor, подпись наследует —
+   так активное/неактивное состояние задаётся одним свойством и они не разъезжаются. */
 .navtab {
   position: relative;
   flex: 1 0 0;
   min-width: 0;
   height: 57px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-1);
   color: var(--color-text);
+  text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   border-radius: var(--radius-pill);
 }
@@ -65,11 +71,19 @@
 .navtab-icon-wrap {
   position: relative;
   display: flex;
-  transition: transform 0.14s ease;
 }
-.navtab:active .navtab-icon-wrap { transform: scale(0.9); }
 
 .navtab-icon { width: 24px; height: 24px; display: block; }
+
+/* HIG: подпись таб-бара — 10pt medium. Отступ до иконки по HIG ~2–4px,
+   берём --space-1 (4px), чтобы остаться на нашей четырёхпиксельной сетке. */
+.navtab-label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: inherit;
+  white-space: nowrap;
+}
 
 .navtab-badge {
   position: absolute;
@@ -91,6 +105,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .navtab-pill,
-  .navtab-icon-wrap { transition: none; }
+  .navtab-pill { transition: none; }
 }

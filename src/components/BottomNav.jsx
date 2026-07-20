@@ -3,9 +3,10 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { NavIcon } from './NavIcons';
 import './BottomNav.css';
 
-// Плавающий таб-бар по макету Tab bar (node 23742-7540): скруглённый, на блюре,
-// без подписей. Активный таб — filled-иконка оранжевым на серой полупрозрачной
-// плашке, которая переезжает между табами.
+// Плавающий таб-бар по макету Tab bar (node 23742-7540): скруглённый, на блюре.
+// Активный таб — filled-иконка оранжевым на серой полупрозрачной плашке, которая
+// переезжает между табами. Подписи под иконками — отступление от макета
+// (в нём их нет): размер и отступы по HIG, цвет наследуется от иконки.
 //
 // ВАЖНО: монтируется один раз в App, а не в TabLayout. Иначе на каждой смене
 // роута компонент пересоздавался бы и плашке было бы не между чем анимироваться.
@@ -77,12 +78,12 @@ export default function BottomNav() {
             to={to}
             end={to === '/'}
             className="navtab"
-            aria-label={label}
           >
             <span className="navtab-icon-wrap">
               <NavIcon name={icon} active={i === index} />
               {badge ? <span className="navtab-badge">{badge}</span> : null}
             </span>
+            <span className="navtab-label">{label}</span>
           </NavLink>
         ))}
       </div>
