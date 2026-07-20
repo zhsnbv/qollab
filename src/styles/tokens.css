@@ -132,6 +132,12 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 }
 .scroll-area::-webkit-scrollbar { display: none; width: 0; }
 
+/* Под плавающим таб-баром: контент должен доезжать до конца, а не прятаться
+   под баром. 16 (отступ сверху) + 65 (бар) + запас снизу = высота зоны. */
+.scroll-area--tabbar {
+  padding-bottom: calc(81px + max(25px, env(safe-area-inset-bottom)));
+}
+
 /* Спиннер подгрузки (инфинити-скролл) */
 .spinner {
   width: 22px;

@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import BottomNav from './BottomNav';
 
-// Обёртка кор-раздела: фиксированный топбар сверху, фиксированный навбар снизу,
-// между ними — прокручиваемая область контента (как в нативных приложениях).
+// Обёртка кор-раздела: фиксированный топбар сверху и прокручиваемая область
+// контента под ним. Таб-бар живёт в App и лежит поверх — он плавающий, поэтому
+// .scroll-area просто получает нижний отступ, чтобы контент из-под него выходил.
 // При скролле у топбара плавно проявляется мягкая тень.
 export default function TabLayout({ topbar, children }) {
   const [scrolled, setScrolled] = useState(false);
@@ -21,8 +21,7 @@ export default function TabLayout({ topbar, children }) {
   return (
     <>
       <div className={`topbar-slot ${scrolled ? 'scrolled' : ''}`}>{topbar}</div>
-      <div className="scroll-area" onScroll={onScroll}>{children}</div>
-      <BottomNav />
+      <div className="scroll-area scroll-area--tabbar" onScroll={onScroll}>{children}</div>
     </>
   );
 }

@@ -1,48 +1,88 @@
-import { NavLink } from 'react-router-dom';
+import { useLayoutEffect, useRef } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { NavIcon } from './NavIcons';
 import './BottomNav.css';
 
-// Иконки — оригинальные PNG из Figma (public/img/nav, @4x): у каждого таба два
-// состояния — цветная (активный) и серая плоская (неактивный), как в макете.
-// PNG, а не SVG: у иконок картиночные заливки-градиенты, SVG-экспорт их ломает.
+// Плавающий таб-бар по макету Tab bar (node 23742-7540): скруглённый, на блюре,
+// без подписей. Активный таб — filled-иконка оранжевым на серой полупрозрачной
+// плашке, которая переезжает между табами.
+//
+// ВАЖНО: монтируется один раз в App, а не в TabLayout. Иначе на каждой смене
+// роута компонент пересоздавался бы и плашке было бы не между чем анимироваться.
 const tabs = [
-  { to: '/', label: 'Главная', icon: 'home', end: true },
+  { to: '/', label: 'Главная', icon: 'home' },
   { to: '/posts', label: 'Лента', icon: 'news' },
-  { to: '/services', label: 'Сервисы', icon: 'services' },
-  { to: '/chats', label: 'Чаты', icon: 'chats', badge: 3 },
-  { to: '/profile', label: 'Профиль', icon: 'profile' },
+  { to: '/services', label: 'Сервисы', icon: 'grid' },
+  { to: '/chats', label: 'Чаты', icon: 'chat', badge: 3 },
+  { to: '/profile', label: 'Профиль', icon: 'person' },
 ];
 
-// Лёгкий bounce всего таба (иконка + текст) ПОСЛЕ нажатия:
-// проигрываем одноразовую анимацию и снимаем класс по её окончанию.
-function bounce(e) {
-  const el = e.currentTarget;
-  el.classList.remove('bounce');
-  void el.offsetWidth; // рестарт анимации
-  el.classList.add('bounce');
+// Плашка шире слота на столько — из макета (78 при слоте 69). Половина запаса
+// заложена в боковой паддинг бара, поэтому на крайних табах она сама встаёт
+// ровно в 4px от края и подрезать её положение не нужно.
+const PILL_OVERHANG = 9;
+
+// '/' матчим точно, остальные по префиксу: /chats/dm тоже подсвечивает «Чаты».
+function activeIndex(pathname) {
+  const i = tabs.findIndex((t) => t.to !== '/' && pathname.startsWith(t.to));
+  return i === -1 ? 0 : i;
 }
 
 export default function BottomNav() {
+  const { pathname } = useLocation();
+  const index = activeIndex(pathname);
+  const barRef = useRef(null);
+  const pillRef = useRef(null);
+  const mounted = useRef(false);
+
+  useLayoutEffect(() => {
+    const bar = barRef.current;
+    const pill = pillRef.current;
+    if (!bar || !pill) return;
+
+    // Ставим плашку по центру активного таба. Двигаем только transform — он
+    // уезжает на композитор и не дёргается, даже когда новый экран монтируется
+    // и занимает главный поток.
+    const place = (animate) => {
+      const tab = bar.children[index + 1]; // +1: первым ребёнком идёт сама плашка
+      if (!tab) return;
+      const b = bar.getBoundingClientRect();
+      const t = tab.getBoundingClientRect();
+      const w = t.width + PILL_OVERHANG;
+      pill.style.width = `${w}px`;
+      const x = t.left - b.left + (t.width - w) / 2;
+      if (!animate) pill.style.transition = 'none';
+      pill.style.transform = `translateX(${x}px)`;
+      if (!animate) {
+        void pill.offsetWidth; // применяем мгновенно, затем возвращаем переход
+        pill.style.transition = '';
+      }
+    };
+
+    place(mounted.current);
+    mounted.current = true;
+
+    const onResize = () => place(false);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [index]);
+
   return (
     <nav className="bottomnav">
-      <div className="bottomnav-row">
-        {tabs.map(({ to, label, icon, end, badge }) => (
+      <div className="bottomnav-row" ref={barRef}>
+        <span className="navtab-pill" ref={pillRef} aria-hidden="true" />
+        {tabs.map(({ to, label, icon, badge }, i) => (
           <NavLink
             key={to}
             to={to}
-            end={end}
+            end={to === '/'}
             className="navtab"
-            onClick={bounce}
-            onAnimationEnd={(e) => e.currentTarget.classList.remove('bounce')}
+            aria-label={label}
           >
-            {({ isActive }) => (
-              <span className="navtab-inner">
-                <span className="navtab-icon-wrap">
-                  <img className="navtab-icon" src={`/img/nav/${icon}${isActive ? '' : '-grey'}.png`} alt="" />
-                  {badge ? <span className="navtab-badge">{badge}</span> : null}
-                </span>
-                <span className="navtab-label">{label}</span>
-              </span>
-            )}
+            <span className="navtab-icon-wrap">
+              <NavIcon name={icon} active={i === index} />
+              {badge ? <span className="navtab-badge">{badge}</span> : null}
+            </span>
           </NavLink>
         ))}
       </div>

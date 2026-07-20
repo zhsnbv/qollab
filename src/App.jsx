@@ -9,7 +9,12 @@ import Profile from './screens/Profile';
 import ArticleView from './screens/ArticleView';
 import DMChat from './screens/DMChat';
 import Splash from './components/Splash';
+import BottomNav from './components/BottomNav';
 import './App.css';
+
+// Роуты с таб-баром. Оверлеи (чат, статья) своего бара не показывают, но и не
+// размонтируют его: они открываются поверх и просто перекрывают по z-index.
+const TAB_ROUTES = ['/', '/posts', '/services', '/chats', '/profile'];
 
 // Сколько держим сплэш, прежде чем он уедет вниз (см. Splash.css) и контент
 // «главной» проявится — не медленно, но подчёркнуто плавно.
@@ -23,6 +28,9 @@ const SPLASH_EXIT_MS = 747;
 function AppRoutes() {
   const location = useLocation();
   const background = location.state?.background;
+  // Таб-бар рендерим здесь, а не внутри TabLayout: так он переживает смену
+  // роута и плашка успевает доехать до нового таба, а не создаётся заново.
+  const showNav = TAB_ROUTES.includes((background || location).pathname);
 
   return (
     <>
@@ -38,6 +46,7 @@ function AppRoutes() {
         <Route path="/chats/dm" element={<DMChat />} />
         <Route path="/article" element={<ArticleView />} />
       </Routes>
+      {showNav && <BottomNav />}
     </>
   );
 }

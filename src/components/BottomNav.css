@@ -1,61 +1,75 @@
+/* Зона таб-бара: лежит поверх контента, а не в потоке — бар плавающий.
+   Градиент в белый растворяет уезжающий под бар контент (из макета).
+   z-index 20: выше топбара (10), но ниже оверлеев чата/статьи (50). */
 .bottomnav {
-  background: var(--color-white);
-  position: relative;
-  /* тонкая граница + одна чистая мягкая тень — отделяет навбар от контента, без «грязи» */
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-  flex-shrink: 0;
-  /* небольшой запас снизу под домашний индикатор iPhone (safe-area) */
-  padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding: 16px 20px max(25px, env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--color-white) 90%);
+  /* Клики ловит только сам бар — вокруг него контент остаётся кликабельным */
+  pointer-events: none;
 }
 
 .bottomnav-row {
+  position: relative;
+  height: 65px;
   display: flex;
-  padding: var(--space-1);
+  /* По вертикали 4, по горизонтали 8.5: в макете слоты перекрываются, из-за
+     чего шаг иконок (69) теснее равного деления. 8.5 воспроизводит этот шаг —
+     тогда плашка центрируется по иконке и упирается в 4px от края. */
+  padding: 4px 8.5px;
+  border-radius: 48px;
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  /* Обводка внутренней тенью, а не border: в Figma stroke рисуется внутрь и не
+     съедает высоту. С border контент-бокс стал бы 55 при высоте таба 57, и
+     иконки уехали бы вниз. */
+  box-shadow: inset 0 0 0 1px var(--color-border), 0 8px 15px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+/* Плашка активного таба. Ширину и сдвиг ставит JS (см. BottomNav.jsx);
+   анимируем только transform — он идёт через композитор и не рвётся, когда
+   главный поток занят монтированием нового экрана. */
+.navtab-pill {
+  position: absolute;
+  left: 0;
+  top: 4px; /* 4 сверху / 5 снизу — как в макете (56 в поле 65) */
+  height: 56px;
+  border-radius: var(--radius-pill);
+  background: rgba(147, 147, 147, 0.15);
+  transition: transform 380ms cubic-bezier(0.33, 1, 0.68, 1);
+  will-change: transform;
 }
 
 .navtab {
-  flex: 1;
+  position: relative;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 57px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 6px 0;
-  text-decoration: none;
-  color: var(--color-weak);
+  justify-content: center;
+  color: var(--color-text);
   -webkit-tap-highlight-color: transparent;
+  border-radius: var(--radius-pill);
 }
-
-/* Иконка + подпись баунсят вместе, слегка и плавно, ПОСЛЕ нажатия */
-.navtab-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-}
-.navtab.bounce .navtab-inner { animation: navtab-bounce 0.34s ease; }
-@keyframes navtab-bounce {
-  0%   { transform: scale(1); }
-  35%  { transform: scale(0.92); }
-  70%  { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
+.navtab.active { color: var(--color-primary); }
+.navtab:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -3px; }
 
 .navtab-icon-wrap {
   position: relative;
   display: flex;
+  transition: transform 0.14s ease;
 }
+.navtab:active .navtab-icon-wrap { transform: scale(0.9); }
 
-/* Иконки — плоские монохромные из Figma (public/img/nav): активные оранжевые,
-   неактивные серые. Экспортированы на белом фоне (= фон навбара), поэтому
-   светлый градиент низа не съедается ключеванием и иконки не обрезаются. */
-.navtab-icon { width: 24px; height: 24px; }
-.navtab.active .navtab-label { color: var(--color-text); }
-
-.navtab-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-weak);
-}
+.navtab-icon { width: 24px; height: 24px; display: block; }
 
 .navtab-badge {
   position: absolute;
@@ -76,3 +90,7 @@
   line-height: 1;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .navtab-pill,
+  .navtab-icon-wrap { transition: none; }
+}
