@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import GradientTile from '../components/GradientTile';
 import { serviceCategories } from '../data/services';
 import './ServicesSheet.css';
 
@@ -50,7 +49,7 @@ export default function ServicesSheet() {
               <div className={view === 'list' ? 'svcsheet-list' : 'svcsheet-grid'}>
                 {cat.items.map((item) => (
                   <button className="svcsheet-item" key={item.id}>
-                    <GradientTile bg={item.bg} img={item.img} icon={item.icon} size={view === 'list' ? 48 : 60} />
+                    <img className="svcsheet-icon" src={item.img} alt="" />
                     <span className="svcsheet-texts">
                       <span className="svcsheet-name">{item.name}</span>
                       {view === 'list' && <span className="svcsheet-sub">{item.sub}</span>}

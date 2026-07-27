@@ -80,7 +80,10 @@
   padding: 0 var(--space-4);
 }
 .svcsheet-body::-webkit-scrollbar { display: none; }
-.svcsheet-bottom-spacer { height: max(var(--space-4), env(safe-area-inset-bottom)); }
+/* Плавающий таб-бар лежит ПОВЕРХ шита (z-index 20 против 15), поэтому в конце
+   списка нужен запас на всю его зону — иначе последние сервисы уезжают под бар
+   и до них не дотянуться. 16 (отступ сверху) + 65 (бар) + низ = высота зоны. */
+.svcsheet-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
 
 .svcsheet-section { padding-top: var(--space-4); }
 .svcsheet-section-title {
@@ -93,6 +96,8 @@
 .svcsheet-item { transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent; }
 .svcsheet-item:active { opacity: 0.7; transform: scale(0.98); }
 .svcsheet-list .svcsheet-item { display: flex; align-items: center; gap: var(--space-4); text-align: left; width: 100%; }
+/* Иконка — готовая картинка из макета; в списке 48, в сетке 60 (см. ниже) */
+.svcsheet-icon { width: 48px; height: 48px; display: block; flex-shrink: 0; border-radius: var(--radius-xl); }
 .svcsheet-texts { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .svcsheet-name {
   font-size: 14px; font-weight: 600; color: var(--color-text); letter-spacing: -0.28px;
@@ -106,6 +111,7 @@
 /* Сетка */
 .svcsheet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5) var(--space-2); }
 .svcsheet-grid .svcsheet-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+.svcsheet-grid .svcsheet-icon { width: 60px; height: 60px; }
 .svcsheet-grid .svcsheet-texts { align-items: center; }
 .svcsheet-grid .svcsheet-name { font-size: 12px; white-space: normal; text-align: center; line-height: 1.15; letter-spacing: -0.24px; }
 

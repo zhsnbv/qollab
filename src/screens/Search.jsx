@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, MagnifyingGlass, X, CaretRight, SmileySad } from '@phosphor-icons/react';
-import GradientTile from '../components/GradientTile';
 import { allServices } from '../data/services';
 import { basePosts, events } from '../data/feed';
 import './Search.css';
@@ -84,7 +83,7 @@ export default function Search() {
         </div>
       </header>
 
-      <div className="se-tabs no-scrollbar edge-scroll">
+      <div className="se-tabs no-scrollbar">
         {TABS.map((t) => (
           <button key={t.id} className={`se-tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
             {t.label}
@@ -128,7 +127,7 @@ export default function Search() {
           <div className="se-list">
             {results.map((s) => (
               <div className="se-row" key={s.id}>
-                <GradientTile bg={s.bg} img={s.img} icon={s.icon} size={40} />
+                <img className="se-svc-icon" src={s.img} alt="" />
                 <span className="se-texts">
                   <span className="se-name">{s.name}</span>
                   <span className="se-sub">{s.sub}</span>

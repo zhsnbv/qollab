@@ -76,7 +76,12 @@ export default function BottomNav() {
             key={to}
             to={to}
             end={to === '/'}
-            className="navtab"
+            // className функцией, чтобы NavLink не подставлял свой .active по
+            // текущему пути: на оверлеях (/banner, /search, /services) ни один
+            // таб не совпадает с роутом, и подсветка слетала — иконка активного
+            // таба чернела, хотя плашка оставалась под ним. Красим по тому же
+            // index, по которому позиционируется плашка.
+            className={() => `navtab${i === index ? ' active' : ''}`}
           >
             <span className="navtab-icon-wrap">
               <NavIcon name={icon} active={i === index} />

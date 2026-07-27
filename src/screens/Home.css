@@ -63,16 +63,17 @@
 }
 .story-item:active, .fav-card:active, .promo-card:active, .actual-row:active,
 .all-pub-btn:active, .fav-gear:active, .link:active, .search-pill:active, .tab:active { opacity: 0.6; }
-/* Плитка сервиса — теперь GradientTile (градиент + иллюстрация, см.
-   components/GradientTile.css); тут только размер под сетку 60×60. */
-.service-icon { width: 60px; height: 60px; }
-.service-item span { font-size: 12px; font-weight: 600; color: var(--color-text); text-align: center; line-height: 1; letter-spacing: -0.24px; }
-.service-icon--all {
-  width: 60px; height: 60px; border-radius: var(--radius-xl); overflow: hidden; position: relative;
-  background: var(--color-primary-bg);
-  border: 1.15px solid var(--color-primary-border);
-  display: flex; align-items: center; justify-content: center;
+/* Плитка сервиса — готовая картинка из макета (градиент запечён), 60×60 */
+.service-icon { width: 60px; height: 60px; display: block; border-radius: var(--radius-xl); }
+/* Подпись в одну строку с многоточием — как в макете. Двухстрочные подписи
+   помечаются модификатором --wrap (в макете так только «ПоддERGка персонала»). */
+.service-name {
+  width: 100%;
+  font-size: 12px; font-weight: 600; color: var(--color-text);
+  text-align: center; line-height: 1.15; letter-spacing: -0.24px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.service-name--wrap { white-space: normal; }
 
 /* Избранное */
 .fav-row { display: flex; gap: var(--space-3); overflow-x: auto; }

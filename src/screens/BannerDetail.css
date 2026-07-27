@@ -1,33 +1,28 @@
 /* Полноэкранный шит баннера — едет снизу вверх (cover vertical), а не сбоку,
    как Статья: он не «страница из списка», а модальная деталь конкретной
-   карточки. Ниже плавающего таб-бара по z-index (см. .svcsheet-overlay). */
+   карточки. Ниже плавающего таб-бара по z-index (см. .svcsheet-overlay).
+   Сам контейнер прозрачный и не анимируется: хедер сверху появляется сразу
+   (совпадает с хедером Главной под ним), а едет только .bd-sheet. */
 .bannerdetail {
   position: absolute;
   inset: 0;
   z-index: 15;
-  background: var(--page-bg);
+  background: transparent;
   display: flex;
   flex-direction: column;
+}
+
+.bd-sheet {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
   animation: bd-slide-in 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
-.bannerdetail.closing { animation: bd-slide-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+.bannerdetail.closing .bd-sheet { animation: bd-slide-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
 @keyframes bd-slide-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @keyframes bd-slide-out { from { transform: translateY(0); } to { transform: translateY(100%); } }
-
-.bd-top {
-  flex-shrink: 0;
-  background: var(--color-white);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-  padding-top: max(var(--space-3), env(safe-area-inset-top));
-}
-.bd-logo { height: 24px; display: block; }
-.bd-menu {
-  width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--color-background);
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
-}
-.bd-menu:active { opacity: 0.6; }
 
 .bd-scroll {
   flex: 1;
@@ -102,5 +97,5 @@
 .bd-cta:active { opacity: 0.85; }
 
 @media (prefers-reduced-motion: reduce) {
-  .bannerdetail, .bannerdetail.closing { animation: none; }
+  .bd-sheet, .bannerdetail.closing .bd-sheet { animation: none; }
 }

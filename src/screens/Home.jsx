@@ -2,16 +2,15 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
-import GradientTile from '../components/GradientTile';
 import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
 import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { basePosts, events } from '../data/feed';
-import { homeServices } from '../data/services';
+import { homeServices, allServicesTile } from '../data/services';
 import { banners } from '../data/banners';
 import { useFavorites, FAV_ICONS } from '../context/FavoritesContext';
 import {
-  MagnifyingGlass, SquaresFour,
+  MagnifyingGlass,
   Lifebuoy, Headset, CheckFat, HandHeart,
   SuitcaseRolling, CaretRight,
 } from '@phosphor-icons/react';
@@ -102,13 +101,13 @@ export default function Home() {
             <div className="services-grid">
               {homeServices.map((s) => (
                 <button className="service-item" key={s.id}>
-                  <GradientTile bg={s.bg} img={s.img} icon={s.icon} size={60} className="service-icon" />
-                  <span>{s.name}</span>
+                  <img className="service-icon" src={s.img} alt="" />
+                  <span className={s.wrap ? 'service-name service-name--wrap' : 'service-name'}>{s.name}</span>
                 </button>
               ))}
               <button className="service-item" onClick={openServices}>
-                <span className="service-icon service-icon--all"><SquaresFour size={28} weight="fill" color="var(--color-primary)" /></span>
-                <span>Все сервисы</span>
+                <img className="service-icon" src={allServicesTile} alt="" />
+                <span className="service-name">Все сервисы</span>
               </button>
             </div>
           </div>
