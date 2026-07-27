@@ -1,39 +1,130 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CaretLeft, MagnifyingGlass, X, CaretRight, SmileySad } from '@phosphor-icons/react';
+import {
+  CaretLeft, MagnifyingGlass, X, CaretRight, SmileySad,
+  ChatCircleDots, SlidersHorizontal, ShareNetwork, CalendarBlank,
+} from '@phosphor-icons/react';
 import { allServices } from '../data/services';
 import { basePosts, events } from '../data/feed';
+import { employees, guests, searchChannels, enterprises } from '../data/people';
 import './Search.css';
 
-// Небольшой мок-справочник сотрудников — тем же приёмом, что и бесконечная
-// лента чатов (см. Chats.jsx): имя+фамилия из двух списков, портрет с
-// randomuser.me по полу. Здесь не бесконечный, просто фиксированный набор.
-const firstNames = ['Нурлан', 'Асель', 'Ерлан', 'Мадина', 'Азамат', 'Гульнара', 'Тимур', 'Айгерим', 'Бекзат', 'Динара', 'Серик', 'Жанар'];
-const lastNamesM = ['Ибрагимов', 'Сулейменов', 'Кулубеков', 'Байтенов', 'Ержанов'];
-const lastNamesF = ['Нурланова', 'Сериккызы', 'Оспанова', 'Ералиева', 'Бекова', 'Жумабаева'];
-const roles = ['Специалист отдела кадров', 'Инженер-технолог', 'Менеджер проекта', 'Специалист IT-поддержки', 'Ведущий бухгалтер', 'Юрисконсульт', 'Специалист по охране труда', 'Аналитик данных'];
-const depts = ['ТОО «Kazakhmys Energy»', 'ТОО «АктюбТЭК»', 'Головной офис ERG', 'Соколовско-Сарбайское ГПО', 'Аксуский завод ферросплавов'];
-
-const employees = Array.from({ length: 12 }, (_, i) => {
-  const male = i % 2 === 0;
-  const last = male ? lastNamesM[i % lastNamesM.length] : lastNamesF[i % lastNamesF.length];
-  return {
-    id: i,
-    name: `${firstNames[i]} ${last}`,
-    role: roles[i % roles.length],
-    dept: depts[i % depts.length],
-    avatar: `https://randomuser.me/api/portraits/${male ? 'men' : 'women'}/${(i * 11) % 90}.jpg`,
-  };
-});
-
+// Вкладки поиска — как в макете (node 23930-6898).
 const TABS = [
   { id: 'people', label: 'Сотрудники' },
   { id: 'services', label: 'Сервисы' },
   { id: 'posts', label: 'Публикации' },
+  { id: 'channels', label: 'Каналы' },
   { id: 'events', label: 'Мероприятия' },
+  { id: 'guests', label: 'Гости' },
 ];
 
+// Фильтр есть только у людей и публикаций (у публикаций — расширенный).
+const FILTER_TABS = { people: 'simple', guests: 'simple', posts: 'full' };
+
+const POST_KINDS = ['Новость', 'Обзор'];
+const SORTS = ['По умолчанию', 'Сначала новые', 'Сначала старые', 'По оценке (высокая)', 'По оценке (низкая)'];
+
+// Палитра кружков с инициалами — как в макете, по кругу через индекс.
+const AVATAR_COLORS = ['#4caf50', '#26c6da', '#ec407a', '#ef5350', '#ff9800', '#7e57c2'];
+
 const norm = (s) => (s || '').toLowerCase();
+
+function initials(name) {
+  const parts = name.split(' ').filter(Boolean);
+  return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
+}
+
+function PersonAvatar({ person, index }) {
+  if (person.avatar) {
+    return <span className="se-avatar"><img src={person.avatar} alt="" loading="lazy" /></span>;
+  }
+  return (
+    <span className="se-avatar se-avatar--initials" style={{ background: AVATAR_COLORS[index % AVATAR_COLORS.length] }}>
+      {initials(person.name)}
+    </span>
+  );
+}
+
+// Боттом-шит фильтра. simple — только «Предприятие» (сотрудники, гости),
+// full — плюс тип публикации, сортировка и диапазон дат (публикации).
+function FilterSheet({ kind, open, onClose, value, onChange }) {
+  const [orgQuery, setOrgQuery] = useState('');
+  if (!kind) return null;
+
+  const orgs = enterprises.filter((e) => norm(e).includes(norm(orgQuery)));
+  const set = (patch) => onChange({ ...value, ...patch });
+  const reset = () => onChange({ postKind: null, sort: SORTS[0], org: null, from: '', to: '' });
+
+  return (
+    <div className={`fs-overlay ${open ? 'open' : ''}`} onClick={onClose} aria-hidden={!open}>
+      <div className="fs-sheet" onClick={(e) => e.stopPropagation()}>
+        <span className="fs-handle" />
+        <div className="fs-head">
+          <h2 className="fs-title">Фильтр</h2>
+          <button className="fs-reset" onClick={reset}>Сбросить фильтр</button>
+        </div>
+
+        <div className="fs-body">
+          {kind === 'full' && (
+            <>
+              <div className="fs-group">
+                <h3 className="fs-label">Тип публикации</h3>
+                {POST_KINDS.map((k) => (
+                  <label className="fs-radio" key={k}>
+                    <input type="radio" name="postKind" checked={value.postKind === k} onChange={() => set({ postKind: k })} />
+                    <span className="fs-dot" />{k}
+                  </label>
+                ))}
+              </div>
+
+              <div className="fs-group">
+                <h3 className="fs-label">Сортировка</h3>
+                {SORTS.map((s) => (
+                  <label className="fs-radio" key={s}>
+                    <input type="radio" name="sort" checked={value.sort === s} onChange={() => set({ sort: s })} />
+                    <span className="fs-dot" />{s}
+                  </label>
+                ))}
+              </div>
+            </>
+          )}
+
+          <div className="fs-group">
+            <h3 className="fs-label">Предприятие</h3>
+            <div className="fs-search">
+              <MagnifyingGlass size={20} color="var(--color-weak)" />
+              <input value={orgQuery} onChange={(e) => setOrgQuery(e.target.value)} placeholder="Поиск" />
+            </div>
+            {orgs.map((o) => (
+              <label className="fs-radio" key={o}>
+                <input type="radio" name="org" checked={value.org === o} onChange={() => set({ org: o })} />
+                <span className="fs-dot" />{o}
+              </label>
+            ))}
+            {orgs.length === 0 && <p className="fs-none">Ничего не найдено</p>}
+          </div>
+
+          {kind === 'full' && (
+            <div className="fs-group">
+              <h3 className="fs-label">Диапазон дат публикации</h3>
+              <div className="fs-dates">
+                <input type="text" placeholder="Start date" value={value.from} onChange={(e) => set({ from: e.target.value })} />
+                <span className="fs-arrow">→</span>
+                <input type="text" placeholder="End date" value={value.to} onChange={(e) => set({ to: e.target.value })} />
+                <CalendarBlank size={20} color="var(--color-weak)" />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="fs-foot">
+          <button className="fs-save" onClick={onClose}>Сохранить</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Search() {
   const navigate = useNavigate();
@@ -46,28 +137,63 @@ export default function Search() {
 
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState('people');
+  const [closing, setClosing] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({ postKind: null, sort: SORTS[0], org: null, from: '', to: '' });
   const q = norm(query.trim());
+  const tabsRef = useRef(null);
+
+  // Подтягиваем активный таб в вид: крайние («Каналы», «Гости») не помещаются
+  // в полосу, и после клика по частично видимому табу подсветка оставалась за
+  // кадром. Скроллим только саму полосу, не трогая вертикальный скролл.
+  useEffect(() => {
+    const bar = tabsRef.current;
+    const el = bar?.querySelector('.se-tab.active');
+    if (!bar || !el) return;
+    const target = el.offsetLeft - (bar.clientWidth - el.offsetWidth) / 2;
+    bar.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  }, [tab]);
+
+  const close = () => {
+    setClosing(true);
+    setTimeout(() => navigate(-1), 260);
+  };
 
   const results = useMemo(() => {
     if (!q) return null;
-    if (tab === 'people') {
-      return employees.filter((e) => norm(e.name).includes(q) || norm(e.role).includes(q) || norm(e.dept).includes(q));
+    const byOrg = (list) => (filters.org ? list.filter((p) => p.org === filters.org) : list);
+    switch (tab) {
+      case 'people':
+        return byOrg(employees.filter((e) => norm(e.name).includes(q) || norm(e.role).includes(q) || norm(e.org).includes(q)));
+      case 'guests':
+        return guests.filter((g) => norm(g.name).includes(q));
+      case 'services':
+        return allServices.filter((s) => norm(s.name).includes(q) || norm(s.sub).includes(q));
+      case 'posts': {
+        let list = basePosts.filter((p) => norm(p.title).includes(q) || norm(p.excerpt).includes(q) || norm(p.channel).includes(q));
+        if (filters.sort === 'Сначала старые') list = [...list].reverse();
+        return list;
+      }
+      case 'channels':
+        return searchChannels.filter((c) => norm(c.name).includes(q));
+      default:
+        return events.filter((e) => norm(e.title).includes(q));
     }
-    if (tab === 'services') {
-      return allServices.filter((s) => norm(s.name).includes(q) || norm(s.sub).includes(q));
-    }
-    if (tab === 'posts') {
-      return basePosts.filter((p) => norm(p.title).includes(q) || norm(p.excerpt).includes(q) || norm(p.channel).includes(q));
-    }
-    return events.filter((e) => norm(e.title).includes(q));
-  }, [q, tab]);
+  }, [q, tab, filters]);
 
   const openPost = (p) => navigate('/article', { state: { post: p, background: homeBackground } });
+  const filterKind = FILTER_TABS[tab] || null;
+  const hasResults = results !== null && results.length > 0;
 
   return (
-    <div className="searchscreen">
+    <div className={`searchscreen ${closing ? 'closing' : ''}`}>
       <header className="se-top">
-        <button className="se-back" onClick={() => navigate(-1)} aria-label="Назад"><CaretLeft size={24} /></button>
+        <button className="se-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
+        <h1 className="se-title">Поиск</h1>
+        <span className="se-back" aria-hidden="true" />
+      </header>
+
+      <div className="se-input-wrap">
         <div className="se-input">
           <MagnifyingGlass size={20} color="var(--color-weak)" />
           <input
@@ -78,12 +204,12 @@ export default function Search() {
             enterKeyHint="search"
           />
           {query && (
-            <button className="se-clear" onClick={() => setQuery('')} aria-label="Очистить"><X size={14} weight="bold" /></button>
+            <button className="se-clear" onClick={() => setQuery('')} aria-label="Очистить"><X size={12} weight="bold" /></button>
           )}
         </div>
-      </header>
+      </div>
 
-      <div className="se-tabs no-scrollbar">
+      <div className="se-tabs no-scrollbar" ref={tabsRef}>
         {TABS.map((t) => (
           <button key={t.id} className={`se-tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
             {t.label}
@@ -91,7 +217,18 @@ export default function Search() {
         ))}
       </div>
 
-      <div className="se-scroll scroll-area--tabbar">
+      {hasResults && (
+        <div className="se-resbar">
+          <h2 className="se-restitle">Результаты поиска</h2>
+          {filterKind && (
+            <button className="se-filter" onClick={() => setFilterOpen(true)}>
+              <SlidersHorizontal size={18} weight="bold" />Фильтр
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="se-scroll">
         {results === null && (
           <div className="se-empty">
             <span className="se-empty-ico"><MagnifyingGlass size={28} weight="bold" color="var(--color-primary)" /></span>
@@ -108,22 +245,24 @@ export default function Search() {
           </div>
         )}
 
-        {results !== null && results.length > 0 && tab === 'people' && (
+        {hasResults && (tab === 'people' || tab === 'guests') && (
           <div className="se-list">
-            {results.map((e) => (
-              <div className="se-row" key={e.id}>
-                <span className="se-avatar"><img src={e.avatar} alt="" loading="lazy" /></span>
+            {results.map((p, i) => (
+              <div className="se-row" key={p.id}>
+                <PersonAvatar person={p} index={i} />
                 <span className="se-texts">
-                  <span className="se-name">{e.name}</span>
-                  <span className="se-sub">{e.role} · {e.dept}</span>
+                  <span className="se-name">{p.name}</span>
+                  <span className="se-sub">{tab === 'guests' ? 'Гость' : `${p.org} • ${p.role}`}</span>
                 </span>
-                <CaretRight size={16} color="var(--color-light)" />
+                <button className="se-chat" aria-label={`Написать: ${p.name}`}>
+                  <ChatCircleDots size={22} />
+                </button>
               </div>
             ))}
           </div>
         )}
 
-        {results !== null && results.length > 0 && tab === 'services' && (
+        {hasResults && tab === 'services' && (
           <div className="se-list">
             {results.map((s) => (
               <div className="se-row" key={s.id}>
@@ -138,7 +277,22 @@ export default function Search() {
           </div>
         )}
 
-        {results !== null && results.length > 0 && tab === 'posts' && (
+        {hasResults && tab === 'channels' && (
+          <div className="se-list">
+            {results.map((c) => (
+              <div className="se-row" key={c.id}>
+                <span className="se-avatar"><img src={c.img} alt="" loading="lazy" /></span>
+                <span className="se-texts">
+                  <span className="se-name">{c.name}</span>
+                  <span className="se-sub">{c.posts}</span>
+                </span>
+                <CaretRight size={16} color="var(--color-light)" />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {hasResults && tab === 'posts' && (
           <div className="se-list">
             {results.map((p, i) => (
               <button className="se-post" key={i} onClick={() => openPost(p)}>
@@ -153,20 +307,42 @@ export default function Search() {
           </div>
         )}
 
-        {results !== null && results.length > 0 && tab === 'events' && (
-          <div className="se-list">
+        {hasResults && tab === 'events' && (
+          <div className="se-events">
             {results.map((e, i) => (
-              <div className="se-row se-row--event" key={i}>
-                <span className="se-event-thumb"><img src={e.img} alt="" loading="lazy" /></span>
-                <span className="se-texts">
-                  <span className="se-name">{e.title}</span>
-                  <span className="se-sub">{e.when}</span>
-                </span>
-              </div>
+              <article className="se-event" key={i}>
+                <div className="se-event-cover"><img src={e.img} alt="" loading="lazy" /></div>
+                <div className="se-event-body">
+                  <p className="se-event-when">{e.when}</p>
+                  <h3 className="se-event-title">{e.title}</h3>
+                  <div className="se-event-org">
+                    <span className="se-event-avatars">
+                      {[0, 1, 2].map((n) => (
+                        <span key={n} className="se-event-av" style={{ background: AVATAR_COLORS[(i + n) % AVATAR_COLORS.length] }} />
+                      ))}
+                    </span>
+                    <span className="se-event-orgtext">{e.org}</span>
+                  </div>
+                  <div className="se-event-actions">
+                    <button className="se-event-more">Подробнее</button>
+                    <button className="se-event-share" aria-label="Поделиться"><ShareNetwork size={20} /></button>
+                  </div>
+                </div>
+              </article>
             ))}
           </div>
         )}
+
+        <div className="se-bottom-spacer" />
       </div>
+
+      <FilterSheet
+        kind={filterOpen ? filterKind : null}
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        value={filters}
+        onChange={setFilters}
+      />
     </div>
   );
 }
