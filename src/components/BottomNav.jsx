@@ -13,7 +13,6 @@ import './BottomNav.css';
 const tabs = [
   { to: '/', label: 'Главная', icon: 'home' },
   { to: '/posts', label: 'Лента', icon: 'news' },
-  { to: '/services', label: 'Сервисы', icon: 'grid' },
   { to: '/chats', label: 'Чаты', icon: 'chat', badge: 3 },
   { to: '/profile', label: 'Профиль', icon: 'person' },
 ];

@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
+import GradientTile from '../components/GradientTile';
 import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
 import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { basePosts, events } from '../data/feed';
+import { homeServices } from '../data/services';
+import { banners } from '../data/banners';
+import { useFavorites, FAV_ICONS } from '../context/FavoritesContext';
 import {
-  MagnifyingGlass, Scroll, Mailbox, CalendarDots,
+  MagnifyingGlass, SquaresFour,
   Lifebuoy, Headset, CheckFat, HandHeart,
   SuitcaseRolling, CaretRight,
 } from '@phosphor-icons/react';
@@ -22,29 +26,6 @@ const stories = [
   { img: '/img/home/story-5.png', name: 'Eco Life ERG', seen: true },
 ];
 
-const services = [
-  { img: '/img/home/svc-1.png', name: 'Sales Market' },
-  { img: '/img/home/svc-2.png', name: 'Поддержка персонала' },
-  { img: '/img/home/svc-3.png', name: 'Мои задачи' },
-  { img: '/img/home/svc-4.png', name: 'МТОРО' },
-  { img: '/img/home/svc-5.png', name: 'ERG CU' },
-  { img: '/img/home/svc-6.png', name: 'Поиск по QR' },
-  { img: '/img/home/svc-7.png', name: 'ДРП' },
-];
-
-const favs = [
-  { label: 'Персонал', value: 'Расчетный листок 2.0', Icon: Scroll },
-  { label: 'IT услуги', value: 'Почта', Icon: Mailbox },
-  { label: 'IT услуги', value: 'Мои встречи', Icon: CalendarDots },
-];
-
-const promos = [
-  { cls: 'promo-1', badge: 'Опрос', title: 'Оставьте отзыв о работе в ERG' },
-  { cls: 'promo-2', badge: 'До -25%', alert: true, title: 'Шины и масла со скидкой', sub: 'для сотрудников ERG' },
-  { cls: 'promo-3', badge: 'Опрос', title: 'Насколько вы довольны корп. университетом ERG?' },
-  { cls: 'promo-4', badge: 'Внимание!', title: 'Мошенники в Whatsapp и Telegram', badgeAtEnd: true },
-];
-
 const actual = [
   { Icon: Lifebuoy, title: 'Заявка в Service Desk', sub: 'Обратная связь' },
   { Icon: Headset, title: 'Горячая линия ERG', sub: 'Сообщить о проблеме, задать вопрос' },
@@ -56,10 +37,19 @@ const actual = [
 export default function Home() {
   const loading = useSkeleton();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { favorites } = useFavorites();
   const [feedTab, setFeedTab] = useState('posts');
   const actions = (
     <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
   );
+
+  // Оверлеи (шит сервисов/поиск/баннер/избранное) открываются поверх Главной
+  // через background-трюк — она остаётся смонтированной под ними.
+  const openServices = () => navigate('/services', { state: { background: location } });
+  const openSearch = () => navigate('/search', { state: { background: location } });
+  const openFavorites = () => navigate('/favorites', { state: { background: location } });
+  const openBanner = (id) => navigate('/banner', { state: { id, background: location } });
 
   if (loading) {
     return <TabLayout topbar={<TopBar logo actions={actions} onLogoClick={toggleTheme} />}><HomeSkeleton /></TabLayout>;
@@ -70,10 +60,10 @@ export default function Home() {
       <FadeIn><div className="home">
         {/* Поиск + баннеры в одной карточке — сторис пока скрыты по просьбе заказчика (вернуть: убрать false &&) */}
         <section className="card card--first">
-          <div className="search-pill">
+          <button className="search-pill" onClick={openSearch}>
             <MagnifyingGlass size={20} color="var(--color-weak)" />
             <span>Поиск</span>
-          </div>
+          </button>
           {false && (
             <div className="story-row no-scrollbar edge-scroll">
               {stories.map((s, i) => (
@@ -89,15 +79,18 @@ export default function Home() {
             </div>
           )}
           <div className="promo-row no-scrollbar edge-scroll">
-            {promos.map((p, i) => (
-              <div className={`promo-card ${p.cls}`} key={i}>
-                {!p.badgeAtEnd && <span className={`promo-badge ${p.alert ? 'alert' : ''}`}>{p.badge}</span>}
-                <div>
-                  <div className="promo-title">{p.title}</div>
-                  {p.sub && <div className="promo-sub">{p.sub}</div>}
-                </div>
-                {p.badgeAtEnd && <span className="promo-badge">{p.badge}</span>}
-              </div>
+            {banners.map((b) => (
+              <button
+                className={`promo-card ${b.textOnDark ? 'on-dark' : ''}`}
+                style={{ background: b.bg }}
+                key={b.id}
+                onClick={() => openBanner(b.id)}
+              >
+                {b.badgePos === 'top' && <span className={`promo-badge promo-badge--${b.badgeVariant}`}>{b.badge}</span>}
+                <div className="promo-title">{b.title}</div>
+                {b.badgePos === 'bottom' && <span className={`promo-badge promo-badge--${b.badgeVariant}`}>{b.badge}</span>}
+                <img className="promo-img" src={b.img} alt="" />
+              </button>
             ))}
           </div>
         </section>
@@ -107,14 +100,14 @@ export default function Home() {
           <div className="block">
             <h3 className="section-title">Сервисы</h3>
             <div className="services-grid">
-              {services.map((s, i) => (
-                <button className="service-item" key={i}>
-                  <span className="service-icon"><img src={s.img} alt="" /></span>
+              {homeServices.map((s) => (
+                <button className="service-item" key={s.id}>
+                  <GradientTile bg={s.bg} img={s.img} icon={s.icon} size={60} className="service-icon" />
                   <span>{s.name}</span>
                 </button>
               ))}
-              <button className="service-item" onClick={() => navigate('/services')}>
-                <span className="service-icon"><img src="/img/home/svc-all.png" alt="" /></span>
+              <button className="service-item" onClick={openServices}>
+                <span className="service-icon service-icon--all"><SquaresFour size={28} weight="fill" color="var(--color-primary)" /></span>
                 <span>Все сервисы</span>
               </button>
             </div>
@@ -122,20 +115,26 @@ export default function Home() {
           <div className="block">
             <div className="row-between">
               <h3 className="section-title" style={{ margin: 0 }}>Избранное</h3>
-              <button className="fav-gear" aria-label="Настроить">
+              <button className="fav-gear" aria-label="Настроить" onClick={openFavorites}>
                 <img src="/img/profile/settings.svg" alt="" width="24" height="24" />
               </button>
             </div>
             <div className="fav-row no-scrollbar edge-scroll">
-              {favs.map(({ label, value, Icon }, i) => (
-                <div className="fav-card" key={i}>
-                  <div>
-                    <div className="fav-label">{label}</div>
-                    <div className="fav-value">{value}</div>
+              {favorites.map((f) => {
+                const Icon = FAV_ICONS[f.icon];
+                return (
+                  <div className="fav-card" key={f.id}>
+                    <div>
+                      <div className="fav-label">{f.label}</div>
+                      <div className="fav-value">{f.value}</div>
+                    </div>
+                    {Icon && <Icon size={24} weight="duotone" color="var(--color-primary)" />}
                   </div>
-                  <Icon size={24} weight="duotone" color="var(--color-primary)" />
-                </div>
-              ))}
+                );
+              })}
+              {favorites.length === 0 && (
+                <button className="fav-card fav-card--empty" onClick={openFavorites}>Добавить избранное</button>
+              )}
             </div>
           </div>
         </section>

@@ -4,17 +4,24 @@ import Home from './screens/Home';
 import Chats from './screens/Chats';
 import ChatRoom from './screens/ChatRoom';
 import Posts from './screens/Posts';
-import Services from './screens/Services';
 import Profile from './screens/Profile';
 import ArticleView from './screens/ArticleView';
 import DMChat from './screens/DMChat';
+import ServicesSheet from './screens/ServicesSheet';
+import Search from './screens/Search';
+import BannerDetail from './screens/BannerDetail';
+import Favorites from './screens/Favorites';
 import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
+import { FavoritesProvider } from './context/FavoritesContext';
 import './App.css';
 
-// Роуты с таб-баром. Оверлеи (чат, статья) своего бара не показывают, но и не
-// размонтируют его: они открываются поверх и просто перекрывают по z-index.
-const TAB_ROUTES = ['/', '/posts', '/services', '/chats', '/profile'];
+// Роуты с таб-баром. Оверлеи (чат, статья, шит сервисов, поиск...) своего бара
+// не показывают напрямую, но и не размонтируют его: они открываются поверх
+// текущего экрана через background-трюк (см. AppRoutes) и либо полностью
+// перекрывают бар по z-index (Статья, Чат, Избранное), либо оставляют его
+// плавать поверх дна (Сервисы, Поиск, Баннер) — см. их CSS.
+const TAB_ROUTES = ['/', '/posts', '/chats', '/profile'];
 
 // Сколько держим сплэш, прежде чем он уедет вниз (см. Splash.css) и контент
 // «главной» проявится — не медленно, но подчёркнуто плавно.
@@ -37,7 +44,6 @@ function AppRoutes() {
       <Routes location={background || location}>
         <Route path="/" element={<Home />} />
         <Route path="/posts" element={<Posts />} />
-        <Route path="/services" element={<Services />} />
         <Route path="/chats" element={<Chats />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
@@ -45,6 +51,10 @@ function AppRoutes() {
         <Route path="/chats/prodev" element={<ChatRoom />} />
         <Route path="/chats/dm" element={<DMChat />} />
         <Route path="/article" element={<ArticleView />} />
+        <Route path="/services" element={<ServicesSheet />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/banner" element={<BannerDetail />} />
+        <Route path="/favorites" element={<Favorites />} />
       </Routes>
       {showNav && <BottomNav />}
     </>
@@ -68,15 +78,17 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="device">
-        <div className={`app-reveal${exiting ? ' app-reveal--in' : ''}`}>
-          {/* Роуты монтируем только в момент ухода сплэша — иначе таймер
-              скелетона «Главной» успевает истечь ещё под непрозрачным
-              сплэшем, и после его ухода скелетон просто не виден. */}
-          {exiting && <AppRoutes />}
+      <FavoritesProvider>
+        <div className="device">
+          <div className={`app-reveal${exiting ? ' app-reveal--in' : ''}`}>
+            {/* Роуты монтируем только в момент ухода сплэша — иначе таймер
+                скелетона «Главной» успевает истечь ещё под непрозрачным
+                сплэшем, и после его ухода скелетон просто не виден. */}
+            {exiting && <AppRoutes />}
+          </div>
+          {!splashDone && <Splash exiting={exiting} />}
         </div>
-        {!splashDone && <Splash exiting={exiting} />}
-      </div>
+      </FavoritesProvider>
     </BrowserRouter>
   );
 }

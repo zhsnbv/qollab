@@ -1,0 +1,22 @@
+.gtile {
+  position: relative;
+  flex-shrink: 0;
+  display: block;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+.gtile-img {
+  position: absolute;
+  top: -22%;
+  left: -22%;
+  width: 144%;
+  height: 144%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.gtile-fallback-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

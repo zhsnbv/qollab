@@ -114,7 +114,10 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 @media (min-width: 440px) {
   body { display: flex; align-items: center; justify-content: center; background: #d8d8d8; padding: 24px 0; }
   .device {
-    height: 874px;
+    /* 874 — целевая высота «айфона», но на невысоком окне ноутбука это выше
+       viewport'а: body зафиксирован (overflow:hidden), так что лишнее просто
+       обрезалось снизу. min() ужимает каркас под реальную высоту окна. */
+    height: min(874px, calc(100dvh - 48px));
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
   }
 }
