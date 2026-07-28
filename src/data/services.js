@@ -8,7 +8,9 @@ export const serviceCategories = [
   {
     title: 'Работа',
     items: [
-      { id: 'task', name: 'Мои задачи', sub: 'Управление списком рабочих дел и задач', img: I('task') },
+      // app — id мини-аппа из data/miniapps.js: у такого сервиса плитка ведёт
+      // не «в никуда», а внутрь многоуровневой навигации (/app/mytasks).
+      { id: 'task', name: 'Мои задачи', sub: 'Управление списком рабочих дел и задач', img: I('task'), app: 'mytasks' },
       { id: 'mail', name: 'Почта 2.0', sub: 'Обновлённая версия корпоративной почты', img: I('mail') },
       { id: 'it', name: 'IT услуги', sub: 'Цифровые услуги для сотрудников', img: I('it') },
       { id: 'ticket', name: 'Тикет система', sub: 'Учёт и обработка обращений', img: I('ticket') },

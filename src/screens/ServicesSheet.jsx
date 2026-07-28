@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { serviceCategories } from '../data/services';
 import './ServicesSheet.css';
 
@@ -10,12 +10,21 @@ import './ServicesSheet.css';
 // как в макете.
 export default function ServicesSheet() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [view, setView] = useState('list');
   const [closing, setClosing] = useState(false);
 
   const close = () => {
     setClosing(true);
     setTimeout(() => navigate(-1), 260);
+  };
+
+  // Мини-апп открываем поверх Главной, а не поверх шита: пробрасываем тот же
+  // background, с которым открыли сам шит, — иначе после «назад» из мини-аппа
+  // экран под ним перестал бы матчиться и Главная пропала бы.
+  const openApp = (app) => {
+    const background = location.state?.background || { pathname: '/' };
+    navigate(`/app/${app}`, { state: { background }, replace: true });
   };
 
   return (
@@ -48,7 +57,7 @@ export default function ServicesSheet() {
               <h3 className="svcsheet-section-title">{cat.title}</h3>
               <div className={view === 'list' ? 'svcsheet-list' : 'svcsheet-grid'}>
                 {cat.items.map((item) => (
-                  <button className="svcsheet-item" key={item.id}>
+                  <button className="svcsheet-item" key={item.id} onClick={() => item.app && openApp(item.app)}>
                     <img className="svcsheet-icon" src={item.img} alt="" />
                     <span className="svcsheet-texts">
                       <span className="svcsheet-name">{item.name}</span>

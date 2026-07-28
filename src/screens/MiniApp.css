@@ -1,0 +1,168 @@
+/* Мини-апп: тот же слой, что Поиск/Сервисы — ниже плавающего таб-бара
+   (z-index 20), бар остаётся виден и кликабелен, как в живом приложении. */
+.miniapp {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  background: var(--page-bg);
+  display: flex;
+  flex-direction: column;
+  animation: ma-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.miniapp.closing { animation: ma-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes ma-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes ma-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+/* Шапка по шаблону: назад 40×40, заголовок 18 semibold по центру,
+   «…» в серой пилюле 40×40 справа. */
+.ma-top {
+  flex-shrink: 0;
+  background: var(--color-white);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.ma-back {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ma-back:active { opacity: 0.5; }
+.ma-title {
+  flex: 1; min-width: 0;
+  font-size: 18px; font-weight: 600; color: var(--color-text);
+  text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ma-menu {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-pill);
+  background: var(--color-background);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ma-menu:active { opacity: 0.6; }
+/* Заглушка той же ширины — чтобы заголовок оставался ровно по центру */
+.ma-menu-space { width: 40px; flex-shrink: 0; }
+
+.ma-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.ma-scroll::-webkit-scrollbar { display: none; }
+/* Смена уровня: контент приезжает с той стороны, куда идёт навигация.
+   key на контейнере пересоздаёт узел, поэтому анимация играет заново. */
+.ma-scroll[data-dir="fwd"] { animation: ma-lvl-fwd 0.24s cubic-bezier(0.32, 0.72, 0, 1); }
+.ma-scroll[data-dir="back"] { animation: ma-lvl-back 0.24s cubic-bezier(0.32, 0.72, 0, 1); }
+@keyframes ma-lvl-fwd { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes ma-lvl-back { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+
+/* Запас под плавающий таб-бар, иначе последняя строка уезжает под него */
+.ma-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+/* Когда снизу есть панель избранного — она уже держит дистанцию до бара,
+   тут достаточно воздуха, иначе низ контента не долистывается. */
+.ma-bottom-spacer.compact { height: var(--space-4); }
+
+/* ---- Строка списка (шаблон 24014-12302) ---- */
+.ma-list { background: var(--color-white); }
+.ma-row {
+  width: 100%;
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: 14px var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  transition: background 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ma-row:last-child { border-bottom: none; }
+.ma-row:not(:disabled):active { background: var(--color-background); }
+.ma-row:disabled { cursor: default; }
+
+.ma-row-ico {
+  width: 24px; height: 24px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-primary);
+}
+.ma-row-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.ma-row-title {
+  font-size: 14px; font-weight: 600; color: var(--color-text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ma-row-sub {
+  font-size: 14px; color: var(--color-weak);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Disabled: гаснет заголовок и иконка, сабтайтл остаётся серым — как в шаблоне */
+.ma-row.disabled .ma-row-title { color: rgba(0, 0, 0, 0.25); }
+.ma-row.disabled .ma-row-ico { color: var(--color-light); }
+/* Конечный пункт (никуда не ведёт) — шеврон приглушаем, чтобы не обещать переход */
+.ma-caret-leaf { opacity: 0.45; }
+
+.ma-empty { padding: var(--space-6) var(--space-4); color: var(--color-weak); font-size: 14px; text-align: center; }
+
+/* ---- Дашборд (АСУТП и подобные) ---- */
+.ma-person { background: var(--color-white); padding: var(--space-4); margin-bottom: var(--space-2); }
+.ma-person-label { font-size: 14px; color: #8ba3b8; margin-bottom: 2px; }
+.ma-person-value { font-size: 17px; color: var(--color-text); margin-bottom: var(--space-3); }
+.ma-person-value:last-child { margin-bottom: 0; }
+
+.ma-card { background: var(--color-white); padding: var(--space-5) var(--space-4); margin-bottom: var(--space-2); }
+.ma-card-title { font-size: 20px; font-weight: 600; color: var(--color-text); margin-bottom: var(--space-4); }
+.ma-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.ma-tile {
+  position: relative;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-1);
+  min-height: 76px;
+}
+.ma-tile-dot {
+  position: absolute; top: 12px; right: 12px;
+  width: 8px; height: 8px; border-radius: var(--radius-pill);
+}
+.ma-tile-label { font-size: 15px; }
+.ma-tile-value { font-size: 24px; font-weight: 600; }
+/* Тона из живого приложения: оранжевый — рабочие статусы, красный — требующие внимания */
+.ma-tile--warn { background: #fbdcbb; border: 1px solid #ef7f1a; }
+.ma-tile--warn .ma-tile-label,
+.ma-tile--warn .ma-tile-value { color: #d9741a; }
+.ma-tile--warn .ma-tile-dot { background: #ef7f1a; }
+.ma-tile--alert { background: #fcdcdc; border: 1px solid #f04438; }
+.ma-tile--alert .ma-tile-label,
+.ma-tile--alert .ma-tile-value { color: #e03b30; }
+.ma-tile--alert .ma-tile-dot { background: #f04438; }
+
+/* ---- Тумблер «Добавить в избранное» ---- */
+.ma-fav {
+  flex-shrink: 0;
+  background: var(--color-white);
+  border-top: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-4);
+  /* Поднимаем над плавающим таб-баром */
+  margin-bottom: calc(81px + max(25px, env(safe-area-inset-bottom)));
+  font-size: 17px; color: var(--color-text);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.ma-fav input { position: absolute; opacity: 0; width: 0; height: 0; }
+.ma-switch {
+  width: 51px; height: 31px; border-radius: var(--radius-pill);
+  background: var(--color-light); flex-shrink: 0; position: relative;
+  transition: background 0.2s ease;
+}
+.ma-switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 27px; height: 27px; border-radius: var(--radius-pill);
+  background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.ma-fav input:checked + .ma-switch { background: var(--color-success); }
+.ma-fav input:checked + .ma-switch::after { transform: translateX(20px); }
+.ma-fav input:focus-visible + .ma-switch { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .miniapp, .miniapp.closing, .ma-scroll { animation: none; }
+  .ma-switch, .ma-switch::after { transition: none; }
+}

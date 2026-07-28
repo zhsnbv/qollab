@@ -49,6 +49,7 @@ export default function Home() {
   const openSearch = () => navigate('/search', { state: { background: location } });
   const openFavorites = () => navigate('/favorites', { state: { background: location } });
   const openBanner = (id) => navigate('/banner', { state: { id, background: location } });
+  const openApp = (app) => navigate(`/app/${app}`, { state: { background: location } });
 
   if (loading) {
     return <TabLayout topbar={<TopBar logo actions={actions} onLogoClick={toggleTheme} />}><HomeSkeleton /></TabLayout>;
@@ -100,7 +101,7 @@ export default function Home() {
             <h3 className="section-title">Сервисы</h3>
             <div className="services-grid">
               {homeServices.map((s) => (
-                <button className="service-item" key={s.id}>
+                <button className="service-item" key={s.id} onClick={() => s.app && openApp(s.app)}>
                   <img className="service-icon" src={s.img} alt="" />
                   <span className={s.wrap ? 'service-name service-name--wrap' : 'service-name'}>{s.name}</span>
                 </button>
