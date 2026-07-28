@@ -14,6 +14,14 @@
   --color-light: #cccccc;
   --color-success: #00b578;
   --color-danger: #f04438;
+  /* Текст выключенного элемента (строки мини-аппов). Токеном, а не хардкодом:
+     rgba(0,0,0,.25) в тёмной теме сливается с фоном в ноль. */
+  --color-disabled: rgba(0, 0, 0, 0.25);
+  --danger-bg: #fdeceb;
+  /* Плавающий таб-бар: подложка и плашка активного таба. В тёмной теме
+     подложка не может остаться белой — бар висит поверх тёмного контента. */
+  --nav-bg: rgba(255, 255, 255, 0.8);
+  --nav-pill: rgba(147, 147, 147, 0.15);
   --page-bg: #f3f3f3;
   --story-seen: #d9d9d9;
   --sk-a: #ececec;
@@ -170,6 +178,12 @@ html[data-theme="dark"] {
   --color-primary-bg-hover: #46301a;
   --color-border: #3d3b36;
   --color-light: #6b675f;
+  --color-disabled: rgba(255, 250, 242, 0.3);
+  --danger-bg: #3a201e;
+  /* Подложка бара — затемнённая поверхность вместо белой; плашка активного
+     таба светлая, иначе на тёмном её попросту не видно. */
+  --nav-bg: rgba(43, 42, 39, 0.8);
+  --nav-pill: rgba(255, 255, 255, 0.13);
   --page-bg: #1f1e1b;              /* фон за карточками */
   --story-seen: #4a4740;
   --sk-a: #34322e;
@@ -204,3 +218,14 @@ html[data-theme="dark"] .data-tag { background: #15263a; border-color: #2a4a6e; 
 /* Скелетон-карточки уже на var(--color-white) — ок. Пилюля тумблера в сервисах: */
 html[data-theme="dark"] .view-toggle-btn.active { background: #4a4740; }
 /* Промо-баннеры остаются цветными островками — их не трогаем */
+
+/* Аватарки-инициалы в чате: светлые пастельные подложки на тёмном слепят,
+   притемняем фон и подсвечиваем сам текст. */
+html[data-theme="dark"] .msg-avatar--initials.tint-green { background: #1e3320; color: #7ee08a; }
+html[data-theme="dark"] .msg-avatar--initials.tint-blue { background: #16283d; color: #6aaaf5; }
+/* Свечение под кругом пустого чата было светлым (рассчитано на белый фон) */
+html[data-theme="dark"] .cr-empty-circle--main { box-shadow: 0 8px 4px rgba(0, 0, 0, 0.3); }
+
+/* Плитка «Все сервисы» — готовая светло-серая картинка из макета: на тёмном
+   фоне светится белым пятном. Инвертируем её в тёмный, оставляя рисунок. */
+html[data-theme="dark"] .service-icon[src$="/all.png"] { filter: invert(0.88) hue-rotate(180deg); }

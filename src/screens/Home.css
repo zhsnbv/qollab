@@ -40,7 +40,7 @@
 .story-ring.unseen { background: var(--color-primary); }
 .story-ring.seen { background: var(--story-seen); }
 .story-inner { width: 100%; height: 100%; border-radius: var(--radius-pill); padding: 2.5px; background: #fff; }
-.story-avatar { display: block; width: 100%; height: 100%; border-radius: var(--radius-pill); overflow: hidden; background: #eee; }
+.story-avatar { display: block; width: 100%; height: 100%; border-radius: var(--radius-pill); overflow: hidden; background: var(--sk-a); }
 .story-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .story-name {
   font-size: 12px; font-weight: 600; color: var(--color-text); text-align: center;

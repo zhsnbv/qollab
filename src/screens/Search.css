@@ -102,7 +102,7 @@
   display: flex; align-items: center; justify-content: center;
   margin-bottom: var(--space-2);
 }
-.se-empty-ico--sad { background: #fdeceb; }
+.se-empty-ico--sad { background: var(--danger-bg); }
 .se-empty-title { font-size: 16px; font-weight: 700; color: var(--color-heading); }
 .se-empty-sub { font-size: 14px; color: var(--color-weak); line-height: 1.45; max-width: 260px; }
 

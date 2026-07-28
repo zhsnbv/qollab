@@ -8,7 +8,10 @@
   bottom: 0;
   z-index: 20;
   padding: 16px 20px max(25px, env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--color-white) 90%);
+  /* Растворяем уезжающий под бар контент в цвет поверхности. Верхняя точка —
+     та же поверхность с нулевой альфой, а не «прозрачный белый»: иначе в
+     тёмной теме середина градиента уходила в серую дымку. */
+  background: linear-gradient(to bottom, transparent 0%, var(--color-white) 90%);
   /* Клики ловит только сам бар — вокруг него контент остаётся кликабельным */
   pointer-events: none;
 }
@@ -22,7 +25,7 @@
      тогда плашка центрируется по иконке и упирается в 4px от края. */
   padding: 4px 8.5px;
   border-radius: 48px;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--nav-bg);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   /* Обводка внутренней тенью, а не border: в Figma stroke рисуется внутрь и не
@@ -42,7 +45,7 @@
   top: 4px; /* 4 сверху / 5 снизу — как в макете (56 в поле 65) */
   height: 56px;
   border-radius: var(--radius-pill);
-  background: rgba(147, 147, 147, 0.15);
+  background: var(--nav-pill);
   transition: transform 380ms cubic-bezier(0.33, 1, 0.68, 1);
   will-change: transform;
 }

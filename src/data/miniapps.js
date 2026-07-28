@@ -7,33 +7,11 @@
 // целиком, а не упираться в тупик на втором шаге.
 //
 // Типы экранов:
-//   list      — список переходов (items)
-//   dashboard — ФИО/подразделение + группы плиток-счётчиков
-//   records   — список записей «заголовок + номер: статус»
+//   list    — список переходов (items)
+//   records — список записей «заголовок + номер: статус»
+// Оба — уровни навигации по шаблону: строка + опциональный сабтайтл + шеврон.
 // Флаг favorite — показывать внизу тумблер «Добавить в избранное» (как в
 // живом приложении на конечных экранах).
-
-// Пользователь прототипа — тот же, что в Профиле, чтобы данные не спорили.
-const ME = { fio: 'Мырзахметова Алуа', dept: 'Управление продуктовой разработки' };
-
-const requestTiles = [
-  {
-    title: 'Мои заявки',
-    tiles: [
-      { label: 'Не в работе', value: 0, tone: 'warn' },
-      { label: 'В работе', value: 0, tone: 'warn' },
-      { label: 'Ожидающие', value: 0, tone: 'alert' },
-    ],
-  },
-  {
-    title: 'Заявки моей группы',
-    tiles: [
-      { label: 'Не в работе', value: 0, tone: 'warn' },
-      { label: 'В работе', value: 0, tone: 'warn' },
-      { label: 'Неназначенные', value: 0, tone: 'alert' },
-    ],
-  },
-];
 
 export const miniApps = {
   mytasks: {
@@ -69,11 +47,13 @@ export const miniApps = {
           ],
         },
       },
+      // АСУТП КИП и Исполнение АСУТиМТ в живом приложении открывают дашборд со
+      // счётчиками заявок — не уровень навигации, поэтому в прототипе они
+      // конечные пункты: строка есть, экран за ней не рисуем.
       {
         id: 'asutp',
         title: 'АСУТП КИП',
         icon: 'Files',
-        screen: { title: 'АСУТП', type: 'dashboard', favorite: true, person: ME, groups: requestTiles },
       },
       {
         id: 'it',
@@ -141,7 +121,6 @@ export const miniApps = {
         id: 'asutimt',
         title: 'Исполнение АСУТиМТ',
         icon: 'GearSix',
-        screen: { title: 'АСУТиМТ', type: 'dashboard', favorite: true, person: ME, groups: requestTiles },
       },
       {
         id: 'food',

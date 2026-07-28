@@ -64,33 +64,6 @@ function Row({ item, onOpen }) {
   );
 }
 
-function Dashboard({ screen }) {
-  return (
-    <>
-      <div className="ma-person">
-        <div className="ma-person-label">ФИО</div>
-        <div className="ma-person-value">{screen.person.fio}</div>
-        <div className="ma-person-label">Подразделение</div>
-        <div className="ma-person-value">{screen.person.dept}</div>
-      </div>
-      {screen.groups.map((g) => (
-        <section className="ma-card" key={g.title}>
-          <h2 className="ma-card-title">{g.title}</h2>
-          <div className="ma-tiles">
-            {g.tiles.map((t) => (
-              <div className={`ma-tile ma-tile--${t.tone}`} key={t.label}>
-                <span className="ma-tile-dot" />
-                <span className="ma-tile-label">{t.label}</span>
-                <span className="ma-tile-value">{t.value}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-    </>
-  );
-}
-
 // Экран мини-аппа с многоуровневой навигацией (Figma node 24014-12302).
 // Уровень зашит в URL (/app/mytasks/it/closed), поэтому системное «назад»
 // и свайп работают сами: каждый переход вглубь — обычный push в историю.
@@ -169,8 +142,6 @@ export default function MiniApp() {
             ))}
           </div>
         )}
-
-        {screen.type === 'dashboard' && <Dashboard screen={screen} />}
 
         {/* Запас снизу нужен только когда под скроллом ничего нет: панель
             «Добавить в избранное» сама отодвинута от таб-бара, и второй такой

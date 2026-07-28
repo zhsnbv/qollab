@@ -95,44 +95,12 @@
 }
 
 /* Disabled: гаснет заголовок и иконка, сабтайтл остаётся серым — как в шаблоне */
-.ma-row.disabled .ma-row-title { color: rgba(0, 0, 0, 0.25); }
+.ma-row.disabled .ma-row-title { color: var(--color-disabled); }
 .ma-row.disabled .ma-row-ico { color: var(--color-light); }
 /* Конечный пункт (никуда не ведёт) — шеврон приглушаем, чтобы не обещать переход */
 .ma-caret-leaf { opacity: 0.45; }
 
 .ma-empty { padding: var(--space-6) var(--space-4); color: var(--color-weak); font-size: 14px; text-align: center; }
-
-/* ---- Дашборд (АСУТП и подобные) ---- */
-.ma-person { background: var(--color-white); padding: var(--space-4); margin-bottom: var(--space-2); }
-.ma-person-label { font-size: 14px; color: #8ba3b8; margin-bottom: 2px; }
-.ma-person-value { font-size: 17px; color: var(--color-text); margin-bottom: var(--space-3); }
-.ma-person-value:last-child { margin-bottom: 0; }
-
-.ma-card { background: var(--color-white); padding: var(--space-5) var(--space-4); margin-bottom: var(--space-2); }
-.ma-card-title { font-size: 20px; font-weight: 600; color: var(--color-text); margin-bottom: var(--space-4); }
-.ma-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-.ma-tile {
-  position: relative;
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-  display: flex; flex-direction: column; gap: var(--space-1);
-  min-height: 76px;
-}
-.ma-tile-dot {
-  position: absolute; top: 12px; right: 12px;
-  width: 8px; height: 8px; border-radius: var(--radius-pill);
-}
-.ma-tile-label { font-size: 15px; }
-.ma-tile-value { font-size: 24px; font-weight: 600; }
-/* Тона из живого приложения: оранжевый — рабочие статусы, красный — требующие внимания */
-.ma-tile--warn { background: #fbdcbb; border: 1px solid #ef7f1a; }
-.ma-tile--warn .ma-tile-label,
-.ma-tile--warn .ma-tile-value { color: #d9741a; }
-.ma-tile--warn .ma-tile-dot { background: #ef7f1a; }
-.ma-tile--alert { background: #fcdcdc; border: 1px solid #f04438; }
-.ma-tile--alert .ma-tile-label,
-.ma-tile--alert .ma-tile-value { color: #e03b30; }
-.ma-tile--alert .ma-tile-dot { background: #f04438; }
 
 /* ---- Тумблер «Добавить в избранное» ---- */
 .ma-fav {
