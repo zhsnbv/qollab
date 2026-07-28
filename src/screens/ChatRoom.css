@@ -142,7 +142,9 @@ html.kb .cr-writebar { padding-bottom: var(--space-2); }
 .msg-time { font-size: 10px; font-weight: 500; }
 .msg-time-row--overlay,
 .msg-time-row--overlay-dark { position: absolute; right: 10px; bottom: 7px; }
-.msg-time-row--overlay { color: rgba(0, 0, 0, 0.45); }
+/* Время внутри бабла: цвет токеном, иначе в тёмной теме чёрное время
+   пропадало на тёмном бабле. */
+.msg-time-row--overlay { color: var(--msg-time); }
 .msg-time-row--overlay-dark {
   right: 6px; bottom: 6px; background: rgba(0, 0, 0, 0.45); color: #fff;
   padding: 2px 8px; border-radius: var(--radius-pill);

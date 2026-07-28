@@ -25,7 +25,7 @@
 .post-channel { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
 .post-channel-avatar {
   width: 22px; height: 22px; border-radius: var(--radius-pill); overflow: hidden; flex-shrink: 0;
-  background: var(--color-background);
+  background: var(--img-placeholder);
 }
 .post-channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .post-channel-name { font-size: 13px; font-weight: 600; color: var(--color-text); }
@@ -45,7 +45,7 @@
 
 .post-thumb {
   width: 96px; height: 96px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;
-  background: var(--color-background);
+  background: var(--img-placeholder);
 }
 .post-item--compact .post-thumb { width: 84px; height: 84px; }
 .post-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -68,7 +68,7 @@
   background: var(--color-white);
   transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
 }
-.event-img { width: 100%; aspect-ratio: 16 / 9; background: var(--color-background); }
+.event-img { width: 100%; aspect-ratio: 16 / 9; background: var(--img-placeholder); }
 .event-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .event-body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
 .event-when { font-size: 13px; color: var(--color-weak); }

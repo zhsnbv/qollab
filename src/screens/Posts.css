@@ -43,14 +43,17 @@
 .channel-ring.active { border-color: var(--color-primary); }
 .channel-avatar {
   width: 60px; height: 60px; border-radius: var(--radius-pill); overflow: hidden;
-  background: var(--color-background); border: 1px solid var(--color-border);
+  /* Рамка нужна только чтобы светлые аватарки не сливались с белым фоном; в
+     тёмной теме она, наоборот, светлее подложки и читается как ободок —
+     поэтому берём цвет из токена (см. --avatar-edge). */
+  background: var(--img-placeholder); border: 1px solid var(--avatar-edge);
   display: flex; align-items: center; justify-content: center;
 }
 .channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
 /* «Все каналы» — квадратная плашка с закруглением, рамка тоже квадратная */
 .channel-ring--square { border-radius: var(--radius-xl); }
 .channel-avatar--all { border-radius: var(--radius-lg); }
-.channel-avatar--cu { background: var(--color-background); }
+.channel-avatar--cu { background: var(--img-placeholder); }
 .channel-avatar--cu img { width: 43px; height: auto; object-fit: contain; }
 .channel-name {
   font-size: 12px; font-weight: 600; color: var(--color-text); text-align: center;
@@ -66,7 +69,7 @@
 }
 .channel-header-avatar {
   width: 32px; height: 32px; border-radius: var(--radius-pill); overflow: hidden; flex-shrink: 0;
-  background: var(--color-background);
+  background: var(--img-placeholder);
 }
 .channel-header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .channel-header-name { flex: 1; font-size: 16px; font-weight: 600; color: var(--color-text); }

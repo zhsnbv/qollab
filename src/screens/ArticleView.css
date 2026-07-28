@@ -51,7 +51,7 @@
 }
 .ar-body::-webkit-scrollbar { display: none; }
 
-.ar-cover { width: 100%; aspect-ratio: 16 / 10; background: var(--color-background); }
+.ar-cover { width: 100%; aspect-ratio: 16 / 10; background: var(--img-placeholder); }
 .ar-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .ar-content {
@@ -157,7 +157,7 @@ html.kb .comments-input-row { padding-bottom: var(--space-2); }
 .comment-row { display: flex; gap: var(--space-3); }
 .comment-avatar {
   width: 36px; height: 36px; border-radius: var(--radius-pill); overflow: hidden; flex-shrink: 0;
-  background: var(--color-background);
+  background: var(--img-placeholder);
 }
 .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .comment-body { flex: 1; min-width: 0; }

@@ -31,7 +31,7 @@
   /* Обводка внутренней тенью, а не border: в Figma stroke рисуется внутрь и не
      съедает высоту. С border контент-бокс стал бы 55 при высоте таба 57, и
      иконки уехали бы вниз. */
-  box-shadow: inset 0 0 0 1px var(--color-border), 0 8px 15px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--nav-edge), var(--nav-shadow);
   overflow: hidden;
   pointer-events: auto;
 }
