@@ -60,3 +60,26 @@
   background: var(--color-primary);
   color: #fff;
 }
+
+/* Кнопка со счётчиком (колокольчик уведомлений на Главной). Бейдж 18×18 в
+   правом верхнем углу — те же метрики, что у бейджа таб-бара. */
+.topbar-btn--badged { position: relative; overflow: visible; }
+.topbar-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--color-danger);
+  /* Именно #fff: --color-white в тёмной теме темнеет (см. бейдж таб-бара) */
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}

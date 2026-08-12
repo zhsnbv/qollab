@@ -9,8 +9,9 @@ import { basePosts, events } from '../data/feed';
 import { homeServices, allServicesTile } from '../data/services';
 import { banners } from '../data/banners';
 import { useFavorites, FAV_ICONS } from '../context/FavoritesContext';
+import { unreadTotal } from '../data/notifications';
 import {
-  MagnifyingGlass,
+  MagnifyingGlass, BellSimple,
   Lifebuoy, Headset, CheckFat, HandHeart,
   SuitcaseRolling, CaretRight,
 } from '@phosphor-icons/react';
@@ -39,8 +40,19 @@ export default function Home() {
   const location = useLocation();
   const { favorites } = useFavorites();
   const [feedTab, setFeedTab] = useState('posts');
+  // Уведомления переехали с отдельной вкладки в иконку шапки Главной
   const actions = (
-    <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
+    <>
+      <button
+        className="topbar-btn topbar-btn--badged"
+        aria-label={`Уведомления${unreadTotal ? `, непрочитанных: ${unreadTotal}` : ''}`}
+        onClick={() => navigate('/notifications', { state: { background: location } })}
+      >
+        <BellSimple size={20} weight="fill" />
+        {unreadTotal > 0 && <span className="topbar-badge">{unreadTotal}</span>}
+      </button>
+      <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
+    </>
   );
 
   // Оверлеи (шит сервисов/поиск/баннер/избранное) открываются поверх Главной

@@ -13,6 +13,8 @@ import Search from './screens/Search';
 import BannerDetail from './screens/BannerDetail';
 import Favorites from './screens/Favorites';
 import MiniApp from './screens/MiniApp';
+import Notifications from './screens/Notifications';
+import NotificationGroup from './screens/NotificationGroup';
 import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
@@ -60,6 +62,8 @@ function AppRoutes() {
         <Route path="/search" element={<Search />} />
         <Route path="/banner" element={<BannerDetail />} />
         <Route path="/favorites" element={<Favorites />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route path="/notifications/:groupId" element={<NotificationGroup />} />
         {/* Мини-аппы: уровень навигации зашит в путь (/app/mytasks/it/closed),
             поэтому «назад» и история браузера работают без своего стека. */}
         <Route path="/app/*" element={<MiniApp />} />

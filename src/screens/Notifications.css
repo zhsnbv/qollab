@@ -1,0 +1,85 @@
+/* Список групп уведомлений (Figma node 24351:90018). Тот же слой, что Поиск и
+   Сервисы-шит: ниже плавающего таб-бара, бар остаётся виден. */
+.notifs {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  background: var(--page-bg);
+  display: flex;
+  flex-direction: column;
+  animation: nt-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.notifs.closing { animation: nt-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes nt-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes nt-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.nt-top {
+  flex-shrink: 0;
+  background: var(--color-white);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.nt-back, .nt-gear {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.nt-back { width: 24px; }
+.nt-back:active, .nt-gear:active { opacity: 0.5; }
+.nt-gear { border-radius: var(--radius-pill); background: var(--color-background); }
+.nt-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+
+.nt-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: var(--space-4); }
+.nt-scroll::-webkit-scrollbar { display: none; }
+.nt-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+
+.nt-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.nt-row {
+  width: 100%;
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: 14px var(--space-4);
+  text-align: left;
+  transition: background 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.nt-row:active { background: var(--color-background); }
+/* Разделитель между строками, но не под последней */
+.nt-row + .nt-row { border-top: 1px solid var(--color-border); }
+
+/* Кольцо группы: цвет приходит инлайном из данных (tone) */
+.nt-ring {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  border: 7px solid currentColor;
+  box-sizing: border-box;
+}
+
+.nt-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.nt-row-head { display: flex; align-items: baseline; gap: var(--space-2); }
+.nt-name {
+  flex: 1; min-width: 0;
+  font-size: 14px; font-weight: 600; color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nt-when { font-size: 12px; color: var(--color-weak); flex-shrink: 0; }
+.nt-row-last { display: flex; align-items: center; gap: var(--space-2); }
+.nt-last {
+  flex: 1; min-width: 0;
+  font-size: 13px; color: var(--color-weak);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* Точка непрочитанного — в макете оранжевая, справа от превью */
+.nt-dot {
+  width: 8px; height: 8px; border-radius: var(--radius-pill);
+  background: var(--color-primary); flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notifs, .notifs.closing { animation: none; }
+}
