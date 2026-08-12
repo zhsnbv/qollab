@@ -220,8 +220,8 @@ export default function ArticleView() {
         <button className="ar-act" onClick={() => setCommentsOpen(true)}>
           <ChatCircle size={20} />{p.comments ?? 0}
         </button>
-        <span className="ar-act ar-act--stat"><Eye size={20} />{p.views ?? '502'}</span>
         <span className="ar-actions-gap" />
+        <span className="ar-act ar-act--stat"><Eye size={20} />{p.views ?? '502'}</span>
         <button className="ar-act ar-act--icon" aria-label="Поделиться"><ShareNetwork size={20} /></button>
       </div>
 

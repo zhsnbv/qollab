@@ -15,6 +15,7 @@ import Favorites from './screens/Favorites';
 import MiniApp from './screens/MiniApp';
 import Notifications from './screens/Notifications';
 import NotificationGroup from './screens/NotificationGroup';
+import ChannelView from './screens/ChannelView';
 import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
@@ -64,6 +65,7 @@ function AppRoutes() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/notifications/:groupId" element={<NotificationGroup />} />
+        <Route path="/channel/:channelId" element={<ChannelView />} />
         {/* Мини-аппы: уровень навигации зашит в путь (/app/mytasks/it/closed),
             поэтому «назад» и история браузера работают без своего стека. */}
         <Route path="/app/*" element={<MiniApp />} />

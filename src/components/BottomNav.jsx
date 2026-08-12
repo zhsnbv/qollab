@@ -30,8 +30,11 @@ function activeIndex(pathname) {
 }
 
 export default function BottomNav() {
-  const { pathname } = useLocation();
-  const index = activeIndex(pathname);
+  const location = useLocation();
+  // Оверлеи (канал, статья, уведомления, поиск) открываются поверх вкладки и
+  // сами ни одному табу не соответствуют — подсветку берём с экрана-подложки,
+  // иначе она сваливалась на «Главную».
+  const index = activeIndex(location.state?.background?.pathname || location.pathname);
   const barRef = useRef(null);
   const pillRef = useRef(null);
   const mounted = useRef(false);

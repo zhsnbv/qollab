@@ -61,6 +61,8 @@
 .post-act.liked { color: var(--color-danger); }
 /* Просмотры — счётчик, а не действие: не реагирует на нажатие */
 .post-act--stat:active { opacity: 1; }
+/* Распорка отодвигает просмотры к правому краю строки метрик */
+.post-actions-gap { flex: 1; }
 
 /* Мероприятия */
 .event-card {
