@@ -1,57 +1,52 @@
+import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import { DotsIcon } from '../components/TopBar';
-import { CaretRight, Info, ArrowsClockwise } from '@phosphor-icons/react';
+import {
+  CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical,
+  IdentificationCard, QrCode, AddressBook, Hash,
+  UserFocus, Headset, FileText, Package, CalendarDots, GraduationCap,
+} from '@phosphor-icons/react';
 import { useSkeleton, ProfileSkeleton, FadeIn } from '../components/Skeleton';
+import {
+  me, quickActions, balance, myTasks, workServices, sosContacts,
+  corpData, structure, indicators, interests, certificates,
+} from '../data/profile';
 import './Profile.css';
 
-// Данные из Figma-макета Screens (Type=Profile). Ассеты — public/img/profile.
-const balance = [
-  { icon: <img src="/img/profile/erg-coin.png" alt="" className="stat-icon-img" />, value: '5 200', label: 'ERG Coins' },
-  { icon: '🏝️', value: '21', label: 'Баланс отпусков' },
-  { icon: '🏥', value: '51 550 ₸', label: 'Мед. страховка' },
-  { icon: '🍕', value: '12 540 ₸', label: 'Кошелек питания' },
-];
+const QUICK_ICONS = { IdentificationCard, QrCode, AddressBook, Hash };
+const TASK_ICONS = { UserFocus, Headset };
+const SERVICE_ICONS = { FileText, Package, CalendarDots, GraduationCap };
 
-const indicators = [
-  { icon: '🏆', value: '84%', label: 'Манифест' },
-  { icon: '🙂', value: '21', label: 'Благодарность' },
-  { icon: <img src="/img/profile/pumpkin.png" alt="" className="stat-icon-img" />, value: '1', label: 'Тыква' },
-  { icon: '🍉', value: '25', label: 'Арбуз' },
-];
-
-const corpData = [
-  { label: 'Табельный номер', value: '16002874', tag: 'Основной' },
-  { label: 'Предприятие', value: 'ТОО “BTS”' },
-  { label: 'Должность', value: 'Руководитель проекта' },
-  { label: 'Подразделение', value: 'Управление продуктовой разработки' },
-  { label: 'Административный руководитель', value: 'Айдар Султанбек', link: true },
-];
-
-const interests = ['Баскетбол', 'Кино', 'Музыка', 'Путешествия', 'Видеоигры'];
-
-function StatCard({ icon, value, label }) {
+// Плитка со значением: эмодзи или картинка + число + подпись
+function StatCard({ value, label, emoji, img }) {
   return (
-    <div className="stat-card">
+    <button className="stat-card">
       <div className="stat-card-top">
-        <span className="stat-icon">{icon}</span>
+        <span className="stat-icon">
+          {img ? <img src={img} alt="" className="stat-icon-img" /> : emoji}
+        </span>
         <span className="stat-value">{value}</span>
         <CaretRight size={18} color="var(--color-light)" />
       </div>
       <div className="stat-label">{label}</div>
-    </div>
+    </button>
   );
 }
 
 export default function Profile() {
   const loading = useSkeleton();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const open = (path) => navigate(path, { state: { background: location } });
+
   const topbar = (
     <header className="topbar">
-      <button className="topbar-btn" aria-label="Настройки">
+      <button className="topbar-btn" aria-label="Настройки" onClick={() => open('/settings')}>
         <img src="/img/profile/settings.svg" alt="" width="20" height="20" />
       </button>
       <div className="topbar-actions">
         <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
-        <button className="qr-btn"><img src="/img/profile/qr.svg" alt="" width="20" height="20" />Мой QR</button>
       </div>
     </header>
   );
@@ -63,49 +58,35 @@ export default function Profile() {
   return (
     <TabLayout topbar={topbar}>
       <FadeIn><div className="profile">
-        {/* Шапка: оранжевая волна проходит за аватаром и карточками уровня/ранга */}
+        {/* Шапка: оранжевая волна за аватаром, имя, должность и статус */}
         <section className="profile-hero">
           <img className="profile-decor" src="/img/profile/header-decor.png" alt="" />
           <div className="profile-head">
-            <div className="profile-avatar-wrap">
-              <img className="profile-avatar" src="/img/profile/avatar-photo.png" alt="" />
+            <button className="profile-avatar-wrap" onClick={() => open('/profile/photo')} aria-label="Фото профиля">
+              <img className="profile-avatar" src={me.avatar} alt="" />
               <span className="profile-avatar-cam">
                 <img src="/img/profile/camera.svg" alt="" width="16" height="16" />
               </span>
-            </div>
-            <h2 className="profile-name">Алуа Мырзахметова</h2>
-            <div className="profile-role">Руководитель проекта</div>
-          </div>
-          <div className="gamify-row no-scrollbar">
-            <div className="gamify-card gamify-card--level">
-              <div className="gamify-title">Уровень вашего профиля</div>
-              <div className="gamify-line">
-                <b>Lv. 4</b>
-                <Info size={16} color="var(--color-weak)" />
-                <b className="gamify-pct">36%</b>
-              </div>
-              <div className="gamify-bar"><span className="gamify-bar-fill level" style={{ width: '36%' }} /></div>
-            </div>
-            <div className="gamify-card gamify-card--rank">
-              <div className="gamify-title">Ваш ранг в qollab</div>
-              <div className="gamify-rank-line">
-                <div className="gamify-rank-left">
-                  <b>Серебряная лига</b>
-                  <div className="gamify-bar"><span className="gamify-bar-fill rank" style={{ width: '22%' }} /></div>
-                </div>
-                <img className="gamify-rank-badge" src="/img/profile/rank-badge.png" alt="" />
-              </div>
-            </div>
+            </button>
+            <h2 className="profile-name">{me.name}</h2>
+            <div className="profile-role">{me.role}</div>
+            <button className="status-btn"><Plus size={12} weight="bold" />Установить статус</button>
           </div>
         </section>
 
-        {/* Мои профили */}
-        <div className="profiles-row-wrap">
-          <button className="profiles-row">
-            <span className="profiles-row-icon"><img src="/img/profile/user.svg" alt="" width="16" height="16" /></span>
-            <span className="profiles-row-title">Мои профили</span>
-            <CaretRight size={18} color="var(--color-light)" />
-          </button>
+        {/* Быстрые действия — четыре плитки под шапкой */}
+        <div className="quick-wrap">
+          <div className="quick-row">
+            {quickActions.map(({ id, label, icon }) => {
+              const Icon = QUICK_ICONS[icon];
+              return (
+                <button className="quick-item" key={id}>
+                  <span className="quick-ico">{Icon && <Icon size={20} weight="fill" />}</span>
+                  <span className="quick-label">{label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Баланс */}
@@ -115,8 +96,70 @@ export default function Profile() {
             <span className="pcard-note">Этот блок виден только вам</span>
           </div>
           <div className="stat-grid">
-            {balance.map((b) => <StatCard key={b.label} {...b} />)}
+            {balance.map((b) => <StatCard key={b.id} {...b} />)}
           </div>
+        </section>
+
+        {/* Мои задачи */}
+        <section className="pcard">
+          <div className="pcard-head">
+            <h3>Мои задачи</h3>
+            <button className="refresh-btn"><ArrowsClockwise size={12} />Обновить</button>
+          </div>
+          <div className="task-grid">
+            {myTasks.map((t) => {
+              const Icon = TASK_ICONS[t.icon];
+              return (
+                <button className={`task-card ${t.wide ? 'wide' : ''}`} key={t.id}>
+                  <span className="task-top">
+                    <span className="task-title">{t.title}</span>
+                    <CaretRight size={12} color="var(--color-light)" />
+                  </span>
+                  <span className="task-value">{t.value}</span>
+                  <span className="task-source">{Icon && <Icon size={16} />}{t.source}</span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Рабочие сервисы */}
+        <section className="pcard">
+          <div className="pcard-head"><h3>Рабочие сервисы</h3></div>
+          <div className="wsvc-list">
+            {workServices.map(({ id, label, icon }) => {
+              const Icon = SERVICE_ICONS[icon];
+              return (
+                <button className="wsvc-row" key={id}>
+                  <span className="wsvc-ico">{Icon && <Icon size={24} />}</span>
+                  <span className="wsvc-label">{label}</span>
+                  <CaretRight size={16} color="var(--color-light)" />
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* SOS-контакты */}
+        <section className="pcard">
+          <div className="pcard-head">
+            <h3>SOS-контакты</h3>
+            <button className="refresh-btn"><Plus size={12} weight="bold" />Добавить контакт</button>
+          </div>
+          <div className="sos-list">
+            {sosContacts.map((c) => (
+              <div className="sos-row" key={c.id}>
+                <div className="sos-line">
+                  <span className="sos-name">{c.name}</span>
+                  <span className="sos-tag">{c.tag}</span>
+                  <button className="sos-more" aria-label="Действия"><DotsThreeVertical size={16} weight="bold" /></button>
+                </div>
+                <span className="sos-phone">{c.phone}</span>
+                {c.note && <span className="sos-note">{c.note}</span>}
+              </div>
+            ))}
+          </div>
+          <p className="sos-hint">SOS-контакты не видны другим сотрудникам — только вам, руководителю, HR и СБ.</p>
         </section>
 
         {/* Корпоративные данные */}
@@ -138,11 +181,41 @@ export default function Profile() {
           </div>
         </section>
 
+        {/* Структура: руководитель и команда */}
+        <section className="pcard">
+          <div className="pcard-head"><h3>Структура</h3></div>
+          <div className="org-label">Руководитель</div>
+          <button className="org-row">
+            <span className="org-avatar">{structure.supervisor.initials}</span>
+            <span className="org-texts">
+              <span className="org-name">{structure.supervisor.name}</span>
+              <span className="org-role">{structure.supervisor.role}</span>
+            </span>
+            <CaretRight size={18} color="var(--color-light)" />
+          </button>
+
+          <div className="org-label">Моя команда · {structure.teamCount}</div>
+          {structure.team.map((m) => (
+            <button className="org-row" key={m.initials}>
+              <span className="org-avatar">{m.initials}</span>
+              <span className="org-texts">
+                <span className="org-name">{m.name}</span>
+                <span className="org-role">{m.role}</span>
+              </span>
+              <CaretRight size={18} color="var(--color-light)" />
+            </button>
+          ))}
+          <button className="org-more">
+            Показать ещё {structure.teamCount - structure.team.length}
+            <CaretRight size={16} />
+          </button>
+        </section>
+
         {/* Мои показатели */}
         <section className="pcard">
           <div className="pcard-head"><h3>Мои показатели</h3></div>
           <div className="stat-grid">
-            {indicators.map((b) => <StatCard key={b.label} {...b} />)}
+            {indicators.map((b) => <StatCard key={b.id} {...b} />)}
           </div>
         </section>
 
@@ -152,19 +225,15 @@ export default function Profile() {
           <div className="data-list">
             <div className="data-row">
               <div className="data-label">Мобильный номер</div>
-              <span className="data-value link">+7 700 757 88 99</span>
+              <span className="data-value link">{me.phone}</span>
             </div>
             <div className="data-row">
               <div className="data-label">Электронная почта</div>
-              <span className="data-value link">alua.myrzahmetova@erg.kz</span>
+              <span className="data-value link">{me.email}</span>
             </div>
             <div className="data-row">
               <div className="data-label">Обо мне</div>
-              <p className="data-about">
-                Как проектный менеджер, я увлечена аналитикой и вниманием к деталям. Мне нравится
-                находить простые решения для сложных задач, развивать команды и постоянно учиться
-                новому. В своей работе я ценю структуру, результат и гармонию.
-              </p>
+              <p className="data-about">{me.about}</p>
               <button className="data-more">Показать больше...</button>
             </div>
             <div className="data-row last">
@@ -177,30 +246,33 @@ export default function Profile() {
         </section>
 
         {/* Мои сертификаты */}
-        <section className="pcard pcard--last">
+        <section className="pcard">
           <div className="pcard-head">
             <h3>Мои сертификаты</h3>
+            <button className="refresh-btn">Показать все</button>
             <Info size={20} weight="fill" color="var(--color-light)" />
           </div>
-          <div className="cert-card">
-            <div className="cert-head">
-              <img src="/img/profile/certificate.svg" alt="" width="32" height="32" />
-              <div className="cert-texts">
-                <b>Курсы Compliance</b>
-                <span>Конфликт интересов (2023 РСС)</span>
+          {certificates.map((c) => (
+            <div className="cert-card" key={c.id}>
+              <div className="cert-head">
+                <img src="/img/profile/certificate.svg" alt="" width="32" height="32" />
+                <div className="cert-texts">
+                  <b>{c.title}</b>
+                  <span>{c.sub}</span>
+                </div>
+              </div>
+              <div className="cert-dates">
+                <div>
+                  <div className="data-label">Дата начала</div>
+                  <span className="data-value">{c.from}</span>
+                </div>
+                <div>
+                  <div className="data-label">Срок действия</div>
+                  <span className="data-value">{c.to}</span>
+                </div>
               </div>
             </div>
-            <div className="cert-dates">
-              <div>
-                <div className="data-label">Дата начала</div>
-                <span className="data-value">2024-11-14</span>
-              </div>
-              <div>
-                <div className="data-label">Срок действия</div>
-                <span className="data-value">9999-12-31</span>
-              </div>
-            </div>
-          </div>
+          ))}
         </section>
       </div></FadeIn>
     </TabLayout>

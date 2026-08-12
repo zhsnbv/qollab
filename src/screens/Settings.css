@@ -1,0 +1,75 @@
+/* Настройки (Figma node 24313:85954) */
+.settings {
+  position: absolute;
+  inset: 0;
+  z-index: 50; /* поверх таб-бара (20): настройки — самостоятельный экран */
+  background: var(--page-bg);
+  display: flex;
+  flex-direction: column;
+  animation: st-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.settings.closing { animation: st-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes st-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes st-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.st-top {
+  flex-shrink: 0;
+  background: var(--color-white);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.st-back {
+  width: 24px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.st-back:active { opacity: 0.5; }
+.st-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+
+.st-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: var(--space-4); }
+.st-scroll::-webkit-scrollbar { display: none; }
+.st-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+
+.st-group { margin-bottom: var(--space-5); }
+.st-group-title {
+  font-size: 13px; font-weight: 500; color: var(--color-weak);
+  margin-bottom: var(--space-2); padding-left: var(--space-1);
+}
+.st-card { background: var(--color-white); border-radius: var(--radius-lg); overflow: hidden; }
+.st-card--logout { margin-top: calc(var(--space-2) * -1); }
+
+.st-row {
+  position: relative;
+  width: 100%; height: 56px;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 0 var(--space-3);
+  text-align: left;
+  transition: background 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.st-row:active { background: var(--color-background); }
+/* Разделитель между строками начинается под текстом (56px), как в макете.
+   Псевдоэлементом, а не border+margin: сдвиг самой строки выталкивал шеврон
+   и значение за пределы карточки с overflow: hidden. */
+.st-row + .st-row::before {
+  content: ''; position: absolute; top: 0; left: 56px; right: 0; height: 1px;
+  background: var(--color-border);
+}
+
+.st-ico {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-primary);
+}
+.st-label { flex: 1; min-width: 0; font-size: 14px; color: var(--color-text); }
+.st-value { font-size: 14px; color: var(--color-weak); flex-shrink: 0; }
+
+.st-row--logout { color: var(--color-danger); }
+.st-row--logout .st-ico { color: var(--color-danger); }
+.st-row--logout .st-label { color: var(--color-danger); }
+
+@media (prefers-reduced-motion: reduce) {
+  .settings, .settings.closing { animation: none; }
+}

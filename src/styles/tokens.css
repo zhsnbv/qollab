@@ -229,18 +229,9 @@ html[data-theme="dark"] .topbar-slot.scrolled {
 html[data-theme="dark"] .topbar-btn img,
 html[data-theme="dark"] .fav-gear img,
 html[data-theme="dark"] .posts-bookmark svg { filter: brightness(1.35); }
-/* Карточки уровня/ранга в профиле: тёмное «стекло» вместо белого */
-html[data-theme="dark"] .gamify-card--level {
-  border-color: #8a6a1d;
-  background: linear-gradient(120deg, rgba(43,42,39,0.75), rgba(74,58,25,0.6) 47%, rgba(58,48,26,0.65) 49%, rgba(43,42,39,0.75));
-}
-html[data-theme="dark"] .gamify-card--rank {
-  border-color: #4e6470;
-  background: linear-gradient(120deg, rgba(43,42,39,0.75), rgba(42,52,58,0.6) 47%, rgba(46,56,62,0.65) 49%, rgba(43,42,39,0.75));
-}
-html[data-theme="dark"] .gamify-bar { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.06); }
 /* Белая шапка профиля под волной остаётся поверхностью — ок; синий тег в тёмный вариант */
-html[data-theme="dark"] .data-tag { background: #15263a; border-color: #2a4a6e; color: #6aaaf5; }
+html[data-theme="dark"] .data-tag,
+html[data-theme="dark"] .sos-tag { background: #15263a; border-color: #2a4a6e; color: #6aaaf5; }
 /* Скелетон-карточки уже на var(--color-white) — ок. Пилюля тумблера в сервисах: */
 html[data-theme="dark"] .view-toggle-btn.active { background: #4a4740; }
 /* Промо-баннеры остаются цветными островками — их не трогаем */

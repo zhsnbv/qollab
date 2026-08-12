@@ -1,0 +1,98 @@
+// Профиль (Figma node 24627-79595). Экран сильно вырос: к балансу и корп.
+// данным добавились задачи, рабочие сервисы, SOS-контакты, структура и
+// сертификаты. Держим всё данными, чтобы сам экран остался читаемым.
+
+export const me = {
+  name: 'Алуа Мырзахметова',
+  role: 'Руководитель проекта',
+  avatar: '/img/profile/avatar-photo.png',
+  phone: '+7 700 757 88 99',
+  email: 'alua.myrzahmetova@erg.kz',
+  about: 'Как проектный менеджер, я увлечена аналитикой и вниманием к деталям. Мне нравится находить простые решения для сложных задач, развивать команды и постоянно учиться новому. В своей работе я ценю структуру, результат и гармонию.',
+};
+
+// Четыре плитки-действия под шапкой
+export const quickActions = [
+  { id: 'id', label: 'ID-карта', icon: 'IdentificationCard' },
+  { id: 'qr', label: 'QR-код', icon: 'QrCode' },
+  { id: 'vc', label: 'Визитка', icon: 'AddressBook' },
+  { id: 'num', label: 'Таб. номер', icon: 'Hash' },
+];
+
+export const balance = [
+  { id: 'coins', value: '5 200', label: 'ERG Coins', img: '/img/profile/erg-coin.png' },
+  { id: 'vacation', value: '21', label: 'Баланс отпусков', emoji: '🏝️' },
+  { id: 'insurance', value: '51 550 ₸', label: 'Мед. страховка', emoji: '🏥' },
+  { id: 'meal', value: '12 540 ₸', label: 'Кошелек питания', emoji: '🍕' },
+];
+
+// Две узкие карточки и одна во всю ширину — как в макете
+export const myTasks = [
+  { id: 't1', title: 'На согласовании', value: 0, source: 'ЕСЭД', icon: 'UserFocus' },
+  { id: 't2', title: 'На подписании', value: 0, source: 'ЕСЭД', icon: 'UserFocus' },
+  { id: 't3', title: 'На подписании', value: 0, source: 'SMAX', icon: 'Headset', wide: true },
+];
+
+export const workServices = [
+  { id: 'access', label: 'Документы по допуску', icon: 'FileText' },
+  { id: 'assets', label: 'Мои основные средства', icon: 'Package' },
+  { id: 'events', label: 'Мои мероприятия', icon: 'CalendarDots' },
+  { id: 'study', label: 'Мой календарь обучения', icon: 'GraduationCap' },
+];
+
+export const sosContacts = [
+  { id: 's1', name: 'Иван Иванович', tag: 'Супруг(-а)', phone: '+7 701 271-11-17', note: 'Жена, всегда на связи' },
+  { id: 's2', name: 'Иван Иванович', tag: 'Родитель', phone: '+7 701 271-11-17' },
+  { id: 's3', name: 'Иван Иванович', tag: 'Другое', phone: '+7 701 271-11-17' },
+];
+
+export const corpData = [
+  { label: 'Табельный номер', value: '16002874', tag: 'Основной' },
+  { label: 'Предприятие', value: 'ТОО «BTS»' },
+  { label: 'Должность', value: 'Руководитель проекта' },
+  { label: 'Подразделение', value: 'Управление продуктовой разработки' },
+  { label: 'Административный руководитель', value: 'Кульманов Данияр', link: true },
+];
+
+export const structure = {
+  supervisor: { initials: 'КД', name: 'Кульманов Данияр', role: 'Начальник управления' },
+  teamCount: 6,
+  team: [
+    { initials: 'НХ', name: 'Хасанов Нурлан Курмангалиевич', role: 'Backend разработчик (Python)' },
+    { initials: 'СБ', name: 'Сарман Берік Талгатұлы', role: 'Backend разработчик (Python)' },
+  ],
+};
+
+export const indicators = [
+  { id: 'manifest', value: '84%', label: 'Манифест', emoji: '🏆' },
+  { id: 'thanks', value: '21', label: 'Благодарность', emoji: '🙂' },
+  { id: 'pumpkin', value: '1', label: 'Тыква', img: '/img/profile/pumpkin.png' },
+  { id: 'melon', value: '25', label: 'Арбуз', emoji: '🍉' },
+];
+
+export const interests = ['Баскетбол', 'Кино', 'Музыка', 'Путешествия', 'Видеоигры'];
+
+export const certificates = [
+  { id: 'c1', title: 'Курсы Compliance', sub: 'Конфликт интересов (2023 РСС)', from: '2024-11-14', to: '9999-12-31' },
+];
+
+// Настройки (Figma node 24313:85954)
+export const settingsGroups = [
+  {
+    title: 'Основные',
+    items: [
+      { id: 'notif', label: 'Уведомления', icon: 'BellSimple' },
+      { id: 'devices', label: 'Устройства', icon: 'DeviceMobile' },
+      { id: 'lang', label: 'Язык', icon: 'Translate', value: 'Русский' },
+    ],
+  },
+  {
+    title: 'Другие',
+    items: [
+      { id: 'perms', label: 'Настройки разрешений', icon: 'ShieldCheck' },
+      { id: 'help', label: 'Помощь', icon: 'Question' },
+      { id: 'privacy', label: 'Политика конфиденциальности', icon: 'FileLock' },
+      { id: 'cache', label: 'Очистить кэш приложения', icon: 'Broom' },
+    ],
+  },
+];

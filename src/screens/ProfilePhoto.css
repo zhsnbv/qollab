@@ -1,0 +1,56 @@
+/* Фото профиля (Figma node 24313:1951) — открывается по тапу на аватар */
+.photoview {
+  position: absolute;
+  inset: 0;
+  z-index: 55; /* поверх таб-бара: это модальный просмотр фото */
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  animation: pv-in 0.24s ease;
+}
+.photoview.closing { animation: pv-out 0.22s ease forwards; }
+@keyframes pv-in { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+@keyframes pv-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.98); } }
+
+.pv-top {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.pv-side, .pv-close {
+  width: 24px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-weak);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.pv-close:active { opacity: 0.5; }
+.pv-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+
+/* Портрет по центру свободного пространства */
+.pv-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-4); }
+.pv-photo {
+  width: 224px; height: 224px; border-radius: var(--radius-pill);
+  overflow: hidden; background: var(--img-placeholder);
+}
+.pv-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.pv-actions {
+  flex-shrink: 0;
+  display: flex;
+  padding: var(--space-4) var(--space-5);
+  padding-bottom: max(var(--space-6), env(safe-area-inset-bottom));
+}
+.pv-action {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  color: var(--color-primary);
+  font-size: 13px;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.pv-action:active { opacity: 0.6; }
+.pv-action span { color: var(--color-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .photoview, .photoview.closing { animation: none; }
+}
