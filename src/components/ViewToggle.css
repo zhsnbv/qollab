@@ -1,0 +1,31 @@
+/* Переключатель список/сетка — пилюля с двумя иконками-масками */
+.view-toggle {
+  background: var(--color-background);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+.view-toggle-btn {
+  padding: 6px 8px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  transition: opacity 0.12s, background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.view-toggle-btn:active { opacity: 0.6; }
+.view-toggle-btn.active { background: var(--color-white); }
+/* Иконки — маски: цвет задаём фоном, поэтому активная красится в брендовый */
+.toggle-ico {
+  width: 20px; height: 20px; display: block;
+  background: var(--color-weak);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
+}
+.toggle-ico--grid { -webkit-mask-image: url('/img/services/toggle-grid.svg'); mask-image: url('/img/services/toggle-grid.svg'); }
+.toggle-ico--list { -webkit-mask-image: url('/img/services/toggle-list.svg'); mask-image: url('/img/services/toggle-list.svg'); }
+.view-toggle-btn.active .toggle-ico { background: var(--color-primary); }

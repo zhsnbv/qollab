@@ -45,7 +45,7 @@ export default function Home() {
 
   // Оверлеи (шит сервисов/поиск/баннер/избранное) открываются поверх Главной
   // через background-трюк — она остаётся смонтированной под ними.
-  const openServices = () => navigate('/services', { state: { background: location } });
+  const openServices = () => navigate('/services/sheet', { state: { background: location } });
   const openSearch = () => navigate('/search', { state: { background: location } });
   const openFavorites = () => navigate('/favorites', { state: { background: location } });
   const openBanner = (id) => navigate('/banner', { state: { id, background: location } });

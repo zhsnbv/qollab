@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ViewToggle from '../components/ViewToggle';
 import { serviceCategories } from '../data/services';
 import './ServicesSheet.css';
 
@@ -33,22 +34,7 @@ export default function ServicesSheet() {
         <span className="svcsheet-handle" />
         <div className="svcsheet-header">
           <h2 className="svcsheet-title">Все сервисы</h2>
-          <div className="view-toggle">
-            <button
-              className={`view-toggle-btn ${view === 'grid' ? 'active' : ''}`}
-              onClick={() => setView('grid')}
-              aria-label="Сетка"
-            >
-              <span className="toggle-ico toggle-ico--grid" />
-            </button>
-            <button
-              className={`view-toggle-btn ${view === 'list' ? 'active' : ''}`}
-              onClick={() => setView('list')}
-              aria-label="Список"
-            >
-              <span className="toggle-ico toggle-ico--list" />
-            </button>
-          </div>
+          <ViewToggle view={view} onChange={setView} />
         </div>
 
         <div className="svcsheet-body">

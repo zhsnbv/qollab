@@ -1,0 +1,71 @@
+/* Вкладка «Сервисы» — белая простыня с секциями по категориям.
+   Каталог и вёрстка строк общие с боттом-шитом (data/services.js), но здесь
+   экран полноэкранный и добавлен поиск. */
+.services { background: var(--color-white); min-height: 100%; padding-bottom: var(--space-5); }
+
+.svc-search-wrap { padding: var(--space-2) var(--space-4) var(--space-3); }
+.svc-search {
+  background: var(--color-background);
+  border-radius: var(--radius-pill);
+  padding: 11px var(--space-4);
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.svc-search input {
+  flex: 1; min-width: 0; border: none; background: none; outline: none;
+  font-family: inherit; font-size: 16px; color: var(--color-text);
+}
+.svc-search input::placeholder { color: var(--color-weak); }
+.svc-search-clear {
+  width: 20px; height: 20px; border-radius: var(--radius-pill);
+  background: var(--color-light); color: #fff;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.svc-search-clear:active { opacity: 0.6; }
+
+.svc-section { padding: var(--space-3) var(--space-4) 0; }
+.svc-section-title {
+  font-size: 14px; font-weight: 600; color: var(--color-heading);
+  letter-spacing: -0.28px; margin-bottom: var(--space-5);
+}
+
+/* Список */
+.svc-list { display: flex; flex-direction: column; gap: var(--space-5); }
+.svc-item { transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent; }
+.svc-item:active { opacity: 0.7; transform: scale(0.98); }
+.svc-list .svc-item { display: flex; align-items: center; gap: var(--space-4); text-align: left; width: 100%; }
+.svc-icon { width: 48px; height: 48px; display: block; flex-shrink: 0; border-radius: var(--radius-xl); }
+.svc-texts { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.svc-name {
+  font-size: 14px; font-weight: 600; color: var(--color-text); letter-spacing: -0.28px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.svc-sub {
+  font-size: 12px; color: var(--color-weak); letter-spacing: -0.24px; line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+}
+
+/* Сетка */
+.svc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5) var(--space-2); }
+.svc-grid .svc-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+.svc-grid .svc-icon { width: 60px; height: 60px; }
+.svc-grid .svc-texts { align-items: center; }
+.svc-grid .svc-name {
+  font-size: 12px; white-space: normal; text-align: center;
+  line-height: 1.15; letter-spacing: -0.24px;
+}
+
+/* Пусто по запросу */
+.svc-empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 56px var(--space-6) var(--space-6); gap: var(--space-3);
+}
+.svc-empty-ico {
+  width: 64px; height: 64px; border-radius: var(--radius-pill);
+  background: var(--danger-bg);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-2);
+}
+.svc-empty-title { font-size: 16px; font-weight: 700; color: var(--color-heading); }
+.svc-empty-sub { font-size: 14px; color: var(--color-weak); line-height: 1.45; max-width: 280px; }

@@ -4,6 +4,7 @@ import Home from './screens/Home';
 import Chats from './screens/Chats';
 import ChatRoom from './screens/ChatRoom';
 import Posts from './screens/Posts';
+import Services from './screens/Services';
 import Profile from './screens/Profile';
 import ArticleView from './screens/ArticleView';
 import DMChat from './screens/DMChat';
@@ -22,7 +23,7 @@ import './App.css';
 // текущего экрана через background-трюк (см. AppRoutes) и либо полностью
 // перекрывают бар по z-index (Статья, Чат, Избранное), либо оставляют его
 // плавать поверх дна (Сервисы, Поиск, Баннер) — см. их CSS.
-const TAB_ROUTES = ['/', '/posts', '/chats', '/profile'];
+const TAB_ROUTES = ['/', '/posts', '/services', '/chats', '/profile'];
 
 // Сколько держим сплэш, прежде чем он уедет вниз (см. Splash.css) и контент
 // «главной» проявится — не медленно, но подчёркнуто плавно.
@@ -45,6 +46,7 @@ function AppRoutes() {
       <Routes location={background || location}>
         <Route path="/" element={<Home />} />
         <Route path="/posts" element={<Posts />} />
+        <Route path="/services" element={<Services />} />
         <Route path="/chats" element={<Chats />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
@@ -52,7 +54,9 @@ function AppRoutes() {
         <Route path="/chats/prodev" element={<ChatRoom />} />
         <Route path="/chats/dm" element={<DMChat />} />
         <Route path="/article" element={<ArticleView />} />
-        <Route path="/services" element={<ServicesSheet />} />
+        {/* Шит с Главной — быстрый доступ, не уходя с экрана. Путь отдельный от
+            вкладки /services: каталог тот же, но это разные способы открыть его. */}
+        <Route path="/services/sheet" element={<ServicesSheet />} />
         <Route path="/search" element={<Search />} />
         <Route path="/banner" element={<BannerDetail />} />
         <Route path="/favorites" element={<Favorites />} />
