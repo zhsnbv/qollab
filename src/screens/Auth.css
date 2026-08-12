@@ -1,0 +1,209 @@
+/* Авторизация (Figma node 24627-79594): онбординг, выбор пространства,
+   телефон, SMS-код и форма гостя. Один экран на все шаги. */
+.auth {
+  position: absolute; inset: 0; z-index: 60; /* поверх всего, включая таб-бар */
+  background: var(--color-white);
+  display: flex; flex-direction: column;
+}
+.auth-scroll {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 var(--space-4) var(--space-6);
+  display: flex; flex-direction: column;
+}
+.auth-scroll::-webkit-scrollbar { display: none; }
+
+/* Шапка со стрелкой/крестиком */
+.auth-top {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.auth-top-btn {
+  width: 24px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-weak);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.auth-top-btn:active { opacity: 0.5; }
+.auth-top-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+
+/* Переключатель языка — капсульные табы */
+.auth-lang { display: flex; gap: var(--space-2); }
+.auth-lang-btn {
+  height: 37px; padding: 0 var(--space-5); border-radius: var(--radius-pill);
+  background: var(--color-background); color: var(--color-text);
+  font-size: 14px; font-weight: 500;
+  transition: background 0.16s, color 0.16s; -webkit-tap-highlight-color: transparent;
+}
+.auth-lang-btn.active { background: var(--color-primary); color: #fff; }
+.auth-lang-row { display: flex; justify-content: flex-end; padding-top: var(--space-2); }
+
+/* Круглая иконка-бейдж над заголовком */
+.auth-badge {
+  width: 74px; height: 74px; border-radius: 50%; margin: var(--space-6) auto var(--space-5);
+  background: var(--color-primary-bg); color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.auth-title { font-size: 20px; font-weight: 600; text-align: center; color: var(--color-heading); }
+.auth-sub { margin-top: var(--space-2); font-size: 14px; line-height: 1.45; text-align: center; color: var(--color-weak); }
+.auth-sub--phone b { color: var(--color-text); font-weight: 600; }
+
+/* Поля ввода */
+.auth-field {
+  position: relative; display: flex; align-items: center; gap: var(--space-2);
+  margin-top: var(--space-6);
+  border: 1px solid var(--color-border); border-radius: var(--radius-md);
+  background: var(--color-white); padding: 0 var(--space-4); height: 48px;
+}
+.auth-field.error { border-color: var(--color-danger); background: var(--danger-bg); }
+.auth-input {
+  flex: 1; min-width: 0; border: none; outline: none; background: none;
+  font-family: inherit; font-size: 15px; color: var(--color-text); height: 100%;
+}
+.auth-input::placeholder { color: var(--color-light); }
+.auth-suffix { font-size: 15px; color: var(--color-weak); flex-shrink: 0; }
+.auth-clear {
+  display: flex; color: var(--color-light); flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.auth-error { margin-top: var(--space-2); font-size: 13px; line-height: 1.35; color: var(--color-danger); }
+.auth-error--center { text-align: center; }
+
+/* Кнопки */
+.auth-btn {
+  flex-shrink: 0; margin-top: var(--space-6);
+  height: 51px; border-radius: var(--radius-pill);
+  font-size: 15px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.12s, background 0.16s; -webkit-tap-highlight-color: transparent;
+}
+.auth-btn--primary { background: var(--color-primary); color: #fff; }
+.auth-btn--ghost {
+  background: var(--color-white); color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+.auth-btn:active { opacity: 0.8; }
+.auth-btn:disabled {
+  background: var(--color-background); color: var(--color-light);
+  box-shadow: none; cursor: default;
+}
+
+/* Онбординг */
+.auth-onb { padding-top: max(var(--space-4), env(safe-area-inset-top)); }
+.auth-onb-art { width: 100%; max-width: 370px; align-self: center; display: block; }
+.auth-onb-title { margin-top: var(--space-4); font-size: 20px; font-weight: 600; text-align: center; color: var(--color-heading); }
+.auth-onb-text { margin-top: var(--space-4); font-size: 14px; line-height: 1.45; text-align: center; color: var(--color-weak); }
+.auth-onb .auth-btn + .auth-btn { margin-top: var(--space-4); }
+.auth-policy {
+  margin-top: var(--space-6); font-size: 13px; text-align: center;
+  color: var(--color-weak); text-decoration: underline;
+}
+.auth-version { margin-top: var(--space-2); font-size: 13px; text-align: center; color: var(--color-weak); }
+.auth-onb-lang { margin-top: auto; padding-top: var(--space-6); display: flex; justify-content: center; }
+
+/* Капча Cloudflare */
+.turnstile {
+  flex-shrink: 0; margin-top: var(--space-5);
+  display: flex; align-items: center; gap: var(--space-3);
+  border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  background: var(--color-white); padding: var(--space-4);
+}
+.turnstile-text { flex: 1; min-width: 0; font-size: 14px; color: var(--color-text); }
+.turnstile-spinner {
+  width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%;
+  border: 2px dotted var(--color-success); animation: spin 1.4s linear infinite;
+}
+.turnstile-brand {
+  display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0;
+  line-height: 1.1;
+}
+.turnstile-brand b { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--color-text); }
+.turnstile-brand i { font-size: 8px; font-style: normal; color: var(--color-weak); }
+
+.auth-legal {
+  margin-top: var(--space-5); font-size: 13px; line-height: 1.45;
+  text-align: center; color: var(--color-weak);
+}
+.auth-legal a { color: var(--color-weak); text-decoration: underline; }
+
+/* Ячейки SMS-кода */
+.otp {
+  position: relative; margin-top: var(--space-6);
+  display: flex; gap: var(--space-2); justify-content: center;
+}
+/* Реальный инпут прозрачен и растянут на всю группу: клик по любой ячейке
+   попадает в него, а браузер сам подставляет код из SMS. */
+.otp-input {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; border: none; outline: none; font-size: 16px;
+}
+.otp-cell {
+  flex: 1; max-width: 48px; height: 48px;
+  border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 500; color: var(--color-text);
+}
+.otp-cell.active { border-color: var(--color-primary); }
+.otp-cell.error { border-color: var(--color-danger); background: var(--danger-bg); }
+
+/* Диалоги поверх экрана */
+.auth-dialog-wrap {
+  position: absolute; inset: 0; z-index: 5;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--space-6);
+  animation: auth-fade 0.18s ease;
+}
+@keyframes auth-fade { from { opacity: 0; } to { opacity: 1; } }
+.auth-dialog {
+  width: 100%; max-width: 280px; border-radius: 14px; overflow: hidden;
+  background: var(--color-white);
+  animation: auth-pop 0.18s ease;
+}
+@keyframes auth-pop { from { transform: scale(0.94); } to { transform: scale(1); } }
+.auth-dialog-body {
+  padding: var(--space-5) var(--space-4);
+  text-align: center; font-size: 13px; line-height: 1.4; color: var(--color-text);
+}
+.auth-dialog-title { font-size: 14px; font-weight: 600; margin-bottom: var(--space-2); color: var(--color-text); }
+.auth-dialog-phone { font-size: 16px; font-weight: 600; margin: var(--space-3) 0; color: var(--color-text); }
+.auth-dialog-actions { display: flex; border-top: 1px solid var(--color-border); }
+.auth-dialog-actions.col { flex-direction: column; }
+.auth-dialog-btn {
+  flex: 1; height: 44px; font-size: 15px; color: var(--color-primary);
+  -webkit-tap-highlight-color: transparent;
+}
+.auth-dialog-actions:not(.col) .auth-dialog-btn + .auth-dialog-btn { border-left: 1px solid var(--color-border); }
+.auth-dialog-actions.col .auth-dialog-btn + .auth-dialog-btn { border-top: 1px solid var(--color-border); }
+.auth-dialog-btn:active { background: var(--color-background); }
+
+/* Форма гостя */
+.guest-field { display: flex; flex-direction: column; gap: 6px; margin-top: var(--space-5); }
+.guest-label { font-size: 13px; color: var(--color-text); }
+.guest-label i { color: var(--color-danger); font-style: normal; }
+/* flex: none обязателен: .auth-input объявлен как flex: 1, а в колоночном
+   .guest-field это схлопывает поле по высоте и height ничего не решает. */
+.guest-input {
+  flex: none; height: 48px;
+  border: 1px solid var(--color-border); border-radius: var(--radius-md);
+  padding: 0 var(--space-4);
+}
+.guest-sex { display: flex; gap: var(--space-8); padding-top: var(--space-2); }
+.guest-radio {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-size: 14px; color: var(--color-text);
+  -webkit-tap-highlight-color: transparent;
+}
+.guest-dot {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px var(--color-light);
+  transition: box-shadow 0.14s;
+}
+.guest-radio.on .guest-dot { box-shadow: inset 0 0 0 2px var(--color-primary), inset 0 0 0 6px var(--color-white), inset 0 0 0 20px var(--color-primary); }
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-dialog-wrap, .auth-dialog { animation: none; }
+  .turnstile-spinner { animation: none; }
+}

@@ -4,6 +4,7 @@ import {
   CaretLeft, CaretRight, BellSimple, DeviceMobile, Translate,
   ShieldCheck, Question, FileLock, Broom, SignOut,
 } from '@phosphor-icons/react';
+import { useAuth } from '../context/AuthContext';
 import { settingsGroups } from '../data/profile';
 import './Settings.css';
 
@@ -13,6 +14,7 @@ const ICONS = { BellSimple, DeviceMobile, Translate, ShieldCheck, Question, File
 // красной строкой внизу.
 export default function Settings() {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [closing, setClosing] = useState(false);
 
   const close = () => {
@@ -49,7 +51,7 @@ export default function Settings() {
         ))}
 
         <div className="st-card st-card--logout">
-          <button className="st-row st-row--logout">
+          <button className="st-row st-row--logout" onClick={signOut}>
             <span className="st-ico"><SignOut size={20} /></span>
             <span className="st-label">Выйти</span>
           </button>

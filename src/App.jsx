@@ -18,9 +18,11 @@ import NotificationGroup from './screens/NotificationGroup';
 import ChannelView from './screens/ChannelView';
 import Settings from './screens/Settings';
 import ProfilePhoto from './screens/ProfilePhoto';
+import Auth from './screens/Auth';
 import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
 
 // Роуты с таб-баром. Оверлеи (чат, статья, шит сервисов, поиск...) своего бара
@@ -39,6 +41,12 @@ const SPLASH_EXIT_MS = 747;
 // CSS), поэтому рендерим их как отдельный слой над «фоновым» location —
 // экран под ними остаётся смонтированным и не теряет состояние/скролл при
 // открытии и последующем «назад».
+// Пока не вошли — вместо приложения показываем флоу авторизации целиком.
+function Shell() {
+  const { authed } = useAuth();
+  return authed ? <AppRoutes /> : <Auth />;
+}
+
 function AppRoutes() {
   const location = useLocation();
   const background = location.state?.background;
@@ -96,17 +104,17 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <FavoritesProvider>
+      <AuthProvider><FavoritesProvider>
         <div className="device">
           <div className={`app-reveal${exiting ? ' app-reveal--in' : ''}`}>
             {/* Роуты монтируем только в момент ухода сплэша — иначе таймер
                 скелетона «Главной» успевает истечь ещё под непрозрачным
                 сплэшем, и после его ухода скелетон просто не виден. */}
-            {exiting && <AppRoutes />}
+            {exiting && <Shell />}
           </div>
           {!splashDone && <Splash exiting={exiting} />}
         </div>
-      </FavoritesProvider>
+      </FavoritesProvider></AuthProvider>
     </BrowserRouter>
   );
 }
