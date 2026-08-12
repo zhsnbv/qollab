@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
-import TopBar, { DotsIcon } from '../components/TopBar';
+import TopBar from '../components/TopBar';
 import {
   MagnifyingGlass, Plus, BellSimple, BookmarkSimple,
-  VideoCamera, Camera, FileText, SpeakerSimpleSlash, Checks,
+  VideoCamera, Camera, FileText, SpeakerSimpleSlash, Checks, PencilSimple,
 } from '@phosphor-icons/react';
 import { useSkeleton, ChatsSkeleton, FadeIn } from '../components/Skeleton';
 import ErgizAvatar from '../components/ErgizAvatar';
@@ -125,7 +125,8 @@ export default function Chats() {
 
   const actions = (
     <>
-      <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
+      {/* Карандаш вместо «трёх точек»: здесь будет редактирование чатов */}
+      <button className="topbar-btn" aria-label="Редактировать"><PencilSimple size={20} color="var(--color-weak)" /></button>
       <button className="topbar-btn primary" aria-label="Новый чат"><Plus size={20} color="#fff" /></button>
     </>
   );

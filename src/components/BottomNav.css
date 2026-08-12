@@ -99,7 +99,9 @@
   height: 18px;
   padding: 0 5px;
   background: var(--color-danger);
-  color: var(--color-white);
+  /* Именно #fff, а не --color-white: этот токен семантически «поверхность» и в
+     тёмной теме темнеет, из-за чего цифра на красном становилась тёмной. */
+  color: #fff;
   font-size: 12px;
   font-weight: 600;
   border-radius: var(--radius-pill);
