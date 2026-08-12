@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  CaretLeft, Heart, ChatCircle, BookmarkSimple, DotsThree, ShareNetwork, X, PaperPlaneRight,
+  CaretLeft, Heart, ChatCircle, BookmarkSimple, Eye, ShareNetwork, X, PaperPlaneRight,
 } from '@phosphor-icons/react';
 import { basePosts } from '../data/feed';
 import { Sk } from '../components/Skeleton';
@@ -210,6 +210,8 @@ export default function ArticleView() {
         )}
       </div>
 
+      {/* Те же метрики, что в превью (лайки, комментарии, просмотры), плюс
+          «поделиться» — оно есть только здесь, на самой публикации. */}
       <div className="ar-actions">
         <button className={`ar-act ${liked ? 'liked' : ''}`} onClick={() => setLiked((v) => !v)}>
           <Heart size={20} weight={liked ? 'fill' : 'regular'} />
@@ -218,9 +220,9 @@ export default function ArticleView() {
         <button className="ar-act" onClick={() => setCommentsOpen(true)}>
           <ChatCircle size={20} />{p.comments ?? 0}
         </button>
+        <span className="ar-act ar-act--stat"><Eye size={20} />{p.views ?? '502'}</span>
         <span className="ar-actions-gap" />
         <button className="ar-act ar-act--icon" aria-label="Поделиться"><ShareNetwork size={20} /></button>
-        <button className="ar-act ar-act--icon" aria-label="Ещё"><DotsThree size={22} weight="bold" /></button>
       </div>
 
       <CommentsSheet open={commentsOpen} onClose={() => setCommentsOpen(false)} count={p.comments} />

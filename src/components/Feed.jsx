@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Heart, ChatCircle, BookmarkSimple, DotsThree,
-  ShareNetwork, CalendarBlank,
+  Heart, ChatCircle, Eye, ShareNetwork, CalendarBlank,
 } from '@phosphor-icons/react';
 import './Feed.css';
 
@@ -28,10 +27,10 @@ export function FeedTabs({ tab, onChange }) {
 }
 
 // Публикация в стиле Medium: канал · дата, заголовок+превью, картинка,
-// строка действий (лайк, комменты, репост · закладка, ещё).
+// строка метрик. В превью — только лайки, комментарии и просмотры: закладка и
+// «ещё» уехали на экран самой публикации, здесь карточка ничего не «делает».
 export function PostCard({ p, compact }) {
   const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const open = () => navigate('/article', { state: { post: p, background: location } });
@@ -56,15 +55,7 @@ export function PostCard({ p, compact }) {
           {Number(String(p.likes).replace(/\s/g, '')) + (liked ? 1 : 0)}
         </button>
         <button className="post-act"><ChatCircle size={18} />{p.comments}</button>
-        <span className="post-actions-gap" />
-        <button
-          className={`post-act post-act--icon ${saved ? 'saved' : ''}`}
-          onClick={() => setSaved((v) => !v)}
-          aria-label="В избранное"
-        >
-          <BookmarkSimple size={18} weight={saved ? 'fill' : 'regular'} />
-        </button>
-        <button className="post-act post-act--icon" aria-label="Ещё"><DotsThree size={20} weight="bold" /></button>
+        <span className="post-act post-act--stat"><Eye size={18} />{p.views ?? '502'}</span>
       </div>
     </article>
   );

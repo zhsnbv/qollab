@@ -59,8 +59,8 @@
 .post-act:active { opacity: 0.55; }
 .post-act--icon { gap: 0; }
 .post-act.liked { color: var(--color-danger); }
-.post-act.saved { color: var(--color-primary); }
-.post-actions-gap { flex: 1; }
+/* Просмотры — счётчик, а не действие: не реагирует на нажатие */
+.post-act--stat:active { opacity: 1; }
 
 /* Мероприятия */
 .event-card {

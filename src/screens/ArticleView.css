@@ -101,6 +101,8 @@
 .ar-act:active { opacity: 0.6; }
 .ar-act.liked { color: #f5222d; }
 .ar-act--icon { padding: 0; }
+/* Просмотры — счётчик, а не действие */
+.ar-act--stat:active { opacity: 1; }
 .ar-actions-gap { flex: 1; }
 
 /* Боттом-шит комментариев (а-ля Medium) */
