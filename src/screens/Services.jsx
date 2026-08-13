@@ -38,7 +38,7 @@ export default function Services() {
         <>
           {/* Звезда ведёт в настройку избранного — тот же экран, что по
               шестерёнке на Главной (Figma node 24737-3477) */}
-          <button className="topbar-btn" aria-label="Настроить избранное" onClick={() => navigate('/favorites')}>
+          <button className="topbar-btn topbar-btn--muted" aria-label="Настроить избранное" onClick={() => navigate('/favorites')}>
             <Star size={20} weight="fill" />
           </button>
           <ViewToggle view={view} onChange={setView} />

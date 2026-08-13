@@ -2,6 +2,15 @@
 /* Прокручиваются по горизонтали: с «Каналами» три таба в 402px не влезают,
    и без скролла последний просто обрезался краем экрана. */
 .feed-tabs { display: flex; gap: var(--space-3); overflow-x: auto; }
+/* Лента прокручивается вровень с краями экрана: сам скролл-контейнер лежит в
+   блоке с боковыми полями, поэтому без выноса пилюли срезались бы за 16px до
+   края — как будто обрезаны. Поля возвращаем его собственным padding'ом. */
+.feed-tabs:not(.feed-tabs--fit) {
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
 .feed-tab {
   flex: 0 0 auto; border-radius: var(--radius-xl); padding: var(--space-3) var(--space-5) var(--space-3) var(--space-4);
   display: flex; align-items: center; justify-content: center; gap: var(--space-3);
