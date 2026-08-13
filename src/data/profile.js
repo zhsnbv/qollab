@@ -33,11 +33,21 @@ export const myTasks = [
   { id: 't3', title: 'На подписании', value: 0, source: 'SMAX', icon: 'Headset', wide: true },
 ];
 
+// Рабочие сервисы живут в боковом меню профиля: их до дюжины, в ленте экрана
+// такой список занимал бы больше места, чем все остальные блоки вместе.
 export const workServices = [
   { id: 'access', label: 'Документы по допуску', icon: 'FileText' },
   { id: 'assets', label: 'Мои основные средства', icon: 'Package' },
   { id: 'events', label: 'Мои мероприятия', icon: 'CalendarDots' },
   { id: 'study', label: 'Мой календарь обучения', icon: 'GraduationCap' },
+  { id: 'requests', label: 'Мои заявки', icon: 'ClipboardText' },
+  { id: 'approvals', label: 'Мои согласования', icon: 'CheckSquareOffset' },
+  { id: 'trips', label: 'Мои командировки', icon: 'AirplaneTilt' },
+  { id: 'vacation', label: 'Мои отпуска', icon: 'Umbrella' },
+  { id: 'timesheet', label: 'Мой табель', icon: 'ClockCounterClockwise' },
+  { id: 'refs', label: 'Мои справки', icon: 'FileArrowDown' },
+  { id: 'passes', label: 'Мои пропуска', icon: 'IdentificationBadge' },
+  { id: 'payroll', label: 'Мои начисления', icon: 'Wallet' },
 ];
 
 export const sosContacts = [

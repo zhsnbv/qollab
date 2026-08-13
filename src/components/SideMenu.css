@@ -1,0 +1,77 @@
+/* Боковое меню рабочих сервисов. Лежит поверх всего каркаса, включая
+   плавающий таб-бар (у него z-index 50), поэтому 60. */
+.sidemenu {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Затемнение: отдельной кнопкой, чтобы тап мимо панели закрывал меню */
+.sidemenu-scrim {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  animation: sm-fade-in 0.24s ease;
+}
+.sidemenu.closing .sidemenu-scrim { animation: sm-fade-out 0.22s ease forwards; }
+@keyframes sm-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sm-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* Панель выезжает справа — оттуда же, где стоит вызывающая её иконка */
+.sidemenu-panel {
+  position: relative;
+  width: min(320px, 85%);
+  height: 100%;
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.18);
+  animation: sm-slide-in 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.sidemenu.closing .sidemenu-panel { animation: sm-slide-out 0.22s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes sm-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes sm-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.sidemenu-top {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4);
+  padding-top: max(var(--space-4), env(safe-area-inset-top));
+  border-bottom: 1px solid var(--color-border);
+}
+.sidemenu-title { flex: 1; min-width: 0; font-size: 16px; font-weight: 600; color: var(--color-text); }
+.sidemenu-close {
+  width: 24px; height: 24px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-weak);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.sidemenu-close:active { opacity: 0.5; }
+
+.sidemenu-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+}
+.sidemenu-scroll::-webkit-scrollbar { display: none; }
+
+.sidemenu-row {
+  display: flex; align-items: center; gap: var(--space-4);
+  width: 100%; height: 56px;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.sidemenu-row:last-child { border-bottom: none; }
+.sidemenu-row:active { opacity: 0.6; }
+.sidemenu-ico { display: flex; flex-shrink: 0; color: var(--color-primary); }
+.sidemenu-label { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; color: var(--color-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sidemenu-scrim, .sidemenu-panel,
+  .sidemenu.closing .sidemenu-scrim, .sidemenu.closing .sidemenu-panel { animation: none; }
+}

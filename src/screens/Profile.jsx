@@ -1,21 +1,22 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import { DotsIcon } from '../components/TopBar';
+import SideMenu from '../components/SideMenu';
 import {
-  CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical,
+  CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
   IdentificationCard, QrCode, AddressBook, Hash,
-  UserFocus, Headset, FileText, Package, CalendarDots, GraduationCap,
+  UserFocus, Headset,
 } from '@phosphor-icons/react';
 import { useSkeleton, ProfileSkeleton, FadeIn } from '../components/Skeleton';
 import {
-  me, quickActions, balance, myTasks, workServices, sosContacts,
+  me, quickActions, balance, myTasks, sosContacts,
   corpData, structure, indicators, interests, certificates,
 } from '../data/profile';
 import './Profile.css';
 
 const QUICK_ICONS = { IdentificationCard, QrCode, AddressBook, Hash };
 const TASK_ICONS = { UserFocus, Headset };
-const SERVICE_ICONS = { FileText, Package, CalendarDots, GraduationCap };
 
 // Плитка со значением: эмодзи или картинка + число + подпись
 function StatCard({ value, label, emoji, img }) {
@@ -37,6 +38,7 @@ export default function Profile() {
   const loading = useSkeleton();
   const navigate = useNavigate();
   const location = useLocation();
+  const [menu, setMenu] = useState(false);
 
   const open = (path) => navigate(path, { state: { background: location } });
 
@@ -46,6 +48,9 @@ export default function Profile() {
         <img src="/img/profile/settings.svg" alt="" width="20" height="20" />
       </button>
       <div className="topbar-actions">
+        <button className="topbar-btn topbar-btn--muted" aria-label="Рабочие сервисы" onClick={() => setMenu(true)}>
+          <SquaresFour size={20} weight="fill" />
+        </button>
         <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
       </div>
     </header>
@@ -56,6 +61,7 @@ export default function Profile() {
   }
 
   return (
+    <>
     <TabLayout topbar={topbar}>
       <FadeIn><div className="profile">
         {/* Шапка: оранжевая волна за аватаром, имя, должность и статус */}
@@ -124,23 +130,6 @@ export default function Profile() {
                   </span>
                   <span className="task-value">{t.value}</span>
                   <span className="task-source">{Icon && <Icon size={16} />}{t.source}</span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Рабочие сервисы */}
-        <section className="pcard">
-          <div className="pcard-head"><h3>Рабочие сервисы</h3></div>
-          <div className="wsvc-list">
-            {workServices.map(({ id, label, icon }) => {
-              const Icon = SERVICE_ICONS[icon];
-              return (
-                <button className="wsvc-row" key={id}>
-                  <span className="wsvc-ico">{Icon && <Icon size={24} />}</span>
-                  <span className="wsvc-label">{label}</span>
-                  <CaretRight size={16} color="var(--color-light)" />
                 </button>
               );
             })}
@@ -283,5 +272,9 @@ export default function Profile() {
         </section>
       </div></FadeIn>
     </TabLayout>
+    {/* Вне TabLayout: внутри .scroll-area панель обрезалась бы его
+        переполнением и ездила вместе с контентом. */}
+    <SideMenu open={menu} onClose={() => setMenu(false)} />
+    </>
   );
 }
