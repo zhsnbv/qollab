@@ -60,7 +60,14 @@ export default function Profile() {
       <FadeIn><div className="profile">
         {/* Шапка: оранжевая волна за аватаром, имя, должность и статус */}
         <section className="profile-hero">
-          <img className="profile-decor" src="/img/profile/header-decor.png" alt="" />
+          {/* Волна собрана из двух слоёв, как в макете: большая картинка и
+              отдельный вектор-гребень поверх неё. Раньше это был один
+              плоский экспорт, обрезанный по ширине шапки, — из-за чего
+              тонкая линия гребня обрывалась. */}
+          <div className="profile-decor" aria-hidden="true">
+            <span className="profile-decor-wave"><img src="/img/profile/wave.png" alt="" /></span>
+            <img className="profile-decor-line" src="/img/profile/wave-line.svg" alt="" />
+          </div>
           <div className="profile-head">
             <button className="profile-avatar-wrap" onClick={() => open('/profile/photo')} aria-label="Фото профиля">
               <img className="profile-avatar" src={me.avatar} alt="" />

@@ -9,14 +9,31 @@
   position: relative;
   overflow: hidden;
 }
-/* Волна — PNG 402×367 с собственными пропорциями: масштабируется по ширине,
-   по высоте не тянется (иначе гребень уползает на должность и кнопку
-   статуса). 27.5px — смещение, при котором тело волны ложится ровно как в
-   рендере макета (замерено по шести колонкам); низ картинки уходит за
-   границу шапки и срезается overflow. */
+/* Волна: слой-обрезка на всю шапку, внутри — картинка и вектор-гребень в
+   координатах макета (базис 402px, шапка 402×283).
+   Все смещения заданы в процентах ОТ ШИРИНЫ: у margin-top проценты считаются
+   от ширины контейнера, а не высоты, — только так вертикальная привязка
+   масштабируется вместе с картинкой на экранах шире/уже 402. */
 .profile-decor {
-  position: absolute; top: 27.5px; left: 0; width: 100%; height: auto;
+  position: absolute; inset: 0; overflow: hidden;
   pointer-events: none; z-index: 1;
+}
+/* 760.873×683.765 в точке (−139.77, −278.23) — как группа декора в макете */
+.profile-decor-wave {
+  position: absolute; left: -34.769%; top: 0; margin-top: -69.211%;
+  width: 189.272%; aspect-ratio: 760.873 / 683.765;
+  display: block; overflow: hidden;
+}
+/* Внутри группы картинка чуть шире и выше рамки, низ срезан (h 106.22%) */
+.profile-decor-wave img {
+  position: absolute; left: -0.02%; top: 0;
+  width: 100.05%; height: 106.22%; max-width: none; display: block;
+}
+/* Тонкий гребень — отдельный вектор поверх волны: 211.886×120.752 в (51.68, 2.67) */
+.profile-decor-line {
+  position: absolute; left: 12.856%; top: 0; margin-top: 0.664%;
+  width: 52.708%; aspect-ratio: 211.886 / 120.752;
+  display: block;
 }
 .profile-head {
   background: var(--color-white);
