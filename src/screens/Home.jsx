@@ -8,7 +8,7 @@ import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { basePosts, events } from '../data/feed';
 import { homeServices, allServicesTile } from '../data/services';
 import { banners } from '../data/banners';
-import { useFavorites, FAV_ICONS } from '../context/FavoritesContext';
+import { useFavorites } from '../context/FavoritesContext';
 import { unreadTotal } from '../data/notifications';
 import {
   MagnifyingGlass, BellSimple,
@@ -132,18 +132,16 @@ export default function Home() {
               </button>
             </div>
             <div className="fav-row no-scrollbar edge-scroll">
-              {favorites.map((f) => {
-                const Icon = FAV_ICONS[f.icon];
-                return (
-                  <div className="fav-card" key={f.id}>
-                    <div>
-                      <div className="fav-label">{f.label}</div>
-                      <div className="fav-value">{f.value}</div>
-                    </div>
-                    {Icon && <Icon size={24} weight="duotone" color="var(--color-primary)" />}
-                  </div>
-                );
-              })}
+              {favorites.map((s) => (
+                <button
+                  className="fav-card"
+                  key={s.id}
+                  onClick={() => s.app && openApp(s.app)}
+                >
+                  <span className="fav-value">{s.name}</span>
+                  <img className="fav-card-ico" src={s.img} alt="" />
+                </button>
+              ))}
               {favorites.length === 0 && (
                 <button className="fav-card fav-card--empty" onClick={openFavorites}>Добавить избранное</button>
               )}

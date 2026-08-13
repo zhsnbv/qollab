@@ -77,13 +77,6 @@ export default function Posts() {
   return (
     <TabLayout topbar={<TopBar title="Лента" actions={actions} />}>
       <FadeIn><div className="posts">
-        <div className="posts-search-wrap">
-          <div className="posts-search">
-            <MagnifyingGlass size={20} color="var(--color-weak)" />
-            <span>Поиск</span>
-          </div>
-        </div>
-
         <div className="posts-tabs-wrap">
           <FeedTabs tab={tab} onChange={setTab} withChannels />
         </div>

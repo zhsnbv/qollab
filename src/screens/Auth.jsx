@@ -17,10 +17,11 @@ const STEP = {
 
 // Демо-правила, чтобы в прототипе были достижимы все нарисованные состояния:
 // «+7 700 …» проходит дальше, другой код оператора не находится в системе,
-// не-казахстанский номер отбивается инлайн-ошибкой. Код из макета — верный.
+// не-казахстанский номер отбивается инлайн-ошибкой. Верны код из макета и
+// 888888 — второй нужен, чтобы на демо не вспоминать цифры из Figma.
 const VALID_PREFIX = '7700';
 const KZ_PREFIX = '77';
-const VALID_CODE = '277683';
+const VALID_CODES = ['277683', '888888'];
 const OTP_LEN = 6;
 const RESEND_SEC = 58;
 const MAX_ATTEMPTS = 3;
@@ -116,6 +117,9 @@ export default function Auth() {
   const otpRef = useRef(null);
 
   const [guest, setGuest] = useState({ last: '', first: '', middle: '', birth: '', sex: 'm' });
+  // Гость идёт тем же путём «номер → код», но в конце получает форму
+  // регистрации, а не сразу вход: его номера в учётках сотрудников нет.
+  const [guestFlow, setGuestFlow] = useState(false);
 
   // Капча «проверяет» только пока открыт экран телефона
   useEffect(() => {
@@ -157,12 +161,7 @@ export default function Auth() {
     });
   };
 
-  const confirmPhone = () => {
-    setDialog(null);
-    if (!phoneDigits.startsWith(VALID_PREFIX)) {
-      setDialog({ kind: 'notfound' });
-      return;
-    }
+  const goToOtp = () => {
     setCode('');
     setCodeError('');
     setAttempts(0);
@@ -170,9 +169,20 @@ export default function Auth() {
     setStep(STEP.otp);
   };
 
+  const confirmPhone = () => {
+    setDialog(null);
+    // Гостя по базе сотрудников не проверяем — его там и не должно быть
+    if (!guestFlow && !phoneDigits.startsWith(VALID_PREFIX)) {
+      setDialog({ kind: 'notfound' });
+      return;
+    }
+    goToOtp();
+  };
+
   const submitCode = (value) => {
-    if (value === VALID_CODE) {
-      signIn();
+    if (VALID_CODES.includes(value)) {
+      if (guestFlow) setStep(STEP.guest);
+      else signIn();
       return;
     }
     const n = attempts + 1;
@@ -231,10 +241,10 @@ export default function Auth() {
             Единая цифровая экосистема. Получите доступ к рабочим сервисам,
             HR-инструментам и возможностям для сотрудников и партнеров.
           </p>
-          <button className="auth-btn auth-btn--primary" onClick={() => setStep(STEP.company)}>
+          <button className="auth-btn auth-btn--primary" onClick={() => { setGuestFlow(false); setStep(STEP.company); }}>
             Войти как сотрудник
           </button>
-          <button className="auth-btn auth-btn--ghost" onClick={() => setStep(STEP.guest)}>
+          <button className="auth-btn auth-btn--ghost" onClick={() => { setGuestFlow(true); setStep(STEP.phone); }}>
             Войти как гость
           </button>
           <a className="auth-policy" href="#policy" onClick={(e) => e.preventDefault()}>
@@ -335,7 +345,7 @@ export default function Auth() {
             text={<p>Номер телефона не связан с учетной записью сотрудника ERG. Проверьте ввод или войдите как гость.</p>}
             actions={[
               { label: 'Попробовать ещё раз', onClick: () => setDialog(null) },
-              { label: 'Войти как гость', onClick: () => { setDialog(null); setStep(STEP.guest); } },
+              { label: 'Войти как гость', onClick: () => { setDialog(null); setGuestFlow(true); goToOtp(); } },
             ]}
           />
         )}
@@ -411,7 +421,7 @@ export default function Auth() {
 
   return (
     <div className="auth">
-      {top('Регистрация гостя', () => setStep(STEP.onboarding), true)}
+      {top('Регистрация гостя', () => { setGuestFlow(false); setStep(STEP.onboarding); }, true)}
       <div className="auth-scroll">
         {field('last', 'Фамилия', 'Ваша фамилия')}
         {field('first', 'Имя', 'Ваше имя', true)}

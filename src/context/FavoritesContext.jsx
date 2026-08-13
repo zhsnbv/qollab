@@ -1,26 +1,25 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Scroll, Mailbox, CalendarDots } from '@phosphor-icons/react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { serviceCategories } from '../data/services';
 
-// Иконка избранного хранится ключом (см. STORAGE_KEY ниже) — компонент достаём
-// здесь же, чтобы Home и Favorites не дублировали один и тот же словарь.
-export const FAV_ICONS = { scroll: Scroll, mailbox: Mailbox, calendar: CalendarDots };
+// Избранное — это выборка из общего каталога сервисов (Figma node 24737-3477):
+// на Главной пилюли, в настройке — два раздела «Избранное» / «Все сервисы».
+// Поэтому храним только id, а имя и иконку берём из каталога: раньше избранное
+// жило отдельным списком со своими подписями и разъезжалось с каталогом.
+const STORAGE_KEY = 'qollab.favorites.v2';
 
-// Избранное с Главной — общее состояние между Home (отображение) и Favorites
-// (экран настройки: удаление/сортировка). Иконки храним ключом (не компонентом
-// React), чтобы список можно было сериализовать в localStorage.
-const STORAGE_KEY = 'qollab.favorites.v1';
+const defaultFavorites = ['task', 'mail', 'it'];
 
-const defaultFavorites = [
-  { id: 'payslip', label: 'Персонал', value: 'Расчетный листок 2.0', icon: 'scroll' },
-  { id: 'mail', label: 'IT услуги', value: 'Почта', icon: 'mailbox' },
-  { id: 'meetings', label: 'IT услуги', value: 'Мои встречи', icon: 'calendar' },
-];
+// Плоский индекс каталога: id → сервис
+export const servicesById = Object.fromEntries(
+  serviceCategories.flatMap((c) => c.items).map((s) => [s.id, s]),
+);
 
 function load() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : null;
-    return Array.isArray(parsed) && parsed.length ? parsed : defaultFavorites;
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    // Отсеиваем id, которых в каталоге уже нет (сервис переименовали/убрали)
+    const ids = Array.isArray(parsed) ? parsed.filter((id) => servicesById[id]) : null;
+    return ids && ids.length ? ids : defaultFavorites;
   } catch {
     return defaultFavorites;
   }
@@ -29,17 +28,24 @@ function load() {
 const FavoritesContext = createContext(null);
 
 export function FavoritesProvider({ children }) {
-  const [favorites, setFavorites] = useState(load);
+  const [favoriteIds, setFavoriteIds] = useState(load);
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites)); } catch { /* ignore */ }
-  }, [favorites]);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(favoriteIds)); } catch { /* ignore */ }
+  }, [favoriteIds]);
 
-  return (
-    <FavoritesContext.Provider value={{ favorites, setFavorites }}>
-      {children}
-    </FavoritesContext.Provider>
-  );
+  const value = useMemo(() => ({
+    favoriteIds,
+    setFavoriteIds,
+    // Развёрнутые сервисы в том порядке, в котором их разложил пользователь
+    favorites: favoriteIds.map((id) => servicesById[id]).filter(Boolean),
+    // Остальной каталог — правый раздел экрана настройки
+    rest: serviceCategories
+      .flatMap((c) => c.items)
+      .filter((s) => !favoriteIds.includes(s.id)),
+  }), [favoriteIds]);
+
+  return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;
 }
 
 export function useFavorites() {

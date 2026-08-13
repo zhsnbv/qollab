@@ -64,7 +64,7 @@
 .story-item:active, .fav-card:active, .promo-card:active, .actual-row:active,
 .all-pub-btn:active, .fav-gear:active, .link:active, .search-pill:active, .tab:active { opacity: 0.6; }
 /* Плитка сервиса — готовая картинка из макета (градиент запечён), 60×60 */
-.service-icon { width: 60px; height: 60px; display: block; border-radius: var(--radius-xl); }
+.service-icon { width: 60px; height: 60px; display: block; border-radius: 33.33%; }
 /* Подпись в одну строку с многоточием — как в макете. Двухстрочные подписи
    помечаются модификатором --wrap (в макете так только «ПоддERGка персонала»). */
 .service-name {
@@ -77,12 +77,13 @@
 
 /* Избранное */
 .fav-row { display: flex; gap: var(--space-3); overflow-x: auto; }
+/* Пилюля сервиса: название и мини-иконка из каталога справа */
 .fav-card {
   flex-shrink: 0; background: var(--color-white); border: 1px solid var(--color-border);
-  border-radius: var(--radius-md); padding: 10px var(--space-4);
-  display: flex; align-items: center; gap: var(--space-4);
+  border-radius: var(--radius-md); padding: var(--space-2) var(--space-3);
+  display: flex; align-items: center; gap: var(--space-3);
 }
-.fav-label { font-size: 12px; color: var(--color-weak); font-weight: 500; line-height: 20px; }
+.fav-card-ico { width: 24px; height: 24px; border-radius: 33.33%; display: block; flex-shrink: 0; }
 .fav-value { font-size: 14px; color: var(--color-text); font-weight: 600; white-space: nowrap; }
 .fav-card--empty {
   border-style: dashed; color: var(--color-weak);

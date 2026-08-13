@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CaretLeft, MinusCircle, DotsSixVertical } from '@phosphor-icons/react';
-import { useFavorites, FAV_ICONS } from '../context/FavoritesContext';
+import { CaretLeft, MinusCircle, PlusCircle, DotsSixVertical } from '@phosphor-icons/react';
+import { useFavorites } from '../context/FavoritesContext';
 import './Favorites.css';
 
 // Драг-реордер указателем: тащим за ручку (DotsSixVertical), список
 // переупорядочивается «на лету» — как только палец/курсор проходит середину
 // соседней строки. FLIP-анимацию соседей не делаем (не критично для этого
 // объёма списка) — едет плавно только сама перетаскиваемая строка.
-function useReorder(count, setFavorites) {
+function useReorder(count, setFavoriteIds) {
   const rowRefs = useRef([]);
   const drag = useRef(null);
   const [dragIndex, setDragIndex] = useState(null);
@@ -29,13 +29,13 @@ function useReorder(count, setFavorites) {
       const target = Math.min(count - 1, Math.max(0, drag.current.from + shift));
       const from = drag.current.current;
       // from/target — обычные числа, а не drag.current, захватываем их в
-      // замыкание: apдейтер setFavorites React может вызвать отложенно
+      // замыкание: апдейтер setFavoriteIds React может вызвать отложенно
       // (после следующего pointermove/up), и к этому моменту drag.current
-      // уже обнулён обработчиком up — обращение к drag.current внутри
-      // апдейтера падало с «Cannot read properties of null».
+      // уже обнулён обработчиком up — обращение к нему падало с
+      // «Cannot read properties of null».
       if (target !== from) {
         drag.current.current = target;
-        setFavorites((list) => {
+        setFavoriteIds((list) => {
           const next = [...list];
           const [moved] = next.splice(from, 1);
           next.splice(target, 0, moved);
@@ -57,45 +57,43 @@ function useReorder(count, setFavorites) {
   return { rowRefs, dragIndex, dragY, onPointerDown };
 }
 
-// Полноэкранный push-экран настройки избранного (Figma node 23774-6737).
-// Удаление и порядок применяются сразу к общему состоянию (FavoritesContext),
-// поэтому изменения видно на Главной сразу после «Сохранить» — без бэкенда,
-// но по-настоящему интерактивно.
+// Настройка избранного (Figma node 24737-3477): сверху «Избранное» с
+// удалением и перетаскиванием, ниже — остальной каталог с добавлением.
+// Изменения сразу уходят в общее состояние, поэтому Главная обновляется
+// без бэкенда, а «Сохранить» просто закрывает экран.
 export default function Favorites() {
   const navigate = useNavigate();
-  const { favorites, setFavorites } = useFavorites();
-  const { rowRefs, dragIndex, dragY, onPointerDown } = useReorder(favorites.length, setFavorites);
+  const { favorites, rest, setFavoriteIds } = useFavorites();
+  const { rowRefs, dragIndex, dragY, onPointerDown } = useReorder(favorites.length, setFavoriteIds);
 
-  const remove = (id) => setFavorites((list) => list.filter((f) => f.id !== id));
+  const remove = (id) => setFavoriteIds((list) => list.filter((x) => x !== id));
+  const add = (id) => setFavoriteIds((list) => [...list, id]);
 
   return (
     <div className="favscreen">
       <header className="fav-top">
         <button className="fav-back" onClick={() => navigate(-1)} aria-label="Назад"><CaretLeft size={24} /></button>
-        <h1 className="fav-title">Список избранных</h1>
+        <h1 className="fav-title">Настроить избранное</h1>
         <span className="fav-back" aria-hidden="true" />
       </header>
 
       <div className="fav-scroll">
+        <h2 className="fav-section">Избранное</h2>
         <div className="fav-list">
-          {favorites.map((f, i) => {
-            const Icon = FAV_ICONS[f.icon];
+          {favorites.map((s, i) => {
             const dragging = dragIndex === i;
             return (
               <div
                 className={`favedit-row ${dragging ? 'dragging' : ''}`}
-                key={f.id}
+                key={s.id}
                 ref={(el) => { rowRefs.current[i] = el; }}
                 style={dragging ? { transform: `translateY(${dragY}px)` } : undefined}
               >
-                <button className="fav-remove" onClick={() => remove(f.id)} aria-label={`Убрать «${f.value}» из избранного`}>
+                <button className="fav-remove" onClick={() => remove(s.id)} aria-label={`Убрать «${s.name}» из избранного`}>
                   <MinusCircle size={20} weight="fill" />
                 </button>
-                {Icon && <Icon size={24} weight="duotone" color="var(--color-primary)" />}
-                <span className="fav-texts">
-                  <span className="fav-name">{f.value}</span>
-                  <span className="fav-sub">{f.label}</span>
-                </span>
+                <img className="fav-ico" src={s.img} alt="" />
+                <span className="fav-name">{s.name}</span>
                 <span
                   className="fav-handle"
                   onPointerDown={onPointerDown(i)}
@@ -108,8 +106,21 @@ export default function Favorites() {
             );
           })}
           {favorites.length === 0 && (
-            <p className="fav-empty">Список избранного пуст — добавьте элементы на Главной.</p>
+            <p className="fav-empty">Список избранного пуст — добавьте сервисы ниже.</p>
           )}
+        </div>
+
+        <h2 className="fav-section">Все сервисы</h2>
+        <div className="fav-list">
+          {rest.map((s) => (
+            <div className="favedit-row" key={s.id}>
+              <button className="fav-add" onClick={() => add(s.id)} aria-label={`Добавить «${s.name}» в избранное`}>
+                <PlusCircle size={20} weight="fill" />
+              </button>
+              <img className="fav-ico" src={s.img} alt="" />
+              <span className="fav-name">{s.name}</span>
+            </div>
+          ))}
         </div>
       </div>
 

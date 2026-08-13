@@ -12,7 +12,9 @@ import './Chats.css';
 
 // Первый экран — данные из Figma-макета Chats (Type=Chats), аватары в public/img/chats.
 const baseChats = [
-  { kind: 'system', icon: BellSimple, title: 'Уведомления', preview: 'Новый вход в qollab: Устройство: iPhone', time: '09:12' },
+  // Уведомления переехали в иконку-колокольчик на Главной — в списке чатов
+  // их дублировать не нужно. Оставлено закомментированным на случай отката.
+  // { kind: 'system', icon: BellSimple, title: 'Уведомления', preview: 'Новый вход в qollab: Устройство: iPhone', time: '09:12' },
   { kind: 'system', icon: BookmarkSimple, title: 'Избранное', preview: 'Мои задачи на неделю:', time: '12:02' },
   { kind: 'bot', avatar: '/img/chats/ergiz-avatar.png', title: 'ERGiz – Искусственный интеллект', preview: 'Привет! хочу задать вам пару коротких вопросов', time: '13:44' },
   { avatar: '/img/chats/bts-pr.png', title: 'PR01DEV + ROBOTS', to: '/chats/prodev', sender: 'Арман А.:', preview: 'не узнал', time: '11:34', muted: true },

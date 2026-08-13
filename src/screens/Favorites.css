@@ -29,15 +29,22 @@
 .fav-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--color-white); }
 .fav-scroll::-webkit-scrollbar { display: none; }
 
+/* Заголовки разделов «Избранное» / «Все сервисы» */
+.fav-section {
+  font-size: 13px; font-weight: 500; color: var(--color-weak);
+  padding: var(--space-4) var(--space-4) var(--space-2);
+}
 .fav-list { display: flex; flex-direction: column; }
 .favedit-row {
-  display: flex; align-items: center; gap: var(--space-5);
-  padding: var(--space-3) var(--space-4);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
   border-bottom: 1px solid var(--color-border);
   background: var(--color-white);
   position: relative;
   touch-action: none;
 }
+/* Иконка сервиса — тот же PNG, что в каталоге; радиус пропорциональный */
+.fav-ico { width: 32px; height: 32px; flex-shrink: 0; border-radius: 33.33%; display: block; }
 .favedit-row.dragging {
   z-index: 2;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
@@ -52,9 +59,19 @@
 }
 .fav-remove:active { opacity: 0.6; transform: scale(0.9); }
 
-.fav-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.fav-name { font-size: 14px; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fav-sub { font-size: 12px; font-weight: 500; color: var(--color-weak); }
+.fav-add {
+  color: var(--color-success);
+  flex-shrink: 0;
+  display: flex;
+  transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.fav-add:active { opacity: 0.6; transform: scale(0.9); }
+
+.fav-name {
+  flex: 1; min-width: 0;
+  font-size: 14px; font-weight: 500; color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
 .fav-handle {
   color: var(--color-weak);
