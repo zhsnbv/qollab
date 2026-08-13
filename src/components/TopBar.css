@@ -62,8 +62,10 @@
 }
 
 /* Кнопка со счётчиком (колокольчик уведомлений на Главной). Бейдж 18×18 в
-   правом верхнем углу — те же метрики, что у бейджа таб-бара. */
-.topbar-btn--badged { position: relative; overflow: visible; }
+   правом верхнем углу — те же метрики, что у бейджа таб-бара.
+   Глиф серый: рядом стоят «три точки» (#999 в SVG), и тёмный колокольчик
+   выбивался из пары. */
+.topbar-btn--badged { position: relative; overflow: visible; color: var(--color-weak); }
 .topbar-badge {
   position: absolute;
   top: -4px;

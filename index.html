@@ -21,6 +21,12 @@
     <script>
       // Тёмная тема временно выключена — всегда светлая.
       document.documentElement.dataset.theme = 'light';
+      // Статус-бар/адресная строка красятся в цвет топбара (--color-white),
+      // иначе в тёмной теме сверху остаётся белая полоса.
+      (function () {
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.content = document.documentElement.dataset.theme === 'dark' ? '#2b2a27' : '#ffffff';
+      })();
       /* Вернуть системную тему (как Claude iOS):
       (function () {
         var mq = window.matchMedia('(prefers-color-scheme: dark)');

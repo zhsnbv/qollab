@@ -1,13 +1,22 @@
 /* Капсульные табы Публикации/Мероприятия (общие для Главной и Новостей) */
-.feed-tabs { display: flex; gap: var(--space-3); }
+/* Прокручиваются по горизонтали: с «Каналами» три таба в 402px не влезают,
+   и без скролла последний просто обрезался краем экрана. */
+.feed-tabs { display: flex; gap: var(--space-3); overflow-x: auto; }
 .feed-tab {
-  flex: 1; border-radius: var(--radius-xl); padding: var(--space-3) var(--space-5) var(--space-3) var(--space-4);
+  flex: 0 0 auto; border-radius: var(--radius-xl); padding: var(--space-3) var(--space-5) var(--space-3) var(--space-4);
   display: flex; align-items: center; justify-content: center; gap: var(--space-3);
   font-size: 16px; font-weight: 600; background: var(--color-background); color: var(--color-text);
+  white-space: nowrap;
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
+/* Когда табов всего два (Главная, без Каналов), они делят ширину поровну */
+.feed-tabs--fit .feed-tab { flex: 1; }
 .feed-tab:active { opacity: 0.65; }
 .feed-tab.active { background: var(--color-primary-bg-hover); color: var(--color-primary); }
+/* Иконка «Каналов» — компонентная, а не маска: красим её теми же двумя
+   состояниями, что и маски, иначе она одна была тёмной среди серых. */
+.feed-tab svg { color: var(--color-weak); flex-shrink: 0; }
+.feed-tab.active svg { color: var(--color-primary); }
 /* Иконки-маски: серые, у активного таба — оранжевые */
 .feed-tab-ico {
   width: 20px; height: 20px; display: block; background: var(--color-weak);

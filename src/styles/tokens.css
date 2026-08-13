@@ -228,6 +228,7 @@ html[data-theme="dark"] .topbar-slot.scrolled {
 /* Серые SVG-глифы (#999) подсветлить на тёмном */
 html[data-theme="dark"] .topbar-btn img,
 html[data-theme="dark"] .fav-gear img,
+html[data-theme="dark"] .cr-walkie img,
 html[data-theme="dark"] .posts-bookmark svg { filter: brightness(1.35); }
 /* Белая шапка профиля под волной остаётся поверхностью — ок; синий тег в тёмный вариант */
 html[data-theme="dark"] .data-tag,

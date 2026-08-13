@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlass, X, SmileySad } from '@phosphor-icons/react';
 import TabLayout from '../components/TabLayout';
-import TopBar, { DotsIcon } from '../components/TopBar';
+import TopBar from '../components/TopBar';
 import ViewToggle from '../components/ViewToggle';
 import { useSkeleton, ServicesSkeleton, FadeIn } from '../components/Skeleton';
 import { serviceCategories } from '../data/services';
@@ -34,12 +34,7 @@ export default function Services() {
   const topbar = (
     <TopBar
       title="Сервисы"
-      actions={
-        <>
-          <ViewToggle view={view} onChange={setView} />
-          <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
-        </>
-      }
+      actions={<ViewToggle view={view} onChange={setView} />}
     />
   );
 

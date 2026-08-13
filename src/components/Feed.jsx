@@ -11,7 +11,7 @@ import './Feed.css';
 // в Ленте (в макете третий таб есть именно там).
 export function FeedTabs({ tab, onChange, withChannels }) {
   return (
-    <div className="feed-tabs no-scrollbar">
+    <div className={`feed-tabs no-scrollbar${withChannels ? '' : ' feed-tabs--fit'}`}>
       <button
         className={`feed-tab ${tab === 'posts' ? 'active' : ''}`}
         onClick={() => onChange('posts')}

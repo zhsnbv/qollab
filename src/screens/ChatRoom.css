@@ -17,7 +17,10 @@
    клавиатуры паддингом — инпут остаётся прямо над клавиатурой, iOS не
    панит вьюпорт, хедер прибит к верху. */
 html.kb .chatroom { padding-bottom: var(--kb, 0px); }
-html.kb .cr-writebar { padding-bottom: var(--space-2); }
+/* Бар позиционирован от padding-box, поэтому при открытой клавиатуре его
+   поднимаем сами — иначе он остался бы под ней. */
+html.kb .cr-writebar { bottom: var(--kb, 0px); padding-bottom: var(--space-2); }
+html.kb .cr-body { padding-bottom: 56px; }
 @keyframes cr-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes cr-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
@@ -63,6 +66,9 @@ html.kb .cr-writebar { padding-bottom: var(--space-2); }
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  /* 42 (бар) + 4 сверху + 28 снизу: последние сообщения доезжают до конца,
+     а не застревают под плавающей панелью ввода. */
+  padding-bottom: calc(74px + max(0px, env(safe-area-inset-bottom)));
 }
 .cr-body::-webkit-scrollbar { display: none; }
 
@@ -258,26 +264,36 @@ html.kb .cr-writebar { padding-bottom: var(--space-2); }
   30% { opacity: 1; transform: translateY(-3px); }
 }
 
-/* Панель ввода */
+/* Панель ввода — «жидкое стекло» (Figma node 24627-79673): плавает поверх
+   переписки, а не отрезает её полосой. Поэтому absolute, а не поток: контент
+   должен проезжать под баром и просвечивать сквозь блюр. */
 .cr-writebar {
-  flex-shrink: 0;
-  display: flex; align-items: center; gap: var(--space-3);
-  padding: var(--space-2) var(--space-4);
-  padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
-  border-top: 1px solid var(--color-border);
-  background: var(--color-white);
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+  display: flex; align-items: flex-end; gap: 6px;
+  padding: var(--space-1) 28px;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+  pointer-events: none; /* ловят клики только сами кнопки и поле */
+}
+.cr-writebar > * { pointer-events: auto; }
+/* Общая «стеклянная» подложка кнопок и поля: та же формула, что у
+   плавающего таб-бара (--nav-bg + блюр), плюс мягкая тень из макета. */
+.cr-write-btn, .cr-input {
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--nav-edge), 0 8px 40px rgba(0, 0, 0, 0.12);
 }
 .cr-write-btn {
-  width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--color-background);
+  width: 42px; height: 42px; border-radius: var(--radius-pill);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .cr-write-btn:active { opacity: 0.6; }
-.cr-send { background: var(--color-primary); }
+.cr-send { background: var(--color-primary); backdrop-filter: none; -webkit-backdrop-filter: none; }
 .cr-send:active { transform: scale(0.92); }
 .cr-input {
-  flex: 1; min-width: 0; background: var(--color-background); border-radius: var(--radius-pill);
-  padding: 0 var(--space-4); display: flex; align-items: center; height: 40px;
+  flex: 1; min-width: 0; border-radius: 21px;
+  padding: 0 var(--space-3); display: flex; align-items: center; min-height: 42px;
 }
 .cr-input input {
   width: 100%; border: none; background: none; outline: none;
