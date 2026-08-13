@@ -16,6 +16,7 @@ export default function Posts() {
   const loading = useSkeleton();
   const navigate = useNavigate();
   const location = useLocation();
+  const openEvent = (e) => navigate('/event', { state: { id: e.id, background: location } });
   const [tab, setTab] = useState('posts'); // posts | channels | events
   const [channel, setChannel] = useState('Все каналы');
   const [scope, setScope] = useState('available');
@@ -165,7 +166,9 @@ export default function Posts() {
         {tab === 'events' && (
           <>
             <div className="event-list">
-              {events.slice(0, eventsShown).map((e, i) => <EventCard key={i} e={e} />)}
+              {events.slice(0, eventsShown).map((e) => (
+                <EventCard key={e.id} e={e} onOpen={openEvent} />
+              ))}
               <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
             </div>
             {loadingMore && <div className="spinner-row"><span className="spinner" /></div>}

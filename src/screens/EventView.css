@@ -1,0 +1,106 @@
+/* Просмотр мероприятия — полноэкранный push поверх ленты, включая
+   плавающий таб-бар (у него z-index 50). */
+.eventview {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  animation: ev-slide-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.eventview.closing { animation: ev-slide-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes ev-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes ev-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.ev-top {
+  flex-shrink: 0;
+  background: var(--color-white);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.ev-back {
+  width: 24px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-weak);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ev-back:active { opacity: 0.5; }
+.ev-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+
+.ev-scroll {
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.ev-scroll::-webkit-scrollbar { display: none; }
+.ev-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+
+/* Белые блоки во всю ширину, как в профиле */
+.ev-card {
+  background: var(--color-white);
+  padding: var(--space-4) var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-5);
+}
+.ev-h { font-size: 16px; font-weight: 600; line-height: 24px; color: var(--color-text); }
+
+/* Основная информация: пары «подпись — значение» */
+.ev-info { display: flex; flex-direction: column; gap: var(--space-3); }
+.ev-info-label { font-size: 13px; color: var(--color-weak); line-height: 17px; }
+.ev-info-value { font-size: 15px; color: var(--color-text); line-height: 22px; margin-top: var(--space-1); }
+
+.ev-share {
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+  width: 100%; padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border); border-radius: var(--radius-pill);
+  font-size: 15px; font-weight: 500; color: var(--color-text);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ev-share:active { opacity: 0.6; }
+
+.ev-about { font-size: 14px; line-height: 1.5; color: var(--color-text); }
+.ev-photo { width: 100%; aspect-ratio: 362 / 187; border-radius: var(--radius-sm); overflow: hidden; background: var(--img-placeholder); }
+.ev-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Выбор даты участия */
+.ev-slots { display: flex; flex-direction: column; }
+.ev-slot {
+  display: flex; align-items: center; gap: var(--space-4);
+  width: 100%; padding: var(--space-3) 0; text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.ev-slot:not(.full):active { opacity: 0.7; }
+.ev-check {
+  width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%;
+  border: 1px solid var(--color-light); background: var(--color-white);
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  transition: background 0.12s, border-color 0.12s;
+}
+.ev-check.on { background: var(--color-primary); border-color: var(--color-primary); }
+/* Занятый слот приглушён целиком — и кружок, и тексты */
+.ev-slot.full .ev-check { background: var(--color-border); border-color: var(--color-light); }
+.ev-slot.full .ev-slot-label,
+.ev-slot.full .ev-slot-sub { color: var(--color-disabled); }
+
+.ev-slot-texts { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.ev-slot-label { font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--color-text); }
+.ev-slot-sub { font-size: 14px; color: var(--color-weak); }
+.ev-slot-tag {
+  margin-top: var(--space-1);
+  background: rgba(0, 0, 0, 0.02); border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-1, 4px);
+  padding: 0 var(--space-2); font-size: 12px; line-height: 20px; color: var(--color-heading);
+}
+
+.ev-join {
+  width: 100%; padding: var(--space-4) var(--space-8);
+  background: var(--color-primary); color: #fff; border-radius: var(--radius-pill);
+  font-size: 16px; font-weight: 600; letter-spacing: -0.16px;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ev-join:active { opacity: 0.85; }
+.ev-join:disabled { opacity: 0.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .eventview, .eventview.closing { animation: none; }
+}

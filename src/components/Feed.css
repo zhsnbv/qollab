@@ -93,7 +93,22 @@
 .event-body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
 .event-when { font-size: 13px; color: var(--color-weak); }
 .event-title { font-size: 17px; font-weight: 600; color: var(--color-text); line-height: 1.3; }
-.event-org { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-weak); margin-top: var(--space-1); }
+.event-org { display: flex; align-items: center; gap: var(--space-2); font-size: 13px; color: var(--color-weak); margin-top: var(--space-1); }
+/* Стопка аватарок: каждая следующая наезжает на предыдущую, как в макете
+   (4 штуки укладываются в 72px при диаметре 24). */
+.event-avatars { display: flex; flex-shrink: 0; }
+.event-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 600; letter-spacing: -0.2px;
+  border: 1.5px solid var(--color-white); box-sizing: border-box;
+}
+.event-avatar + .event-avatar { margin-left: -8px; }
+.event-avatar.tint-0 { background: #ffe0b2; color: #b45309; }
+.event-avatar.tint-1 { background: #d9f7be; color: #3f6212; }
+.event-avatar.tint-2 { background: #e6f4ff; color: #1e40af; }
+.event-avatar.tint-3 { background: #fde2e2; color: #b91c1c; }
+.event-avatar--none { background: var(--color-background); color: var(--color-weak); font-size: 12px; }
 .event-cta { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
 .event-more {
   flex: 1; border: 1px solid var(--color-primary-border); border-radius: var(--radius-pill);

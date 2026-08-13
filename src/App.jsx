@@ -16,6 +16,7 @@ import MiniApp from './screens/MiniApp';
 import Notifications from './screens/Notifications';
 import NotificationGroup from './screens/NotificationGroup';
 import ChannelView from './screens/ChannelView';
+import EventView from './screens/EventView';
 import Settings from './screens/Settings';
 import ProfilePhoto from './screens/ProfilePhoto';
 import Auth from './screens/Auth';
@@ -76,6 +77,7 @@ function AppRoutes() {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/notifications/:groupId" element={<NotificationGroup />} />
         <Route path="/channel/:channelId" element={<ChannelView />} />
+        <Route path="/event" element={<EventView />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile/photo" element={<ProfilePhoto />} />
         {/* Мини-аппы: уровень навигации зашит в путь (/app/mytasks/it/closed),

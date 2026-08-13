@@ -62,6 +62,7 @@ export default function Home() {
   const openFavorites = () => navigate('/favorites', { state: { background: location } });
   const openBanner = (id) => navigate('/banner', { state: { id, background: location } });
   const openApp = (app) => navigate(`/app/${app}`, { state: { background: location } });
+  const openEvent = (e) => navigate('/event', { state: { id: e.id, background: location } });
 
   if (loading) {
     return <TabLayout topbar={<TopBar logo actions={actions} onLogoClick={toggleTheme} />}><HomeSkeleton /></TabLayout>;
@@ -179,7 +180,9 @@ export default function Home() {
           ) : (
             <>
               <div className="home-events">
-                {events.slice(0, 4).map((e, i) => <EventCard key={i} e={e} />)}
+                {events.slice(0, 4).map((e) => (
+                  <EventCard key={e.id} e={e} onOpen={openEvent} />
+                ))}
               </div>
               <button className="all-pub-btn" onClick={() => navigate('/posts')}>
                 Все мероприятия<CaretRight size={18} color="var(--color-light)" />

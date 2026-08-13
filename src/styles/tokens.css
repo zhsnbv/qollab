@@ -233,6 +233,11 @@ html[data-theme="dark"] .posts-bookmark svg { filter: brightness(1.35); }
 /* Белая шапка профиля под волной остаётся поверхностью — ок; синий тег в тёмный вариант */
 html[data-theme="dark"] .data-tag,
 html[data-theme="dark"] .sos-tag { background: #15263a; border-color: #2a4a6e; color: #6aaaf5; }
+/* Тег «заявок достигло лимита» задан на rgba чёрного — на тёмном он пропадает */
+html[data-theme="dark"] .ev-slot-tag {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+}
 /* Скелетон-карточки уже на var(--color-white) — ок. Пилюля тумблера в сервисах: */
 html[data-theme="dark"] .view-toggle-btn.active { background: #4a4740; }
 /* Промо-баннеры остаются цветными островками — их не трогаем */

@@ -74,16 +74,47 @@ export function PostCard({ p, compact }) {
 }
 
 // Карточка мероприятия: картинка, дата, заголовок, организаторы, «Подробнее».
-export function EventCard({ e }) {
+// Стопка аватарок организаторов. Пустой список — отдельное состояние из
+// макета: один серый кружок с вопросом и подпись «Без организаторов».
+function Organizers({ list }) {
+  if (!list || list.length === 0) {
+    return (
+      <div className="event-org">
+        <span className="event-avatars"><span className="event-avatar event-avatar--none">?</span></span>
+        Без организаторов
+      </div>
+    );
+  }
   return (
-    <article className="event-card press-scale">
+    <div className="event-org">
+      <span className="event-avatars">
+        {list.slice(0, 4).map((initials, i) => (
+          <span className={`event-avatar tint-${i % 4}`} key={initials + i}>{initials}</span>
+        ))}
+      </span>
+      {list.length} {plural(list.length, 'организатор', 'организатора', 'организаторов')}
+    </div>
+  );
+}
+
+const plural = (n, one, few, many) => {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+};
+
+export function EventCard({ e, onOpen }) {
+  return (
+    <article className="event-card">
       <div className="event-img"><img src={e.img} alt="" loading="lazy" /></div>
       <div className="event-body">
         <div className="event-when">{e.when}</div>
         <h3 className="event-title">{e.title}</h3>
-        <div className="event-org"><CalendarBlank size={16} color="var(--color-weak)" />{e.org}</div>
+        <Organizers list={e.organizers} />
         <div className="event-cta">
-          <button className="event-more">Подробнее</button>
+          <button className="event-more" onClick={() => onOpen?.(e)}>Подробнее</button>
           <button className="event-share" aria-label="Поделиться"><ShareNetwork size={18} color="var(--color-primary)" /></button>
         </div>
       </div>
