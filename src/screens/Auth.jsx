@@ -50,7 +50,7 @@ function maskPhone(raw) {
 function LangSwitch({ lang, onChange }) {
   return (
     <div className="auth-lang">
-      {['Рус', 'Қаз'].map((l) => (
+      {['Қаз', 'Рус'].map((l) => (
         <button
           key={l}
           className={`auth-lang-btn${lang === l ? ' active' : ''}`}

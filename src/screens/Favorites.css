@@ -26,7 +26,9 @@
 .fav-back:active { opacity: 0.5; }
 .fav-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
 
-.fav-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--color-white); }
+/* min-height: 0 — иначе flex-элемент не сжимается ниже своего содержимого,
+   колонка просто вырастает по высоте списка и прокручивать становится нечего. */
+.fav-scroll { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: var(--color-white); }
 .fav-scroll::-webkit-scrollbar { display: none; }
 
 /* Заголовки разделов «Избранное» / «Все сервисы» */
@@ -41,7 +43,6 @@
   border-bottom: 1px solid var(--color-border);
   background: var(--color-white);
   position: relative;
-  touch-action: none;
 }
 /* Иконка сервиса — тот же PNG, что в каталоге; радиус пропорциональный */
 .fav-ico { width: 32px; height: 32px; flex-shrink: 0; border-radius: 33.33%; display: block; }
@@ -73,6 +74,8 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
+/* touch-action: none только на ручке. Раньше он стоял на всей строке — палец
+   на списке считался началом перетаскивания, и экран переставал скроллиться. */
 .fav-handle {
   color: var(--color-weak);
   flex-shrink: 0;
@@ -80,6 +83,7 @@
   margin: calc(var(--space-2) * -1);
   cursor: grab;
   display: flex;
+  touch-action: none;
 }
 .favedit-row.dragging .fav-handle { cursor: grabbing; color: var(--color-primary); }
 

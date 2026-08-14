@@ -60,7 +60,11 @@
 .fav-gear { display: flex; align-items: center; justify-content: center; opacity: 0.75; }
 
 /* Сервисы */
+/* min-width: 0 обязателен: у грид-элемента min-width по умолчанию auto, то есть
+   не меньше min-content. Длинная подпись в одну строку («Электронная очередь»)
+   раздувала колонку, и сетка вылезала за экран на телефонах уже 402px. */
 .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-5) var(--space-4); }
+.services-grid > .service-item { min-width: 0; }
 .service-item { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent; }
 .service-item:active { opacity: 0.7; transform: scale(0.95); }
 /* Тактильность прочих кликабельных строк/карточек Главной */

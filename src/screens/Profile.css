@@ -36,12 +36,6 @@
   position: absolute; left: -0.02%; top: 0;
   width: 100.05%; height: 106.22%; max-width: none; display: block;
 }
-/* Тонкий гребень — отдельный вектор поверх волны: 211.886×120.752 в (51.68, 2.67) */
-.profile-decor-line {
-  position: absolute; left: 12.856%; top: 0; margin-top: 0.664%;
-  width: 52.708%; aspect-ratio: 211.886 / 120.752;
-  display: block;
-}
 .profile-head {
   background: var(--color-white);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);

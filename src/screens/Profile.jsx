@@ -66,13 +66,10 @@ export default function Profile() {
       <FadeIn><div className="profile">
         {/* Шапка: оранжевая волна за аватаром, имя, должность и статус */}
         <section className="profile-hero">
-          {/* Волна собрана из двух слоёв, как в макете: большая картинка и
-              отдельный вектор-гребень поверх неё. Раньше это был один
-              плоский экспорт, обрезанный по ширине шапки, — из-за чего
-              тонкая линия гребня обрывалась. */}
+          {/* Только картинка волны. Вектор-гребень из макета убран: он залит
+              белым и на тёмной теме читался белым пятном поверх шапки. */}
           <div className="profile-decor" aria-hidden="true">
             <span className="profile-decor-wave"><img src="/img/profile/wave.png" alt="" /></span>
-            <img className="profile-decor-line" src="/img/profile/wave-line.svg" alt="" />
           </div>
           <div className="profile-head">
             <button className="profile-avatar-wrap" onClick={() => open('/profile/photo')} aria-label="Фото профиля">
