@@ -59,15 +59,16 @@ export default function Posts() {
       : channelList;
   const shownChannels = scoped.filter((c) => c.name.toLowerCase().includes(chanQuery.trim().toLowerCase()));
 
+  // «Три точки» — всегда крайние справа, как на остальных экранах
   const actions = (
     <>
-      <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
       <button className="topbar-btn" aria-label="Закладки">
         <span className="posts-bookmark">
           <BookmarkSimple size={20} weight="fill" color="var(--color-weak)" />
           <span className="posts-bookmark-dot" />
         </span>
       </button>
+      <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
     </>
   );
 
