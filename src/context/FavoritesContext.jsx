@@ -5,14 +5,15 @@ import { serviceCategories } from '../data/services';
 // на Главной пилюли, в настройке — два раздела «Избранное» / «Все сервисы».
 // Поэтому храним только id, а имя и иконку берём из каталога: раньше избранное
 // жило отдельным списком со своими подписями и разъезжалось с каталогом.
-const STORAGE_KEY = 'qollab.favorites.v2';
+const STORAGE_KEY = 'qollab.favorites.v3';
 
-const defaultFavorites = ['task', 'mail', 'it'];
+// Ровно семь: столько плиток помещается в сетку «Моих сервисов» на Главной
+const defaultFavorites = ['task', 'mail', 'it', 'ticket', 'info', 'qr', 'queue'];
 
-// Плоский индекс каталога: id → сервис
-export const servicesById = Object.fromEntries(
-  serviceCategories.flatMap((c) => c.items).map((s) => [s.id, s]),
-);
+// Плоский каталог и индекс по id — их же использует экран настройки,
+// чтобы собирать черновик, не дублируя разбор категорий.
+export const allServices = serviceCategories.flatMap((c) => c.items);
+export const servicesById = Object.fromEntries(allServices.map((s) => [s.id, s]));
 
 function load() {
   try {
@@ -40,9 +41,7 @@ export function FavoritesProvider({ children }) {
     // Развёрнутые сервисы в том порядке, в котором их разложил пользователь
     favorites: favoriteIds.map((id) => servicesById[id]).filter(Boolean),
     // Остальной каталог — правый раздел экрана настройки
-    rest: serviceCategories
-      .flatMap((c) => c.items)
-      .filter((s) => !favoriteIds.includes(s.id)),
+    rest: allServices.filter((s) => !favoriteIds.includes(s.id)),
   }), [favoriteIds]);
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;

@@ -4,12 +4,6 @@
   functions = "netlify/functions"
   publish = "dist"
 
-  ## Uncomment to use this redirect for Single Page Applications like create-react-app.
-  ## Not needed for static site generators.
-  #[[redirects]]
-  #  from = "/*"
-  #  to = "/index.html"
-  #  status = 200
 
   ## (optional) Settings for Netlify Dev
   ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
@@ -19,3 +13,10 @@
   #  publish = "dist" # Folder with the static content for _redirect file
 
   ## more info on configuring this file: https://ntl.fyi/file-based-build-config
+
+# SPA на BrowserRouter: без этого правила обновление страницы на /profile,
+# /services и любом другом маршруте отдаёт 404 — файла с таким путём в dist нет.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

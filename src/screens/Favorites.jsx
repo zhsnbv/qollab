@@ -1,8 +1,13 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CaretLeft, MinusCircle, PlusCircle, DotsSixVertical } from '@phosphor-icons/react';
-import { useFavorites } from '../context/FavoritesContext';
+import { CaretLeft, MinusCircle, PlusCircle, DotsSixVertical, Info } from '@phosphor-icons/react';
+import { useFavorites, servicesById, allServices } from '../context/FavoritesContext';
 import './Favorites.css';
+
+// Ровно столько плиток помещается в сетку «Моих сервисов» на Главной
+// (два ряда по четыре, восьмая — «Все сервисы»), поэтому набор фиксирован:
+// сохранить можно только полный комплект.
+const LIMIT = 7;
 
 // Драг-реордер указателем: тащим за ручку (DotsSixVertical), список
 // переупорядочивается «на лету» — как только палец/курсор проходит середину
@@ -57,28 +62,48 @@ function useReorder(count, setFavoriteIds) {
   return { rowRefs, dragIndex, dragY, onPointerDown };
 }
 
-// Настройка избранного (Figma node 24737-3477): сверху «Избранное» с
+// Настройка избранного (Figma node 24860-3477): сверху «Избранное» с
 // удалением и перетаскиванием, ниже — остальной каталог с добавлением.
-// Изменения сразу уходят в общее состояние, поэтому Главная обновляется
-// без бэкенда, а «Сохранить» просто закрывает экран.
+// Правки копятся в черновике и уходят на Главную только по «Сохранить» —
+// иначе кнопка ничего не значила бы, а на экране можно побывать в неполном
+// наборе (например, убрать всё и уйти назад).
 export default function Favorites() {
   const navigate = useNavigate();
-  const { favorites, rest, setFavoriteIds } = useFavorites();
-  const { rowRefs, dragIndex, dragY, onPointerDown } = useReorder(favorites.length, setFavoriteIds);
+  const { favoriteIds, setFavoriteIds } = useFavorites();
+  const [draft, setDraft] = useState(favoriteIds);
 
-  const remove = (id) => setFavoriteIds((list) => list.filter((x) => x !== id));
-  const add = (id) => setFavoriteIds((list) => [...list, id]);
+  const favorites = useMemo(() => draft.map((id) => servicesById[id]).filter(Boolean), [draft]);
+  const rest = useMemo(() => allServices.filter((s) => !draft.includes(s.id)), [draft]);
+  const { rowRefs, dragIndex, dragY, onPointerDown } = useReorder(favorites.length, setDraft);
+
+  const remove = (id) => setDraft((list) => list.filter((x) => x !== id));
+  const add = (id) => setDraft((list) => (list.length >= LIMIT ? list : [...list, id]));
+  const full = draft.length >= LIMIT;
+  const canSave = draft.length === LIMIT;
+
+  const save = () => {
+    setFavoriteIds(draft);
+    navigate(-1);
+  };
 
   return (
     <div className="favscreen">
       <header className="fav-top">
         <button className="fav-back" onClick={() => navigate(-1)} aria-label="Назад"><CaretLeft size={24} /></button>
-        <h1 className="fav-title">Настроить избранное</h1>
+        <h1 className="fav-title">Избранные сервисы</h1>
         <span className="fav-back" aria-hidden="true" />
       </header>
 
+      <div className="fav-hint">
+        <Info size={16} weight="fill" />
+        Выберите {LIMIT} сервисов, чтобы сохранить изменения
+      </div>
+
       <div className="fav-scroll">
-        <h2 className="fav-section">Избранное</h2>
+        <div className="fav-section-row">
+          <h2 className="fav-section">Избранное</h2>
+          <span className="fav-count">{draft.length} из {LIMIT}</span>
+        </div>
         <div className="fav-list">
           {favorites.map((s, i) => {
             const dragging = dragIndex === i;
@@ -106,15 +131,20 @@ export default function Favorites() {
             );
           })}
           {favorites.length === 0 && (
-            <p className="fav-empty">Список избранного пуст — добавьте сервисы ниже.</p>
+            <p className="fav-empty">Выберите необходимые сервисы из списка ниже</p>
           )}
         </div>
 
         <h2 className="fav-section">Все сервисы</h2>
         <div className="fav-list">
           {rest.map((s) => (
-            <div className="favedit-row" key={s.id}>
-              <button className="fav-add" onClick={() => add(s.id)} aria-label={`Добавить «${s.name}» в избранное`}>
+            <div className={`favedit-row ${full ? 'muted' : ''}`} key={s.id}>
+              <button
+                className="fav-add"
+                onClick={() => add(s.id)}
+                disabled={full}
+                aria-label={`Добавить «${s.name}» в избранное`}
+              >
                 <PlusCircle size={20} weight="fill" />
               </button>
               <img className="fav-ico" src={s.img} alt="" />
@@ -125,7 +155,7 @@ export default function Favorites() {
       </div>
 
       <div className="fav-save-wrap">
-        <button className="fav-save" onClick={() => navigate(-1)}>Сохранить</button>
+        <button className="fav-save" onClick={save} disabled={!canSave}>Сохранить</button>
       </div>
     </div>
   );

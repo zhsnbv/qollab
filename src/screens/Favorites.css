@@ -83,7 +83,14 @@
 }
 .favedit-row.dragging .fav-handle { cursor: grabbing; color: var(--color-primary); }
 
-.fav-empty { padding: var(--space-6) var(--space-4); text-align: center; color: var(--color-weak); font-size: 14px; }
+/* Пустое избранное — плашка-плейсхолдер на месте будущего списка */
+.fav-empty {
+  margin: var(--space-2) var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  background: var(--color-background);
+  text-align: center; color: var(--color-weak); font-size: 14px;
+}
 
 .fav-save-wrap {
   flex-shrink: 0;
@@ -102,3 +109,24 @@
 @media (prefers-reduced-motion: reduce) {
   .favscreen { animation: none; }
 }
+
+/* Подсказка про обязательные 7 сервисов (Figma 24860-3477) */
+.fav-hint {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: #e6f4ff; color: #1677ff;
+  font-size: 13px; line-height: 18px;
+}
+/* Счётчик стоит в одной строке с заголовком, поэтому боковые поля переносим
+   на обёртку — иначе «7 из 7» упирается в край и обрезается. */
+.fav-section-row {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  padding-right: var(--space-4);
+}
+.fav-section-row .fav-section { padding-right: 0; }
+.fav-count { font-size: 13px; color: var(--color-weak); flex-shrink: 0; }
+/* Набор полон — «плюсы» в каталоге гаснут, чтобы не выглядеть рабочими */
+.favedit-row.muted { opacity: 0.45; }
+.fav-add:disabled { cursor: default; }
+.fav-save:disabled { background: var(--color-border); color: var(--color-weak); }

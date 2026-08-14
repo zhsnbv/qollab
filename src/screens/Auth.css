@@ -171,12 +171,17 @@
 .auth-dialog-phone { font-size: 16px; font-weight: 600; margin: var(--space-3) 0; color: var(--color-text); }
 .auth-dialog-actions { display: flex; border-top: 1px solid var(--color-border); }
 .auth-dialog-actions.col { flex-direction: column; }
+/* min-height, а не height: при крупном системном шрифте (iOS «Увеличенный
+   текст») длинная подпись переставала помещаться в 44px и кнопки слипались.
+   Разделители — inset-тенью: она рисуется поверх фона и не пропадает при
+   схлопывании границ соседних кнопок. */
 .auth-dialog-btn {
-  flex: 1; height: 44px; font-size: 15px; color: var(--color-primary);
+  flex: 1; min-height: 44px; padding: var(--space-3) var(--space-4);
+  font-size: 15px; line-height: 1.25; color: var(--color-primary);
   -webkit-tap-highlight-color: transparent;
 }
-.auth-dialog-actions:not(.col) .auth-dialog-btn + .auth-dialog-btn { border-left: 1px solid var(--color-border); }
-.auth-dialog-actions.col .auth-dialog-btn + .auth-dialog-btn { border-top: 1px solid var(--color-border); }
+.auth-dialog-actions:not(.col) .auth-dialog-btn + .auth-dialog-btn { box-shadow: inset 1px 0 0 var(--color-border); }
+.auth-dialog-actions.col .auth-dialog-btn + .auth-dialog-btn { box-shadow: inset 0 1px 0 var(--color-border); }
 .auth-dialog-btn:active { background: var(--color-background); }
 
 /* Форма гостя */

@@ -6,7 +6,7 @@ import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
 import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { basePosts, events } from '../data/feed';
-import { homeServices, allServicesTile } from '../data/services';
+import { allServicesTile } from '../data/services';
 import { banners } from '../data/banners';
 import { useFavorites } from '../context/FavoritesContext';
 import { unreadTotal } from '../data/notifications';
@@ -57,7 +57,9 @@ export default function Home() {
 
   // Оверлеи (шит сервисов/поиск/баннер/избранное) открываются поверх Главной
   // через background-трюк — она остаётся смонтированной под ними.
-  const openServices = () => navigate('/services/sheet', { state: { background: location } });
+  // Боттом-шит каталога пока не используем: «Все сервисы» ведёт во вкладку
+  // (вернуть шит — navigate('/services/sheet', { state: { background: location } })).
+  const openServices = () => navigate('/services');
   const openSearch = () => navigate('/search', { state: { background: location } });
   const openFavorites = () => navigate('/favorites', { state: { background: location } });
   const openBanner = (id) => navigate('/banner', { state: { id, background: location } });
@@ -108,12 +110,18 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Сервисы + избранное */}
+        {/* Мои сервисы: сетка из избранного пользователя + плитка «Все сервисы».
+            Раньше здесь было два блока — общий каталог и отдельное «Избранное»;
+            они занимали пол-экрана и дублировали друг друга, а «Все» вело туда
+            же, куда и вкладка. Теперь сетку набирает сам пользователь. */}
         <section className="card">
           <div className="block">
-            <h3 className="section-title">Сервисы</h3>
+            <div className="row-between">
+              <h3 className="section-title" style={{ margin: 0 }}>Мои сервисы</h3>
+              <button className="section-link" onClick={openFavorites}>Настроить</button>
+            </div>
             <div className="services-grid">
-              {homeServices.map((s) => (
+              {favorites.map((s) => (
                 <button className="service-item" key={s.id} onClick={() => s.app && openApp(s.app)}>
                   <img className="service-icon" src={s.img} alt="" />
                   <span className={s.wrap ? 'service-name service-name--wrap' : 'service-name'}>{s.name}</span>
@@ -123,29 +131,6 @@ export default function Home() {
                 <img className="service-icon" src={allServicesTile} alt="" />
                 <span className="service-name">Все сервисы</span>
               </button>
-            </div>
-          </div>
-          <div className="block">
-            <div className="row-between">
-              <h3 className="section-title" style={{ margin: 0 }}>Избранное</h3>
-              <button className="fav-gear" aria-label="Настроить" onClick={openFavorites}>
-                <img src="/img/profile/settings.svg" alt="" width="24" height="24" />
-              </button>
-            </div>
-            <div className="fav-row no-scrollbar edge-scroll">
-              {favorites.map((s) => (
-                <button
-                  className="fav-card"
-                  key={s.id}
-                  onClick={() => s.app && openApp(s.app)}
-                >
-                  <span className="fav-value">{s.name}</span>
-                  <img className="fav-card-ico" src={s.img} alt="" />
-                </button>
-              ))}
-              {favorites.length === 0 && (
-                <button className="fav-card fav-card--empty" onClick={openFavorites}>Добавить избранное</button>
-              )}
             </div>
           </div>
         </section>
