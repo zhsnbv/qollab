@@ -31,11 +31,16 @@
   width: 189.272%; aspect-ratio: 760.873 / 683.765;
   display: block; overflow: hidden;
 }
-/* Внутри группы картинка чуть шире и выше рамки, низ срезан (h 106.22%) */
-.profile-decor-wave img {
-  position: absolute; left: -0.02%; top: 0;
-  width: 100.05%; height: 106.22%; max-width: none; display: block;
+/* Картинка занимает группу целиком: её пропорции (2048×1840) совпадают с
+   рамкой декора, поэтому подгонять по высоте, как прежний экспорт, не нужно. */
+.profile-decor-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; max-width: none; display: block;
 }
+/* Тему выбираем показом нужного слоя: обе картинки уже в разметке */
+.profile-decor-img--dark { display: none; }
+html[data-theme="dark"] .profile-decor-img--light { display: none; }
+html[data-theme="dark"] .profile-decor-img--dark { display: block; }
 .profile-head {
   background: var(--color-white);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);

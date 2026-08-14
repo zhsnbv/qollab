@@ -66,10 +66,16 @@ export default function Profile() {
       <FadeIn><div className="profile">
         {/* Шапка: оранжевая волна за аватаром, имя, должность и статус */}
         <section className="profile-hero">
-          {/* Только картинка волны. Вектор-гребень из макета убран: он залит
-              белым и на тёмной теме читался белым пятном поверх шапки. */}
+          {/* Волна — готовая картинка целиком, отдельно под каждую тему
+              (в тёмной она насыщеннее). Вектор-гребень из макета убран: он
+              залит белым и на тёмном фоне читался белым пятном. Обе версии в
+              разметке, нужную показывает CSS — так переключение темы не ждёт
+              загрузки картинки. */}
           <div className="profile-decor" aria-hidden="true">
-            <span className="profile-decor-wave"><img src="/img/profile/wave.png" alt="" /></span>
+            <span className="profile-decor-wave">
+              <img className="profile-decor-img profile-decor-img--light" src="/img/profile/wave-light.png" alt="" />
+              <img className="profile-decor-img profile-decor-img--dark" src="/img/profile/wave-dark.png" alt="" />
+            </span>
           </div>
           <div className="profile-head">
             <button className="profile-avatar-wrap" onClick={() => open('/profile/photo')} aria-label="Фото профиля">
