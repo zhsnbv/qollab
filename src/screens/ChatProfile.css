@@ -1,0 +1,143 @@
+/* Профиль из чата (Figma 25110-107882) — человек и группа на одном экране.
+   Поверх чата, включая плавающий таб-бар (z-index 50). */
+.chatprofile {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  animation: cp-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.chatprofile.closing { animation: cp-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes cp-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes cp-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.cp-top {
+  flex-shrink: 0;
+  background: var(--color-white);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.cp-back {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-pill);
+  background: var(--color-background); color: var(--color-weak);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.cp-back:active { opacity: 0.5; }
+/* Пустой правый дублёр держит заголовок ровно по центру — фон ему не нужен */
+.cp-top > .cp-back:last-child { background: none; }
+.cp-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+
+.cp-scroll {
+  flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.cp-scroll::-webkit-scrollbar { display: none; }
+.cp-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+
+.cp-card { background: var(--color-white); padding: var(--space-5); }
+
+/* Шапка профиля: аватар 100, имя, статус и ряд круглых действий */
+.cp-hero { display: flex; flex-direction: column; align-items: center; }
+.cp-ava {
+  border-radius: 50%; overflow: hidden; flex-shrink: 0; display: block;
+  background: var(--img-placeholder);
+}
+.cp-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cp-ava--initials {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+}
+.cp-ava--initials.tint-green { background: #d9f7be; color: #52c41a; }
+.cp-ava--initials.tint-blue { background: #e6f4ff; color: #1677ff; }
+.cp-ava--initials.tint-orange { background: var(--color-primary-bg); color: var(--color-primary); }
+.cp-name {
+  margin-top: var(--space-4);
+  font-size: 20px; font-weight: 600; color: var(--color-text); text-align: center;
+}
+.cp-status { margin-top: var(--space-2); font-size: 14px; color: var(--color-weak); text-align: center; }
+
+.cp-actions { display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-5); width: 100%; }
+.cp-action {
+  flex: 1; max-width: 74px;
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.cp-action:active { opacity: 0.6; }
+.cp-action-ico {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--color-primary-bg); color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.cp-action-label { font-size: 12px; color: var(--color-text); }
+
+/* Поля «Должность» / «Мобильный телефон» / «Описание» */
+.cp-field { border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-3); margin-bottom: var(--space-3); }
+.cp-field--last, .cp-field:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.cp-field-label { font-size: 13px; color: var(--color-weak); margin-bottom: var(--space-1); }
+.cp-field-value { font-size: 15px; color: var(--color-text); }
+.cp-field-value--link { color: var(--color-primary); }
+/* Ссылка-приглашение в описании группы длинная — переносим по символам */
+.cp-field-value--wrap { word-break: break-all; line-height: 1.4; }
+
+/* Пилюли Группы / Медиа / Файлы / Ссылки */
+.cp-tabs { display: flex; gap: var(--space-2); overflow-x: auto; margin-bottom: var(--space-4); }
+.cp-tab {
+  flex: 0 0 auto; padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill); background: var(--color-background);
+  font-size: 14px; font-weight: 500; color: var(--color-text); white-space: nowrap;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.cp-tab:active { opacity: 0.65; }
+.cp-tab.active { background: var(--color-primary); color: #fff; }
+
+/* Строки списков (группы, участники, файлы, ссылки) */
+.cp-rows { display: flex; flex-direction: column; }
+.cp-row {
+  display: flex; align-items: center; gap: var(--space-4);
+  width: 100%; padding: var(--space-2) 0; text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  -webkit-tap-highlight-color: transparent;
+}
+.cp-row:last-child { border-bottom: none; }
+button.cp-row { transition: opacity 0.12s; }
+button.cp-row:active { opacity: 0.6; }
+.cp-row-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cp-row-title {
+  font-size: 15px; color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cp-row-title--link { color: var(--color-primary); }
+.cp-row-sub { font-size: 13px; color: var(--color-weak); }
+.cp-file-ico {
+  width: 36px; height: 36px; border-radius: var(--radius-sm); flex-shrink: 0;
+  background: var(--color-primary-bg); color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Медиа — сетка 3 в ряд, как в макете (ячейка 132.67×124, зазор 2) */
+.cp-media { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.cp-media-cell {
+  position: relative; aspect-ratio: 133 / 124; overflow: hidden;
+  background: var(--img-placeholder);
+}
+.cp-media-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cp-media-play {
+  position: absolute; inset: 0; margin: auto;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.cp-media-time {
+  position: absolute; right: 6px; bottom: 6px;
+  background: rgba(0, 0, 0, 0.5); color: #fff;
+  font-size: 12px; line-height: 20px; padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chatprofile, .chatprofile.closing { animation: none; }
+}

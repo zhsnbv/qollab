@@ -18,7 +18,7 @@ const baseChats = [
   { kind: 'system', icon: BookmarkSimple, title: 'Избранное', preview: 'Мои задачи на неделю:', time: '12:02' },
   { kind: 'bot', avatar: '/img/chats/ergiz-avatar.png', title: 'ERGiz – Искусственный интеллект', preview: 'Привет! хочу задать вам пару коротких вопросов', time: '13:44' },
   { avatar: '/img/chats/bts-pr.png', title: 'PR01DEV + ROBOTS', to: '/chats/prodev', sender: 'Арман А.:', preview: 'не узнал', time: '11:34', muted: true },
-  { avatar: '/img/chats/ayazhan.png', title: 'Аяжан Сериккызы', preview: 'Салем, там задача', time: '13:21', online: true, unreadCount: 2 },
+  { profileId: 'ayazhan', avatar: '/img/chats/ayazhan.png', title: 'Аяжан Сериккызы', preview: 'Салем, там задача', time: '13:21', online: true, unreadCount: 2 },
   { avatar: '/img/chats/daniyar.png', title: 'Данияр Кенжебаев', preview: 'Вот зал куда мы ходим', time: '10:51', online: true, contentIcon: VideoCamera, attachKind: 'video' },
   { avatar: '/img/chats/qollab-group.png', title: 'Групповой чат qollab', kind: 'group', sender: 'Айдар С.:', preview: 'Вот скрин приложения с о', time: '10:01', muted: true, contentIcon: Camera, attachKind: 'photo' },
   { avatar: '/img/chats/aray.png', title: 'Арай Абишева', preview: 'Подпиши этот договор', time: '09:01', contentIcon: FileText, attachKind: 'document' },

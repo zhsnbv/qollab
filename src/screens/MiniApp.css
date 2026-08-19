@@ -7,11 +7,14 @@
   background: var(--page-bg);
   display: flex;
   flex-direction: column;
-  animation: ma-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  overflow: hidden;
+  animation: ma-in 0.32s cubic-bezier(0.32, 0.72, 0, 1);
 }
-.miniapp.closing { animation: ma-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
-@keyframes ma-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
-@keyframes ma-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+.miniapp.closing { animation: ma-out 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+/* Выезжает снизу — мини-апп открывается поверх экрана листом, а не пушем */
+@keyframes ma-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes ma-out { from { transform: translateY(0); } to { transform: translateY(100%); } }
 
 /* Шапка по шаблону: назад 40×40, заголовок 18 semibold по центру,
    «…» в серой пилюле 40×40 справа. */
@@ -23,18 +26,24 @@
   padding-top: max(var(--space-3), env(safe-area-inset-top));
 }
 .ma-back {
-  width: 40px; height: 40px; flex-shrink: 0;
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-pill);
+  background: var(--color-background); color: var(--color-weak);
   display: flex; align-items: center; justify-content: center;
-  color: var(--color-text);
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .ma-back:active { opacity: 0.5; }
-.ma-title {
+/* Имя приложения и подпись «Мини-приложение» — по центру шапки */
+.ma-titles {
   flex: 1; min-width: 0;
-  font-size: 18px; font-weight: 600; color: var(--color-text);
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.ma-title {
+  max-width: 100%;
+  font-size: 16px; font-weight: 600; color: var(--color-text);
   text-align: center;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.ma-subtitle { font-size: 12px; color: var(--color-weak); }
 .ma-menu {
   width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-pill);
   background: var(--color-background);
@@ -134,3 +143,34 @@
   .miniapp, .miniapp.closing, .ma-scroll { animation: none; }
   .ma-switch, .ma-switch::after { transition: none; }
 }
+
+/* ── Скелетон тела: общий для всех мини-аппов ────────────────────────────── */
+.ma-sk { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); }
+.ma-sk .sk, .ma-sk-tiles span, .ma-sk-cards span {
+  display: block; border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--sk-a) 25%, var(--sk-b) 37%, var(--sk-a) 63%);
+  background-size: 400% 100%;
+  animation: ma-sk-shine 1.4s ease-in-out infinite;
+}
+@keyframes ma-sk-shine { from { background-position: 100% 50%; } to { background-position: 0 50%; } }
+.ma-sk-search { height: 44px; border-radius: var(--radius-pill) !important; }
+.ma-sk-banner { height: 132px; }
+.ma-sk-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+.ma-sk-tiles span { height: 120px; }
+.ma-sk-title { height: 22px; width: 60%; }
+.ma-sk-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.ma-sk-cards span { height: 180px; }
+
+/* ── Заглушка для аппов без своих экранов ────────────────────────────────── */
+.ma-stub {
+  padding: var(--space-8) var(--space-5);
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3);
+}
+.ma-stub-ico {
+  width: 72px; height: 72px; border-radius: var(--radius-xl);
+  background: var(--color-primary-bg); color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-2);
+}
+.ma-stub-title { font-size: 18px; font-weight: 600; color: var(--color-text); }
+.ma-stub-text { font-size: 14px; line-height: 1.5; color: var(--color-weak); max-width: 300px; }

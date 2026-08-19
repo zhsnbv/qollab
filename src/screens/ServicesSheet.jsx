@@ -43,7 +43,7 @@ export default function ServicesSheet() {
               <h3 className="svcsheet-section-title">{cat.title}</h3>
               <div className={view === 'list' ? 'svcsheet-list' : 'svcsheet-grid'}>
                 {cat.items.map((item) => (
-                  <button className="svcsheet-item" key={item.id} onClick={() => item.app && openApp(item.app)}>
+                  <button className="svcsheet-item" key={item.id} onClick={() => openApp(item.app || item.id)}>
                     <img className="svcsheet-icon" src={item.img} alt="" />
                     <span className="svcsheet-texts">
                       <span className="svcsheet-name">{item.name}</span>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
-  CaretLeft, CaretRight,
+  CaretLeft, CaretRight, X, SquaresFour,
   UserFocus, Files, Headset, Camera, GearSix, ForkKnife, Receipt,
   ClipboardText, LockKeyOpen, NotePencil, ArrowsClockwise, UsersThree,
   BookOpenText, VideoCamera, Signature, PaperPlaneTilt, Tray, FolderOpen,
@@ -10,6 +10,8 @@ import {
 } from '@phosphor-icons/react';
 import { DotsIcon } from '../components/TopBar';
 import { miniApps } from '../data/miniapps';
+import { servicesById } from '../context/FavoritesContext';
+import { useSkeleton } from '../components/Skeleton';
 import './MiniApp.css';
 
 // Иконки строк держим словарём: в данных лежит только имя, чтобы дерево
@@ -64,6 +66,40 @@ function Row({ item, onOpen }) {
   );
 }
 
+// Пока «мини-апп грузится» — общий скелетон тела: он один на все аппы,
+// поэтому не завязан на конкретный экран.
+function MiniAppSkeleton() {
+  return (
+    <div className="ma-sk">
+      <div className="ma-sk-search sk" />
+      <div className="ma-sk-banner sk" />
+      <div className="ma-sk-tiles">
+        <span className="sk" /><span className="sk" /><span className="sk" />
+      </div>
+      <div className="ma-sk-title sk" />
+      <div className="ma-sk-cards">
+        <span className="sk" /><span className="sk" />
+      </div>
+    </div>
+  );
+}
+
+// Экраны есть пока только у «Моих задач». Для остальных сервисов показываем
+// заглушку — так вся сетка сервисов кликается и прототип не упирается в
+// «ничего не происходит».
+function MiniAppStub({ name }) {
+  return (
+    <div className="ma-stub">
+      <span className="ma-stub-ico"><SquaresFour size={32} weight="fill" /></span>
+      <h2 className="ma-stub-title">{name}</h2>
+      <p className="ma-stub-text">
+        Мини-приложение откроется здесь. Раздел ещё готовится — в прототипе
+        показываем только вход в него.
+      </p>
+    </div>
+  );
+}
+
 // Экран мини-аппа с многоуровневой навигацией (Figma node 24014-12302).
 // Уровень зашит в URL (/app/mytasks/it/closed), поэтому системное «назад»
 // и свайп работают сами: каждый переход вглубь — обычный push в историю.
@@ -73,6 +109,12 @@ export default function MiniApp() {
   const params = useParams();
   const path = (params['*'] || '').split('/').filter(Boolean);
   const screen = resolve(path);
+  const loading = useSkeleton(600);
+  // Имя в шапке: у аппов со своим деревом — заголовок экрана, у остальных
+  // берём название сервиса из каталога.
+  const appId = path[0];
+  const service = servicesById[appId];
+  const appName = miniApps[appId]?.title || service?.name || 'Мини-приложение';
 
   const [closing, setClosing] = useState(false);
   // Избранное держим по ключу экрана, а не одним флагом: компонент при
@@ -101,35 +143,37 @@ export default function MiniApp() {
   const back = () => (depth > 1 ? navigate(-1) : closeApp());
   const open = (id) => navigate(`/app/${[...path, id].join('/')}`, { state: location.state });
 
-  if (!screen) {
-    return (
-      <div className="miniapp">
-        <header className="ma-top">
-          <button className="ma-back" onClick={closeApp} aria-label="Назад"><CaretLeft size={24} /></button>
-          <h1 className="ma-title">Не найдено</h1>
-          <span className="ma-menu-space" />
-        </header>
-        <div className="ma-scroll"><p className="ma-empty">Такого раздела нет.</p></div>
-      </div>
-    );
-  }
+
+  // Шапка по макету (25099-85021): слева крестик — закрыть мини-апп целиком,
+  // на вложенных уровнях он превращается в «назад»; по центру имя приложения
+  // с подписью, справа «…».
+  const nested = depth > 1;
+  const title = nested ? screen?.title || appName : appName;
 
   return (
     <div className={`miniapp ${closing ? 'closing' : ''}`}>
       <header className="ma-top">
-        <button className="ma-back" onClick={back} aria-label="Назад"><CaretLeft size={24} /></button>
-        <h1 className="ma-title">{screen.title}</h1>
+        <button className="ma-back" onClick={back} aria-label={nested ? 'Назад' : 'Закрыть'}>
+          {nested ? <CaretLeft size={24} /> : <X size={22} />}
+        </button>
+        <span className="ma-titles">
+          <span className="ma-title">{title}</span>
+          {!nested && <span className="ma-subtitle">Мини-приложение</span>}
+        </span>
         <button className="ma-menu" aria-label="Меню"><DotsIcon /></button>
       </header>
 
       <div className="ma-scroll" key={path.join('/')} data-dir={dir}>
-        {screen.type === 'list' && (
+        {loading && <MiniAppSkeleton />}
+        {!loading && !screen && <MiniAppStub name={appName} />}
+
+        {!loading && screen?.type === 'list' && (
           <div className="ma-list">
             {screen.items.map((item) => <Row key={item.id} item={item} onOpen={open} />)}
           </div>
         )}
 
-        {screen.type === 'records' && (
+        {!loading && screen?.type === 'records' && (
           <div className="ma-list">
             {screen.records.map((r, i) => (
               <button className="ma-row" key={i}>
@@ -146,10 +190,10 @@ export default function MiniApp() {
         {/* Запас снизу нужен только когда под скроллом ничего нет: панель
             «Добавить в избранное» сама отодвинута от таб-бара, и второй такой
             же отступ просто не давал долистать последний блок. */}
-        <div className={`ma-bottom-spacer ${screen.favorite ? 'compact' : ''}`} />
+        <div className={`ma-bottom-spacer ${screen?.favorite ? 'compact' : ''}`} />
       </div>
 
-      {screen.favorite && (
+      {!loading && screen?.favorite && (
         <label className="ma-fav">
           <span>Добавить в избранное</span>
           <input

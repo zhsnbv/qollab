@@ -19,11 +19,12 @@
   padding-top: max(var(--space-3), env(safe-area-inset-top));
 }
 .pv-side, .pv-close {
-  width: 24px; height: 40px; flex-shrink: 0;
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-pill);
   display: flex; align-items: center; justify-content: center;
   color: var(--color-weak);
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
+.pv-close { background: var(--color-background); }
 .pv-close:active { opacity: 0.5; }
 .pv-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
 

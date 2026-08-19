@@ -82,7 +82,7 @@ export default function Services() {
             <h2 className="svc-section-title">{cat.title}</h2>
             <div className={view === 'list' ? 'svc-list' : 'svc-grid'}>
               {cat.items.map((item) => (
-                <button className="svc-item" key={item.id} onClick={() => item.app && openApp(item.app)}>
+                <button className="svc-item" key={item.id} onClick={() => openApp(item.app || item.id)}>
                   <img className="svc-icon" src={item.img} alt="" />
                   <span className="svc-texts">
                     <span className="svc-name">{item.name}</span>

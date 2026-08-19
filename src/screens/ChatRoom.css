@@ -36,9 +36,10 @@ html.kb .cr-body { padding-bottom: 56px; }
   background: var(--color-white);
 }
 .cr-back {
-  width: 24px; height: 40px; display: flex; align-items: center; justify-content: center;
-  color: var(--color-text); flex-shrink: 0;
+  width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+  color: var(--color-weak); flex-shrink: 0;
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+  border-radius: var(--radius-pill); background: var(--color-background);
 }
 .cr-back:active { opacity: 0.5; }
 .cr-avatar {
@@ -300,3 +301,16 @@ html.kb .cr-body { padding-bottom: 56px; }
   font-family: inherit; font-size: 16px; color: var(--color-text); letter-spacing: -0.32px;
 }
 .cr-input input::placeholder { color: var(--color-weak); }
+
+/* Шапка-кнопка: ведёт в профиль собеседника или группы */
+.cr-headline {
+  flex: 1; min-width: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  text-align: left; padding: 0;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.cr-headline:active { opacity: 0.6; }
+.cr-headline .cr-title-wrap { display: flex; flex-direction: column; }
+/* Аватарка участника в группе — кнопка, но выглядит как обычный кружок */
+.msg-avatar--btn { padding: 0; border: none; cursor: pointer; }
+.msg-avatar--btn:active { opacity: 0.6; }

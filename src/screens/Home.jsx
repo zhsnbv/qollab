@@ -122,7 +122,7 @@ export default function Home() {
             </div>
             <div className="services-grid">
               {favorites.map((s) => (
-                <button className="service-item" key={s.id} onClick={() => s.app && openApp(s.app)}>
+                <button className="service-item" key={s.id} onClick={() => openApp(s.app || s.id)}>
                   <img className="service-icon" src={s.img} alt="" />
                   <span className={s.wrap ? 'service-name service-name--wrap' : 'service-name'}>{s.name}</span>
                 </button>

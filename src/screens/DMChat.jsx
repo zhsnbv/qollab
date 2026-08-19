@@ -122,6 +122,12 @@ export default function DMChat() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const chat = state?.chat;
+  const location = useLocation();
+  // Профиль собеседника: у демо-чатов свой id, для остальных показываем
+  // карточку по умолчанию — экран один и тот же.
+  const openProfile = () => navigate('/chat-profile', {
+    state: { id: chat?.profileId || 'ayazhan', kind: 'user', background: state?.background },
+  });
   const [closing, setClosing] = useState(false);
   const [phase, setPhase] = useState('connecting'); // connecting | empty | chat
   const [messages, setMessages] = useState(() => (chat && !isEmptyChat(chat) ? buildHistory(chat) : []));
@@ -203,11 +209,14 @@ export default function DMChat() {
     <div className={`chatroom ${closing ? 'closing' : ''}`}>
       <header className="cr-header">
         <button className="cr-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
-        <span className={`cr-avatar ${chat.kind === 'bot' ? 'cr-avatar--bot' : ''}`}><ChatAvatarImg chat={chat} size={40} /></span>
-        <div className="cr-title-wrap">
-          <div className="cr-title">{chat.title}</div>
-          <div className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</div>
-        </div>
+        {/* Шапка личного чата ведёт в профиль собеседника */}
+        <button className="cr-headline" onClick={openProfile} aria-label="Профиль собеседника">
+          <span className={`cr-avatar ${chat.kind === 'bot' ? 'cr-avatar--bot' : ''}`}><ChatAvatarImg chat={chat} size={40} /></span>
+          <span className="cr-title-wrap">
+            <span className="cr-title">{chat.title}</span>
+            <span className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</span>
+          </span>
+        </button>
         {!chat.kind && (
           <button className="cr-walkie" aria-label="Позвонить"><Phone size={20} color="var(--color-text)" /></button>
         )}

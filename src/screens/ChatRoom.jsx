@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Plus, Microphone, PaperPlaneRight } from '@phosphor-icons/react';
 import { dayLabel } from '../utils/chatDate';
 import { useKeyboardInset } from '../utils/useKeyboardInset';
@@ -11,10 +11,10 @@ import './ChatRoom.css';
 // avatar — фото; initials — цветной кружок с инициалами (как в макете).
 // color — цвет имени автора внутри бабла и полосы цитаты, когда его
 // цитируют (закреплён за собеседником, как в дизайне).
-const dinara = { short: 'Динара Т.', avatar: '/img/chats/ayazhan.png', color: '#eb2f96' };
-const nurlan = { short: 'Нурлан Б.', initials: 'НБ', tint: 'green', color: '#52c41a' };
-const arman = { short: 'Арман А.', initials: 'АА', tint: 'blue', color: '#1677ff' };
-const madina = { short: 'Мадина К.', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', color: '#f5222d' };
+const dinara = { profileId: 'dinara', short: 'Динара Т.', avatar: '/img/chats/ayazhan.png', color: '#eb2f96' };
+const nurlan = { profileId: 'nurlan', short: 'Нурлан Б.', initials: 'НБ', tint: 'green', color: '#52c41a' };
+const arman = { profileId: 'arman', short: 'Арман А.', initials: 'АА', tint: 'blue', color: '#1677ff' };
+const madina = { profileId: 'madina', short: 'Мадина К.', avatar: 'https://randomuser.me/api/portraits/women/44.jpg', color: '#f5222d' };
 const participants = [dinara, nurlan, arman, madina];
 
 // История переписки — проигрывается один раз сразу после скелетона (группа
@@ -48,15 +48,27 @@ let uid = 0;
 const now = () => new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-function AuthorAvatar({ author }) {
-  if (author.avatar) {
-    return <span className="msg-avatar"><img src={author.avatar} alt="" loading="lazy" /></span>;
-  }
-  return <span className={`msg-avatar msg-avatar--initials tint-${author.tint}`}>{author.initials}</span>;
+function AuthorAvatar({ author, onOpen }) {
+  const inner = author.avatar
+    ? <img src={author.avatar} alt="" loading="lazy" />
+    : author.initials;
+  const cls = author.avatar ? 'msg-avatar' : `msg-avatar msg-avatar--initials tint-${author.tint}`;
+  // Тап по аватарке в группе открывает профиль участника
+  if (!onOpen || !author.profileId) return <span className={cls}>{inner}</span>;
+  return (
+    <button className={`${cls} msg-avatar--btn`} onClick={() => onOpen(author.profileId)} aria-label={`Профиль: ${author.short}`}>
+      {inner}
+    </button>
+  );
 }
 
 export default function ChatRoom() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Профили открываем поверх чата: он остаётся под ними смонтированным
+  const openProfile = (id, kind) => navigate('/chat-profile', {
+    state: { id, kind, background: location.state?.background },
+  });
   const [closing, setClosing] = useState(false);
   const [phase, setPhase] = useState('connecting'); // connecting | chat
   const [messages, setMessages] = useState([]);
@@ -151,11 +163,13 @@ export default function ChatRoom() {
     <div className={`chatroom ${closing ? 'closing' : ''}`}>
       <header className="cr-header">
         <button className="cr-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
-        <span className="cr-avatar"><img src="/img/chats/bts-pr.png" alt="" /></span>
-        <div className="cr-title-wrap">
-          <div className="cr-title">PR01DEV + ROBOTS</div>
-          <div className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</div>
-        </div>
+        <button className="cr-headline" onClick={() => openProfile('prodev', 'group')} aria-label="Профиль группы">
+          <span className="cr-avatar"><img src="/img/chats/bts-pr.png" alt="" /></span>
+          <span className="cr-title-wrap">
+            <span className="cr-title">PR01DEV + ROBOTS</span>
+            <span className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</span>
+          </span>
+        </button>
         <button className="cr-walkie" aria-label="Рация"><img src="/img/chats/walkie.svg" alt="" width="20" height="20" /></button>
       </header>
 
@@ -171,7 +185,7 @@ export default function ChatRoom() {
                 firstOfGroup={msg.firstOfGroup}
                 lastOfGroup={msg.lastOfGroup}
                 mine={!!msg.mine}
-                avatar={!msg.mine ? <AuthorAvatar author={msg.author} /> : null}
+                avatar={!msg.mine ? <AuthorAvatar author={msg.author} onOpen={(id) => openProfile(id, 'user')} /> : null}
                 authorLabel={!msg.mine ? msg.author?.short : null}
                 authorColor={!msg.mine ? msg.author?.color : null}
               />
