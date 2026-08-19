@@ -27,7 +27,7 @@ export default function Settings() {
       <header className="st-top">
         <button className="st-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="st-title">Настройки</h1>
-        <span className="st-back" aria-hidden="true" />
+        <span className="st-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="st-scroll">

@@ -190,7 +190,7 @@ export default function Search() {
       <header className="se-top">
         <button className="se-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="se-title">Поиск</h1>
-        <span className="se-back" aria-hidden="true" />
+        <span className="se-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="se-input-wrap">

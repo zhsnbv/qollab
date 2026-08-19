@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MagnifyingGlass, X, SmileySad, Star } from '@phosphor-icons/react';
+import { MagnifyingGlass, X, SmileySad, GearSix } from '@phosphor-icons/react';
 import TabLayout from '../components/TabLayout';
 import TopBar from '../components/TopBar';
 import ViewToggle from '../components/ViewToggle';
@@ -36,10 +36,10 @@ export default function Services() {
       title="Сервисы"
       actions={
         <>
-          {/* Звезда ведёт в настройку избранного — тот же экран, что по
-              шестерёнке на Главной (Figma node 24737-3477) */}
+          {/* Шестерёнка ведёт в настройку избранного — тот же экран, что и
+              «Настроить» на Главной (Figma node 24860-3477) */}
           <button className="topbar-btn topbar-btn--muted" aria-label="Настроить избранное" onClick={() => navigate('/favorites')}>
-            <Star size={20} weight="fill" />
+            <GearSix size={20} weight="fill" />
           </button>
           <ViewToggle view={view} onChange={setView} />
         </>

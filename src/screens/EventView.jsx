@@ -35,7 +35,7 @@ export default function EventView() {
       <header className="ev-top">
         <button className="ev-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="ev-title">Мероприятие</h1>
-        <span className="ev-back" aria-hidden="true" />
+        <span className="ev-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="ev-scroll">

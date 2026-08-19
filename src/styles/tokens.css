@@ -92,6 +92,9 @@ body {
 /* Поля ввода/textarea оставляем выделяемыми (когда появятся) */
 input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
 
+/* Распорка справа в шапке: занимает место кнопки, но сама невидима */
+.hdr-spacer { background: none !important; pointer-events: none; }
+
 /* Скрытие скроллбаров у горизонтальных лент */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
@@ -252,3 +255,5 @@ html[data-theme="dark"] .cr-empty-circle--main { box-shadow: 0 8px 4px rgba(0, 0
 /* Плитка «Все сервисы» — готовая светло-серая картинка из макета: на тёмном
    фоне светится белым пятном. Инвертируем её в тёмный, оставляя рисунок. */
 html[data-theme="dark"] .service-icon[src$="/all.png"] { filter: invert(0.88) hue-rotate(180deg); }
+/* Та же история у плашки «Все каналы» в Ленте — глиф тёмный на тёмном */
+html[data-theme="dark"] .channel-avatar--all img { filter: invert(0.85) hue-rotate(180deg); }

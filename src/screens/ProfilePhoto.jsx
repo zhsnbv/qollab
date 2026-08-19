@@ -24,7 +24,7 @@ export default function ProfilePhoto() {
   return (
     <div className={`photoview ${closing ? 'closing' : ''}`}>
       <header className="pv-top">
-        <span className="pv-side" aria-hidden="true" />
+        <span className="pv-side hdr-spacer" aria-hidden="true" />
         <h1 className="pv-title">Фото профиля</h1>
         <button className="pv-close" onClick={close} aria-label="Закрыть"><X size={24} /></button>
       </header>

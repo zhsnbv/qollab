@@ -50,9 +50,11 @@
   display: flex; align-items: center; justify-content: center;
 }
 .channel-avatar img { width: 100%; height: 100%; object-fit: cover; }
-/* «Все каналы» — квадратная плашка с закруглением, рамка тоже квадратная */
+/* «Все каналы» — квадратная плашка с закруглением, рамка тоже квадратная.
+   Подложка берётся из токена: PNG прозрачный, и на тёмной теме белая заливка
+   светилась бы пятном среди круглых аватарок. */
 .channel-ring--square { border-radius: var(--radius-xl); }
-.channel-avatar--all { border-radius: var(--radius-lg); }
+.channel-avatar--all { border-radius: var(--radius-lg); background: var(--color-background); }
 .channel-avatar--cu { background: var(--img-placeholder); }
 .channel-avatar--cu img { width: 43px; height: auto; object-fit: contain; }
 .channel-name {

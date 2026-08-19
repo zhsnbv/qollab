@@ -66,20 +66,15 @@ function Row({ item, onOpen }) {
   );
 }
 
-// Пока «мини-апп грузится» — общий скелетон тела: он один на все аппы,
-// поэтому не завязан на конкретный экран.
-function MiniAppSkeleton() {
+// Запуск мини-аппа: свой сплеш с иконкой сервиса, по которому тапнули,
+// и его названием — как у нативного приложения.
+function MiniAppSplash({ name, img }) {
   return (
-    <div className="ma-sk">
-      <div className="ma-sk-search sk" />
-      <div className="ma-sk-banner sk" />
-      <div className="ma-sk-tiles">
-        <span className="sk" /><span className="sk" /><span className="sk" />
-      </div>
-      <div className="ma-sk-title sk" />
-      <div className="ma-sk-cards">
-        <span className="sk" /><span className="sk" />
-      </div>
+    <div className="ma-splash">
+      {img
+        ? <img className="ma-splash-ico" src={img} alt="" />
+        : <span className="ma-splash-ico ma-splash-ico--fallback"><SquaresFour size={40} weight="fill" /></span>}
+      <span className="ma-splash-name">{name}</span>
     </div>
   );
 }
@@ -164,7 +159,7 @@ export default function MiniApp() {
       </header>
 
       <div className="ma-scroll" key={path.join('/')} data-dir={dir}>
-        {loading && <MiniAppSkeleton />}
+        {loading && <MiniAppSplash name={appName} img={service?.img} />}
         {!loading && !screen && <MiniAppStub name={appName} />}
 
         {!loading && screen?.type === 'list' && (

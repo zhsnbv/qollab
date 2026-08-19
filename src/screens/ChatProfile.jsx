@@ -1,35 +1,26 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  CaretLeft, Phone, User, BellSimple, MagnifyingGlass, DotsThree,
-  Play, FileText, LinkSimple,
-} from '@phosphor-icons/react';
+import { CaretLeft, Play, FileText, LinkSimple } from '@phosphor-icons/react';
 import { userProfiles, groupProfiles } from '../data/chatProfiles';
 import './ChatProfile.css';
 
 // Профиль из чата (Figma node 25110-107882). Один экран на два случая:
-// человек — открывается тапом по шапке личного чата и по аватарке в группе;
-// группа — тапом по шапке группового чата. Отличаются только «шапочной»
-// частью, поэтому разводим их флагом, а не двумя почти одинаковыми экранами.
-const TABS = [
-  { id: 'groups', label: 'Группы' },
-  { id: 'media', label: 'Медиа' },
-  { id: 'files', label: 'Файлы' },
-  { id: 'links', label: 'Ссылки' },
-];
-
+// человек — тап по шапке личного чата и по аватарке в группе; группа — тап по
+// шапке группового чата. Отличается только состав вкладок и пара полей,
+// поэтому разводим флагом, а не двумя почти одинаковыми экранами.
+// Иконки действий — те же SVG, что в макете (fluent, залиты #EF7F1A).
 const ACTIONS_USER = [
-  { id: 'call', label: 'Звонок', Icon: Phone },
-  { id: 'profile', label: 'Профиль', Icon: User },
-  { id: 'mute', label: 'Звук', Icon: BellSimple },
-  { id: 'search', label: 'Поиск', Icon: MagnifyingGlass },
-  { id: 'more', label: 'Ещё', Icon: DotsThree },
+  { id: 'call', label: 'Звонок', ico: 'call' },
+  { id: 'profile', label: 'Профиль', ico: 'person' },
+  { id: 'mute', label: 'Звук', ico: 'bell' },
+  { id: 'search', label: 'Поиск', ico: 'search' },
+  { id: 'more', label: 'Ещё', ico: 'more' },
 ];
 
 const ACTIONS_GROUP = [
-  { id: 'mute', label: 'Звук', Icon: BellSimple },
-  { id: 'search', label: 'Поиск', Icon: MagnifyingGlass },
-  { id: 'more', label: 'Ещё', Icon: DotsThree },
+  { id: 'mute', label: 'Звук', ico: 'bell' },
+  { id: 'search', label: 'Поиск', ico: 'search' },
+  { id: 'more', label: 'Ещё', ico: 'more' },
 ];
 
 function Avatar({ item, size }) {
@@ -52,8 +43,10 @@ export default function ChatProfile() {
   const p = (isGroup ? groupProfiles[id] : userProfiles[id]) || userProfiles.ayazhan;
 
   const [closing, setClosing] = useState(false);
-  // У группы вкладки «Группы» нет — вместо неё список участников выше
-  const tabs = isGroup ? TABS.filter((t) => t.id !== 'groups') : TABS;
+  // У группы первая вкладка — участники, у человека — его группы
+  const tabs = isGroup
+    ? [{ id: 'members', label: 'Участники' }, { id: 'media', label: 'Медиа' }, { id: 'files', label: 'Файлы' }, { id: 'links', label: 'Ссылки' }]
+    : [{ id: 'groups', label: 'Группы' }, { id: 'media', label: 'Медиа' }, { id: 'files', label: 'Файлы' }, { id: 'links', label: 'Ссылки' }];
   const [tab, setTab] = useState(tabs[0].id);
 
   const close = () => {
@@ -71,63 +64,49 @@ export default function ChatProfile() {
       <header className="cp-top">
         <button className="cp-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="cp-title">{isGroup ? 'Группа' : 'Профиль'}</h1>
-        <span className="cp-back" aria-hidden="true" />
+        <span className="cp-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="cp-scroll">
         <section className="cp-card cp-hero">
           <Avatar item={p} size={100} />
           <h2 className="cp-name">{p.name}</h2>
-          <p className="cp-status">
-            {isGroup ? `${p.membersCount} участника` : p.status}
-          </p>
+          <p className="cp-status">{isGroup ? `${p.membersCount} участника` : p.status}</p>
 
           <div className="cp-actions">
-            {(isGroup ? ACTIONS_GROUP : ACTIONS_USER).map(({ id: aid, label, Icon }) => (
+            {(isGroup ? ACTIONS_GROUP : ACTIONS_USER).map(({ id: aid, label, ico }) => (
               <button className="cp-action" key={aid}>
-                <span className="cp-action-ico"><Icon size={20} weight="fill" /></span>
+                <span className="cp-action-ico">
+                  <img src={`/img/chat-profile/${ico}.svg`} alt="" width="20" height="20" />
+                </span>
                 <span className="cp-action-label">{label}</span>
               </button>
             ))}
           </div>
         </section>
 
-        {isGroup ? (
-          <section className="cp-card">
-            <div className="cp-field">
+        <section className="cp-card">
+          {isGroup ? (
+            <div className="cp-field cp-field--last">
               <div className="cp-field-label">Описание</div>
               <div className="cp-field-value cp-field-value--wrap">{p.description}</div>
             </div>
-          </section>
-        ) : (
-          <section className="cp-card">
-            <div className="cp-field">
-              <div className="cp-field-label">Должность</div>
-              <div className="cp-field-value">{p.role}</div>
-            </div>
-            <div className="cp-field cp-field--last">
-              <div className="cp-field-label">Мобильный телефон</div>
-              <div className="cp-field-value cp-field-value--link">{p.phone}</div>
-            </div>
-          </section>
-        )}
+          ) : (
+            <>
+              <div className="cp-field">
+                <div className="cp-field-label">Должность</div>
+                <div className="cp-field-value">{p.role}</div>
+              </div>
+              <div className="cp-field cp-field--last">
+                <div className="cp-field-label">Мобильный телефон</div>
+                <div className="cp-field-value cp-field-value--link">{p.phone}</div>
+              </div>
+            </>
+          )}
+        </section>
 
-        {isGroup && (
-          <section className="cp-card">
-            <div className="cp-rows">
-              {p.members.map((m) => (
-                <button className="cp-row" key={m.id} onClick={() => openUser(m.id)}>
-                  <Avatar item={userProfiles[m.id] || m} size={36} />
-                  <span className="cp-row-texts">
-                    <span className="cp-row-title">{m.name}</span>
-                    <span className="cp-row-sub">{m.role}</span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
+        {/* Один блок: пилюли и их содержимое — участники группы тоже вкладка,
+            а не отдельная карточка выше */}
         <section className="cp-card">
           <div className="cp-tabs no-scrollbar">
             {tabs.map((t) => (
@@ -140,6 +119,20 @@ export default function ChatProfile() {
               </button>
             ))}
           </div>
+
+          {tab === 'members' && (
+            <div className="cp-rows">
+              {p.members.map((m) => (
+                <button className="cp-row" key={m.id} onClick={() => openUser(m.id)}>
+                  <Avatar item={userProfiles[m.id] || m} size={36} />
+                  <span className="cp-row-texts">
+                    <span className="cp-row-title">{m.name}</span>
+                    <span className="cp-row-sub">{m.role}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
 
           {tab === 'groups' && (
             <div className="cp-rows">
@@ -171,7 +164,7 @@ export default function ChatProfile() {
           {tab === 'files' && (
             <div className="cp-rows">
               {p.files.map((f) => (
-                <div className="cp-row" key={f.id}>
+                <div className="cp-row cp-row--file" key={f.id}>
                   <span className="cp-file-ico"><FileText size={20} weight="fill" /></span>
                   <span className="cp-row-texts">
                     <span className="cp-row-title">{f.name}</span>

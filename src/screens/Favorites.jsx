@@ -91,7 +91,7 @@ export default function Favorites() {
       <header className="fav-top">
         <button className="fav-back" onClick={() => navigate(-1)} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="fav-title">Избранные сервисы</h1>
-        <span className="fav-back" aria-hidden="true" />
+        <span className="fav-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="fav-hint">

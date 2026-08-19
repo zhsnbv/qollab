@@ -30,7 +30,7 @@ export default function ChannelView() {
         <header className="cv-top">
           <button className="cv-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
           <h1 className="cv-title">Канал</h1>
-          <span className="cv-back" aria-hidden="true" />
+          <span className="cv-back hdr-spacer" aria-hidden="true" />
         </header>
         <p className="cv-empty">Канал не найден.</p>
       </div>
@@ -47,7 +47,7 @@ export default function ChannelView() {
       <header className="cv-top">
         <button className="cv-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="cv-title">Канал</h1>
-        <span className="cv-back" aria-hidden="true" />
+        <span className="cv-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="cv-scroll">

@@ -221,7 +221,7 @@ export default function Auth() {
         {closeIcon ? <X size={24} /> : <CaretLeft size={24} />}
       </button>
     );
-    const gap = <span className="auth-top-btn" aria-hidden="true" />;
+    const gap = <span className="auth-top-btn hdr-spacer" aria-hidden="true" />;
     return (
       <header className="auth-top">
         {closeIcon ? gap : btn}
