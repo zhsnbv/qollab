@@ -15,7 +15,7 @@
 /* Клавиатура: каркас уже сжат до видимой области (--vvh), поэтому панель
    ввода поднимается сама. Остаётся убрать нижний запас, рассчитанный на
    safe-area, и подтянуть тело чата. */
-html.kb .cr-writebar { padding-bottom: var(--space-2); }
+html.kb .cr-writebar { padding-top: var(--space-2); padding-bottom: var(--space-1); }
 html.kb .cr-body { padding-bottom: 56px; }
 @keyframes cr-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes cr-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
@@ -367,7 +367,7 @@ html.kb .cr-body { padding-bottom: 56px; }
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: var(--nav-edge), 0 8px 30px rgba(0, 0, 0, 0.12);
 }
-html.kb .cr-compose { bottom: 58px; }
+html.kb .cr-compose { bottom: 54px; }
 .cr-compose-ico { color: var(--color-primary); display: flex; flex-shrink: 0; }
 .cr-compose-line { width: 2px; align-self: stretch; border-radius: 2px; background: var(--color-primary); flex-shrink: 0; }
 .cr-compose-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }

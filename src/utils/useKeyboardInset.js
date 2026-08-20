@@ -17,10 +17,15 @@ export function useViewportFit() {
     const apply = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+        // offsetTop вычитать нельзя: при сдвиге страницы он «съедает» высоту
+        // клавиатуры, и компенсация перестаёт срабатывать.
+        const kb = Math.max(0, window.innerHeight - vv.height);
         root.style.setProperty('--vvh', `${vv.height}px`);
+        // Каркас сдвигаем вслед за видимой областью: если iOS увёл страницу
+        // вверх к полю ввода, без этого низ каркаса уезжает под клавиатуру.
+        root.style.setProperty('--vvtop', `${vv.offsetTop}px`);
         root.style.setProperty('--kb', `${kb}px`);
-        root.classList.toggle('kb', kb > 40);
+        root.classList.toggle('kb', kb > 80);
         // Страницу держим прибитой: иначе iOS уводит её вверх вслед за фокусом
         window.scrollTo(0, 0);
       });
