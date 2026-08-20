@@ -14,12 +14,19 @@ export function useViewportFit() {
     if (!vv) return undefined;
 
     let raf;
+    // Высоту клавиатуры считаем от максимальной наблюдаемой высоты окна, а не
+    // от window.innerHeight: с interactive-widget=resizes-content окно само
+    // сжимается под клавиатуру, их разница всегда ноль, и режим клавиатуры
+    // не включался — под панелью ввода оставался отступ safe-area.
+    let maxHeight = vv.height;
+    const resetMax = () => { maxHeight = vv.height; };
+    window.addEventListener('orientationchange', resetMax);
+
     const apply = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        // offsetTop вычитать нельзя: при сдвиге страницы он «съедает» высоту
-        // клавиатуры, и компенсация перестаёт срабатывать.
-        const kb = Math.max(0, window.innerHeight - vv.height);
+        maxHeight = Math.max(maxHeight, vv.height);
+        const kb = Math.max(0, maxHeight - vv.height);
         root.style.setProperty('--vvh', `${vv.height}px`);
         // Каркас сдвигаем вслед за видимой областью: если iOS увёл страницу
         // вверх к полю ввода, без этого низ каркаса уезжает под клавиатуру.
@@ -37,6 +44,7 @@ export function useViewportFit() {
     return () => {
       vv.removeEventListener('resize', apply);
       vv.removeEventListener('scroll', apply);
+      window.removeEventListener('orientationchange', resetMax);
       cancelAnimationFrame(raf);
       root.style.removeProperty('--vvh');
       root.style.removeProperty('--kb');
