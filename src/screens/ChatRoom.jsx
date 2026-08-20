@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Plus, Microphone, PaperPlaneRight } from '@phosphor-icons/react';
 import { dayLabel } from '../utils/chatDate';
@@ -27,11 +27,13 @@ const participants = [dinara, nurlan, arman, madina];
 // уже активна, история уже есть). typing — сколько мс «печатает», gap — пауза
 // после сообщения.
 const script = [
-  { author: dinara, typing: 1100, gap: 500, text: 'О, привет! Как раз тебя тут обсуждали 👋' },
-  { author: nurlan, typing: 1400, gap: 400, text: 'Привет всем! Почти на финише. Глянь PR #482, я оставил пару комментов' },
-  { author: nurlan, typing: 1000, gap: 400, kind: 'photo', img: '/img/posts/events/e4.jpg', text: 'Скинул фото с демо для стейкхолдеров 👇' },
-  { author: nurlan, typing: 800, gap: 600, kind: 'link', text: 'https://figma.com/design/qollab/PR-482' },
-  { author: arman, typing: 1300, gap: 500, text: 'Кстати релиз сдвинули на пятницу, успеем прогнать тесты?' },
+  // day проставляем явно: история начинается вчера и переходит на сегодня —
+  // так видно, как работает плавающий разделитель даты.
+  { author: dinara, typing: 1100, gap: 500, day: 'Вчера', text: 'О, привет! Как раз тебя тут обсуждали 👋' },
+  { author: nurlan, typing: 1400, gap: 400, day: 'Вчера', text: 'Привет всем! Почти на финише. Глянь PR #482, я оставил пару комментов' },
+  { author: nurlan, typing: 1000, gap: 400, day: 'Вчера', kind: 'photo', img: '/img/posts/events/e4.jpg', text: 'Скинул фото с демо для стейкхолдеров 👇' },
+  { author: nurlan, typing: 800, gap: 600, day: 'Вчера', kind: 'link', text: 'https://figma.com/design/qollab/PR-482' },
+  { author: arman, typing: 1300, gap: 500, day: 'Вчера', text: 'Кстати релиз сдвинули на пятницу, успеем прогнать тесты?' },
   {
     author: dinara, typing: 1500, gap: 400,
     quote: { author: nurlan.short, text: 'https://figma.com/design/qollab/PR-482', color: nurlan.color },
@@ -200,7 +202,7 @@ export default function ChatRoom() {
         setTyping(null);
         const id = ++uid;
         setMessages((m) => [...m, {
-          id, author: step.author, kind: step.kind || 'text',
+          id, author: step.author, kind: step.kind || 'text', day: step.day || 'Сегодня',
           text: step.text, img: step.img, duration: step.duration, quote: step.quote, time: now(),
         }]);
         if (step.reactions) {
@@ -267,10 +269,20 @@ export default function ChatRoom() {
     const prev = messages[i - 1];
     const next = messages[i + 1];
     const sameAuthor = (a, b) => (a.mine ? b.mine : !b.mine && a.author?.short === b.author?.short);
-    const firstOfGroup = !prev || !sameAuthor(prev, msg);
+    const dayStart = !prev || (prev.day || 'Сегодня') !== (msg.day || 'Сегодня');
+    const firstOfGroup = !prev || !sameAuthor(prev, msg) || dayStart;
     const lastOfGroup = !next || !sameAuthor(next, msg);
-    return { ...msg, firstOfGroup, lastOfGroup };
+    return { ...msg, firstOfGroup, lastOfGroup, dayStart };
   });
+
+  // Сообщения одного дня — отдельная секция со своим липким заголовком
+  const daySections = items.reduce((acc, msg) => {
+    const day = msg.day || 'Сегодня';
+    const last = acc[acc.length - 1];
+    if (last && last.day === day) last.items.push(msg);
+    else acc.push({ day, items: [msg] });
+    return acc;
+  }, []);
 
   return (
     <div className={`chatroom ${closing ? 'closing' : ''}`}>
@@ -296,10 +308,12 @@ export default function ChatRoom() {
         {phase === 'connecting' && <ConnectingSkeleton />}
         {phase === 'chat' && (
           <div className="cr-messages">
-            <div className="cr-day"><span className="cr-day-line" />{dayLabel()}<span className="cr-day-line" /></div>
-            {items.map((msg) => (
-              <Message
-                key={msg.id}
+            {daySections.map((section) => (
+              <section className="cr-day-section" key={section.day}>
+                <div className="cr-day">{section.day || dayLabel()}</div>
+                {section.items.map((msg) => (
+                <Message
+                  key={msg.id}
                 msg={{ ...msg, pinned: pinnedIds.includes(msg.id) }}
                 firstOfGroup={msg.firstOfGroup}
                 lastOfGroup={msg.lastOfGroup}
@@ -310,7 +324,9 @@ export default function ChatRoom() {
                 reactions={reactions[msg.id]}
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={onLongPress}
-              />
+                />
+                ))}
+              </section>
             ))}
             {notice.map((n) => (
               <div className="msg-status-chip" key={n.id}>{n.text}</div>

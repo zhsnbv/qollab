@@ -327,7 +327,7 @@ export default function DMChat() {
         {phase === 'empty' && <EmptyState />}
         {phase === 'chat' && (
           <div className="cr-messages">
-            <div className="cr-day"><span className="cr-day-line" />{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}<span className="cr-day-line" /></div>
+            <div className="cr-day">{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}</div>
             {items.map((msg) => (
               <Message
                 key={msg.id}
