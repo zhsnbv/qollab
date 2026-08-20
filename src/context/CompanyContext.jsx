@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { companies, companyById, defaultCompany } from '../data/companies';
+import { startBrandSwap } from '../utils/brand';
 
 // Выбранное рабочее пространство. Кроме самого объекта компании контекст
 // делает одну вещь: ставит data-company на <html>. Дальше цвета подхватывает
@@ -16,6 +17,14 @@ export function CompanyProvider({ children }) {
   useEffect(() => {
     document.documentElement.dataset.company = companyId;
     try { localStorage.setItem(KEY, companyId); } catch { /* ignore */ }
+  }, [companyId]);
+
+  // В чужом пространстве упоминания ERG заменяются на его бренд. Для самого
+  // ERG подмена не нужна — тексты уже написаны под него.
+  useEffect(() => {
+    if (companyId === 'erg') return undefined;
+    const brand = (companyById[companyId] || defaultCompany).name;
+    return startBrandSwap(brand);
   }, [companyId]);
 
   const value = useMemo(() => ({

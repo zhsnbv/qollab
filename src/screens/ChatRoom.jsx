@@ -9,6 +9,7 @@ import MessageMenu from '../components/MessageMenu';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
+import Toast from '../components/Toast';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import './ChatRoom.css';
 
@@ -86,7 +87,11 @@ export default function ChatRoom() {
   const [editing, setEditing] = useState(null);
   const [forward, setForward] = useState(null);
   const [confirm, setConfirm] = useState(null);
-  const [notice, setNotice] = useState([]);     // системные плашки
+  // В ленте остаются только события самого чата (закрепы) — их видят все
+  // участники. Результат моего действия показываем тостом: он не засоряет
+  // переписку.
+  const [notice, setNotice] = useState([]);
+  const [toast, setToast] = useState('');
 
   const addNotice = (text) => setNotice((n) => [...n, { id: `n${Date.now()}`, text }]);
 
@@ -103,10 +108,10 @@ export default function ChatRoom() {
     const msg = menu.msg;
     setMenu(null);
     if (action === 'reply') { setEditing(null); setReply(msg); }
-    if (action === 'copy') navigator.clipboard?.writeText(msg.text || '');
+    if (action === 'copy') { navigator.clipboard?.writeText(msg.text || ''); setToast('Скопировано'); }
     if (action === 'edit') { setReply(null); setEditing(msg); setInput(msg.text || ''); }
     if (action === 'forward') setForward(msg);
-    if (action === 'select') addNotice('Режим выбора сообщений появится позже');
+    if (action === 'select') setToast('Режим выбора появится позже');
     if (action === 'pin') {
       const on = pinnedIds.includes(msg.id);
       setPinnedIds((ids) => (on ? ids.filter((x) => x !== msg.id) : [...ids, msg.id]));
@@ -355,9 +360,11 @@ export default function ChatRoom() {
       {forward && (
         <ForwardSheet
           onClose={() => setForward(null)}
-          onPick={(chat) => { setForward(null); addNotice(`Сообщение переслано: ${chat.name}`); }}
+          onPick={(chat) => { setForward(null); setToast(`Переслано: ${chat.name}`); }}
         />
       )}
+
+      <Toast text={toast} onDone={() => setToast('')} />
 
       {confirm && (
         <ConfirmDialog

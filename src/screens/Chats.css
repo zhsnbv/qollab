@@ -44,7 +44,11 @@
 .chat-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-pill); }
 
 .chat-avatar--system {
-  background: linear-gradient(180deg, #ffac62, #ef7f1a);
+  /* Градиент строится от акцента пространства: светлый край — тот же цвет,
+     разбавленный поверхностью, поэтому смена компании его перекрашивает. */
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-primary) 65%, var(--color-white)),
+    var(--color-primary));
   border: none;
   display: flex;
   align-items: center;

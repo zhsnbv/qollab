@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Search24Regular, Dismiss20Regular } from '@fluentui/react-icons';
+import { Search24Regular, Dismiss20Regular, Bookmark20Filled } from '@fluentui/react-icons';
 import { employees } from '../data/employees';
 import './ForwardSheet.css';
 
 // «Выберите чат» — пересылка сообщения. Сверху активные чаты, ниже поиск по
 // справочнику: тот же набор данных, что в «Написать сообщение».
 const ACTIVE = [
+  { id: 'saved', name: 'Избранное', saved: true },
   { id: 'ergiz', name: 'ERGiz — Искусственный интеллект', avatar: '/img/chats/ergiz-avatar.png' },
   { id: 'bugs', name: 'qollab Bugs & Offers', initials: 'QB', tint: 'violet' },
   { id: 'prodev', name: 'PR01DEV + ROBOTS', avatar: '/img/chats/bts-pr.png' },
@@ -27,9 +28,11 @@ export default function ForwardSheet({ onClose, onPick }) {
 
   const row = (item) => (
     <button className="fwd-row" key={item.id} onClick={() => onPick(item)}>
-      {item.avatar
-        ? <span className="fwd-ava"><img src={item.avatar} alt="" /></span>
-        : <span className={`fwd-ava fwd-ava--initials tint-${item.tint || 'orange'}`}>{item.initials || item.name.slice(0, 2).toUpperCase()}</span>}
+      {item.saved
+        ? <span className="fwd-ava fwd-ava--saved"><Bookmark20Filled /></span>
+        : item.avatar
+          ? <span className="fwd-ava"><img src={item.avatar} alt="" /></span>
+          : <span className={`fwd-ava fwd-ava--initials tint-${item.tint || 'orange'}`}>{item.initials || item.name.slice(0, 2).toUpperCase()}</span>}
       <span className="fwd-name">{item.name}</span>
     </button>
   );

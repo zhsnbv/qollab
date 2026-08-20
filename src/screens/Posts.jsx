@@ -2,11 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
-import { MagnifyingGlass, BookmarkSimple, CaretRight } from '@phosphor-icons/react';
+import { MagnifyingGlass, CaretRight } from '@phosphor-icons/react';
 import { useSkeleton, PostsSkeleton, FadeIn } from '../components/Skeleton';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { channels, basePosts, makePost, events } from '../data/feed';
 import { channelList, channelScopes } from '../data/channels';
+import ActionSheet from '../components/ActionSheet';
+import Toast from '../components/Toast';
+import {
+  ArrowSync24Regular, Share24Regular, BroomRegular, Settings24Regular,
+} from '@fluentui/react-icons';
 import './Posts.css';
 
 const BATCH = 8;
@@ -26,6 +31,25 @@ export default function Posts() {
   const [loadingMore, setLoadingMore] = useState(false);
   const pendingRef = useRef(false);
   const sentinelRef = useRef(null);
+  // «Три точки» открывают лист снизу — как контекстные меню на остальных
+  // экранах, вместо выпадающего меню поверх контента.
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [toast, setToast] = useState('');
+
+  const MENU_ITEMS = [
+    { id: 'refresh', label: 'Обновить страницу', Icon: ArrowSync24Regular },
+    { id: 'share', label: 'Поделиться ссылкой', Icon: Share24Regular },
+    { id: 'cache', label: 'Очистить кэш мини-приложения', Icon: BroomRegular },
+    { id: 'settings', label: 'Настройки', Icon: Settings24Regular },
+  ];
+
+  const onMenuPick = (id) => {
+    setMenuOpen(false);
+    if (id === 'refresh') setToast('Лента обновлена');
+    if (id === 'share') setToast('Ссылка скопирована');
+    if (id === 'cache') setToast('Кэш мини-приложений очищен');
+    if (id === 'settings') navigate('/settings', { state: { background: location } });
+  };
 
   // Публикации — бесконечно; мероприятия — лениво до полного списка (~9)
   const eventsDone = eventsShown >= events.length;
@@ -62,13 +86,8 @@ export default function Posts() {
   // «Три точки» — всегда крайние справа, как на остальных экранах
   const actions = (
     <>
-      <button className="topbar-btn" aria-label="Закладки">
-        <span className="posts-bookmark">
-          <BookmarkSimple size={20} weight="fill" color="var(--color-weak)" />
-          <span className="posts-bookmark-dot" />
-        </span>
-      </button>
-      <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
+      {/* Закладки временно скрыты по просьбе заказчика (вернуть — убрать false) */}
+      <button className="topbar-btn" aria-label="Меню" onClick={() => setMenuOpen(true)}><DotsIcon /></button>
     </>
   );
 
@@ -176,6 +195,16 @@ export default function Posts() {
           </>
         )}
       </div></FadeIn>
+
+      {menuOpen && (
+        <ActionSheet
+          title="Лента"
+          items={MENU_ITEMS}
+          onClose={() => setMenuOpen(false)}
+          onPick={onMenuPick}
+        />
+      )}
+      <Toast text={toast} onDone={() => setToast('')} />
     </TabLayout>
   );
 }

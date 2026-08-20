@@ -41,11 +41,19 @@ export function PinnedList({ items, onClose, onUnpin, onUnpinAll }) {
 
         <div className="pinlist-body">
           {items.map((m) => (
-            <div className="pinlist-row" key={m.id}>
-              <span className="pinlist-row-texts">
-                <span className="pinlist-row-author">{m.mine ? 'Вы' : m.author?.short || m.author}</span>
-                <span className="pinlist-row-text">{m.text || previewOf(m)}</span>
-              </span>
+            <div className={`pinlist-msg ${m.mine ? 'mine' : 'their'}`} key={m.id}>
+              <div className="pinlist-bubble">
+                {!m.mine && (
+                  <div className="pinlist-author" style={{ color: m.author?.color }}>
+                    {m.author?.short || m.author}
+                  </div>
+                )}
+                <div className="pinlist-text">{m.text || previewOf(m)}</div>
+                <div className="pinlist-meta">
+                  <Pin16Filled />
+                  <span>{m.time}</span>
+                </div>
+              </div>
               <button className="pinlist-unpin" onClick={() => onUnpin(m.id)}>Открепить</button>
             </div>
           ))}

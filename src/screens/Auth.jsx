@@ -24,7 +24,8 @@ const STEP = {
 // 888888 — второй нужен, чтобы на демо не вспоминать цифры из Figma.
 const VALID_PREFIX = '7700';
 const KZ_PREFIX = '77';
-const VALID_CODES = ['277683', '888888'];
+// Прототип: подходит любой код из шести цифр
+const CODE_LENGTH = 6;
 const OTP_LEN = 6;
 const RESEND_SEC = 58;
 const MAX_ATTEMPTS = 3;
@@ -184,7 +185,7 @@ export default function Auth() {
   };
 
   const submitCode = (value) => {
-    if (VALID_CODES.includes(value)) {
+    if (value.length === CODE_LENGTH) {
       if (guestFlow) setStep(STEP.guest);
       else signIn();
       return;

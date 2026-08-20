@@ -71,3 +71,10 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .fwd-empty { padding: var(--space-6) var(--space-4); text-align: center; color: var(--color-weak); font-size: 14px; }
+/* «Избранное» — тот же градиент, что у системного чата в списке */
+.fwd-ava--saved {
+  color: #fff;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-primary) 65%, var(--color-white)),
+    var(--color-primary));
+}

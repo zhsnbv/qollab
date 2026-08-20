@@ -25,17 +25,21 @@
   opacity: 0.28;
 }
 
-/* Иконки сидят центром на линии орбиты и крутятся обратно, чтобы не
-   переворачиваться вместе со слоем. */
+/* Иконки сидят центром на линии орбиты. Контр-вращение с тем же периодом
+   держит их вертикальными: слой везёт иконку по кругу, а она сама
+   поворачивается ровно настолько же в другую сторону. Направление задаётся
+   в разметке — оно противоположно направлению слоя. */
 .onb-app, .onb-glyph {
   position: absolute;
   aspect-ratio: 1;
-  transform: translate(-50%, -50%);
   animation-name: onb-spin-back;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
-@keyframes onb-spin-back { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes onb-spin-back {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(-360deg); }
+}
 
 .onb-app { border-radius: 24%; display: block; }
 

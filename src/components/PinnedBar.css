@@ -61,20 +61,36 @@
   scrollbar-width: none; padding: 0 var(--space-4);
 }
 .pinlist-body::-webkit-scrollbar { display: none; }
-.pinlist-row {
-  display: flex; align-items: center; gap: var(--space-3);
-  padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border);
+/* Лист занимает почти весь экран независимо от числа закрепов: он читается
+   как отдельный экран переписки, а не как маленькая подсказка снизу. */
+.pinlist { height: 92%; max-height: 92%; }
+
+/* Сообщения баблами, как в чате */
+.pinlist-msg { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--space-4); }
+.pinlist-msg.mine { align-items: flex-end; }
+.pinlist-msg.their { align-items: flex-start; }
+.pinlist-bubble {
+  max-width: 82%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 16px;
+  background: var(--color-background);
 }
-.pinlist-row:last-child { border-bottom: none; }
-.pinlist-row-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.pinlist-row-author { font-size: 13px; font-weight: 600; color: var(--color-primary); }
-.pinlist-row-text {
-  font-size: 14px; color: var(--color-text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.pinlist-msg.mine .pinlist-bubble {
+  background: var(--color-primary-bg);
+  border-bottom-right-radius: 4px;
 }
+.pinlist-msg.their .pinlist-bubble { border-bottom-left-radius: 4px; }
+.pinlist-author { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+.pinlist-text { font-size: 15px; line-height: 1.35; color: var(--color-text); }
+.pinlist-meta {
+  display: flex; align-items: center; justify-content: flex-end; gap: 4px;
+  margin-top: var(--space-1);
+  font-size: 11px; color: var(--msg-time);
+}
+.pinlist-meta svg { width: 12px; height: 12px; }
 .pinlist-unpin {
-  flex-shrink: 0; font-size: 14px; color: var(--color-weak);
-  padding: var(--space-1) var(--space-2);
+  font-size: 13px; color: var(--color-primary);
+  padding: 2px var(--space-1);
   -webkit-tap-highlight-color: transparent;
 }
 .pinlist-unpin:active { opacity: 0.6; }
