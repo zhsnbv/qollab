@@ -64,7 +64,14 @@ html[data-theme="dark"][data-company="bts"] {
    поэтому цвет надписи тоже держим токеном. */
 :root { --on-primary: #ffffff; }
 
-/* Иллюстрация онбординга нарисована в оранжевом. Для других компаний
-   уводим её в нужный тон фильтром — иначе она спорит с акцентом. */
-html[data-company="integra"] .auth-onb-art { filter: hue-rotate(202deg) saturate(1.15) brightness(0.82); }
-html[data-company="bts"] .auth-onb-art { filter: hue-rotate(118deg) saturate(0.85) brightness(0.9); }
+
+/* Волна в шапке профиля — растровая и объёмная, маской её не покрасить без
+   потери градиента. Уводим оттенок фильтром: светотень остаётся, меняется
+   только тон. Значения подобраны от исходного оранжевого (hue ≈ 28°).
+   Точнее будет только отдельным PNG под каждую компанию. */
+html[data-company="integra"] .profile-decor-img {
+  filter: hue-rotate(218deg) saturate(1.6) brightness(0.62);
+}
+html[data-company="bts"] .profile-decor-img {
+  filter: hue-rotate(128deg) saturate(1.1) brightness(0.72);
+}

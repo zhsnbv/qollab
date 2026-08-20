@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { CaretLeft, X, Briefcase, User, ChatCircleDots, CheckCircle, XCircle } from '@phosphor-icons/react';
 import { useAuth } from '../context/AuthContext';
-import { ChevronDown20Regular, Checkmark20Filled } from '@fluentui/react-icons';
+import { ChevronDown20Regular, Checkmark20Filled, Dismiss20Regular } from '@fluentui/react-icons';
 import { useCompany } from '../context/CompanyContext';
+import OnboardingArt from '../components/OnboardingArt';
 import './Auth.css';
 
 // Авторизация (Figma node 24627-79594): онбординг → выбор рабочего
@@ -238,16 +239,17 @@ export default function Auth() {
     return (
       <div className="auth">
         <div className="auth-scroll auth-onb">
-          <img className="auth-onb-art" src="/img/auth/onboarding.png" alt="" />
+          <OnboardingArt />
           <h1 className="auth-onb-title">Добро пожаловать в qollab!</h1>
           <p className="auth-onb-text">
             Единая цифровая экосистема. Получите доступ к рабочим сервисам,
             HR-инструментам и возможностям для сотрудников и партнеров.
           </p>
           <button className="auth-company" onClick={() => setSheet(true)}>
+            <span className="auth-company-dot" style={{ background: company.accent }} />
             <span className="auth-company-texts">
               <span className="auth-company-label">Рабочее пространство</span>
-              <span className="auth-company-name">{company.name}</span>
+              <span className="auth-company-name">{company.full}</span>
             </span>
             <ChevronDown20Regular className="auth-company-caret" />
           </button>
@@ -265,8 +267,13 @@ export default function Auth() {
           <div className="auth-sheet-wrap">
             <button className="auth-sheet-scrim" onClick={() => setSheet(false)} aria-label="Закрыть" />
             <div className="auth-sheet">
-              <span className="auth-sheet-grip" />
-              <h3 className="auth-sheet-title">Рабочее пространство</h3>
+              <span className="auth-sheet-handle" />
+              <div className="auth-sheet-header">
+                <h3 className="auth-sheet-title">Выберите пространство</h3>
+                <button className="auth-sheet-close" onClick={() => setSheet(false)} aria-label="Закрыть">
+                  <Dismiss20Regular />
+                </button>
+              </div>
               <div className="auth-sheet-list">
                 {companies.map((c) => (
                   <button
@@ -276,7 +283,7 @@ export default function Auth() {
                   >
                     <span className="auth-sheet-dot" style={{ background: c.accent }} />
                     <span className="auth-sheet-texts">
-                      <span className="auth-sheet-name">{c.name}</span>
+                      <span className="auth-sheet-name">{c.full}</span>
                       <span className="auth-sheet-domain">{c.domain}</span>
                     </span>
                     {c.id === companyId && <Checkmark20Filled className="auth-sheet-check" />}
