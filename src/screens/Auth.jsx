@@ -22,7 +22,6 @@ const STEP = {
 // «+7 700 …» проходит дальше, другой код оператора не находится в системе,
 // не-казахстанский номер отбивается инлайн-ошибкой. Верны код из макета и
 // 888888 — второй нужен, чтобы на демо не вспоминать цифры из Figma.
-const VALID_PREFIX = '7700';
 const KZ_PREFIX = '77';
 // Прототип: подходит любой код из шести цифр
 const CODE_LENGTH = 6;
@@ -33,6 +32,15 @@ const MAX_ATTEMPTS = 3;
 const digits = (s) => s.replace(/\D/g, '');
 
 // +7 700 000 09 91
+// Приводим ввод к казахстанскому виду: 8 в начале меняем на 7, недостающую
+// семёрку подставляем сами, лишние цифры отбрасываем. Раньше state хранил всё
+// набранное, из-за чего после одиннадцатой цифры кнопка снова гасла.
+function normalizePhone(raw) {
+  const d = digits(raw).replace(/^8/, '7');
+  if (!d) return '';
+  return (d.startsWith('7') ? d : `7${d}`).slice(0, 11);
+}
+
 function formatPhone(raw) {
   const d = digits(raw).replace(/^8/, '7').slice(0, 11);
   if (!d) return '';
@@ -176,11 +184,8 @@ export default function Auth() {
 
   const confirmPhone = () => {
     setDialog(null);
-    // Гостя по базе сотрудников не проверяем — его там и не должно быть
-    if (!guestFlow && !phoneDigits.startsWith(VALID_PREFIX)) {
-      setDialog({ kind: 'notfound' });
-      return;
-    }
+    // Прототип показывают вживую, поэтому подходит любой казахстанский номер:
+    // формат уже проверен в requestCode, отдельной «базы сотрудников» тут нет.
     goToOtp();
   };
 
@@ -313,7 +318,7 @@ export default function Auth() {
               inputMode="tel"
               placeholder="+7"
               value={phone ? formatPhone(phone) : ''}
-              onChange={(e) => { setPhone(e.target.value); setPhoneError(''); }}
+              onChange={(e) => { setPhone(normalizePhone(e.target.value)); setPhoneError(''); }}
             />
             {phone && (
               <button className="auth-clear" onClick={() => { setPhone(''); setPhoneError(''); }} aria-label="Очистить">
