@@ -1,0 +1,150 @@
+/* «Написать сообщение» — поверх списка чатов, включая плавающий таб-бар */
+.newchat {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  background: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  animation: nc-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.newchat.closing { animation: nc-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes nc-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes nc-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.nc-top {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+}
+.nc-back {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-pill);
+  background: var(--color-background); color: var(--color-weak);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.nc-back:active { opacity: 0.5; }
+.nc-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+
+/* Строка поиска + кнопка оргструктуры справа */
+.nc-search-row {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-3);
+}
+.nc-search {
+  flex: 1; min-width: 0; height: 44px;
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: 0 var(--space-4); border-radius: var(--radius-pill);
+  background: var(--color-background);
+}
+.nc-search input {
+  flex: 1; min-width: 0; border: none; background: none; outline: none;
+  font-family: inherit; font-size: 15px; color: var(--color-text);
+}
+.nc-search input::placeholder { color: var(--color-weak); }
+.nc-clear {
+  width: 18px; height: 18px; flex-shrink: 0; border-radius: 50%;
+  background: var(--color-light); color: var(--color-white);
+  display: flex; align-items: center; justify-content: center;
+}
+.nc-struct {
+  width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%;
+  border: 1px solid var(--color-border); color: var(--color-text);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.nc-struct:active { opacity: 0.6; }
+
+/* «Создать группу» — отдельной строкой над списком */
+.nc-group {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.nc-group:active { opacity: 0.6; }
+.nc-group-ico { color: var(--color-primary); display: flex; flex-shrink: 0; }
+.nc-group-label { flex: 1; text-align: left; font-size: 16px; color: var(--color-primary); }
+
+.nc-scroll { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.nc-scroll::-webkit-scrollbar { display: none; }
+.nc-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+
+/* Строка сотрудника: основная часть — кнопка, «i» — отдельная */
+.nc-row {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.nc-row-main {
+  flex: 1; min-width: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) 0; text-align: left;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.nc-row-main:active { opacity: 0.6; }
+.nc-row-main:disabled { cursor: default; }
+.nc-ava {
+  width: 40px; height: 40px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  background: var(--img-placeholder);
+  display: flex; align-items: center; justify-content: center;
+}
+.nc-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nc-ava--initials { font-size: 14px; font-weight: 600; }
+.nc-ava--initials.tint-green { background: #d9f7be; color: #52c41a; }
+.nc-ava--initials.tint-blue { background: #e6f4ff; color: #1677ff; }
+.nc-ava--initials.tint-orange { background: var(--color-primary-bg); color: var(--color-primary); }
+.nc-ava--initials.tint-grey { background: var(--color-background); color: var(--color-weak); }
+
+.nc-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+/* Имя и компания в одну строку: компания ужимается первой */
+.nc-line { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.nc-name { font-size: 15px; font-weight: 600; color: var(--color-text); white-space: nowrap; }
+.nc-company {
+  flex: 1; min-width: 0; font-size: 13px; color: var(--color-weak);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nc-line--sub { gap: 4px; }
+.nc-sub {
+  font-size: 13px; color: var(--color-weak);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nc-line--sub .nc-sub:last-child { flex: 1; min-width: 0; }
+/* Уволенный: имя зачёркнуто, строка не кликается */
+.nc-row.dismissed .nc-name { text-decoration: line-through; color: var(--color-weak); }
+
+.nc-info {
+  width: 32px; height: 32px; flex-shrink: 0;
+  color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.nc-info:active { opacity: 0.5; }
+
+/* Пустое состояние: три кружка, заголовок и подсказка */
+.nc-empty {
+  min-height: 60%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--space-2); padding: var(--space-8) var(--space-5);
+}
+.nc-empty-icons { display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-2); }
+.nc-empty-circle {
+  background: var(--color-background); border: 5px solid var(--color-white);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.nc-empty-circle--side { width: 60px; height: 60px; }
+.nc-empty-circle--side:first-child { margin-right: -14px; }
+.nc-empty-circle--side:last-child { margin-left: -14px; }
+.nc-empty-circle--main {
+  width: 76px; height: 76px; background: var(--color-primary-bg-hover); border-width: 6px;
+  position: relative; z-index: 2;
+}
+.nc-empty-title { font-size: 18px; font-weight: 600; color: var(--color-text); }
+.nc-empty-sub { font-size: 14px; color: var(--color-weak); text-align: center; line-height: 1.4; max-width: 320px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .newchat, .newchat.closing { animation: none; }
+}

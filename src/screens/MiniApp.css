@@ -7,8 +7,6 @@
   background: var(--color-white);
   display: flex;
   flex-direction: column;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  overflow: hidden;
   animation: ma-in 0.32s cubic-bezier(0.32, 0.72, 0, 1);
 }
 .miniapp.closing { animation: ma-out 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
@@ -21,6 +19,7 @@
 .ma-top {
   flex-shrink: 0;
   background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
   display: flex; align-items: center; gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   padding-top: max(var(--space-3), env(safe-area-inset-top));
@@ -175,3 +174,20 @@
   display: flex; align-items: center; justify-content: center;
 }
 .ma-splash-name { font-size: 18px; font-weight: 600; color: var(--color-text); text-align: center; }
+
+/* ── Скелетон тела: второй шаг запуска, после сплеша ─────────────────────── */
+.ma-sk { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); }
+.ma-sk .sk, .ma-sk-tiles span, .ma-sk-cards span {
+  display: block; border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--sk-a) 25%, var(--sk-b) 37%, var(--sk-a) 63%);
+  background-size: 400% 100%;
+  animation: ma-sk-shine 1.4s ease-in-out infinite;
+}
+@keyframes ma-sk-shine { from { background-position: 100% 50%; } to { background-position: 0 50%; } }
+.ma-sk-search { height: 44px; border-radius: var(--radius-pill) !important; }
+.ma-sk-banner { height: 132px; }
+.ma-sk-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+.ma-sk-tiles span { height: 120px; }
+.ma-sk-title { height: 22px; width: 60%; }
+.ma-sk-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.ma-sk-cards span { height: 180px; }

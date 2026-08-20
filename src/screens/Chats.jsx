@@ -129,7 +129,13 @@ export default function Chats() {
     <>
       {/* Карандаш вместо «трёх точек»: здесь будет редактирование чатов */}
       <button className="topbar-btn" aria-label="Редактировать"><PencilSimple size={20} weight="fill" color="var(--color-weak)" /></button>
-      <button className="topbar-btn primary" aria-label="Новый чат"><Plus size={20} color="#fff" /></button>
+      <button
+        className="topbar-btn primary"
+        aria-label="Новый чат"
+        onClick={() => navigate('/new-chat', { state: { background: location } })}
+      >
+        <Plus size={20} color="#fff" />
+      </button>
     </>
   );
 

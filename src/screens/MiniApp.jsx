@@ -66,6 +66,23 @@ function Row({ item, onOpen }) {
   );
 }
 
+// Скелетон тела — общий для всех аппов, идёт вторым шагом после сплеша.
+function MiniAppSkeleton() {
+  return (
+    <div className="ma-sk">
+      <div className="ma-sk-search sk" />
+      <div className="ma-sk-banner sk" />
+      <div className="ma-sk-tiles">
+        <span className="sk" /><span className="sk" /><span className="sk" />
+      </div>
+      <div className="ma-sk-title sk" />
+      <div className="ma-sk-cards">
+        <span className="sk" /><span className="sk" />
+      </div>
+    </div>
+  );
+}
+
 // Запуск мини-аппа: свой сплеш с иконкой сервиса, по которому тапнули,
 // и его названием — как у нативного приложения.
 function MiniAppSplash({ name, img }) {
@@ -104,7 +121,16 @@ export default function MiniApp() {
   const params = useParams();
   const path = (params['*'] || '').split('/').filter(Boolean);
   const screen = resolve(path);
-  const loading = useSkeleton(600);
+  // Запуск идёт тремя шагами: сплеш приложения → скелетон тела → контент.
+  // useSkeleton держит только первый шаг, дальше ведём свой таймер.
+  const splash = useSkeleton(700);
+  const [booting, setBooting] = useState(true);
+  useEffect(() => {
+    if (splash) return undefined;
+    const t = setTimeout(() => setBooting(false), 600);
+    return () => clearTimeout(t);
+  }, [splash]);
+  const loading = splash || booting;
   // Имя в шапке: у аппов со своим деревом — заголовок экрана, у остальных
   // берём название сервиса из каталога.
   const appId = path[0];
@@ -159,7 +185,8 @@ export default function MiniApp() {
       </header>
 
       <div className="ma-scroll" key={path.join('/')} data-dir={dir}>
-        {loading && <MiniAppSplash name={appName} img={service?.img} />}
+        {splash && <MiniAppSplash name={appName} img={service?.img} />}
+        {!splash && booting && <MiniAppSkeleton />}
         {!loading && !screen && <MiniAppStub name={appName} />}
 
         {!loading && screen?.type === 'list' && (

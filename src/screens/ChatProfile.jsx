@@ -38,9 +38,19 @@ function Avatar({ item, size }) {
 export default function ChatProfile() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id, kind } = location.state || {};
+  const { id, kind, employee } = location.state || {};
   const isGroup = kind === 'group';
-  const p = (isGroup ? groupProfiles[id] : userProfiles[id]) || userProfiles.ayazhan;
+  const known = isGroup ? groupProfiles[id] : userProfiles[id];
+  const fromEmployee = employee && {
+    ...employee,
+    status: employee.dismissed ? 'Сотрудник уволен' : 'был(-а) в сети недавно',
+    // Медиа, файлы и ссылки в прототипе общие — берём набор из демо-профиля
+    groups: userProfiles.ayazhan.groups,
+    media: userProfiles.ayazhan.media,
+    files: userProfiles.ayazhan.files,
+    links: userProfiles.ayazhan.links,
+  };
+  const p = known || fromEmployee || userProfiles.ayazhan;
 
   const [closing, setClosing] = useState(false);
   // У группы первая вкладка — участники, у человека — его группы
