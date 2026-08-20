@@ -10,7 +10,7 @@ import { channelList, channelScopes } from '../data/channels';
 import ActionSheet from '../components/ActionSheet';
 import Toast from '../components/Toast';
 import {
-  ArrowSync24Regular, Share24Regular, BroomRegular, Settings24Regular,
+  ArrowSync24Regular, Share24Regular, Broom24Regular, Settings24Regular,
 } from '@fluentui/react-icons';
 import './Posts.css';
 
@@ -39,7 +39,7 @@ export default function Posts() {
   const MENU_ITEMS = [
     { id: 'refresh', label: 'Обновить страницу', Icon: ArrowSync24Regular },
     { id: 'share', label: 'Поделиться ссылкой', Icon: Share24Regular },
-    { id: 'cache', label: 'Очистить кэш мини-приложения', Icon: BroomRegular },
+    { id: 'cache', label: 'Очистить кэш мини-приложения', Icon: Broom24Regular },
     { id: 'settings', label: 'Настройки', Icon: Settings24Regular },
   ];
 
@@ -198,7 +198,6 @@ export default function Posts() {
 
       {menuOpen && (
         <ActionSheet
-          title="Лента"
           items={MENU_ITEMS}
           onClose={() => setMenuOpen(false)}
           onPick={onMenuPick}

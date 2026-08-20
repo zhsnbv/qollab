@@ -12,14 +12,10 @@
   font-variant-numeric: tabular-nums;
 }
 .chatroom.closing { animation: cr-slide-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
-/* Клавиатура открыта: держим чат на полную высоту (иначе снизу открывается
-   зазор, где просвечивает список чатов под ним), но резервируем высоту
-   клавиатуры паддингом — инпут остаётся прямо над клавиатурой, iOS не
-   панит вьюпорт, хедер прибит к верху. */
-html.kb .chatroom { padding-bottom: var(--kb, 0px); }
-/* Бар позиционирован от padding-box, поэтому при открытой клавиатуре его
-   поднимаем сами — иначе он остался бы под ней. */
-html.kb .cr-writebar { bottom: var(--kb, 0px); padding-bottom: var(--space-2); }
+/* Клавиатура: каркас уже сжат до видимой области (--vvh), поэтому панель
+   ввода поднимается сама. Остаётся убрать нижний запас, рассчитанный на
+   safe-area, и подтянуть тело чата. */
+html.kb .cr-writebar { padding-bottom: var(--space-2); }
 html.kb .cr-body { padding-bottom: 56px; }
 @keyframes cr-slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes cr-slide-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
@@ -124,7 +120,10 @@ html.kb .cr-body { padding-bottom: 56px; }
 .msg { display: flex; align-items: flex-end; gap: var(--space-3); }
 .msg--mine { justify-content: flex-end; }
 /* слот 40px держит выравнивание последующих сообщений группы */
+/* Слот держит выравнивание серии сообщений. В личных чатах аватарки нет —
+   тогда и место под неё не резервируем. */
 .msg-avatar-slot { width: 40px; flex-shrink: 0; }
+.msg-avatar-slot:empty { display: none; }
 .msg-avatar {
   width: 40px; height: 40px; border-radius: var(--radius-pill); overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -365,7 +364,7 @@ html.kb .cr-body { padding-bottom: 56px; }
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: var(--nav-edge), 0 8px 30px rgba(0, 0, 0, 0.12);
 }
-html.kb .cr-compose { bottom: calc(var(--kb, 0px) + 58px); }
+html.kb .cr-compose { bottom: 58px; }
 .cr-compose-ico { color: var(--color-primary); display: flex; flex-shrink: 0; }
 .cr-compose-line { width: 2px; align-self: stretch; border-radius: 2px; background: var(--color-primary); flex-shrink: 0; }
 .cr-compose-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }

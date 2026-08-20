@@ -319,7 +319,7 @@ export default function DMChat() {
                 firstOfGroup={msg.firstOfGroup}
                 lastOfGroup={msg.lastOfGroup}
                 mine={!!msg.mine}
-                avatar={!msg.mine ? <AuthorAvatar chat={chat} author={msg.author} /> : null}
+                avatar={!msg.mine && chat.kind === 'group' ? <AuthorAvatar chat={chat} author={msg.author} /> : null}
                 authorLabel={!msg.mine && chat.kind === 'group' ? msg.author : null}
                 authorColor={!msg.mine && chat.kind === 'group' ? colorForName(msg.author) : null}
                 reaction={reactions[msg.id]}

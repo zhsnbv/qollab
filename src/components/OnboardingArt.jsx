@@ -65,6 +65,8 @@ export default function OnboardingArt() {
               width: pc(o.d), height: pc(o.d),
               animationDuration: `${o.duration}s`,
               animationDirection: o.dir > 0 ? 'normal' : 'reverse',
+              // Кольца разъезжаются из центра волной, одно за другим
+              '--appear-delay': `${0.08 + oi * 0.12}s`,
             }}
           >
             <span className="onb-orbit" />
@@ -75,20 +77,28 @@ export default function OnboardingArt() {
               const y = 50 + Math.sin(rad) * 50;
               const style = {
                 left: `${x}%`, top: `${y}%`,
+                // Иконки проявляются после своих колец
+                '--appear-delay': `${0.45 + oi * 0.12 + ii * 0.07}s`,
                 width: `${(item.kind === 'app' ? o.size : o.size) / o.d * 100}%`,
                 // Контр-вращение: иконка остаётся вертикальной. Кадры уже
                 // крутят её в минус, поэтому направление берём как у слоя.
                 animationDuration: `${o.duration}s`,
                 animationDirection: o.dir > 0 ? 'normal' : 'reverse',
               };
+              // Внешний слой занят контр-вращением, поэтому появление вешаем
+              // на вложенный: --appear-delay наследуется вниз сам.
               if (item.kind === 'app') {
                 const svc = servicesById[item.id];
-                return <img className="onb-app" key={ii} src={svc?.img} alt="" style={style} />;
+                return (
+                  <span className="onb-app" key={ii} style={style}>
+                    <img className="onb-appear" src={svc?.img} alt="" />
+                  </span>
+                );
               }
               const { Icon } = item;
               return (
                 <span className="onb-glyph" key={ii} style={style}>
-                  <Icon />
+                  <span className="onb-appear"><Icon /></span>
                 </span>
               );
             })}

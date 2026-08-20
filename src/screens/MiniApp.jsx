@@ -12,6 +12,12 @@ import { DotsIcon } from '../components/TopBar';
 import { miniApps } from '../data/miniapps';
 import { servicesById } from '../context/FavoritesContext';
 import { useSkeleton } from '../components/Skeleton';
+import ActionSheet from '../components/ActionSheet';
+import Toast from '../components/Toast';
+import {
+  ArrowSync24Regular, Share24Regular, PhoneAdd24Regular,
+  Broom24Regular, Settings24Regular, DismissCircle24Regular,
+} from '@fluentui/react-icons';
 import './MiniApp.css';
 
 // Иконки строк держим словарём: в данных лежит только имя, чтобы дерево
@@ -162,6 +168,29 @@ export default function MiniApp() {
   };
 
   const back = () => (depth > 1 ? navigate(-1) : closeApp());
+
+  // Контекстное меню мини-аппа: к общим пунктам добавлены выход и установка
+  // на домашний экран — они есть только здесь.
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [toast, setToast] = useState('');
+  const MENU_ITEMS = [
+    { id: 'exit', label: 'Выйти из мини-приложения', Icon: DismissCircle24Regular, danger: true },
+    { id: 'refresh', label: 'Обновить страницу', Icon: ArrowSync24Regular },
+    { id: 'share', label: 'Поделиться ссылкой', Icon: Share24Regular },
+    { id: 'home', label: 'Добавить на главный экран', Icon: PhoneAdd24Regular },
+    { id: 'cache', label: 'Очистить кэш мини-приложения', Icon: Broom24Regular },
+    { id: 'settings', label: 'Настройки', Icon: Settings24Regular },
+  ];
+
+  const onMenuPick = (id) => {
+    setMenuOpen(false);
+    if (id === 'exit') closeApp();
+    if (id === 'refresh') setToast('Страница обновлена');
+    if (id === 'share') setToast('Ссылка скопирована');
+    if (id === 'home') setToast(`${appName} добавлено на главный экран`);
+    if (id === 'cache') setToast('Кэш мини-приложения очищен');
+    if (id === 'settings') navigate('/settings', { state: { background: location } });
+  };
   const open = (id) => navigate(`/app/${[...path, id].join('/')}`, { state: location.state });
 
 
@@ -181,7 +210,7 @@ export default function MiniApp() {
           <span className="ma-title">{title}</span>
           {!nested && <span className="ma-subtitle">Мини-приложение</span>}
         </span>
-        <button className="ma-menu" aria-label="Меню"><DotsIcon /></button>
+        <button className="ma-menu" aria-label="Меню" onClick={() => setMenuOpen(true)}><DotsIcon /></button>
       </header>
 
       <div className="ma-scroll" key={path.join('/')} data-dir={dir}>
@@ -226,6 +255,11 @@ export default function MiniApp() {
           <span className="ma-switch" />
         </label>
       )}
+
+      {menuOpen && (
+        <ActionSheet items={MENU_ITEMS} onClose={() => setMenuOpen(false)} onPick={onMenuPick} />
+      )}
+      <Toast text={toast} onDone={() => setToast('')} />
     </div>
   );
 }

@@ -127,7 +127,9 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
   width: 100%;
   max-width: 402px;
   margin: 0 auto;
-  height: 100dvh;
+  /* --vvh ставит useViewportFit: это высота видимой области, поэтому
+     клавиатура реально поджимает каркас, а не накрывает его. */
+  height: var(--vvh, 100dvh);
   background: var(--page-bg);
   position: relative;
   display: flex;

@@ -1,35 +1,56 @@
 import { useEffect } from 'react';
 
-// Компенсация клавиатуры iOS в полноэкранных/боттом-шит слоях: сжимаем окно
-// на высоту клавиатуры (--kb) и гасим нативный pan вьюпорта, чтобы верх
-// оставался прибитым к месту. Слушаем И resize (конец анимации клавиатуры),
-// И scroll (сам процесс авто-скролла к полю ввода) — иначе между фокусом на
-// инпуте и концом анимации верх на мгновение «уезжает», а потом дёргается
-// на место, а внизу до появления клавиатуры остаётся пустой зазор.
+// Высота каркаса привязывается к видимой области (visualViewport), а не к
+// 100dvh: на iOS клавиатура dvh не уменьшает, поэтому нижняя часть экрана —
+// вместе с полем ввода — оставалась под клавиатурой. Теперь при её появлении
+// каркас физически становится ниже, и панель ввода поднимается сама, без
+// компенсирующих отступов.
+//
+// Ставим переменные один раз на весь документ: каркас общий для всех экранов.
+export function useViewportFit() {
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const root = document.documentElement;
+    if (!vv) return undefined;
+
+    let raf;
+    const apply = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+        root.style.setProperty('--vvh', `${vv.height}px`);
+        root.style.setProperty('--kb', `${kb}px`);
+        root.classList.toggle('kb', kb > 40);
+        // Страницу держим прибитой: иначе iOS уводит её вверх вслед за фокусом
+        window.scrollTo(0, 0);
+      });
+    };
+
+    apply();
+    vv.addEventListener('resize', apply);
+    vv.addEventListener('scroll', apply);
+    return () => {
+      vv.removeEventListener('resize', apply);
+      vv.removeEventListener('scroll', apply);
+      cancelAnimationFrame(raf);
+      root.style.removeProperty('--vvh');
+      root.style.removeProperty('--kb');
+      root.classList.remove('kb');
+    };
+  }, []);
+}
+
+// Экраны с лентой сообщений дополнительно прокручиваются к последнему
+// сообщению, когда клавиатура открылась.
 export function useKeyboardInset(scrollRef) {
   useEffect(() => {
     const vv = window.visualViewport;
-    if (!vv) return;
-    let raf;
+    if (!vv) return undefined;
     const onChange = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const kb = Math.max(0, window.innerHeight - vv.height);
-        document.documentElement.style.setProperty('--kb', `${kb}px`);
-        document.documentElement.classList.toggle('kb', kb > 0);
-        window.scrollTo(0, 0);
-        const b = scrollRef?.current;
-        if (b) b.scrollTop = b.scrollHeight;
-      });
+      const b = scrollRef?.current;
+      if (b) requestAnimationFrame(() => { b.scrollTop = b.scrollHeight; });
     };
     vv.addEventListener('resize', onChange);
-    vv.addEventListener('scroll', onChange);
-    return () => {
-      vv.removeEventListener('resize', onChange);
-      vv.removeEventListener('scroll', onChange);
-      cancelAnimationFrame(raf);
-      document.documentElement.style.removeProperty('--kb');
-      document.documentElement.classList.remove('kb');
-    };
+    return () => vv.removeEventListener('resize', onChange);
   }, [scrollRef]);
 }

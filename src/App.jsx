@@ -28,6 +28,7 @@ import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CompanyProvider } from './context/CompanyContext';
+import { useViewportFit } from './utils/useKeyboardInset';
 import './App.css';
 
 // Роуты с таб-баром. Оверлеи (чат, статья, шит сервисов, поиск...) своего бара
@@ -97,6 +98,7 @@ function AppRoutes() {
 }
 
 export default function App() {
+  useViewportFit();
   const [exiting, setExiting] = useState(false);
   const [splashDone, setSplashDone] = useState(false);
 
