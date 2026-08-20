@@ -133,10 +133,14 @@ export default function Message({
               {msg.kind === 'video' && <span className="msg-video-play"><Play size={22} weight="fill" color="#fff" /></span>}
             </div>
             {msg.text && <div className="msg-text">{renderText(msg.text)}</div>}
+            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
             <TimeRow time={msg.time} mine={mine} status={msg.status} />
           </div>
         ) : msg.kind === 'voice' ? (
-          <VoiceBubble duration={msg.duration} mine={mine} time={msg.time} status={msg.status} />
+          <>
+            <VoiceBubble duration={msg.duration} mine={mine} time={msg.time} status={msg.status} />
+            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
+          </>
         ) : msg.kind === 'document' ? (
           <>
             <div className="msg-document">
@@ -147,6 +151,7 @@ export default function Message({
               </span>
             </div>
             <TimeRow time={msg.time} mine={mine} status={msg.status} variant="static" />
+            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
           </>
         ) : (
           <div className="msg-bubble">
@@ -162,10 +167,10 @@ export default function Message({
             ) : (
               <div className="msg-text">{renderText(msg.text)}</div>
             )}
+            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
             <TimeRow time={msg.time} mine={mine} status={msg.status} />
           </div>
         )}
-        <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
       </div>
     </div>
   );

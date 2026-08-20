@@ -1,12 +1,16 @@
-/* Ряд реакций под баблом */
-.rx { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.rx--mine { justify-content: flex-end; }
+/* Ряд реакций внутри бабла: сидит между текстом и строкой времени.
+   Выравнивание всегда по левому краю — внутри бабла он общий для всех. */
+.rx { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+/* Время лежит в правом нижнем углу поверх паддинга бабла, поэтому последней
+   пилюле оставляем место, чтобы они не наезжали друг на друга. */
+.rx:last-child { padding-right: 44px; }
 
 .rx-pill {
   display: flex; align-items: center; gap: 4px;
-  height: 28px; padding: 0 6px 0 8px;
+  height: 26px; padding: 0 6px 0 8px;
   border-radius: var(--radius-pill);
-  background: var(--color-background);
+  /* На фоне бабла нужна своя подложка: --color-background с ним совпадает */
+  background: var(--color-white);
   transition: background 0.14s, transform 0.12s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -17,13 +21,13 @@
 
 .rx-faces { display: flex; }
 .rx-face {
-  width: 20px; height: 20px; border-radius: 50%; overflow: hidden;
+  width: 18px; height: 18px; border-radius: 50%; overflow: hidden;
   border: 1.5px solid var(--color-white); box-sizing: border-box;
   display: flex; align-items: center; justify-content: center;
   font-size: 8px; font-weight: 700; letter-spacing: -0.2px;
   background: var(--img-placeholder);
 }
-.rx-face + .rx-face { margin-left: -7px; }
+.rx-face + .rx-face { margin-left: -6px; }
 .rx-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .rx-face--initials.tint-green { background: #d9f7be; color: #389e0d; }
 .rx-face--initials.tint-blue { background: #e6f4ff; color: #1677ff; }
