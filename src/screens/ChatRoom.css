@@ -172,8 +172,8 @@ html.kb .cr-body { padding-bottom: 56px; }
   animation: msg-in 0.2s ease;
 }
 @keyframes msg-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-.msg--their .msg-bubble { background: var(--color-background); border: 1px solid var(--color-border); }
-.msg--mine .msg-bubble { background: var(--color-primary-bg-hover); border: none; font-weight: 500; min-width: 88px; }
+.msg--their .msg-bubble { --bubble-bg: var(--color-background); background: var(--bubble-bg); border: 1px solid var(--color-border); }
+.msg--mine .msg-bubble { --bubble-bg: var(--color-primary-bg-hover); background: var(--bubble-bg); border: none; font-weight: 500; min-width: 88px; }
 .msg--their.msg--last .msg-bubble,
 .msg--their.msg--last .msg-document { border-bottom-left-radius: 2px; }
 .msg--mine.msg--last .msg-bubble { border-bottom-right-radius: 2px; }
@@ -366,3 +366,13 @@ html.kb .cr-compose { bottom: 58px; }
   -webkit-tap-highlight-color: transparent;
 }
 .cr-compose-close:active { opacity: 0.5; }
+
+/* Низ бабла с реакциями: они переносятся по строкам, время всегда последнее.
+   Нижний паддинг бабла тут не нужен — время уже в потоке. */
+.msg-bubble:has(.msg-footer) { padding-bottom: 10px; }
+.msg-footer {
+  display: flex; align-items: flex-end; flex-wrap: wrap;
+  gap: 4px var(--space-2);
+  margin-top: 6px;
+}
+.msg-footer .msg-time-row--inline { margin-left: auto; padding-bottom: 2px; color: var(--msg-time); }

@@ -85,6 +85,20 @@ function TimeRow({ time, mine, status, variant = 'overlay' }) {
   );
 }
 
+// Низ бабла: реакции и время в одной строке. Пока реакций нет, время
+// остаётся на своём месте — в правом нижнем углу поверх паддинга, чтобы
+// короткие сообщения не растягивались.
+function BubbleFooter({ reactions, mine, msg, onToggleReaction }) {
+  const hasReactions = Object.values(reactions || {}).some((u) => u.length > 0);
+  if (!hasReactions) return <TimeRow time={msg.time} mine={mine} status={msg.status} />;
+  return (
+    <div className="msg-footer">
+      <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
+      <TimeRow time={msg.time} mine={mine} status={msg.status} variant="inline" />
+    </div>
+  );
+}
+
 // Одно сообщение в чате. Имя/аватар автора показываются только на первом
 // (имя) и последнем (аватар) сообщении серии одного автора — время и статус
 // прочтения теперь внутри самого бабла, на каждом сообщении (как в WhatsApp).
@@ -133,8 +147,7 @@ export default function Message({
               {msg.kind === 'video' && <span className="msg-video-play"><Play size={22} weight="fill" color="#fff" /></span>}
             </div>
             {msg.text && <div className="msg-text">{renderText(msg.text)}</div>}
-            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
-            <TimeRow time={msg.time} mine={mine} status={msg.status} />
+            <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} />
           </div>
         ) : msg.kind === 'voice' ? (
           <>
@@ -167,8 +180,7 @@ export default function Message({
             ) : (
               <div className="msg-text">{renderText(msg.text)}</div>
             )}
-            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
-            <TimeRow time={msg.time} mine={mine} status={msg.status} />
+            <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} />
           </div>
         )}
       </div>

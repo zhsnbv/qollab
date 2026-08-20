@@ -1,28 +1,29 @@
-/* Ряд реакций внутри бабла: сидит между текстом и строкой времени.
-   Выравнивание всегда по левому краю — внутри бабла он общий для всех. */
-.rx { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-/* Время лежит в правом нижнем углу поверх паддинга бабла, поэтому последней
-   пилюле оставляем место, чтобы они не наезжали друг на друга. */
-.rx:last-child { padding-right: 44px; }
+/* Реакции стоят в одной строке со временем и переносятся, когда перестают
+   помещаться: бабл при этом растягивается до своей максимальной ширины. */
+.rx { display: flex; flex-wrap: wrap; gap: 4px; }
 
 .rx-pill {
   display: flex; align-items: center; gap: 4px;
   height: 26px; padding: 0 6px 0 8px;
   border-radius: var(--radius-pill);
-  /* На фоне бабла нужна своя подложка: --color-background с ним совпадает */
-  background: var(--color-white);
+  /* Чужая реакция — тот же бабл, но на тон темнее: --bubble-bg приходит от
+     самого бабла, поэтому оттенок верен и для моего акцентного, и для чужого. */
+  background: color-mix(in srgb, var(--bubble-bg, var(--color-background)) 88%, #000);
   transition: background 0.14s, transform 0.12s;
   -webkit-tap-highlight-color: transparent;
 }
 .rx-pill:active { transform: scale(0.94); }
-/* Своя реакция — залита акцентом, как в мессенджерах */
-.rx-pill.own { background: var(--color-primary-bg-hover); }
+/* Своя реакция — залита самим акцентом */
+.rx-pill.own { background: var(--color-primary); }
+.rx-pill.own .rx-count { color: #fff; }
+.rx-pill.own .rx-face { border-color: var(--color-primary); }
 .rx-emoji { font-size: 15px; line-height: 1; }
 
 .rx-faces { display: flex; }
 .rx-face {
   width: 18px; height: 18px; border-radius: 50%; overflow: hidden;
-  border: 1.5px solid var(--color-white); box-sizing: border-box;
+  border: 1.5px solid color-mix(in srgb, var(--bubble-bg, var(--color-background)) 88%, #000);
+  box-sizing: border-box;
   display: flex; align-items: center; justify-content: center;
   font-size: 8px; font-weight: 700; letter-spacing: -0.2px;
   background: var(--img-placeholder);
@@ -38,4 +39,3 @@
   min-width: 18px; padding: 0 2px;
   font-size: 13px; font-weight: 600; color: var(--color-text); text-align: center;
 }
-.rx-pill.own .rx-count { color: var(--color-primary); }
