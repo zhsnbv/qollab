@@ -5,18 +5,21 @@ import { startBrandSwap } from '../utils/brand';
 // Выбранное рабочее пространство. Кроме самого объекта компании контекст
 // делает одну вещь: ставит data-company на <html>. Дальше цвета подхватывает
 // styles/companies.css, поэтому перекрашивать экраны поодиночке не нужно.
+// Держим выбор в sessionStorage, а не в localStorage: вход тоже живёт сессию,
+// поэтому новый запуск всегда начинается со стартового экрана и ERG —
+// пространство выбирают заново.
 const KEY = 'qollab.company';
 const CompanyContext = createContext(null);
 
 export function CompanyProvider({ children }) {
   const [companyId, setCompanyId] = useState(() => {
-    const saved = localStorage.getItem(KEY);
+    const saved = sessionStorage.getItem(KEY);
     return companyById[saved] ? saved : defaultCompany.id;
   });
 
   useEffect(() => {
     document.documentElement.dataset.company = companyId;
-    try { localStorage.setItem(KEY, companyId); } catch { /* ignore */ }
+    try { sessionStorage.setItem(KEY, companyId); } catch { /* ignore */ }
   }, [companyId]);
 
   // В чужом пространстве упоминания ERG заменяются на его бренд. Для самого
