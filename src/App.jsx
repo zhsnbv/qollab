@@ -29,6 +29,7 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CompanyProvider } from './context/CompanyContext';
 import { useViewportFit } from './utils/useKeyboardInset';
+import { applyTheme, getThemeMode, watchSystemTheme } from './utils/theme';
 import './App.css';
 
 // Роуты с таб-баром. Оверлеи (чат, статья, шит сервисов, поиск...) своего бара
@@ -99,6 +100,12 @@ function AppRoutes() {
 
 export default function App() {
   useViewportFit();
+  // Режим оформления уже применён инлайн-скриптом; здесь только подписка на
+  // системную тему — она нужна, пока выбран режим «автоматически».
+  useEffect(() => {
+    applyTheme(getThemeMode());
+    return watchSystemTheme(getThemeMode);
+  }, []);
   const [exiting, setExiting] = useState(false);
   const [splashDone, setSplashDone] = useState(false);
 

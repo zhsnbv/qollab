@@ -20,13 +20,17 @@
     <meta name="apple-mobile-web-app-title" content="Qollab" />
     <title>Qollab</title>
     <script>
-      // Тёмная тема временно выключена — всегда светлая.
-      document.documentElement.dataset.theme = 'light';
-      // Статус-бар/адресная строка красятся в цвет топбара (--color-white),
-      // иначе в тёмной теме сверху остаётся белая полоса.
+      // Оформление выбирается в настройках: светлое, тёмное или по системе.
+      // Ставим до первой отрисовки, иначе экран моргает светлым.
       (function () {
+        var mode = 'light';
+        try { mode = localStorage.getItem('qollab.theme') || 'light'; } catch (e) {}
+        var dark = mode === 'dark'
+          || (mode === 'auto' && window.matchMedia
+              && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
         var m = document.querySelector('meta[name="theme-color"]');
-        if (m) m.content = document.documentElement.dataset.theme === 'dark' ? '#2b2a27' : '#ffffff';
+        if (m) m.content = dark ? '#2b2a27' : '#ffffff';
       })();
       /* Вернуть системную тему (как Claude iOS):
       (function () {

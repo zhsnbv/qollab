@@ -94,6 +94,8 @@ export const settingsGroups = [
       { id: 'notif', label: 'Уведомления', icon: 'BellSimple' },
       { id: 'devices', label: 'Устройства', icon: 'DeviceMobile' },
       { id: 'lang', label: 'Язык', icon: 'Translate', value: 'Русский' },
+      // value подставляется на экране: зависит от выбранного режима
+      { id: 'theme', label: 'Оформление', icon: 'Moon' },
     ],
   },
   {

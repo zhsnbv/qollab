@@ -92,9 +92,18 @@ body {
 /* Поля ввода/textarea оставляем выделяемыми (когда появятся) */
 input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
 
-/* Тень под шапкой при скролле — та же, что у слота топбара во вкладках */
+/* Тень под шапкой при скролле — та же, что у слота топбара во вкладках.
+   Шапке нужен свой слой: без него тень рисуется в слое самой шапки, а
+   идущая следом область прокрутки закрашивает её своим фоном. */
 .hdr-shadow { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03); }
-[class$="-top"], .cr-header { transition: box-shadow 0.25s ease; }
+/* Классы перечислены явно: [class$="-top"] смотрит на весь атрибут целиком,
+   а у шапки со скроллом он оканчивается на hdr-shadow. */
+.cp-top, .nc-top, .cs-top, .ev-top, .st-top, .fav-top, .nt-top, .ng-top,
+.se-top, .cv-top, .ar-top, .ma-top, .pv-top, .cr-header {
+  position: relative;
+  z-index: 1;
+  transition: box-shadow 0.25s ease;
+}
 
 /* Распорка справа в шапке: занимает место кнопки, но сама невидима */
 .hdr-spacer { background: none !important; pointer-events: none; }
