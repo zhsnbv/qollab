@@ -322,6 +322,7 @@ export default function DMChat() {
                 avatar={!msg.mine && chat.kind === 'group' ? <AuthorAvatar chat={chat} author={msg.author} /> : null}
                 authorLabel={!msg.mine && chat.kind === 'group' ? msg.author : null}
                 authorColor={!msg.mine && chat.kind === 'group' ? colorForName(msg.author) : null}
+                withAvatarSlot={chat.kind === 'group'}
                 reaction={reactions[msg.id]}
                 onLongPress={onLongPress}
               />

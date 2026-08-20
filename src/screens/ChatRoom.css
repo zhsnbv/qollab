@@ -120,10 +120,10 @@ html.kb .cr-body { padding-bottom: 56px; }
 .msg { display: flex; align-items: flex-end; gap: var(--space-3); }
 .msg--mine { justify-content: flex-end; }
 /* слот 40px держит выравнивание последующих сообщений группы */
-/* Слот держит выравнивание серии сообщений. В личных чатах аватарки нет —
-   тогда и место под неё не резервируем. */
+/* Слот держит выравнивание серии: аватар рисуется только на последнем
+   сообщении, у остальных слот пустой, но место занимает. В личных чатах
+   аватарок нет совсем — там слот просто не рендерится (см. withAvatarSlot). */
 .msg-avatar-slot { width: 40px; flex-shrink: 0; }
-.msg-avatar-slot:empty { display: none; }
 .msg-avatar {
   width: 40px; height: 40px; border-radius: var(--radius-pill); overflow: hidden;
   display: flex; align-items: center; justify-content: center;

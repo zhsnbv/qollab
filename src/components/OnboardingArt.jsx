@@ -66,7 +66,7 @@ export default function OnboardingArt() {
               animationDuration: `${o.duration}s`,
               animationDirection: o.dir > 0 ? 'normal' : 'reverse',
               // Кольца разъезжаются из центра волной, одно за другим
-              '--appear-delay': `${0.08 + oi * 0.12}s`,
+              '--appear-delay': `${0.12 + oi * 0.22}s`,
             }}
           >
             <span className="onb-orbit" />
@@ -78,7 +78,7 @@ export default function OnboardingArt() {
               const style = {
                 left: `${x}%`, top: `${y}%`,
                 // Иконки проявляются после своих колец
-                '--appear-delay': `${0.45 + oi * 0.12 + ii * 0.07}s`,
+                '--appear-delay': `${0.75 + oi * 0.22 + ii * 0.11}s`,
                 width: `${(item.kind === 'app' ? o.size : o.size) / o.d * 100}%`,
                 // Контр-вращение: иконка остаётся вертикальной. Кадры уже
                 // крутят её в минус, поэтому направление берём как у слоя.

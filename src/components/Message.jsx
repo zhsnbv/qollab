@@ -116,13 +116,13 @@ function useLongPress(onLongPress, msg) {
 
 export default function Message({
   msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor,
-  reaction, onLongPress,
+  reaction, onLongPress, withAvatarSlot = true,
 }) {
   const showAuthor = firstOfGroup && !mine && authorLabel;
   const press = useLongPress(onLongPress, msg);
   return (
     <div className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''}`}>
-      {!mine && <span className="msg-avatar-slot">{lastOfGroup && avatar}</span>}
+      {!mine && withAvatarSlot && <span className="msg-avatar-slot">{lastOfGroup && avatar}</span>}
       <div className="msg-col" {...press}>
         {msg.kind === 'photo' || msg.kind === 'video' ? (
           <div className="msg-bubble msg-bubble--media">
