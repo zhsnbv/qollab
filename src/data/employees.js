@@ -5,7 +5,7 @@
 export const employees = [
   {
     id: 'nurlan-ibragimov', name: 'Нурлан Ибрагимов',
-    company: 'Business & Technology Solutions',
+    company: 'Business & Technology Services',
     phone: '+77017300276', role: 'Java Developer',
     avatar: '/img/chats/daniyar.png',
   },
@@ -27,7 +27,7 @@ export const employees = [
   },
   {
     id: 'nurlan-bekenov', name: 'Нурлан Бекенов',
-    company: 'Business & Technology Solutions',
+    company: 'Business & Technology Services',
     phone: '+77015500234', role: 'Разработчик программного обеспечения',
     avatar: '/img/chats/daniyar.png',
   },
@@ -39,7 +39,7 @@ export const employees = [
   },
   {
     id: 'aizhan-serikkyzy', name: 'Аяжан Сериккызы',
-    company: 'Business & Technology Solutions',
+    company: 'Business & Technology Services',
     phone: '+77017300112', role: 'Руководитель проекта',
     avatar: '/img/chats/ayazhan.png',
   },

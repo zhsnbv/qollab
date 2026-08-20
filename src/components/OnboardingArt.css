@@ -29,12 +29,13 @@
 }
 @keyframes onb-spin { to { transform: rotate(360deg); } }
 
-/* Сама линия орбиты — тонкий круг акцентом */
+/* Линия орбиты: в макете это --color-primary-border (0.8px), а не сам акцент.
+   Токен уже разведён по пространствам, поэтому линии остаются одинаково
+   приглушёнными и у оранжевого ERG, и у тёмного Integra. */
 .onb-orbit {
   position: absolute; inset: 0;
   border-radius: 50%;
-  border: 1px solid var(--color-primary);
-  opacity: 0.28;
+  border: 0.8px solid var(--color-primary-border);
 }
 
 /* Иконки сидят центром на линии орбиты. Контр-вращение с тем же периодом

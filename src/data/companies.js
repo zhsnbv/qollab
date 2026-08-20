@@ -20,7 +20,7 @@ export const companies = [
   {
     id: 'bts',
     name: 'BTS Digital',
-    full: 'Business & Technology Solutions',
+    full: 'Business & Technology Services',
     domain: 'bts.qollab.kz',
     accent: '#0b6b53',
   },
