@@ -3,10 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, ShareNetwork, Check } from '@phosphor-icons/react';
 import { events } from '../data/feed';
 import './EventView.css';
+import { useScrolled } from '../utils/useScrolled';
 
 // Просмотр мероприятия (Figma node 24799-3477): основная информация, описание
 // с картинкой и выбор даты участия. Три белых блока с зазором 8, как в макете.
 export default function EventView() {
+  const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const location = useLocation();
   const [closing, setClosing] = useState(false);
@@ -32,13 +34,13 @@ export default function EventView() {
 
   return (
     <div className={`eventview ${closing ? 'closing' : ''}`}>
-      <header className="ev-top">
+      <header className={`ev-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="ev-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="ev-title">Мероприятие</h1>
         <span className="ev-back hdr-spacer" aria-hidden="true" />
       </header>
 
-      <div className="ev-scroll">
+      <div className="ev-scroll" onScroll={onScroll}>
         <section className="ev-card">
           <h2 className="ev-h">Основная информация</h2>
           <div className="ev-info">

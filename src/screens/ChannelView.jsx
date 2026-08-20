@@ -5,6 +5,7 @@ import { PostCard } from '../components/Feed';
 import { channelList } from '../data/channels';
 import { basePosts } from '../data/feed';
 import './ChannelView.css';
+import { useScrolled } from '../utils/useScrolled';
 
 // Аватарки подписчиков в строке «N подписчиков» — просто цветные кружки,
 // отдельных изображений под них в макете нет.
@@ -13,6 +14,7 @@ const FACE_TONES = ['#4a4a4a', '#ef7f1a', '#22c55e'];
 // Просмотр канала (Figma node 24627-79597): обложка, шапка канала, описание,
 // кнопка подписки и лента публикаций этого канала.
 export default function ChannelView() {
+  const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const { channelId } = useParams();
   const channel = channelList.find((c) => c.id === channelId);
@@ -27,7 +29,7 @@ export default function ChannelView() {
   if (!channel) {
     return (
       <div className="chanview">
-        <header className="cv-top">
+        <header className={`cv-top ${scrolled ? 'hdr-shadow' : ''}`}>
           <button className="cv-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
           <h1 className="cv-title">Канал</h1>
           <span className="cv-back hdr-spacer" aria-hidden="true" />
@@ -50,7 +52,7 @@ export default function ChannelView() {
         <span className="cv-back hdr-spacer" aria-hidden="true" />
       </header>
 
-      <div className="cv-scroll">
+      <div className="cv-scroll" onScroll={onScroll}>
         <div className="cv-cover"><img src={channel.cover} alt="" /></div>
 
         <div className="cv-head">

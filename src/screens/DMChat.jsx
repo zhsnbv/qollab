@@ -60,6 +60,10 @@ function colorForName(name) {
 // случайно среди личных чатов, но не у бота/группы и не там, где уже есть
 // вложение в превью списка чатов.
 function isEmptyChat(chat) {
+  // Чат, начатый из справочника сотрудников, истории не имеет по определению:
+  // без этого buildHistory лепил баблы из отсутствующего preview и экран
+  // выглядел пустым — с невидимыми сообщениями вместо приглашения написать.
+  if (chat.fresh) return true;
   if (chat.kind || chat.attachKind) return false;
   return hashStr(chat.title || '') % 4 === 0;
 }
@@ -97,9 +101,13 @@ function subtitleFor(chat) {
   return chat.online ? 'в сети' : 'был(а) недавно';
 }
 
-// ERGiz — рамка+звезда вёрсткой (ErgizAvatar), у остальных — обычное фото.
+// ERGiz — рамка+звезда вёрсткой (ErgizAvatar), у остальных — фото, а если его
+// нет (сотрудник из справочника) — инициалы, иначе в шапке пустой кружок.
 function ChatAvatarImg({ chat, size }) {
   if (chat.kind === 'bot') return <ErgizAvatar size={size} />;
+  if (!chat.avatar && chat.initials) {
+    return <span className={`cr-avatar-initials tint-${chat.tint || 'orange'}`}>{chat.initials}</span>;
+  }
   return <img src={chat.avatar} alt="" loading="lazy" />;
 }
 

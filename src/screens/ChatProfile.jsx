@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Play, FileText, LinkSimple } from '@phosphor-icons/react';
 import { userProfiles, groupProfiles } from '../data/chatProfiles';
 import './ChatProfile.css';
+import { useScrolled } from '../utils/useScrolled';
 
 // Профиль из чата (Figma node 25110-107882). Один экран на два случая:
 // человек — тап по шапке личного чата и по аватарке в группе; группа — тап по
@@ -36,6 +37,7 @@ function Avatar({ item, size }) {
 }
 
 export default function ChatProfile() {
+  const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const location = useLocation();
   const { id, kind, employee } = location.state || {};
@@ -71,13 +73,13 @@ export default function ChatProfile() {
 
   return (
     <div className={`chatprofile ${closing ? 'closing' : ''}`}>
-      <header className="cp-top">
+      <header className={`cp-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="cp-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="cp-title">{isGroup ? 'Группа' : 'Профиль'}</h1>
         <span className="cp-back hdr-spacer" aria-hidden="true" />
       </header>
 
-      <div className="cp-scroll">
+      <div className="cp-scroll" onScroll={onScroll}>
         <section className="cp-card cp-hero">
           <Avatar item={p} size={100} />
           <h2 className="cp-name">{p.name}</h2>

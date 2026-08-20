@@ -7,12 +7,14 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { settingsGroups } from '../data/profile';
 import './Settings.css';
+import { useScrolled } from '../utils/useScrolled';
 
 const ICONS = { BellSimple, DeviceMobile, Translate, ShieldCheck, Question, FileLock, Broom };
 
 // Настройки (Figma node 24313:85954): две группы строк и «Выйти» отдельной
 // красной строкой внизу.
 export default function Settings() {
+  const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const [closing, setClosing] = useState(false);
@@ -24,13 +26,13 @@ export default function Settings() {
 
   return (
     <div className={`settings ${closing ? 'closing' : ''}`}>
-      <header className="st-top">
+      <header className={`st-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="st-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="st-title">Настройки</h1>
         <span className="st-back hdr-spacer" aria-hidden="true" />
       </header>
 
-      <div className="st-scroll">
+      <div className="st-scroll" onScroll={onScroll}>
         {settingsGroups.map((g) => (
           <section className="st-group" key={g.title}>
             <h2 className="st-group-title">{g.title}</h2>

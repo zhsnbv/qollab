@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  CaretLeft, CaretRight, MagnifyingGlass, X, Info,
-  UsersThree, NotePencil, UserPlus,
-} from '@phosphor-icons/react';
+  ChevronLeft24Regular, ChevronRight24Regular, Search24Regular, Dismiss16Regular,
+  Info24Regular, PeopleTeam24Filled, Organization24Regular,
+  Compose24Regular, PersonAdd24Filled,
+} from '@fluentui/react-icons';
 import { searchEmployees } from '../data/employees';
 import './NewChat.css';
+import { useScrolled } from '../utils/useScrolled';
 
 // «Написать сообщение» (Figma node 25122-109360): два состояния одного экрана —
 // пустой поиск с подсказкой и список найденных сотрудников. Тап по строке
@@ -32,13 +34,14 @@ function Person({ e, onOpen, onInfo }) {
         </span>
       </button>
       <button className="nc-info" onClick={() => onInfo(e)} aria-label={`О сотруднике: ${e.name}`}>
-        <Info size={20} />
+        <Info24Regular />
       </button>
     </div>
   );
 }
 
 export default function NewChat() {
+  const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const location = useLocation();
   const [closing, setClosing] = useState(false);
@@ -53,7 +56,7 @@ export default function NewChat() {
   // Чат с сотрудником — тот же экран личной переписки, что и из списка чатов
   const openChat = (e) => navigate('/chats/dm', {
     state: {
-      chat: { title: e.name, avatar: e.avatar, initials: e.initials, tint: e.tint, profileId: e.id },
+      chat: { title: e.name, avatar: e.avatar, initials: e.initials, tint: e.tint, profileId: e.id, fresh: true },
       background: location.state?.background,
     },
   });
@@ -64,15 +67,15 @@ export default function NewChat() {
 
   return (
     <div className={`newchat ${closing ? 'closing' : ''}`}>
-      <header className="nc-top">
-        <button className="nc-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
+      <header className={`nc-top ${scrolled ? 'hdr-shadow' : ''}`}>
+        <button className="nc-back" onClick={close} aria-label="Назад"><ChevronLeft24Regular /></button>
         <h1 className="nc-title">Написать сообщение</h1>
         <span className="nc-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="nc-search-row">
         <div className="nc-search">
-          <MagnifyingGlass size={20} color="var(--color-weak)" />
+          <Search24Regular className="nc-search-ico" />
           <input
             value={query}
             onChange={(ev) => setQuery(ev.target.value)}
@@ -82,26 +85,26 @@ export default function NewChat() {
           />
           {query && (
             <button className="nc-clear" onClick={() => setQuery('')} aria-label="Очистить">
-              <X size={12} weight="bold" />
+              <Dismiss16Regular />
             </button>
           )}
         </div>
-        <button className="nc-struct" aria-label="Оргструктура"><UsersThree size={20} /></button>
+        <button className="nc-struct" aria-label="Оргструктура"><Organization24Regular /></button>
       </div>
 
       <button className="nc-group">
-        <span className="nc-group-ico"><UsersThree size={24} weight="fill" /></span>
+        <span className="nc-group-ico"><PeopleTeam24Filled /></span>
         <span className="nc-group-label">Создать группу</span>
-        <CaretRight size={16} color="var(--color-light)" />
+        <ChevronRight24Regular className="nc-chevron" />
       </button>
 
-      <div className="nc-scroll">
+      <div className="nc-scroll" onScroll={onScroll}>
         {found.length === 0 && (
           <div className="nc-empty">
             <div className="nc-empty-icons">
-              <span className="nc-empty-circle nc-empty-circle--side"><NotePencil size={20} color="var(--color-weak)" /></span>
-              <span className="nc-empty-circle nc-empty-circle--main"><UserPlus size={28} weight="fill" color="var(--color-primary)" /></span>
-              <span className="nc-empty-circle nc-empty-circle--side"><MagnifyingGlass size={20} color="var(--color-weak)" /></span>
+              <span className="nc-empty-circle nc-empty-circle--side"><Compose24Regular /></span>
+              <span className="nc-empty-circle nc-empty-circle--main"><PersonAdd24Filled /></span>
+              <span className="nc-empty-circle nc-empty-circle--side"><Search24Regular /></span>
             </div>
             <p className="nc-empty-title">Поиск собеседника</p>
             <p className="nc-empty-sub">

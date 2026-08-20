@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CaretLeft, MinusCircle, PlusCircle, DotsSixVertical, Info } from '@phosphor-icons/react';
 import { useFavorites, servicesById, allServices } from '../context/FavoritesContext';
 import './Favorites.css';
+import { useScrolled } from '../utils/useScrolled';
 
 // Ровно столько плиток помещается в сетку «Моих сервисов» на Главной
 // (два ряда по четыре, восьмая — «Все сервисы»), поэтому набор фиксирован:
@@ -68,6 +69,7 @@ function useReorder(count, setFavoriteIds) {
 // иначе кнопка ничего не значила бы, а на экране можно побывать в неполном
 // наборе (например, убрать всё и уйти назад).
 export default function Favorites() {
+  const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const { favoriteIds, setFavoriteIds } = useFavorites();
   const [draft, setDraft] = useState(favoriteIds);
@@ -88,7 +90,7 @@ export default function Favorites() {
 
   return (
     <div className="favscreen">
-      <header className="fav-top">
+      <header className={`fav-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="fav-back" onClick={() => navigate(-1)} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="fav-title">Избранные сервисы</h1>
         <span className="fav-back hdr-spacer" aria-hidden="true" />
@@ -99,7 +101,7 @@ export default function Favorites() {
         Выберите {LIMIT} сервисов, чтобы сохранить изменения
       </div>
 
-      <div className="fav-scroll">
+      <div className="fav-scroll" onScroll={onScroll}>
         <div className="fav-section-row">
           <h2 className="fav-section">Избранное</h2>
           <span className="fav-count">{draft.length} из {LIMIT}</span>

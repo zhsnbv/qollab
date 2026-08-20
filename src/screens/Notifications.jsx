@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { CaretLeft, GearSix } from '@phosphor-icons/react';
 import { notificationGroups } from '../data/notifications';
 import './Notifications.css';
+import { useScrolled } from '../utils/useScrolled';
 
 // Список групп уведомлений (Figma node 24351:90018). Открывается по колокольчику
 // в шапке Главной; каждая строка ведёт в ленту своей группы.
 export default function Notifications() {
+  const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const [closing, setClosing] = useState(false);
 
@@ -17,13 +19,13 @@ export default function Notifications() {
 
   return (
     <div className={`notifs ${closing ? 'closing' : ''}`}>
-      <header className="nt-top">
+      <header className={`nt-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="nt-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="nt-title">Уведомления</h1>
         <button className="nt-gear" aria-label="Настройки уведомлений"><GearSix size={20} weight="fill" /></button>
       </header>
 
-      <div className="nt-scroll">
+      <div className="nt-scroll" onScroll={onScroll}>
         <div className="nt-card">
           {notificationGroups.map((g) => (
             <button className="nt-row" key={g.id} onClick={() => navigate(`/notifications/${g.id}`)}>

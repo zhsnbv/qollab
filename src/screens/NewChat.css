@@ -148,3 +148,10 @@
 @media (prefers-reduced-motion: reduce) {
   .newchat, .newchat.closing { animation: none; }
 }
+
+/* Fluent-иконки рисуются в 24px и наследуют цвет — задаём его по месту */
+.nc-search-ico { color: var(--color-weak); flex-shrink: 0; }
+.nc-chevron { color: var(--color-light); flex-shrink: 0; width: 20px; height: 20px; }
+.nc-clear svg { width: 12px; height: 12px; }
+.nc-empty-circle--side svg { color: var(--color-weak); }
+.nc-empty-circle--main svg { color: var(--color-primary); width: 30px; height: 30px; }
