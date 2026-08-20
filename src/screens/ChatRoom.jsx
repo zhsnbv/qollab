@@ -5,6 +5,11 @@ import { dayLabel } from '../utils/chatDate';
 import { useKeyboardInset } from '../utils/useKeyboardInset';
 import { ConnectingSkeleton } from '../components/ChatState';
 import Message from '../components/Message';
+import MessageMenu from '../components/MessageMenu';
+import { PinnedBar, PinnedList } from '../components/PinnedBar';
+import ForwardSheet from '../components/ForwardSheet';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import './ChatRoom.css';
 
 // Участники. В группе имя показываем полным, фамилию — инициалом с точкой.
@@ -69,6 +74,61 @@ export default function ChatRoom() {
   const openProfile = (id, kind) => navigate('/chat-profile', {
     state: { id, kind, background: location.state?.background },
   });
+
+  // Действия над сообщением: меню по долгому нажатию, реакции, закрепы,
+  // ответ/редактирование и пересылка. Всё держим здесь — сообщения живут
+  // в этом же состоянии.
+  const [menu, setMenu] = useState(null);      // { msg, rect }
+  const [reactions, setReactions] = useState({}); // id → эмодзи
+  const [pinnedIds, setPinnedIds] = useState([]);
+  const [pinListOpen, setPinListOpen] = useState(false);
+  const [reply, setReply] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [forward, setForward] = useState(null);
+  const [confirm, setConfirm] = useState(null);
+  const [notice, setNotice] = useState([]);     // системные плашки
+
+  const addNotice = (text) => setNotice((n) => [...n, { id: `n${Date.now()}`, text }]);
+
+  const onLongPress = (msg, rect) => setMenu({ msg, rect });
+
+  const react = (emoji) => {
+    const id = menu.msg.id;
+    // Повторный тап по той же реакции снимает её
+    setReactions((r) => ({ ...r, [id]: r[id] === emoji ? undefined : emoji }));
+    setMenu(null);
+  };
+
+  const runAction = (action) => {
+    const msg = menu.msg;
+    setMenu(null);
+    if (action === 'reply') { setEditing(null); setReply(msg); }
+    if (action === 'copy') navigator.clipboard?.writeText(msg.text || '');
+    if (action === 'edit') { setReply(null); setEditing(msg); setInput(msg.text || ''); }
+    if (action === 'forward') setForward(msg);
+    if (action === 'select') addNotice('Режим выбора сообщений появится позже');
+    if (action === 'pin') {
+      const on = pinnedIds.includes(msg.id);
+      setPinnedIds((ids) => (on ? ids.filter((x) => x !== msg.id) : [...ids, msg.id]));
+      addNotice(on
+        ? `Вы открепили сообщение${msg.text ? ` «${msg.text}»` : ''}`
+        : `Вы закрепили сообщение${msg.text ? ` «${msg.text}»` : ''}`);
+    }
+    if (action === 'delete') {
+      setConfirm({
+        title: 'Удалить сообщение?',
+        text: 'Сообщение исчезнет у всех участников чата. Отменить это действие нельзя.',
+        confirmLabel: 'Удалить',
+        danger: true,
+        onConfirm: () => {
+          setMessages((list) => list.filter((m) => m.id !== msg.id));
+          setPinnedIds((ids) => ids.filter((x) => x !== msg.id));
+          setConfirm(null);
+        },
+      });
+    }
+  };
+
   const [closing, setClosing] = useState(false);
   const [phase, setPhase] = useState('connecting'); // connecting | chat
   const [messages, setMessages] = useState([]);
@@ -127,8 +187,22 @@ export default function ChatRoom() {
   const send = () => {
     const text = input.trim();
     if (!text) return;
+
+    // Правка существующего сообщения — не новое, ответа собеседника не ждём
+    if (editing) {
+      setMessages((m) => m.map((msg) => (msg.id === editing.id ? { ...msg, text, edited: true } : msg)));
+      setEditing(null);
+      setInput('');
+      return;
+    }
+
     const id = ++uid;
-    setMessages((m) => [...m, { id, mine: true, kind: 'text', text, time: now(), status: 'sent' }]);
+    // Ответ несёт с собой цитату — её рисует сам бабл
+    const quote = reply
+      ? { author: reply.mine ? 'Вы' : reply.author?.short, text: reply.text || 'Вложение', color: reply.author?.color }
+      : undefined;
+    setMessages((m) => [...m, { id, mine: true, kind: 'text', text, time: now(), status: 'sent', quote }]);
+    setReply(null);
     setInput('');
     timersRef.current.push(setTimeout(() => {
       setMessages((m) => m.map((msg) => (msg.id === id ? { ...msg, status: 'delivered' } : msg)));
@@ -147,6 +221,9 @@ export default function ChatRoom() {
   const subtitle = phase === 'connecting'
     ? 'Подключение…'
     : (typing ? `${typing.short} печатает…` : '73 участника');
+
+  const pinnedMessages = messages.filter((m) => pinnedIds.includes(m.id));
+  const lastPinned = pinnedMessages[pinnedMessages.length - 1];
 
   // Группировка: имя — на первом сообщении серии одного автора, аватар и
   // «хвостик» бабла — на последнем.
@@ -173,6 +250,12 @@ export default function ChatRoom() {
         <button className="cr-walkie" aria-label="Рация"><img src="/img/chats/walkie.svg" alt="" width="20" height="20" /></button>
       </header>
 
+      <PinnedBar
+        message={lastPinned}
+        count={pinnedMessages.length}
+        onOpenList={() => setPinListOpen(true)}
+      />
+
       <div className="cr-body" ref={scrollRef}>
         {phase === 'connecting' && <ConnectingSkeleton />}
         {phase === 'chat' && (
@@ -181,14 +264,19 @@ export default function ChatRoom() {
             {items.map((msg) => (
               <Message
                 key={msg.id}
-                msg={msg}
+                msg={{ ...msg, pinned: pinnedIds.includes(msg.id) }}
                 firstOfGroup={msg.firstOfGroup}
                 lastOfGroup={msg.lastOfGroup}
                 mine={!!msg.mine}
                 avatar={!msg.mine ? <AuthorAvatar author={msg.author} onOpen={(id) => openProfile(id, 'user')} /> : null}
                 authorLabel={!msg.mine ? msg.author?.short : null}
                 authorColor={!msg.mine ? msg.author?.color : null}
+                reaction={reactions[msg.id]}
+                onLongPress={onLongPress}
               />
+            ))}
+            {notice.map((n) => (
+              <div className="msg-status-chip" key={n.id}>{n.text}</div>
             ))}
             {typing && (
               <div className="msg msg--their msg--last">
@@ -201,6 +289,28 @@ export default function ChatRoom() {
           </div>
         )}
       </div>
+
+      {(reply || editing) && (
+        <div className="cr-compose">
+          <span className="cr-compose-ico">
+            {editing ? <Edit20Regular /> : <ArrowReply20Regular />}
+          </span>
+          <span className="cr-compose-line" />
+          <span className="cr-compose-texts">
+            <span className="cr-compose-label">
+              {editing ? 'Редактирование' : (reply.mine ? 'Вы' : reply.author?.short)}
+            </span>
+            <span className="cr-compose-text">{(editing || reply).text || 'Вложение'}</span>
+          </span>
+          <button
+            className="cr-compose-close"
+            onClick={() => { setReply(null); setEditing(null); if (editing) setInput(''); }}
+            aria-label="Отменить"
+          >
+            <Dismiss20Regular />
+          </button>
+        </div>
+      )}
 
       <div className="cr-writebar">
         <button className="cr-write-btn" aria-label="Вложение"><Plus size={24} color="var(--color-text)" /></button>
@@ -218,6 +328,47 @@ export default function ChatRoom() {
           <button className="cr-write-btn" aria-label="Голосовое"><Microphone size={24} color="var(--color-text)" /></button>
         )}
       </div>
+
+      {menu && (
+        <MessageMenu
+          msg={{ ...menu.msg, pinned: pinnedIds.includes(menu.msg.id) }}
+          mine={!!menu.msg.mine}
+          rect={menu.rect}
+          onClose={() => setMenu(null)}
+          onAction={runAction}
+          onReact={react}
+        />
+      )}
+
+      {pinListOpen && (
+        <PinnedList
+          items={pinnedMessages}
+          onClose={() => setPinListOpen(false)}
+          onUnpin={(id) => {
+            setPinnedIds((ids) => ids.filter((x) => x !== id));
+            if (pinnedMessages.length <= 1) setPinListOpen(false);
+          }}
+          onUnpinAll={() => { setPinnedIds([]); setPinListOpen(false); addNotice('Вы открепили все сообщения'); }}
+        />
+      )}
+
+      {forward && (
+        <ForwardSheet
+          onClose={() => setForward(null)}
+          onPick={(chat) => { setForward(null); addNotice(`Сообщение переслано: ${chat.name}`); }}
+        />
+      )}
+
+      {confirm && (
+        <ConfirmDialog
+          title={confirm.title}
+          text={confirm.text}
+          confirmLabel={confirm.confirmLabel}
+          danger={confirm.danger}
+          onConfirm={confirm.onConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
     </div>
   );
 }

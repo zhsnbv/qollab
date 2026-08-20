@@ -325,3 +325,57 @@ html.kb .cr-body { padding-bottom: 56px; }
 .cr-avatar-initials.tint-blue { background: #e6f4ff; color: #1677ff; }
 .cr-avatar-initials.tint-orange { background: var(--color-primary-bg); color: var(--color-primary); }
 .cr-avatar-initials.tint-grey { background: var(--color-background); color: var(--color-weak); }
+
+/* Реакция на сообщении — кружок на нижнем углу бабла */
+.msg-col { position: relative; }
+.msg-reaction {
+  position: absolute; bottom: -10px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1;
+}
+.msg--mine .msg-reaction { left: -6px; }
+.msg--their .msg-reaction { right: -6px; }
+/* Реакция выступает за бабл — оставляем ей место под группой */
+.msg:has(.msg-reaction) { margin-bottom: var(--space-3); }
+
+/* Системная плашка по центру ленты: «Вы закрепили сообщение…» и т.п. */
+.msg-status-chip {
+  align-self: center;
+  max-width: 82%;
+  margin: var(--space-2) 0;
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-background);
+  font-size: 13px; line-height: 1.35; color: var(--color-weak); text-align: center;
+}
+
+/* Панель ответа и редактирования над полем ввода — вид общий, различаются
+   иконкой и подписью. */
+.cr-compose {
+  position: absolute; left: 0; right: 0; bottom: 74px; z-index: 4;
+  display: flex; align-items: center; gap: var(--space-3);
+  margin: 0 28px var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--nav-edge), 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+html.kb .cr-compose { bottom: calc(var(--kb, 0px) + 58px); }
+.cr-compose-ico { color: var(--color-primary); display: flex; flex-shrink: 0; }
+.cr-compose-line { width: 2px; align-self: stretch; border-radius: 2px; background: var(--color-primary); flex-shrink: 0; }
+.cr-compose-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.cr-compose-label { font-size: 13px; font-weight: 600; color: var(--color-primary); }
+.cr-compose-text {
+  font-size: 14px; color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cr-compose-close {
+  color: var(--color-weak); display: flex; flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.cr-compose-close:active { opacity: 0.5; }

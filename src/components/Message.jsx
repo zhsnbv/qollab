@@ -87,12 +87,43 @@ function TimeRow({ time, mine, status, variant = 'overlay' }) {
 // Одно сообщение в чате. Имя/аватар автора показываются только на первом
 // (имя) и последнем (аватар) сообщении серии одного автора — время и статус
 // прочтения теперь внутри самого бабла, на каждом сообщении (как в WhatsApp).
-export default function Message({ msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor }) {
+// Долгое нажатие открывает меню действий. Ловим руками, а не через
+// contextmenu: на touch-устройствах он не срабатывает, а на десктопе даёт
+// системное меню браузера.
+function useLongPress(onLongPress, msg) {
+  const timer = useRef(null);
+  const moved = useRef(false);
+
+  const start = (e) => {
+    if (!onLongPress) return;
+    moved.current = false;
+    const el = e.currentTarget;
+    timer.current = setTimeout(() => {
+      if (!moved.current) onLongPress(msg, el.getBoundingClientRect());
+    }, 420);
+  };
+  const cancel = () => clearTimeout(timer.current);
+  const move = () => { moved.current = true; cancel(); };
+
+  return {
+    onPointerDown: start,
+    onPointerUp: cancel,
+    onPointerLeave: cancel,
+    onPointerMove: move,
+    onContextMenu: (e) => e.preventDefault(),
+  };
+}
+
+export default function Message({
+  msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor,
+  reaction, onLongPress,
+}) {
   const showAuthor = firstOfGroup && !mine && authorLabel;
+  const press = useLongPress(onLongPress, msg);
   return (
     <div className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''}`}>
       {!mine && <span className="msg-avatar-slot">{lastOfGroup && avatar}</span>}
-      <div className="msg-col">
+      <div className="msg-col" {...press}>
         {msg.kind === 'photo' || msg.kind === 'video' ? (
           <div className="msg-bubble msg-bubble--media">
             {showAuthor && <div className="msg-author-inline" style={{ color: authorColor }}>{authorLabel}</div>}
@@ -133,6 +164,8 @@ export default function Message({ msg, firstOfGroup, lastOfGroup, mine, avatar, 
             <TimeRow time={msg.time} mine={mine} status={msg.status} />
           </div>
         )}
+        {/* Реакция висит на углу бабла, как в проде */}
+        {reaction && <span className="msg-reaction">{reaction}</span>}
       </div>
     </div>
   );
