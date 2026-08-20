@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
+import ScreenMenu from '../components/ScreenMenu';
 import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
 import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
@@ -40,6 +41,7 @@ export default function Home() {
   const location = useLocation();
   const { favorites } = useFavorites();
   const [feedTab, setFeedTab] = useState('posts');
+  const [menuOpen, setMenuOpen] = useState(false);
   // Уведомления переехали с отдельной вкладки в иконку шапки Главной
   const actions = (
     <>
@@ -51,7 +53,7 @@ export default function Home() {
         <BellSimple size={20} weight="fill" />
         {unreadTotal > 0 && <span className="topbar-badge">{unreadTotal}</span>}
       </button>
-      <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
+      <button className="topbar-btn" aria-label="Меню" onClick={() => setMenuOpen(true)}><DotsIcon /></button>
     </>
   );
 
@@ -191,6 +193,7 @@ export default function Home() {
           ))}
         </section>
       </div></FadeIn>
+      <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </TabLayout>
   );
 }

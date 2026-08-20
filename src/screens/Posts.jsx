@@ -7,11 +7,7 @@ import { useSkeleton, PostsSkeleton, FadeIn } from '../components/Skeleton';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { channels, basePosts, makePost, events } from '../data/feed';
 import { channelList, channelScopes } from '../data/channels';
-import ActionSheet from '../components/ActionSheet';
-import Toast from '../components/Toast';
-import {
-  ArrowSync24Regular, Share24Regular, Broom24Regular, Settings24Regular,
-} from '@fluentui/react-icons';
+import ScreenMenu from '../components/ScreenMenu';
 import './Posts.css';
 
 const BATCH = 8;
@@ -34,21 +30,12 @@ export default function Posts() {
   // «Три точки» открывают лист снизу — как контекстные меню на остальных
   // экранах, вместо выпадающего меню поверх контента.
   const [menuOpen, setMenuOpen] = useState(false);
-  const [toast, setToast] = useState('');
 
-  const MENU_ITEMS = [
-    { id: 'refresh', label: 'Обновить страницу', Icon: ArrowSync24Regular },
-    { id: 'share', label: 'Поделиться ссылкой', Icon: Share24Regular },
-    { id: 'cache', label: 'Очистить кэш мини-приложения', Icon: Broom24Regular },
-    { id: 'settings', label: 'Настройки', Icon: Settings24Regular },
-  ];
-
-  const onMenuPick = (id) => {
-    setMenuOpen(false);
-    if (id === 'refresh') setToast('Лента обновлена');
-    if (id === 'share') setToast('Ссылка скопирована');
-    if (id === 'cache') setToast('Кэш мини-приложений очищен');
-    if (id === 'settings') navigate('/settings', { state: { background: location } });
+  // Обновление ленты — и жестом сверху, и пунктом меню: возвращаем список к
+  // первой странице, подгруженные партии сбрасываются.
+  const refresh = () => {
+    setExtraCount(BATCH);
+    setEventsShown(EVENTS_BATCH);
   };
 
   // Публикации — бесконечно; мероприятия — лениво до полного списка (~9)
@@ -96,7 +83,7 @@ export default function Posts() {
   }
 
   return (
-    <TabLayout topbar={<TopBar title="Лента" actions={actions} />}>
+    <TabLayout topbar={<TopBar title="Лента" actions={actions} />} onRefresh={refresh}>
       <FadeIn><div className="posts">
         <div className="posts-tabs-wrap">
           <FeedTabs tab={tab} onChange={setTab} withChannels />
@@ -196,14 +183,7 @@ export default function Posts() {
         )}
       </div></FadeIn>
 
-      {menuOpen && (
-        <ActionSheet
-          items={MENU_ITEMS}
-          onClose={() => setMenuOpen(false)}
-          onPick={onMenuPick}
-        />
-      )}
-      <Toast text={toast} onDone={() => setToast('')} />
+      <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} onRefresh={refresh} />
     </TabLayout>
   );
 }

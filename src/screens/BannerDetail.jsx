@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { X, Link as LinkIcon } from '@phosphor-icons/react';
 import TopBar, { DotsIcon } from '../components/TopBar';
+import ScreenMenu from '../components/ScreenMenu';
 import { banners } from '../data/banners';
 import './BannerDetail.css';
 
@@ -15,6 +16,7 @@ export default function BannerDetail() {
   const { state } = useLocation();
   const banner = banners.find((b) => b.id === state?.id) || banners[0];
   const [closing, setClosing] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const close = () => {
     setClosing(true);
@@ -28,7 +30,7 @@ export default function BannerDetail() {
           так, будто хедер остался на месте. Раньше свой хедер выезжал вместе с
           контентом и на секунду двоился с хедером Главной. */}
       <div className="topbar-slot">
-        <TopBar logo actions={<button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>} />
+        <TopBar logo actions={<button className="topbar-btn" aria-label="Меню" onClick={() => setMenuOpen(true)}><DotsIcon /></button>} />
       </div>
 
       <div className="bd-sheet">
@@ -54,6 +56,8 @@ export default function BannerDetail() {
           </div>
         </div>
       </div>
+
+      <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </div>
   );
 }

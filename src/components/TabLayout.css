@@ -1,0 +1,28 @@
+/* Каркас кор-раздела под топбаром: здесь живёт полоса pull-to-refresh, поэтому
+   область обрезает контент — сдвинутый вниз он не должен лезть за нижний край. */
+.tab-scroll {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tab-scroll .scroll-area { flex: 1; }
+
+/* Полоса обновления: белая подложка со спиннером, открывается при протяжке */
+.ptr {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.ptr-spinner { animation: none; }
+.ptr-spinner.is-spin { animation: spin 0.7s linear infinite; }
+
+/* Возврат после отпускания — плавный, сама протяжка идёт за пальцем */
+.scroll-area.ptr-anim { transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.tab-scroll:has(.ptr-anim) .ptr { transition: height 0.28s cubic-bezier(0.22, 1, 0.36, 1); }

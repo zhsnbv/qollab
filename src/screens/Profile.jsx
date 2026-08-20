@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import { DotsIcon } from '../components/TopBar';
+import ScreenMenu from '../components/ScreenMenu';
 import SideMenu from '../components/SideMenu';
 import {
   CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
@@ -39,6 +40,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menu, setMenu] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const open = (path) => navigate(path, { state: { background: location } });
 
@@ -51,7 +53,7 @@ export default function Profile() {
         <button className="topbar-btn topbar-btn--muted" aria-label="Рабочие сервисы" onClick={() => setMenu(true)}>
           <SquaresFour size={20} weight="fill" />
         </button>
-        <button className="topbar-btn" aria-label="Меню"><DotsIcon /></button>
+        <button className="topbar-btn" aria-label="Меню" onClick={() => setMenuOpen(true)}><DotsIcon /></button>
       </div>
     </header>
   );
@@ -278,6 +280,7 @@ export default function Profile() {
     {/* Вне TabLayout: внутри .scroll-area панель обрезалась бы его
         переполнением и ездила вместе с контентом. */}
     <SideMenu open={menu} onClose={() => setMenu(false)} />
+    <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </>
   );
 }
