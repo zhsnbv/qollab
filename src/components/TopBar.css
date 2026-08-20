@@ -30,11 +30,19 @@
   color: var(--color-heading);
 }
 
+/* Логотип рисуем маской, а не картинкой: форма берётся из того же SVG, а
+   заливка — из токена акцента, поэтому лого перекрашивается вместе с темой
+   рабочего пространства. */
 .topbar-logo {
   width: 88px;
   height: 32px;
-  object-fit: contain;
   display: block;
+  background: var(--color-primary);
+  -webkit-mask-image: url('/img/common/qollab-logo.svg');
+  mask-image: url('/img/common/qollab-logo.svg');
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  -webkit-mask-size: contain; mask-size: contain;
 }
 /* Лого-кнопка (тап по логотипу переключает тему на «Главной») */
 .topbar-logo-btn { padding: 0; display: flex; align-items: center; }

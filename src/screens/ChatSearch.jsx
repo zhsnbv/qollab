@@ -39,6 +39,10 @@ export default function ChatSearch() {
   const [history, setHistory] = useState(() => searchEmployees('а').slice(0, 4));
 
   const people = searchEmployees(query);
+  // «Активные» — те, с кем чат уже заведён: у них есть карточка в демо-данных
+  const activeIds = new Set(['nurlan-ibragimov', 'aizhan-serikkyzy', 'daniyar-kenzhebaev', 'aray-abisheva']);
+  const activePeople = people.filter((e) => activeIds.has(e.id));
+  const globalPeople = people.filter((e) => !activeIds.has(e.id));
   const messages = searchMessages(query);
   const active = query.trim().length > 0;
   const nothing = active && (tab === 'chats' ? people.length === 0 : messages.length === 0);
@@ -135,7 +139,22 @@ export default function ChatSearch() {
           </>
         )}
 
-        {active && tab === 'chats' && people.map(personRow)}
+        {active && tab === 'chats' && (
+          <>
+            {activePeople.length > 0 && (
+              <>
+                <div className="cs-section">Активные чаты</div>
+                {activePeople.map(personRow)}
+              </>
+            )}
+            {globalPeople.length > 0 && (
+              <>
+                <div className="cs-section">Глобальный поиск</div>
+                {globalPeople.map(personRow)}
+              </>
+            )}
+          </>
+        )}
 
         {active && tab === 'messages' && messages.map((m) => (
           <button className="cs-msg" key={m.id} onClick={() => setQuery(m.chat)}>

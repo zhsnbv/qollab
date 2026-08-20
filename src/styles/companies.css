@@ -1,0 +1,70 @@
+/* ============================================================
+   ТЕМЫ РАБОЧИХ ПРОСТРАНСТВ
+   Акцент компании подменяет primary и всё, что от него зависит.
+   Значения перечислены явно, а не выводятся из одного цвета:
+   у тёмного акцента (#140f4d) осветление и затемнение работают
+   иначе, чем у оранжевого, и «умная» формула давала нечитаемые
+   сочетания на тёмной теме.
+   ============================================================ */
+
+/* ── Integra: глубокий сине-фиолетовый ──────────────────────── */
+html[data-company="integra"] {
+  --color-primary: #140f4d;
+  --color-primary-bg: #ecebf5;        /* подложка иконок и пилюль */
+  --color-primary-border: #b6b3d2;
+  --color-primary-bg-hover: #dcdaeb;
+  /* Серо-синие поверхности вместо тёплых серо-коричневых */
+  --page-bg: #f2f3f7;
+  --color-background: #f1f2f6;
+  --img-placeholder: #f1f2f6;
+  --sk-a: #e8e9f0;
+  --sk-b: #f5f6fa;
+}
+/* На тёмной теме #140f4d почти сливается с фоном, поэтому акцент
+   осветляем — иначе кнопки и активные табы перестают читаться. */
+html[data-company="integra"][data-theme="dark"],
+html[data-theme="dark"][data-company="integra"] {
+  --color-primary: #8f8ad6;
+  --color-primary-bg: #23204a;
+  --color-primary-border: #4b467e;
+  --color-primary-bg-hover: #2e2a5c;
+  --color-white: #26262e;
+  --color-background: #343545;
+  --color-border: #3a3b48;
+  --color-light: #6a6b7c;
+  --page-bg: #1b1c24;
+  --color-heading: rgba(242, 244, 255, 0.92);
+  --color-text: #eceef7;
+  --color-weak: #9b9dae;
+  --color-disabled: rgba(242, 244, 255, 0.3);
+  --img-placeholder: #2b2c36;
+  --story-seen: #454657;
+  --sk-a: #2f3040;
+  --sk-b: #3a3b4d;
+  --msg-time: rgba(242, 244, 255, 0.45);
+  --nav-bg: rgba(38, 38, 46, 0.8);
+}
+
+/* ── BTS Digital: тёмно-зелёный ─────────────────────────────── */
+html[data-company="bts"] {
+  --color-primary: #0b6b53;
+  --color-primary-bg: #e6f2ee;
+  --color-primary-border: #a6cdc1;
+  --color-primary-bg-hover: #d3e8e1;
+}
+html[data-company="bts"][data-theme="dark"],
+html[data-theme="dark"][data-company="bts"] {
+  --color-primary: #4fbf9d;
+  --color-primary-bg: #123a30;
+  --color-primary-border: #2c6a58;
+  --color-primary-bg-hover: #17493c;
+}
+
+/* Кнопки и бейджи на акценте: белый текст читается не на всех оттенках,
+   поэтому цвет надписи тоже держим токеном. */
+:root { --on-primary: #ffffff; }
+
+/* Иллюстрация онбординга нарисована в оранжевом. Для других компаний
+   уводим её в нужный тон фильтром — иначе она спорит с акцентом. */
+html[data-company="integra"] .auth-onb-art { filter: hue-rotate(202deg) saturate(1.15) brightness(0.82); }
+html[data-company="bts"] .auth-onb-art { filter: hue-rotate(118deg) saturate(0.85) brightness(0.9); }

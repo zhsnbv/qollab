@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { CaretLeft, X, Briefcase, User, ChatCircleDots, CheckCircle, XCircle } from '@phosphor-icons/react';
 import { useAuth } from '../context/AuthContext';
+import { ChevronDown20Regular, Checkmark20Filled } from '@fluentui/react-icons';
+import { useCompany } from '../context/CompanyContext';
 import './Auth.css';
 
 // Авторизация (Figma node 24627-79594): онбординг → выбор рабочего
@@ -101,9 +103,10 @@ function Turnstile({ done }) {
 export default function Auth() {
   const { signIn } = useAuth();
   const [step, setStep] = useState(STEP.onboarding);
+  const { company, companyId, setCompanyId, companies } = useCompany();
+  const [sheet, setSheet] = useState(false);
   const [lang, setLang] = useState('Рус');
 
-  const [company, setCompany] = useState('');
 
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -241,11 +244,15 @@ export default function Auth() {
             Единая цифровая экосистема. Получите доступ к рабочим сервисам,
             HR-инструментам и возможностям для сотрудников и партнеров.
           </p>
-          <button className="auth-btn auth-btn--primary" onClick={() => { setGuestFlow(false); setStep(STEP.company); }}>
-            Войти как сотрудник
+          <button className="auth-company" onClick={() => setSheet(true)}>
+            <span className="auth-company-texts">
+              <span className="auth-company-label">Рабочее пространство</span>
+              <span className="auth-company-name">{company.name}</span>
+            </span>
+            <ChevronDown20Regular className="auth-company-caret" />
           </button>
-          <button className="auth-btn auth-btn--ghost" onClick={() => { setGuestFlow(true); setStep(STEP.phone); }}>
-            Войти как гость
+          <button className="auth-btn auth-btn--primary" onClick={() => { setGuestFlow(false); setStep(STEP.phone); }}>
+            Войти
           </button>
           <a className="auth-policy" href="#policy" onClick={(e) => e.preventDefault()}>
             Политика конфиденциальности
@@ -253,39 +260,32 @@ export default function Auth() {
           <div className="auth-version">App Version: v2.8.2</div>
           <div className="auth-onb-lang"><LangSwitch lang={lang} onChange={setLang} /></div>
         </div>
-      </div>
-    );
-  }
 
-  if (step === STEP.company) {
-    return (
-      <div className="auth">
-        {top('Выбор рабочего пространства', () => setStep(STEP.onboarding))}
-        <div className="auth-scroll">
-          <div className="auth-lang-row"><LangSwitch lang={lang} onChange={setLang} /></div>
-          <div className="auth-badge"><Briefcase size={32} weight="fill" /></div>
-          <h2 className="auth-title">Введите название вашей компании</h2>
-          <p className="auth-sub">Укажите компанию, чтобы найти ваше рабочее пространство</p>
-
-          <div className="auth-field">
-            <input
-              className="auth-input"
-              placeholder="Название компании"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              autoComplete="off"
-            />
-            <span className="auth-suffix">.qollab.kz</span>
+        {sheet && (
+          <div className="auth-sheet-wrap">
+            <button className="auth-sheet-scrim" onClick={() => setSheet(false)} aria-label="Закрыть" />
+            <div className="auth-sheet">
+              <span className="auth-sheet-grip" />
+              <h3 className="auth-sheet-title">Рабочее пространство</h3>
+              <div className="auth-sheet-list">
+                {companies.map((c) => (
+                  <button
+                    className={`auth-sheet-row ${c.id === companyId ? 'active' : ''}`}
+                    key={c.id}
+                    onClick={() => { setCompanyId(c.id); setSheet(false); }}
+                  >
+                    <span className="auth-sheet-dot" style={{ background: c.accent }} />
+                    <span className="auth-sheet-texts">
+                      <span className="auth-sheet-name">{c.name}</span>
+                      <span className="auth-sheet-domain">{c.domain}</span>
+                    </span>
+                    {c.id === companyId && <Checkmark20Filled className="auth-sheet-check" />}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-
-          <button
-            className="auth-btn auth-btn--primary"
-            disabled={!company.trim()}
-            onClick={() => setStep(STEP.phone)}
-          >
-            Продолжить
-          </button>
-        </div>
+        )}
       </div>
     );
   }
@@ -293,7 +293,7 @@ export default function Auth() {
   if (step === STEP.phone) {
     return (
       <div className="auth">
-        {top('Авторизация', () => setStep(STEP.company))}
+        {top('Авторизация', () => setStep(STEP.onboarding))}
         <div className="auth-scroll">
           <div className="auth-lang-row"><LangSwitch lang={lang} onChange={setLang} /></div>
           <div className="auth-badge"><User size={32} weight="fill" /></div>

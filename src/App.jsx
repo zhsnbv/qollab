@@ -27,6 +27,7 @@ import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { CompanyProvider } from './context/CompanyContext';
 import './App.css';
 
 // Роуты с таб-баром. Оверлеи (чат, статья, шит сервисов, поиск...) своего бара
@@ -112,7 +113,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <AuthProvider><FavoritesProvider>
+      <CompanyProvider><AuthProvider><FavoritesProvider>
         <div className="device">
           <div className={`app-reveal${exiting ? ' app-reveal--in' : ''}`}>
             {/* Роуты монтируем только в момент ухода сплэша — иначе таймер
@@ -122,7 +123,7 @@ export default function App() {
           </div>
           {!splashDone && <Splash exiting={exiting} />}
         </div>
-      </FavoritesProvider></AuthProvider>
+      </FavoritesProvider></AuthProvider></CompanyProvider>
     </BrowserRouter>
   );
 }

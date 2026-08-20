@@ -14,10 +14,10 @@ export default function TopBar({ title, logo, actions, onLogoClick }) {
       {logo ? (
         onLogoClick ? (
           <button className="topbar-logo-btn pressable" onClick={onLogoClick} aria-label="Переключить тему">
-            <img className="topbar-logo" src="/img/common/qollab-logo.svg" alt="Qollab" />
+            <span className="topbar-logo" role="img" aria-label="Qollab" />
           </button>
         ) : (
-          <img className="topbar-logo" src="/img/common/qollab-logo.svg" alt="Qollab" />
+          <span className="topbar-logo" role="img" aria-label="Qollab" />
         )
       ) : (
         <h1 className="topbar-title">{title}</h1>
