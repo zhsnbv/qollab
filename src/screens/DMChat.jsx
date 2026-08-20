@@ -195,9 +195,25 @@ export default function DMChat() {
   const addNotice = (text) => setNotice((n) => [...n, { id: `n${Date.now()}`, text }]);
   const onLongPress = (msg, rect) => setMenu({ msg, rect });
 
+  // Один человек — одна реакция на сообщение. В личном чате их и будет
+  // максимум две (моя и собеседника), но композиция та же, что в группе.
+  const ME = { id: 'me', initials: 'Я', tint: 'orange' };
+
+  const toggleReaction = (msgId, emoji) => {
+    setReactions((all) => {
+      const groups = { ...(all[msgId] || {}) };
+      const alreadyMine = (groups[emoji] || []).some((u) => u.id === ME.id);
+      Object.keys(groups).forEach((key) => {
+        groups[key] = groups[key].filter((u) => u.id !== ME.id);
+        if (groups[key].length === 0) delete groups[key];
+      });
+      if (!alreadyMine) groups[emoji] = [...(groups[emoji] || []), ME];
+      return { ...all, [msgId]: groups };
+    });
+  };
+
   const react = (emoji) => {
-    const id = menu.msg.id;
-    setReactions((r) => ({ ...r, [id]: r[id] === emoji ? undefined : emoji }));
+    toggleReaction(menu.msg.id, emoji);
     setMenu(null);
   };
 
@@ -323,7 +339,8 @@ export default function DMChat() {
                 authorLabel={!msg.mine && chat.kind === 'group' ? msg.author : null}
                 authorColor={!msg.mine && chat.kind === 'group' ? colorForName(msg.author) : null}
                 withAvatarSlot={chat.kind === 'group'}
-                reaction={reactions[msg.id]}
+                reactions={reactions[msg.id]}
+                onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={onLongPress}
               />
             ))}

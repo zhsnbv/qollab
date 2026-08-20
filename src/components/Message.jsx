@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Play, Stop, FileText, Check, Checks, Clock } from '@phosphor-icons/react';
+import MessageReactions from './MessageReactions';
 
 // Псевдослучайная волна для войса (стабильная между рендерами)
 const WAVE = [4, 12, 16, 6, 20, 4, 24, 12, 17, 16, 8, 7, 20, 6, 24, 5, 17, 4, 10, 14, 6, 18, 9];
@@ -116,7 +117,7 @@ function useLongPress(onLongPress, msg) {
 
 export default function Message({
   msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor,
-  reaction, onLongPress, withAvatarSlot = true,
+  reactions, onToggleReaction, onLongPress, withAvatarSlot = true,
 }) {
   const showAuthor = firstOfGroup && !mine && authorLabel;
   const press = useLongPress(onLongPress, msg);
@@ -164,8 +165,7 @@ export default function Message({
             <TimeRow time={msg.time} mine={mine} status={msg.status} />
           </div>
         )}
-        {/* Реакция висит на углу бабла, как в проде */}
-        {reaction && <span className="msg-reaction">{reaction}</span>}
+        <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
       </div>
     </div>
   );

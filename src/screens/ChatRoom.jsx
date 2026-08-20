@@ -38,9 +38,13 @@ const script = [
     text: 'Хороший тайминг — как раз смотрела на эту таску :)',
   },
   { author: dinara, typing: 1200, gap: 600, kind: 'voice', duration: '0:37' },
-  { author: madina, typing: 1400, gap: 500, text: 'Плюсую 👍 Давайте синкнемся в 16:00, скину инвайт' },
+  {
+    author: madina, typing: 1400, gap: 500, text: 'Плюсую 👍 Давайте синкнемся в 16:00, скину инвайт',
+    // Реакции коллег из истории: показывают, как выглядит пилюля с аватарками
+    reactions: { '👍': ['nurlan', 'arman', 'dinara'] },
+  },
   { author: arman, typing: 1500, gap: 400, text: '@Динара Т. добавь встречу в календарь, пожалуйста' },
-  { author: nurlan, typing: 900, gap: 0, text: 'Ок, я за 🚀' },
+  { author: nurlan, typing: 900, gap: 0, text: 'Ок, я за 🚀', reactions: { '❤️': ['madina'], '😂': ['arman'] } },
 ];
 
 // Короткие ответы на сообщения, которые юзер пишет уже после того, как
@@ -80,7 +84,9 @@ export default function ChatRoom() {
   // ответ/редактирование и пересылка. Всё держим здесь — сообщения живут
   // в этом же состоянии.
   const [menu, setMenu] = useState(null);      // { msg, rect }
-  const [reactions, setReactions] = useState({}); // id → эмодзи
+  // Реакции: id сообщения → { эмодзи: [кто поставил] }. Один человек держит
+  // одну реакцию на сообщение, поэтому при выборе новой снимаем прежнюю.
+  const [reactions, setReactions] = useState({});
   const [pinnedIds, setPinnedIds] = useState([]);
   const [pinListOpen, setPinListOpen] = useState(false);
   const [reply, setReply] = useState(null);
@@ -97,10 +103,24 @@ export default function ChatRoom() {
 
   const onLongPress = (msg, rect) => setMenu({ msg, rect });
 
+  const ME = { id: 'me', initials: 'Я', tint: 'orange' };
+
+  const toggleReaction = (msgId, emoji) => {
+    setReactions((all) => {
+      const groups = { ...(all[msgId] || {}) };
+      const alreadyMine = (groups[emoji] || []).some((u) => u.id === ME.id);
+      // Снимаем свою реакцию отовсюду: одна на сообщение
+      Object.keys(groups).forEach((key) => {
+        groups[key] = groups[key].filter((u) => u.id !== ME.id);
+        if (groups[key].length === 0) delete groups[key];
+      });
+      if (!alreadyMine) groups[emoji] = [...(groups[emoji] || []), ME];
+      return { ...all, [msgId]: groups };
+    });
+  };
+
   const react = (emoji) => {
-    const id = menu.msg.id;
-    // Повторный тап по той же реакции снимает её
-    setReactions((r) => ({ ...r, [id]: r[id] === emoji ? undefined : emoji }));
+    toggleReaction(menu.msg.id, emoji);
     setMenu(null);
   };
 
@@ -178,10 +198,21 @@ export default function ChatRoom() {
       delay += step.typing;
       timersRef.current.push(setTimeout(() => {
         setTyping(null);
+        const id = ++uid;
         setMessages((m) => [...m, {
-          id: ++uid, author: step.author, kind: step.kind || 'text',
+          id, author: step.author, kind: step.kind || 'text',
           text: step.text, img: step.img, duration: step.duration, quote: step.quote, time: now(),
         }]);
+        if (step.reactions) {
+          const groups = Object.fromEntries(Object.entries(step.reactions).map(([emoji, ids]) => [
+            emoji,
+            ids.map((pid) => {
+              const p = participants.find((x) => x.profileId === pid) || {};
+              return { id: pid, avatar: p.avatar, initials: p.initials, tint: p.tint };
+            }),
+          ]));
+          setReactions((all) => ({ ...all, [id]: groups }));
+        }
       }, delay));
       delay += step.gap;
     });
@@ -276,7 +307,8 @@ export default function ChatRoom() {
                 avatar={!msg.mine ? <AuthorAvatar author={msg.author} onOpen={(id) => openProfile(id, 'user')} /> : null}
                 authorLabel={!msg.mine ? msg.author?.short : null}
                 authorColor={!msg.mine ? msg.author?.color : null}
-                reaction={reactions[msg.id]}
+                reactions={reactions[msg.id]}
+                onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={onLongPress}
               />
             ))}
