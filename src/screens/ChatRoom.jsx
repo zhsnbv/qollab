@@ -10,6 +10,7 @@ import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
+import ComposeInput from '../components/ComposeInput';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import './ChatRoom.css';
 
@@ -368,9 +369,9 @@ export default function ChatRoom() {
       <div className="cr-writebar">
         <button className="cr-write-btn" aria-label="Вложение"><Plus size={24} color="var(--color-text)" /></button>
         <div className="cr-input">
-          <input
+          <ComposeInput
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={setInput}
             onKeyDown={onKey}
             placeholder="Сообщение…"
           />

@@ -310,11 +310,17 @@ html.kb .cr-body { padding-bottom: 56px; }
   flex: 1; min-width: 0; border-radius: 21px;
   padding: 0 var(--space-3); display: flex; align-items: center; min-height: 42px;
 }
-.cr-input input {
+.cr-field {
   width: 100%; border: none; background: none; outline: none;
   font-family: inherit; font-size: 16px; color: var(--color-text); letter-spacing: -0.32px;
+  line-height: 22px; max-height: 88px; overflow-y: auto;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+  -webkit-user-select: text; user-select: text;
 }
-.cr-input input::placeholder { color: var(--color-weak); }
+/* Плейсхолдер рисуем сами: у contenteditable своего нет */
+.cr-field.is-empty::before {
+  content: attr(data-placeholder); color: var(--color-weak); pointer-events: none;
+}
 
 /* Шапка-кнопка: ведёт в профиль собеседника или группы */
 .cr-headline {
