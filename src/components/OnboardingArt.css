@@ -3,34 +3,43 @@
 .onb-art {
   position: relative;
   width: 100%;
-  max-width: 370px;
+  max-width: 340px;
   align-self: center;
-  /* Внешняя орбита выходит за холст — в макете она не обрезана */
-  overflow: visible;
+  flex-shrink: 0;
 }
 
-/* Орбиты — тонкие круги акцентом, приглушённые до фоновых линий */
-.onb-orbit {
+/* Слой орбиты вращается целиком: вместе с ним едут сидящие на нём иконки */
+.onb-orbit-layer {
   position: absolute;
+  animation-name: onb-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes onb-spin { to { transform: rotate(360deg); } }
+
+/* Сама линия орбиты — тонкий круг акцентом */
+.onb-orbit {
+  position: absolute; inset: 0;
   border-radius: 50%;
   border: 1px solid var(--color-primary);
   opacity: 0.28;
-  pointer-events: none;
 }
 
-/* Иконки сервисов — единственное растровое здесь: они цветные и не зависят
-   от акцента (та же картинка, что в каталоге). */
-.onb-app {
+/* Иконки сидят центром на линии орбиты и крутятся обратно, чтобы не
+   переворачиваться вместе со слоем. */
+.onb-app, .onb-glyph {
   position: absolute;
   aspect-ratio: 1;
-  border-radius: 24%;
-  display: block;
+  transform: translate(-50%, -50%);
+  animation-name: onb-spin-back;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
+@keyframes onb-spin-back { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-/* Кружок с векторным глифом */
+.onb-app { border-radius: 24%; display: block; }
+
 .onb-glyph {
-  position: absolute;
-  aspect-ratio: 1;
   border-radius: 50%;
   background: var(--color-white);
   border: 1px solid var(--color-primary-border);
@@ -39,16 +48,18 @@
 }
 .onb-glyph svg { width: 60%; height: 60%; }
 
-/* Иконка приложения: скруглённый квадрат акцентом и белый глиф внутри */
+/* Логотип приложения — в центре, поверх орбит */
 .onb-icon {
   position: absolute;
   aspect-ratio: 1;
   border-radius: 27.27%;
   background: var(--color-primary);
-  color: var(--color-white);
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 2;
 }
-.onb-icon svg { width: 100%; height: 100%; }
-/* Глиф внутри всегда светлый: подложка — насыщенный акцент в обеих темах */
-.onb-icon svg { color: #fff; }
+.onb-icon svg { width: 100%; height: 100%; color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .onb-orbit-layer, .onb-app, .onb-glyph { animation: none; }
+}
