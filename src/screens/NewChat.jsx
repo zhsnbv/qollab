@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  ChevronLeft24Regular, ChevronRight24Regular, Search24Regular, Dismiss16Regular,
-  Info24Regular, PeopleTeam24Filled, Organization24Regular,
-  Compose24Regular, PersonAdd24Filled,
+  ChevronLeft24Regular, ChevronRight20Regular, Search24Regular, Dismiss12Regular,
+  Info24Regular, PeopleAdd24Regular, Organization24Regular,
+  Whiteboard24Regular, PersonAdd24Regular, Search24Filled,
 } from '@fluentui/react-icons';
 import { searchEmployees } from '../data/employees';
 import './NewChat.css';
@@ -79,13 +79,13 @@ export default function NewChat() {
           <input
             value={query}
             onChange={(ev) => setQuery(ev.target.value)}
-            placeholder="Поиск по ФИ, Тел, Должн..."
+            placeholder="Поиск по ФИ, Тел, Должность"
             enterKeyHint="search"
             autoFocus
           />
           {query && (
             <button className="nc-clear" onClick={() => setQuery('')} aria-label="Очистить">
-              <Dismiss16Regular />
+              <Dismiss12Regular />
             </button>
           )}
         </div>
@@ -93,18 +93,18 @@ export default function NewChat() {
       </div>
 
       <button className="nc-group">
-        <span className="nc-group-ico"><PeopleTeam24Filled /></span>
+        <span className="nc-group-ico"><PeopleAdd24Regular /></span>
         <span className="nc-group-label">Создать группу</span>
-        <ChevronRight24Regular className="nc-chevron" />
+        <ChevronRight20Regular className="nc-chevron" />
       </button>
 
       <div className="nc-scroll" onScroll={onScroll}>
         {found.length === 0 && (
           <div className="nc-empty">
             <div className="nc-empty-icons">
-              <span className="nc-empty-circle nc-empty-circle--side"><Compose24Regular /></span>
-              <span className="nc-empty-circle nc-empty-circle--main"><PersonAdd24Filled /></span>
-              <span className="nc-empty-circle nc-empty-circle--side"><Search24Regular /></span>
+              <span className="nc-empty-circle nc-empty-circle--side"><Whiteboard24Regular /></span>
+              <span className="nc-empty-circle nc-empty-circle--main"><PersonAdd24Regular /></span>
+              <span className="nc-empty-circle nc-empty-circle--side"><Search24Filled /></span>
             </div>
             <p className="nc-empty-title">Поиск собеседника</p>
             <p className="nc-empty-sub">

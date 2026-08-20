@@ -19,6 +19,7 @@ import ChannelView from './screens/ChannelView';
 import EventView from './screens/EventView';
 import ChatProfile from './screens/ChatProfile';
 import NewChat from './screens/NewChat';
+import ChatSearch from './screens/ChatSearch';
 import Settings from './screens/Settings';
 import ProfilePhoto from './screens/ProfilePhoto';
 import Auth from './screens/Auth';
@@ -82,6 +83,7 @@ function AppRoutes() {
         <Route path="/event" element={<EventView />} />
         <Route path="/chat-profile" element={<ChatProfile />} />
         <Route path="/new-chat" element={<NewChat />} />
+        <Route path="/chat-search" element={<ChatSearch />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile/photo" element={<ProfilePhoto />} />
         {/* Мини-аппы: уровень навигации зашит в путь (/app/mytasks/it/closed),

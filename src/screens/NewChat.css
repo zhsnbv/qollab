@@ -66,7 +66,7 @@
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .nc-group:active { opacity: 0.6; }
-.nc-group-ico { color: var(--color-primary); display: flex; flex-shrink: 0; }
+.nc-group-ico { color: var(--color-primary); display: flex; flex-shrink: 0; margin-left: 0; }
 .nc-group-label { flex: 1; text-align: left; font-size: 16px; color: var(--color-primary); }
 
 .nc-scroll { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
@@ -80,9 +80,9 @@
   border-bottom: 1px solid var(--color-border);
 }
 .nc-row-main {
-  flex: 1; min-width: 0;
-  display: flex; align-items: center; gap: var(--space-3);
-  padding: var(--space-3) 0; text-align: left;
+  flex: 1; min-width: 0; min-height: 57px;
+  display: flex; align-items: center; gap: 10px;
+  padding: var(--space-2) 0; text-align: left;
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .nc-row-main:active { opacity: 0.6; }
@@ -153,5 +153,5 @@
 .nc-search-ico { color: var(--color-weak); flex-shrink: 0; }
 .nc-chevron { color: var(--color-light); flex-shrink: 0; width: 20px; height: 20px; }
 .nc-clear svg { width: 12px; height: 12px; }
-.nc-empty-circle--side svg { color: var(--color-weak); }
-.nc-empty-circle--main svg { color: var(--color-primary); width: 30px; height: 30px; }
+.nc-empty-circle--side svg { color: var(--color-weak); width: 26px; height: 26px; }
+.nc-empty-circle--main svg { color: var(--color-primary); width: 34px; height: 34px; }

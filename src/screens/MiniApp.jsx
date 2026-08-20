@@ -123,11 +123,11 @@ export default function MiniApp() {
   const screen = resolve(path);
   // Запуск идёт тремя шагами: сплеш приложения → скелетон тела → контент.
   // useSkeleton держит только первый шаг, дальше ведём свой таймер.
-  const splash = useSkeleton(700);
+  const splash = useSkeleton(1200);
   const [booting, setBooting] = useState(true);
   useEffect(() => {
     if (splash) return undefined;
-    const t = setTimeout(() => setBooting(false), 600);
+    const t = setTimeout(() => setBooting(false), 1100);
     return () => clearTimeout(t);
   }, [splash]);
   const loading = splash || booting;
@@ -186,8 +186,8 @@ export default function MiniApp() {
 
       <div className="ma-scroll" key={path.join('/')} data-dir={dir}>
         {splash && <MiniAppSplash name={appName} img={service?.img} />}
-        {!splash && booting && <MiniAppSkeleton />}
-        {!loading && !screen && <MiniAppStub name={appName} />}
+        {!splash && booting && <div className="ma-fade"><MiniAppSkeleton /></div>}
+        {!loading && !screen && <div className="ma-fade"><MiniAppStub name={appName} /></div>}
 
         {!loading && screen?.type === 'list' && (
           <div className="ma-list">

@@ -147,7 +147,11 @@ export default function Chats() {
     <TabLayout topbar={<TopBar title="Чаты" actions={actions} />}>
       <FadeIn>
       <div className="chats-search-wrap">
-        <div className="chats-search">
+        <div
+          className="chats-search"
+          role="button"
+          onClick={() => navigate('/chat-search', { state: { background: location } })}
+        >
           <MagnifyingGlass size={20} color="var(--color-weak)" />
           <span>Поиск</span>
         </div>

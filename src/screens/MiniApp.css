@@ -160,6 +160,11 @@
 .ma-stub-title { font-size: 18px; font-weight: 600; color: var(--color-text); }
 .ma-stub-text { font-size: 14px; line-height: 1.5; color: var(--color-weak); max-width: 300px; }
 
+/* Переход между шагами запуска: короткое проявление, чтобы смена сплеша на
+   скелетон и скелетона на контент не выглядела рывком. */
+.ma-fade { animation: ma-fade-in 0.22s ease both; }
+@keyframes ma-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
 /* Сплеш запуска: иконка сервиса по центру, название под ней */
 .ma-splash {
   min-height: 100%;
