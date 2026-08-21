@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Portal from './Portal';
 import './Toast.css';
 
 // Кратковременное уведомление о результате действия («Скопировано»,
@@ -12,5 +13,5 @@ export default function Toast({ text, onDone, duration = 2200 }) {
   }, [text, duration, onDone]);
 
   if (!text) return null;
-  return <div className="toast" role="status">{text}</div>;
+  return <Portal><div className="toast" role="status">{text}</div></Portal>;
 }

@@ -1,4 +1,5 @@
 import { Checkmark20Filled } from '@fluentui/react-icons';
+import Portal from './Portal';
 import './ActionSheet.css';
 
 // Контекстное меню экрана — листом снизу, а не выпадающим меню: на телефоне
@@ -8,7 +9,7 @@ export default function ActionSheet({ title, items, onClose, onPick, selected })
   // Режим выбора: иконка уходит влево, справа у активного пункта — галочка
   const isSelect = selected !== undefined;
   return (
-    <div className="asheet-wrap">
+    <Portal><div className="asheet-wrap">
       <button className="asheet-scrim" onClick={onClose} aria-label="Закрыть" />
       <div className="asheet">
         <span className="asheet-handle" />
@@ -30,6 +31,6 @@ export default function ActionSheet({ title, items, onClose, onPick, selected })
         </div>
         <button className="asheet-cancel" onClick={onClose}>Отмена</button>
       </div>
-    </div>
+    </div></Portal>
   );
 }
