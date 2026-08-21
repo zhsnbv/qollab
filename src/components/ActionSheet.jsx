@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { Checkmark20Filled } from '@fluentui/react-icons';
 import Portal from './Portal';
+import { pushScrim, popScrim } from '../utils/scrim';
 import './ActionSheet.css';
 
 // Контекстное меню экрана — листом снизу, а не выпадающим меню: на телефоне
@@ -8,6 +10,9 @@ import './ActionSheet.css';
 export default function ActionSheet({ title, items, onClose, onPick, selected }) {
   // Режим выбора: иконка уходит влево, справа у активного пункта — галочка
   const isSelect = selected !== undefined;
+
+  // Затемняем заодно и полосу статуса: оверлей должен перекрывать весь экран
+  useEffect(() => { pushScrim(); return popScrim; }, []);
   return (
     <Portal><div className="asheet-wrap">
       <button className="asheet-scrim" onClick={onClose} aria-label="Закрыть" />

@@ -5,7 +5,17 @@
 export const THEME_KEY = 'qollab.theme';
 export const THEME_MODES = ['light', 'dark', 'auto'];
 
-const SURFACE = { light: '#ffffff', dark: '#2b2a27' };
+export const SURFACE = { light: '#ffffff', dark: '#2b2a27' };
+
+// Цвет системной полосы статуса (в PWA её красит сама система по этой мете)
+export function setStatusColor(color) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = color;
+}
+
+export function resetStatusColor() {
+  setStatusColor(SURFACE[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light']);
+}
 
 export function getThemeMode() {
   const saved = localStorage.getItem(THEME_KEY);
@@ -24,8 +34,7 @@ export function applyTheme(mode) {
   const theme = resolveTheme(mode);
   document.documentElement.dataset.theme = theme;
   // Статус-бар и адресная строка красятся в цвет поверхности
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = SURFACE[theme];
+  setStatusColor(SURFACE[theme]);
   return theme;
 }
 
