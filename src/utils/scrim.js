@@ -9,12 +9,14 @@ let depth = 0;
 
 export function pushScrim() {
   depth += 1;
+  document.documentElement.classList.add('scrim-open');
   const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
   setStatusColor(dim(SURFACE[theme]));
 }
 
 export function popScrim() {
   depth = Math.max(0, depth - 1);
+  if (!depth) document.documentElement.classList.remove('scrim-open');
   // Цвет не запоминаем, а пересчитываем от текущей темы: пока лист открыт,
   // её могли переключить — как раз из листа «Оформление».
   if (!depth) resetStatusColor();

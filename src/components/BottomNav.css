@@ -115,3 +115,10 @@
 @media (prefers-reduced-motion: reduce) {
   .navtab-pill { transition: none; }
 }
+
+/* Под затемняющим оверлеем размытие бару не нужно, а в Safari именно оно
+   вытаскивало плашку поверх листа — гасим фильтр на время оверлея. */
+html.scrim-open .bottomnav-row {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
