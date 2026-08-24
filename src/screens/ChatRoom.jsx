@@ -104,7 +104,7 @@ export default function ChatRoom() {
 
   const addNotice = (text) => setNotice((n) => [...n, { id: `n${Date.now()}`, text }]);
 
-  const onLongPress = (msg, rect) => setMenu({ msg, rect });
+  const onLongPress = (msg, rect, node) => setMenu({ msg, rect, node });
 
   const ME = { id: 'me', initials: 'Я', tint: 'orange' };
 
@@ -388,6 +388,7 @@ export default function ChatRoom() {
           msg={{ ...menu.msg, pinned: pinnedIds.includes(menu.msg.id) }}
           mine={!!menu.msg.mine}
           rect={menu.rect}
+          node={menu.node}
           onClose={() => setMenu(null)}
           onAction={runAction}
           onReact={react}

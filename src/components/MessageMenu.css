@@ -1,38 +1,33 @@
-/* Меню сообщения: затемнение, строка реакций и список действий */
+/* Меню сообщения: размытый фон, само сообщение поверх него на своём месте,
+   реакции над ним и действия под ним. */
 .msgmenu-wrap {
   position: absolute; inset: 0; z-index: 60;
-  display: flex; align-items: center; justify-content: center;
   animation: msgmenu-fade 0.16s ease;
 }
 @keyframes msgmenu-fade { from { opacity: 0; } to { opacity: 1; } }
 .msgmenu-scrim {
   position: absolute; inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
 
-/* Блоки появляются по очереди: сперва реакции, следом — на полпути их
-   анимации — список действий. Общий контейнер не анимируем, иначе вложенные
-   transform складываются и перелёт выглядит вдвое сильнее. */
-.msgmenu {
-  position: relative;
-  display: flex; flex-direction: column; gap: var(--space-3);
-  padding: 0 var(--space-4);
-  width: 100%;
-  /* Контейнер тянется на всю ширину и раньше съедал тапы по пустому месту:
-     клик не доходил до затемнения, и меню не закрывалось. */
+/* Копия нажатого сообщения. Клики отдаём затемнению под ней: тап мимо
+   панелей должен закрывать меню, даже если попал по самому сообщению. */
+.msgmenu-source {
+  position: absolute;
   pointer-events: none;
+  animation: msgmenu-raise 0.3s cubic-bezier(0.34, 1.4, 0.64, 1) both;
 }
-.msgmenu-reactions, .msgmenu-list { pointer-events: auto; }
-/* Меню прижимается к той же стороне, что и сообщение */
-.msgmenu--right { align-items: flex-end; }
-.msgmenu--left { align-items: flex-start; }
-/* Порядок блоков: когда меню раскрывается вверх, реакции остаются сверху */
-.msgmenu.up { flex-direction: column; }
+/* Внутри копии строка занимает всю ширину, как в ленте */
+.msgmenu-source .msg { width: 100%; }
+
+/* Панели считаются от рамки сообщения, поэтому позиционируются инлайн-стилями;
+   до первого замера прячем их, чтобы не мигнули в углу экрана. */
+.msgmenu-reactions, .msgmenu-list { position: absolute; }
+.msgmenu-reactions[data-ready="no"], .msgmenu-list[data-ready="no"] { visibility: hidden; }
 
 .msgmenu-reactions {
   animation: msgmenu-pop 0.36s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  transform-origin: var(--pop-origin, center bottom);
   display: flex; gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-pill);
@@ -49,10 +44,9 @@
 
 .msgmenu-list {
   /* Задержка примерно в половину анимации реакций */
-  animation: msgmenu-pop 0.34s cubic-bezier(0.34, 1.5, 0.64, 1) 0.16s both;
-  transform-origin: var(--pop-origin, center top);
-  min-width: 220px;
-  border-radius: var(--radius-md); overflow: hidden;
+  animation: msgmenu-pop 0.34s cubic-bezier(0.34, 1.5, 0.64, 1) 0.14s both;
+  min-width: 220px; max-width: calc(100% - 24px);
+  border-radius: var(--radius-md); overflow-y: auto; overscroll-behavior: contain;
   background: var(--color-white);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
 }
@@ -68,14 +62,20 @@
 .msgmenu-item.divided { box-shadow: inset 0 1px 0 var(--color-border); }
 .msgmenu-item:active { background: var(--color-background); }
 
+/* Раскрытие идёт от того края, у которого стоит сообщение */
+.msgmenu--right { transform-origin: right center; }
+.msgmenu--left { transform-origin: left center; }
+
 @keyframes msgmenu-pop {
   from { opacity: 0; transform: scale(0.72); }
   to { opacity: 1; transform: scale(1); }
 }
-/* Раскрытие идёт от края, у которого стоит сообщение */
-.msgmenu--right { --pop-origin: right center; }
-.msgmenu--left { --pop-origin: left center; }
+/* Сообщение не «влетает», а чуть подаётся вперёд — как будто всплыло над фоном */
+@keyframes msgmenu-raise {
+  from { transform: scale(0.98); }
+  to { transform: scale(1); }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .msgmenu-reactions, .msgmenu-list { animation: none; }
+  .msgmenu-reactions, .msgmenu-list, .msgmenu-source { animation: none; }
 }

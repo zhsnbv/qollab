@@ -114,7 +114,7 @@ function useLongPress(onLongPress, msg) {
     moved.current = false;
     const el = e.currentTarget;
     timer.current = setTimeout(() => {
-      if (!moved.current) onLongPress(msg, el.getBoundingClientRect());
+      if (!moved.current) onLongPress(msg, el.getBoundingClientRect(), el.closest('.msg'));
     }, 420);
   };
   const cancel = () => clearTimeout(timer.current);
