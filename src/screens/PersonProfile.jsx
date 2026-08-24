@@ -56,6 +56,7 @@ export default function PersonProfile() {
   const [closing, setClosing] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [screenMenu, setScreenMenu] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [toast, setToast] = useState('');
 
   const close = () => {
@@ -222,6 +223,15 @@ export default function PersonProfile() {
               <div className="data-row">
                 <div className="data-label">Мобильный номер</div>
                 <span className="data-value link">{p.phone}</span>
+              </div>
+              <div className="data-row">
+                <div className="data-label">Электронная почта</div>
+                <span className="data-value link">{p.email}</span>
+              </div>
+              <div className="data-row">
+                <div className="data-label">Обо мне</div>
+                <p className={`data-about ${aboutOpen ? '' : 'clamped'}`}>{p.about}</p>
+                {!aboutOpen && <button className="data-more" onClick={() => setAboutOpen(true)}>Показать больше...</button>}
               </div>
               <div className="data-row last">
                 <div className="data-label">Интересы</div>

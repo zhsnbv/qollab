@@ -10,7 +10,10 @@
 @keyframes person-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes person-out { to { transform: translateX(100%); } }
 
+/* Выше карточек: внутри .profile у них свой z-index 1, и при равном значении
+   позже нарисованная карточка закрывала тень шапки. */
 .pp-top {
+  z-index: 2;
   flex-shrink: 0; background: var(--color-white);
   padding: var(--space-3) var(--space-4);
   padding-top: calc(var(--space-3) + env(safe-area-inset-top));
@@ -49,3 +52,9 @@
 
 /* Одинокая плашка показателей занимает всю ширину карточки */
 .stat-grid--single { grid-template-columns: 1fr; }
+
+/* «Обо мне» показываем тремя строками, остальное — по «Показать больше» */
+.data-about.clamped {
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}

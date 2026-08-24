@@ -12,6 +12,26 @@ const WORK_STATUS = {
   madina: { kind: 'dnd', text: 'Не беспокоить', note: 'Ответит после 18:00' },
 };
 
+// «Обо мне» человек пишет сам; в прототипе текст общий — своего у карточек
+// собеседников в данных нет.
+const ABOUT = 'Работаю над продуктами группы: аналитика, процессы и запуск новых '
+  + 'сервисов. Люблю понятные решения и спокойную коммуникацию, всегда открыт(-а) '
+  + 'к вопросам от коллег.';
+
+// Почта в ERG собирается из имени и фамилии латиницей
+const RU_LAT = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i',
+  й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't',
+  у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y',
+  ь: '', э: 'e', ю: 'yu', я: 'ya', ә: 'a', ғ: 'g', қ: 'k', ң: 'n', ө: 'o',
+  ұ: 'u', ү: 'u', һ: 'h', і: 'i',
+};
+const translit = (word) => [...word.toLowerCase()].map((c) => RU_LAT[c] ?? c).join('');
+const emailFrom = (name) => {
+  const [first, last] = name.split(' ');
+  return `${translit(first)}.${translit(last || first)}@erg.kz`;
+};
+
 // Корпоративные данные в прототипе общие: на макете это блок из HR-системы,
 // а не то, что человек заполняет сам.
 const CORP = {
@@ -52,6 +72,8 @@ export function getPerson(id, employee) {
     role: base.role || fromDirectory?.role || '',
     phone: base.phone || fromDirectory?.phone || 'не указан',
     company: fromDirectory?.company || CORP.company,
+    email: emailFrom(base.name),
+    about: ABOUT,
     thanks: 21,
     interests: ['Баскетбол', 'Кино', 'Музыка', 'Путешествия'],
     work: WORK_STATUS[base.id] || null,
