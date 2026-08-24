@@ -132,7 +132,8 @@ html[data-theme="dark"] .profile-decor-img--dark { display: block; }
 .cert-dates > div { flex: 1; }
 
 /* ── Быстрые действия: белая карточка с четырьмя равными плитками ────────── */
-.quick-wrap { padding: var(--space-2) var(--space-4); }
+ /* Ширина как у карточек .pcard: боковых отступов нет */
+.quick-wrap { padding: var(--space-2) 0; }
 .quick-row {
   background: var(--color-white); border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-5);

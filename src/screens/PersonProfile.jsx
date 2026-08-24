@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  CaretLeft, CaretRight, ChatCircle, Phone, Heart, DotsThree,
-  FileText, ImageSquare, LinkSimple, UsersThree,
+  CaretLeft, CaretRight, ChatCircle, Phone, Heart,
 } from '@phosphor-icons/react';
-import {
-  Alert24Regular, Search24Regular, Share24Regular, PersonProhibited24Regular,
-} from '@fluentui/react-icons';
+import { Alert24Regular, Search24Regular, Share24Regular } from '@fluentui/react-icons';
 import { DotsIcon } from '../components/TopBar';
+import ScreenMenu from '../components/ScreenMenu';
 import { getPerson } from '../data/person';
 import { useScrolled } from '../utils/useScrolled';
 import ProfileHero from '../components/ProfileHero';
@@ -23,15 +21,25 @@ const MENU_ITEMS = [
   { id: 'mute', label: 'Отключить звук', Icon: Alert24Regular },
   { id: 'search', label: 'Поиск по переписке', Icon: Search24Regular },
   { id: 'share', label: 'Поделиться контактом', Icon: Share24Regular },
-  { id: 'block', label: 'Заблокировать', Icon: PersonProhibited24Regular, danger: true },
 ];
 
+// Три точки действия — иконка из макета (Figma 25099-78231), цвет наследуется
+function DotsThreeAction({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 13.5 3.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M3.5 1.75C3.5 2.7165 2.7165 3.5 1.75 3.5C0.783502 3.5 0 2.7165 0 1.75C0 0.783502 0.783502 0 1.75 0C2.7165 0 3.5 0.783502 3.5 1.75ZM8.5 1.75C8.5 2.7165 7.7165 3.5 6.75 3.5C5.7835 3.5 5 2.7165 5 1.75C5 0.783502 5.7835 0 6.75 0C7.7165 0 8.5 0.783502 8.5 1.75ZM11.75 3.5C12.7165 3.5 13.5 2.7165 13.5 1.75C13.5 0.783502 12.7165 0 11.75 0C10.7835 0 10 0.783502 10 1.75C10 2.7165 10.7835 3.5 11.75 3.5Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 // Счётчик вложений: та же карточка-в-карточке, что у баланса, только
-// компактная — четыре в ряд, без шеврона.
-function CountCard({ Icon, value, label, onOpen }) {
+// компактная — четыре в ряд, число крупно, без иконки и шеврона.
+function CountCard({ value, label, onOpen }) {
   return (
     <button className="stat-card count-card" onClick={onOpen}>
-      <span className="stat-icon"><Icon size={18} weight="fill" color="var(--color-primary)" /></span>
       <span className="count-value">{value}</span>
       <span className="stat-label">{label}</span>
     </button>
@@ -47,6 +55,7 @@ export default function PersonProfile() {
 
   const [closing, setClosing] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [screenMenu, setScreenMenu] = useState(false);
   const [toast, setToast] = useState('');
 
   const close = () => {
@@ -77,24 +86,23 @@ export default function PersonProfile() {
     if (mid === 'mute') setToast('Уведомления отключены');
     if (mid === 'search') setToast('Поиск по переписке');
     if (mid === 'share') setToast('Контакт скопирован');
-    if (mid === 'block') setToast('Пользователь заблокирован');
   };
 
   const actions = [
     { id: 'write', label: 'Написать', Icon: ChatCircle, onClick: write },
     { id: 'call', label: 'Звонок', Icon: Phone, onClick: () => setToast(`Звоним: ${p.name}`) },
     { id: 'thanks', label: 'Рахмет', Icon: Heart, onClick: () => setToast('Рахмет отправлен') },
-    { id: 'more', label: 'Ещё', Icon: DotsThree, onClick: () => setMenuOpen(true) },
+    { id: 'more', label: 'Ещё', Icon: DotsThreeAction, onClick: () => setMenuOpen(true) },
   ];
 
-  // Пилюля показывает рабочий статус, а если его нет — присутствие: иначе
-  // одна и та же строка дублировалась бы под ней.
+  // Пилюля — только установленный статус. Присутствие всегда строкой под ним:
+  // это не статус, а факт последнего визита.
   const status = (
     <>
-      <span className={`status-btn phero-status ${p.work ? `status-btn--${p.work.kind}` : ''}`}>
-        {p.work ? p.work.text : p.status}
-      </span>
-      {p.work && <div className="phero-presence">{p.status}</div>}
+      {p.work && (
+        <span className={`status-btn phero-status status-btn--${p.work.kind}`}>{p.work.text}</span>
+      )}
+      <div className="phero-presence">{p.status}</div>
     </>
   );
 
@@ -103,7 +111,7 @@ export default function PersonProfile() {
       <header className={`pp-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="pp-back" onClick={close} aria-label="Назад"><CaretLeft size={22} /></button>
         <h1 className="pp-title">Профиль</h1>
-        <button className="pp-back" onClick={() => setMenuOpen(true)} aria-label="Меню"><DotsIcon /></button>
+        <button className="pp-back" onClick={() => setScreenMenu(true)} aria-label="Меню"><DotsIcon /></button>
       </header>
 
       <div className="pp-scroll" onScroll={onScroll}>
@@ -129,10 +137,10 @@ export default function PersonProfile() {
               <button className="refresh-btn" onClick={() => openShared('files')}>Показать всё</button>
             </div>
             <div className="count-row">
-              <CountCard Icon={FileText} value={p.files.length} label="Файлы" onOpen={() => openShared('files')} />
-              <CountCard Icon={ImageSquare} value={p.media.length} label="Медиа" onOpen={() => openShared('media')} />
-              <CountCard Icon={LinkSimple} value={p.links.length} label="Ссылки" onOpen={() => openShared('links')} />
-              <CountCard Icon={UsersThree} value={p.groups.length} label="Группы" onOpen={() => openShared('groups')} />
+              <CountCard value={p.files.length} label="Файлы" onOpen={() => openShared('files')} />
+              <CountCard value={p.media.length} label="Медиа" onOpen={() => openShared('media')} />
+              <CountCard value={p.links.length} label="Ссылки" onOpen={() => openShared('links')} />
+              <CountCard value={p.groups.length} label="Группы" onOpen={() => openShared('groups')} />
             </div>
           </section>
 
@@ -229,6 +237,7 @@ export default function PersonProfile() {
       {menuOpen && (
         <ActionSheet items={MENU_ITEMS} onClose={() => setMenuOpen(false)} onPick={onMenuPick} />
       )}
+      <ScreenMenu open={screenMenu} onClose={() => setScreenMenu(false)} />
       <Toast text={toast} onDone={() => setToast('')} />
     </div>
   );

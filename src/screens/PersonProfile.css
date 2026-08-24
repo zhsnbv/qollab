@@ -42,10 +42,9 @@
 .count-card {
   flex: 1; min-width: 0;
   padding: var(--space-3) var(--space-2);
-  align-items: center; text-align: center; gap: 3px;
+  align-items: center; text-align: center; gap: 2px;
 }
-.count-card .stat-icon { justify-content: center; }
-.count-value { font-size: 17px; font-weight: 600; color: var(--color-text); line-height: 1.2; }
+.count-value { font-size: 22px; font-weight: 600; color: var(--color-text); line-height: 1.2; }
 .count-card .stat-label { font-size: 12px; }
 
 /* Одинокая плашка показателей занимает всю ширину карточки */

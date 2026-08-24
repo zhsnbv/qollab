@@ -3,7 +3,7 @@
    иллюстрацию — .phero-art, сейчас там мягкая подложка в цвете акцента. */
 .phero {
   position: relative;
-  background: linear-gradient(180deg, var(--color-white) 62%, var(--page-bg) 100%);
+  background: linear-gradient(180deg, var(--color-white) 0%, var(--color-primary-bg) 100%);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   padding: var(--space-6) var(--space-4) var(--space-4);
   display: flex;
@@ -12,22 +12,10 @@
   text-align: center;
   overflow: hidden;
 }
-/* Подложка-заглушка: сюда встанет иллюстрация, поэтому она отдельным слоем и
-   не завязана на размеры аватарки. */
+/* Слой под будущую иллюстрацию: пустой, но зарезервирован — картинка встанет
+   сюда и не сдвинет ни имя, ни статус, ни кнопки под шапкой. */
 .phero-art {
-  position: absolute;
-  left: 50%;
-  top: -46%;
-  width: 150%;
-  aspect-ratio: 1;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 62%,
-    var(--color-primary-bg) 0%,
-    color-mix(in srgb, var(--color-primary-bg) 45%, transparent) 55%,
-    transparent 72%
-  );
+  position: absolute; inset: 0;
   pointer-events: none;
 }
 .phero > *:not(.phero-art) { position: relative; z-index: 1; }
