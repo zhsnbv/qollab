@@ -28,7 +28,7 @@ export default function ProfileHero({ me, onPhoto, status }) {
         <span className="phero-avatar">{avatar}</span>
       )}
       <h2 className="phero-name">{me.name}</h2>
-      <div className="phero-role">{me.role}</div>
+      {me.role && <div className="phero-role">{me.role}</div>}
       {status ?? (
         <button className="status-btn phero-status"><Plus size={12} weight="bold" />Установить статус</button>
       )}

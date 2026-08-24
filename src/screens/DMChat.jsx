@@ -139,11 +139,22 @@ export default function DMChat() {
   const { state } = useLocation();
   const chat = state?.chat;
   const location = useLocation();
-  // Профиль собеседника: у демо-чатов свой id, для остальных показываем
-  // карточку по умолчанию — экран один и тот же.
-  // Человек открывается объединённым профилем, группа — прежним экраном
+  // Профиль собеседника: у демо-чатов есть свой id, у остальных карточка
+  // собирается из строки списка — иначе всем открывался бы один и тот же
+  // человек. Группа по-прежнему уходит на прежний экран.
   const openProfile = () => navigate(PROFILE_V2 && chat?.kind !== 'group' ? '/person' : '/chat-profile', {
-    state: { id: chat?.profileId || 'ayazhan', kind: 'user', background: state?.background },
+    state: {
+      id: chat?.profileId,
+      kind: 'user',
+      employee: chat?.profileId ? undefined : {
+        id: chat?.title,
+        name: chat?.title,
+        avatar: chat?.avatar,
+        initials: chat?.initials,
+        tint: chat?.tint,
+      },
+      background: state?.background,
+    },
   });
   const [closing, setClosing] = useState(false);
   // Действия над сообщением — тот же набор, что в групповом чате

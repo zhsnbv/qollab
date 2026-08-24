@@ -33,14 +33,24 @@ export function getPerson(id, employee) {
     initials: employee.initials,
     tint: employee.tint,
     status: employee.dismissed ? 'Сотрудник уволен' : 'был(-а) в сети недавно',
-    groups: [], media: [], files: [], links: [],
   }) || userProfiles.ayazhan;
 
   const fromDirectory = employees.find((e) => e.id === base.id || e.name === base.name);
 
+  // Вложения в прототипе общие: у собеседников без своей карточки берём тот
+  // же демонабор, иначе переписка выглядела бы пустой.
+  const demo = userProfiles.ayazhan;
+
   return {
     ...CORP,
     ...base,
+    groups: base.groups || demo.groups,
+    media: base.media || demo.media,
+    files: base.files || demo.files,
+    links: base.links || demo.links,
+    // Должность и телефон подтягиваем из справочника, если в чате их нет
+    role: base.role || fromDirectory?.role || '',
+    phone: base.phone || fromDirectory?.phone || 'не указан',
     company: fromDirectory?.company || CORP.company,
     thanks: 21,
     interests: ['Баскетбол', 'Кино', 'Музыка', 'Путешествия'],
