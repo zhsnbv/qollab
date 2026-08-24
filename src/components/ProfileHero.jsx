@@ -4,22 +4,34 @@ import './ProfileHero.css';
 
 // Шапка своего профиля. Две версии живут рядом: центрированная — то, что
 // проверяем сейчас, прежняя с 3D-линией — на случай отката (см. src/config.js).
-export default function ProfileHero({ me, onPhoto }) {
+// status — то, что стоит под должностью: у себя это кнопка «Установить
+// статус», у коллеги — его статус и строка присутствия.
+export default function ProfileHero({ me, onPhoto, status }) {
   if (!PROFILE_V2) return <ClassicHero me={me} onPhoto={onPhoto} />;
+
+  const avatar = me.avatar
+    ? <img className="ava" src={me.avatar} alt="" />
+    : <span className={`ava ava--initials tint-${me.tint || 'orange'}`}>{me.initials}</span>;
 
   return (
     <section className="phero">
       {/* Слот под иллюстрацию: пока мягкая подложка в цвете акцента */}
       <span className="phero-art" aria-hidden="true" />
-      <button className="phero-avatar" onClick={onPhoto} aria-label="Фото профиля">
-        <img className="ava" src={me.avatar} alt="" />
-        <span className="phero-cam">
-          <img src="/img/profile/camera.svg" alt="" width="16" height="16" />
-        </span>
-      </button>
+      {onPhoto ? (
+        <button className="phero-avatar" onClick={onPhoto} aria-label="Фото профиля">
+          {avatar}
+          <span className="phero-cam">
+            <img src="/img/profile/camera.svg" alt="" width="16" height="16" />
+          </span>
+        </button>
+      ) : (
+        <span className="phero-avatar">{avatar}</span>
+      )}
       <h2 className="phero-name">{me.name}</h2>
       <div className="phero-role">{me.role}</div>
-      <button className="phero-status"><Plus size={12} weight="bold" />Установить статус</button>
+      {status ?? (
+        <button className="status-btn phero-status"><Plus size={12} weight="bold" />Установить статус</button>
+      )}
     </section>
   );
 }

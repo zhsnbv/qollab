@@ -1,18 +1,23 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CaretLeft } from '@phosphor-icons/react';
 import {
-  Chat24Regular, Call24Regular, Ribbon24Regular, MoreHorizontal24Regular,
+  CaretLeft, CaretRight, ChatCircle, Phone, Medal, DotsThree,
+  FileText, ImageSquare, LinkSimple, UsersThree,
+} from '@phosphor-icons/react';
+import {
   Alert24Regular, Search24Regular, Share24Regular, PersonProhibited24Regular,
 } from '@fluentui/react-icons';
 import { getPerson } from '../data/person';
+import { useScrolled } from '../utils/useScrolled';
+import ProfileHero from '../components/ProfileHero';
 import ActionSheet from '../components/ActionSheet';
 import Toast from '../components/Toast';
+import './Profile.css';
 import './PersonProfile.css';
 
-// Объединённый профиль человека: рабочие данные и переписка на одном экране.
-// Открывается одинаково из чата, поиска и оргструктуры — порядок блоков от
-// точки входа не зависит.
+// Профиль коллеги: та же вёрстка, что у своего профиля (карточки .pcard,
+// плитки .stat-card, строки .org-row), только состав другой — вместо личных
+// блоков переписка. Экран один: из чата, поиска, участников группы.
 const MENU_ITEMS = [
   { id: 'mute', label: 'Отключить звук', Icon: Alert24Regular },
   { id: 'search', label: 'Поиск по переписке', Icon: Search24Regular },
@@ -20,9 +25,25 @@ const MENU_ITEMS = [
   { id: 'block', label: 'Заблокировать', Icon: PersonProhibited24Regular, danger: true },
 ];
 
+// Плитка блока «Общее с вами» — та же, что в «Балансе» и «Показателях»,
+// только вместо эмодзи иконка типа вложения.
+function CountCard({ Icon, value, label, onOpen }) {
+  return (
+    <button className="stat-card" onClick={onOpen}>
+      <div className="stat-card-top">
+        <span className="stat-icon"><Icon size={20} weight="fill" color="var(--color-primary)" /></span>
+        <span className="stat-value">{value}</span>
+        <CaretRight size={18} color="var(--color-light)" />
+      </div>
+      <div className="stat-label">{label}</div>
+    </button>
+  );
+}
+
 export default function PersonProfile() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [scrolled, onScroll] = useScrolled();
   const { id, employee, background } = location.state || {};
   const p = getPerson(id, employee);
 
@@ -35,10 +56,22 @@ export default function PersonProfile() {
     setTimeout(() => navigate(-1), 240);
   };
 
-  // Вложения открываем существующим экраном профиля чата: там уже есть вкладки
-  // и вёрстка списков, дублировать её незачем.
+  // Вложения открываем прежним экраном профиля чата: там уже есть вкладки и
+  // вёрстка списков, дублировать её незачем.
   const openShared = (tab) => navigate('/chat-profile', {
     state: { id: p.id, kind: 'user', tab, sharedOnly: true, background },
+  });
+
+  const write = () => navigate('/chats/dm', {
+    // DMChat ждёт готовую строку списка чатов, а не id человека
+    state: {
+      chat: {
+        profileId: p.id, title: p.name, avatar: p.avatar,
+        initials: p.initials, tint: p.tint, online: true,
+        fresh: true, preview: '', time: '',
+      },
+      background,
+    },
   });
 
   const onMenuPick = (mid) => {
@@ -49,137 +82,163 @@ export default function PersonProfile() {
     if (mid === 'block') setToast('Пользователь заблокирован');
   };
 
-  const counts = [
-    { id: 'files', n: p.files.length, label: 'файлов' },
-    { id: 'media', n: p.media.length, label: 'медиа' },
-    { id: 'links', n: p.links.length, label: 'ссылки' },
-    { id: 'groups', n: p.groups.length, label: 'группы' },
+  const actions = [
+    { id: 'write', label: 'Написать', Icon: ChatCircle, onClick: write },
+    { id: 'call', label: 'Звонок', Icon: Phone, onClick: () => setToast(`Звоним: ${p.name}`) },
+    { id: 'thanks', label: 'Рахмет', Icon: Medal, onClick: () => setToast('Рахмет отправлен') },
+    { id: 'more', label: 'Ещё', Icon: DotsThree, onClick: () => setMenuOpen(true) },
   ];
+
+  const status = (
+    <>
+      {p.work && (
+        <span className={`status-btn phero-status status-btn--${p.work.kind}`}>{p.work.text}</span>
+      )}
+      <div className="phero-presence">{p.status}</div>
+    </>
+  );
 
   return (
     <div className={`person ${closing ? 'closing' : ''}`}>
-      <header className="pp-top">
+      <header className={`pp-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="pp-back" onClick={close} aria-label="Назад"><CaretLeft size={22} /></button>
         <h1 className="pp-title">Профиль</h1>
-        <span className="pp-back" style={{ visibility: 'hidden' }} aria-hidden="true" />
+        <span className="pp-back hdr-spacer" aria-hidden="true" />
       </header>
 
-      <div className="pp-scroll">
-        <section className="pp-hero">
-          <span className="pp-art" aria-hidden="true" />
-          <span className={`pp-ava tint-${p.tint || 'orange'}`}>
-            {p.avatar ? <img src={p.avatar} alt="" /> : p.initials}
-          </span>
-          <h2 className="pp-name">{p.name}</h2>
-          <div className="pp-role">{p.role}</div>
-          {/* Чип — только рабочий статус из HR или настроек. Присутствие
-              («в сети», «был(-а)…») остаётся строкой: это факт, а не статус. */}
-          {p.work && (
-            <span className={`pp-status pp-status--${p.work.kind}`}>
-              <span className="dot" />{p.work.text}
-            </span>
+      <div className="pp-scroll" onScroll={onScroll}>
+        <div className="profile">
+          <ProfileHero me={p} status={status} />
+
+          {/* Быстрые действия — тот же ряд плиток, что в своём профиле */}
+          <div className="quick-wrap">
+            <div className="quick-row">
+              {actions.map(({ id: aid, label, Icon, onClick }) => (
+                <button className="quick-item" key={aid} onClick={onClick}>
+                  <span className="quick-ico"><Icon size={20} weight="fill" /></span>
+                  <span className="quick-label">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Кто замещает — карточка в том же виде, что «Структура» */}
+          {p.work?.deputy && (
+            <section className="pcard">
+              <div className="pcard-head"><h3>{p.work.note}</h3></div>
+              <button className="org-row" onClick={() => setToast('Открыли бы чат с замещающим')}>
+                <span className="org-avatar">{p.supervisor.initials}</span>
+                <span className="org-texts">
+                  <span className="org-name">{p.work.deputy}</span>
+                  <span className="org-role">{p.supervisor.role}</span>
+                </span>
+                <CaretRight size={18} color="var(--color-light)" />
+              </button>
+            </section>
           )}
-          <div className="pp-presence">{p.status}</div>
-        </section>
 
-        <div className="pp-actions">
-          <button
-            className="pp-action pp-action--primary"
-            onClick={() => navigate('/chats/dm', {
-              // DMChat ждёт готовую строку списка чатов, а не id человека
-              state: {
-                chat: {
-                  profileId: p.id, title: p.name, avatar: p.avatar,
-                  initials: p.initials, tint: p.tint, online: true,
-                  // Переписку начинаем с чистого листа: истории у этого
-                  // перехода нет, а поля превью экран ждёт обязательными.
-                  fresh: true, preview: '', time: '',
-                },
-                background,
-              },
-            })}
-          >
-            <span className="ico"><Chat24Regular /></span>Написать
-          </button>
-          <button className="pp-action" onClick={() => setToast(`Звоним: ${p.name}`)}>
-            <span className="ico"><Call24Regular /></span>Звонок
-          </button>
-          <button className="pp-action" onClick={() => setToast('Рахмет отправлен')}>
-            <span className="ico"><Ribbon24Regular /></span>Рахмет
-          </button>
-          <button className="pp-action" onClick={() => setMenuOpen(true)}>
-            <span className="ico"><MoreHorizontal24Regular /></span>Ещё
-          </button>
-        </div>
+          {/* Общее с вами */}
+          <section className="pcard">
+            <div className="pcard-head">
+              <h3>Общее с вами</h3>
+              <button className="refresh-btn" onClick={() => openShared('files')}>Показать всё</button>
+            </div>
+            <div className="stat-grid">
+              <CountCard Icon={FileText} value={p.files.length} label="Файлы" onOpen={() => openShared('files')} />
+              <CountCard Icon={ImageSquare} value={p.media.length} label="Медиа" onOpen={() => openShared('media')} />
+              <CountCard Icon={LinkSimple} value={p.links.length} label="Ссылки" onOpen={() => openShared('links')} />
+              <CountCard Icon={UsersThree} value={p.groups.length} label="Общие группы" onOpen={() => openShared('groups')} />
+            </div>
+          </section>
 
-        {p.work && (
-          <div className="pp-note">
-            <span>
-              {p.work.deputy ? <>{p.work.note} <b>{p.work.deputy}</b></> : p.work.note}
-            </span>
-            {p.work.deputy && (
-              <span className="lnk" onClick={() => setToast('Открыли бы чат с замещающим')}>Написать ему</span>
-            )}
-          </div>
-        )}
+          {/* Корпоративные данные */}
+          <section className="pcard">
+            <div className="pcard-head"><h3>Корпоративные данные</h3></div>
+            <div className="data-list">
+              <div className="data-row">
+                <div className="data-label">Табельный номер</div>
+                <div className="data-value-line">
+                  <span className="data-value">{p.tabNumber}</span>
+                  <span className="data-tag">Основной</span>
+                </div>
+              </div>
+              <div className="data-row">
+                <div className="data-label">Предприятие</div>
+                <span className="data-value">{p.company}</span>
+              </div>
+              <div className="data-row">
+                <div className="data-label">Должность</div>
+                <span className="data-value">{p.role}</span>
+              </div>
+              <div className="data-row">
+                <div className="data-label">Подразделение</div>
+                <span className="data-value">{p.unit}</span>
+              </div>
+              <div className="data-row last">
+                <div className="data-label">Административный руководитель</div>
+                <span className="data-value link">{p.chief}</span>
+              </div>
+            </div>
+          </section>
 
-        {/* Общее с вами — счётчики: блок остаётся низким, а каждый ведёт в свой список */}
-        <section className="pp-card">
-          <div className="pp-card-head">
-            <h3>Общее с вами</h3>
-            <button className="link" onClick={() => openShared('files')}>Всё</button>
-          </div>
-          <div className="pp-counts">
-            {counts.map((c) => (
-              <button className="pp-count" key={c.id} onClick={() => openShared(c.id)}>
-                <b>{c.n}</b><span>{c.label}</span>
+          {/* Структура */}
+          <section className="pcard">
+            <div className="pcard-head"><h3>Структура</h3></div>
+            <div className="org-label">Руководитель</div>
+            <button className="org-row" onClick={() => setToast(p.supervisor.name)}>
+              <span className="org-avatar">{p.supervisor.initials}</span>
+              <span className="org-texts">
+                <span className="org-name">{p.supervisor.name}</span>
+                <span className="org-role">{p.supervisor.role}</span>
+              </span>
+              <CaretRight size={18} color="var(--color-light)" />
+            </button>
+
+            <div className="org-label">Команда · {p.team.length}</div>
+            {p.team.map((m) => (
+              <button className="org-row" key={m.initials} onClick={() => setToast(m.name)}>
+                <span className="org-avatar">{m.initials}</span>
+                <span className="org-texts">
+                  <span className="org-name">{m.name}</span>
+                  <span className="org-role">{m.role}</span>
+                </span>
+                <CaretRight size={18} color="var(--color-light)" />
               </button>
             ))}
-          </div>
-        </section>
+          </section>
 
-        <section className="pp-card">
-          <div className="pp-card-head"><h3>Корпоративные данные</h3></div>
-          <div className="pp-field"><span className="label">Табельный номер</span><span className="value">{p.tabNumber}</span></div>
-          <div className="pp-field"><span className="label">Предприятие</span><span className="value">{p.company}</span></div>
-          <div className="pp-field"><span className="label">Должность</span><span className="value">{p.role}</span></div>
-          <div className="pp-field"><span className="label">Подразделение</span><span className="value">{p.unit}</span></div>
-        </section>
+          {/* Показатели: у коллеги публичная часть — благодарности */}
+          <section className="pcard">
+            <div className="pcard-head"><h3>Показатели</h3></div>
+            <div className="stat-grid">
+              <button className="stat-card">
+                <div className="stat-card-top">
+                  <span className="stat-icon">🙂</span>
+                  <span className="stat-value">{p.thanks}</span>
+                  <CaretRight size={18} color="var(--color-light)" />
+                </div>
+                <div className="stat-label">Благодарность</div>
+              </button>
+            </div>
+          </section>
 
-        <section className="pp-card">
-          <div className="pp-card-head"><h3>Структура</h3></div>
-          <button className="pp-row" onClick={() => setToast(p.supervisor.name)}>
-            <span className="ini">{p.supervisor.initials}</span>
-            <span className="texts"><b>{p.supervisor.name}</b><span>{p.supervisor.role}</span></span>
-          </button>
-          {p.team.map((m) => (
-            <button className="pp-row" key={m.initials} onClick={() => setToast(m.name)}>
-              <span className="ini">{m.initials}</span>
-              <span className="texts"><b>{m.name}</b><span>{m.role}</span></span>
-            </button>
-          ))}
-        </section>
-
-        <section className="pp-card">
-          <div className="pp-card-head"><h3>Показатели</h3></div>
-          <div className="pp-metric">
-            <span className="em">🙂</span>
-            <span className="texts"><b>{p.thanks}</b><span>Благодарность</span></span>
-          </div>
-        </section>
-
-        <section className="pp-card">
-          <div className="pp-card-head"><h3>Персональные данные</h3></div>
-          <div className="pp-field"><span className="label">Мобильный номер</span><span className="value link">{p.phone}</span></div>
-          <div className="pp-field">
-            <span className="label">Интересы</span>
-            <span className="pp-chips">
-              {p.interests.map((i) => <span className="pp-chip" key={i}>{i}</span>)}
-            </span>
-          </div>
-        </section>
-
-        <div className="pp-spacer" />
+          {/* Персональные данные */}
+          <section className="pcard">
+            <div className="pcard-head"><h3>Персональные данные</h3></div>
+            <div className="data-list">
+              <div className="data-row">
+                <div className="data-label">Мобильный номер</div>
+                <span className="data-value link">{p.phone}</span>
+              </div>
+              <div className="data-row last">
+                <div className="data-label">Интересы</div>
+                <div className="tags-row">
+                  {p.interests.map((t) => <span className="tag" key={t}>{t}</span>)}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
 
       {menuOpen && (
