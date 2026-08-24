@@ -8,6 +8,7 @@ import { useScrolled } from '../utils/useScrolled';
 import { searchEmployees } from '../data/employees';
 import { recentPeople, searchMessages, splitMatch } from '../data/chatSearch';
 import './ChatSearch.css';
+import { PROFILE_V2 } from '../config';
 
 // Поиск в чатах (Figma node 25122-109552): пустой экран с недавними и историей,
 // две вкладки результатов — «Чаты» (люди) и «Сообщения» (текст с подсветкой
@@ -59,7 +60,7 @@ export default function ChatSearch() {
     },
   });
 
-  const openInfo = (e) => navigate('/chat-profile', {
+  const openInfo = (e) => navigate(PROFILE_V2 ? '/person' : '/chat-profile', {
     state: { id: e.id, kind: 'user', employee: e, background: location.state?.background },
   });
 

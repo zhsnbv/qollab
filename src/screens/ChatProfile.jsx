@@ -4,6 +4,7 @@ import { CaretLeft, Play, FileText, LinkSimple } from '@phosphor-icons/react';
 import { userProfiles, groupProfiles } from '../data/chatProfiles';
 import './ChatProfile.css';
 import { useScrolled } from '../utils/useScrolled';
+import { PROFILE_V2 } from '../config';
 
 // Профиль из чата (Figma node 25110-107882). Один экран на два случая:
 // человек — тап по шапке личного чата и по аватарке в группе; группа — тап по
@@ -40,7 +41,9 @@ export default function ChatProfile() {
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const location = useLocation();
-  const { id, kind, employee } = location.state || {};
+  // sharedOnly — экран открыт как список вложений из объединённого профиля:
+  // шапка и реквизиты там уже показаны, поэтому оставляем только вкладки.
+  const { id, kind, employee, tab: startTab, sharedOnly } = location.state || {};
   const isGroup = kind === 'group';
   const known = isGroup ? groupProfiles[id] : userProfiles[id];
   const fromEmployee = employee && {
@@ -59,27 +62,32 @@ export default function ChatProfile() {
   const tabs = isGroup
     ? [{ id: 'members', label: 'Участники' }, { id: 'media', label: 'Медиа' }, { id: 'files', label: 'Файлы' }, { id: 'links', label: 'Ссылки' }]
     : [{ id: 'groups', label: 'Группы' }, { id: 'media', label: 'Медиа' }, { id: 'files', label: 'Файлы' }, { id: 'links', label: 'Ссылки' }];
-  const [tab, setTab] = useState(tabs[0].id);
+  const [tab, setTab] = useState(startTab && tabs.some((t) => t.id === startTab) ? startTab : tabs[0].id);
 
   const close = () => {
     setClosing(true);
     setTimeout(() => navigate(-1), 260);
   };
 
-  const openUser = (userId) => navigate('/chat-profile', {
+  // Участник группы открывается объединённым профилем — тем же экраном, что
+  // из чата и из поиска.
+  const openUser = (userId) => navigate(PROFILE_V2 ? '/person' : '/chat-profile', {
     state: { id: userId, kind: 'user', background: location.state?.background },
-    replace: true,
+    replace: !PROFILE_V2,
   });
 
   return (
     <div className={`chatprofile ${closing ? 'closing' : ''}`}>
       <header className={`cp-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="cp-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
-        <h1 className="cp-title">{isGroup ? 'Группа' : 'Профиль'}</h1>
+        <h1 className="cp-title">
+          {sharedOnly ? `Общее с ${p.name.split(' ')[0]}` : (isGroup ? 'Группа' : 'Профиль')}
+        </h1>
         <span className="cp-back hdr-spacer" aria-hidden="true" />
       </header>
 
       <div className="cp-scroll" onScroll={onScroll}>
+        {!sharedOnly && (<>
         <section className="cp-card cp-hero">
           <Avatar item={p} size={100} />
           <h2 className="cp-name">{p.name}</h2>
@@ -116,6 +124,7 @@ export default function ChatProfile() {
             </>
           )}
         </section>
+        </>)}
 
         {/* Один блок: пилюли и их содержимое — участники группы тоже вкладка,
             а не отдельная карточка выше */}

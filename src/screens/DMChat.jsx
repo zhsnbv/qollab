@@ -14,6 +14,7 @@ import Toast from '../components/Toast';
 import ComposeInput from '../components/ComposeInput';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import './ChatRoom.css';
+import { PROFILE_V2 } from '../config';
 
 // Генерик-чат «один на один» (и групповой/бот) — история уже есть, на любое
 // сообщение пользователя приходит ровно один ответ (без сценария как в ProDev).
@@ -140,7 +141,8 @@ export default function DMChat() {
   const location = useLocation();
   // Профиль собеседника: у демо-чатов свой id, для остальных показываем
   // карточку по умолчанию — экран один и тот же.
-  const openProfile = () => navigate('/chat-profile', {
+  // Человек открывается объединённым профилем, группа — прежним экраном
+  const openProfile = () => navigate(PROFILE_V2 && chat?.kind !== 'group' ? '/person' : '/chat-profile', {
     state: { id: chat?.profileId || 'ayazhan', kind: 'user', background: state?.background },
   });
   const [closing, setClosing] = useState(false);

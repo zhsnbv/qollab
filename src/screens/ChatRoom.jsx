@@ -13,6 +13,7 @@ import Toast from '../components/Toast';
 import ComposeInput from '../components/ComposeInput';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import './ChatRoom.css';
+import { PROFILE_V2 } from '../config';
 
 // Участники. В группе имя показываем полным, фамилию — инициалом с точкой.
 // avatar — фото; initials — цветной кружок с инициалами (как в макете).
@@ -79,7 +80,7 @@ export default function ChatRoom() {
   const navigate = useNavigate();
   const location = useLocation();
   // Профили открываем поверх чата: он остаётся под ними смонтированным
-  const openProfile = (id, kind) => navigate('/chat-profile', {
+  const openProfile = (id, kind) => navigate(PROFILE_V2 && kind !== 'group' ? '/person' : '/chat-profile', {
     state: { id, kind, background: location.state?.background },
   });
 

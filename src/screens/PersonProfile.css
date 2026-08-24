@@ -1,0 +1,169 @@
+/* Объединённый профиль человека: та же композиция, что у своего профиля,
+   плюс блок переписки. Экран один — из чата, из поиска и из оргструктуры. */
+.person {
+  position: absolute; inset: 0; z-index: 50;
+  background: var(--page-bg);
+  display: flex; flex-direction: column;
+  animation: person-in 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.person.closing { animation: person-out 0.26s ease forwards; }
+@keyframes person-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes person-out { to { transform: translateX(100%); } }
+
+.pp-top {
+  flex-shrink: 0; background: var(--color-white);
+  padding: var(--space-3) var(--space-4);
+  padding-top: calc(var(--space-3) + env(safe-area-inset-top));
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.pp-back {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--color-background); color: var(--color-text);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.pp-back:active { opacity: 0.6; }
+.pp-title { flex: 1; text-align: center; font-size: 17px; font-weight: 600; color: var(--color-heading); }
+
+.pp-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; }
+.pp-scroll::-webkit-scrollbar { display: none; }
+
+/* Шапка повторяет свою: центр, мягкая подложка вместо 3D-линии */
+.pp-hero {
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--color-white) 62%, var(--page-bg) 100%);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.pp-art {
+  position: absolute; left: 50%; top: -46%;
+  width: 150%; aspect-ratio: 1; transform: translateX(-50%);
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 62%,
+    var(--color-primary-bg) 0%,
+    color-mix(in srgb, var(--color-primary-bg) 45%, transparent) 55%,
+    transparent 72%
+  );
+}
+.pp-hero > *:not(.pp-art) { position: relative; z-index: 1; }
+.pp-ava {
+  width: 112px; height: 112px; border-radius: 50%; overflow: hidden;
+  border: 6px solid var(--color-primary); box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; font-weight: 600; color: #fff;
+}
+.pp-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pp-name {
+  margin-top: var(--space-4);
+  font-size: 24px; font-weight: 600; letter-spacing: -0.5px; color: var(--color-heading);
+  text-wrap: balance;
+}
+.pp-role { margin-top: var(--space-1); font-size: 14px; font-weight: 500; color: var(--color-weak); }
+/* Статус: рабочий — чипом, присутствие — строкой под ним */
+.pp-status {
+  margin-top: var(--space-3);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: var(--radius-pill);
+  font-size: 12px; font-weight: 500; line-height: 20px;
+  background: var(--color-background); color: var(--color-text);
+}
+.pp-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-light); }
+.pp-status--vacation { background: var(--color-primary-bg); color: var(--color-primary); }
+.pp-status--vacation .dot { background: var(--color-primary); }
+.pp-status--dnd { background: var(--danger-bg); color: var(--color-danger); }
+.pp-status--dnd .dot { background: var(--color-danger); }
+.pp-presence { margin-top: var(--space-2); font-size: 13px; color: var(--color-weak); }
+
+/* Действия — плитками, как быстрые действия в своём профиле */
+.pp-actions { display: flex; gap: var(--space-2); padding: var(--space-4) var(--space-4) 0; }
+.pp-action {
+  flex: 1; min-width: 0;
+  background: var(--color-white); border-radius: var(--radius-md);
+  padding: 10px 4px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--color-text);
+  transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.pp-action:active { opacity: 0.7; transform: scale(0.97); }
+.pp-action .ico {
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  background: var(--color-primary-bg); color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.pp-action--primary { background: var(--color-primary); color: #fff; }
+.pp-action--primary .ico { background: rgba(255, 255, 255, 0.22); color: #fff; }
+
+/* Замещение и «ответит после…» — прямо под действиями, там же, где решают */
+.pp-note {
+  margin: var(--space-3) var(--space-4) 0;
+  padding: 11px var(--space-4); border-radius: var(--radius-md);
+  background: var(--color-primary-bg); color: var(--color-text);
+  font-size: 13px; line-height: 1.4;
+  display: flex; align-items: center; gap: var(--space-2);
+}
+.pp-note b { font-weight: 600; }
+.pp-note .lnk { margin-left: auto; color: var(--color-primary); font-weight: 500; white-space: nowrap; }
+
+.pp-card {
+  background: var(--color-white); border-radius: var(--radius-lg);
+  margin: var(--space-3) var(--space-4) 0;
+  padding: var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-3);
+}
+.pp-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.pp-card-head h3 { font-size: 17px; font-weight: 600; color: var(--color-heading); }
+.pp-card-head .link { font-size: 13px; font-weight: 500; color: var(--color-primary); }
+
+/* Общее с вами: счётчики в ряд — блок остаётся низким */
+.pp-counts { display: flex; gap: var(--space-2); }
+.pp-count {
+  flex: 1; min-width: 0; background: var(--color-background);
+  border-radius: var(--radius-md); padding: 10px 4px 9px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.pp-count:active { opacity: 0.7; transform: scale(0.97); }
+.pp-count b { font-size: 17px; font-weight: 600; color: var(--color-heading); font-variant-numeric: tabular-nums; }
+.pp-count span { font-size: 11px; color: var(--color-weak); }
+
+.pp-field { display: flex; flex-direction: column; gap: 2px; }
+.pp-field + .pp-field { border-top: 1px solid var(--color-border); padding-top: var(--space-3); }
+.pp-field .label { font-size: 13px; color: var(--color-weak); }
+.pp-field .value { font-size: 15px; color: var(--color-heading); }
+.pp-field .value.link { color: var(--color-primary); }
+
+.pp-row {
+  display: flex; align-items: center; gap: var(--space-3); width: 100%;
+  text-align: left; transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.pp-row + .pp-row { border-top: 1px solid var(--color-border); padding-top: var(--space-3); }
+.pp-row:active { opacity: 0.6; }
+.pp-row .ini {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: var(--color-primary-bg); color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600;
+}
+.pp-row .texts { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pp-row .texts b { font-size: 15px; font-weight: 500; color: var(--color-heading); }
+.pp-row .texts span { font-size: 13px; color: var(--color-weak); }
+
+/* Показатели: у коллеги публичная часть — одна плитка благодарностей */
+.pp-metric {
+  display: flex; align-items: center; gap: var(--space-3);
+  background: var(--color-background); border-radius: var(--radius-md);
+  padding: 12px var(--space-3);
+}
+.pp-metric .em { font-size: 22px; line-height: 1; }
+.pp-metric .texts { display: flex; flex-direction: column; }
+.pp-metric b { font-size: 17px; font-weight: 600; color: var(--color-heading); }
+.pp-metric span { font-size: 12px; color: var(--color-weak); }
+
+.pp-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pp-chip {
+  font-size: 13px; padding: 5px 12px; border-radius: var(--radius-pill);
+  background: var(--color-background); color: var(--color-text);
+}
+.pp-spacer { height: 40px; }

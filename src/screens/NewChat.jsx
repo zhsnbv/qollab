@@ -8,6 +8,7 @@ import {
 import { searchEmployees } from '../data/employees';
 import './NewChat.css';
 import { useScrolled } from '../utils/useScrolled';
+import { PROFILE_V2 } from '../config';
 
 // «Написать сообщение» (Figma node 25122-109360): два состояния одного экрана —
 // пустой поиск с подсказкой и список найденных сотрудников. Тап по строке
@@ -61,7 +62,7 @@ export default function NewChat() {
     },
   });
 
-  const openInfo = (e) => navigate('/chat-profile', {
+  const openInfo = (e) => navigate(PROFILE_V2 ? '/person' : '/chat-profile', {
     state: { id: e.id, kind: 'user', employee: e, background: location.state?.background },
   });
 
