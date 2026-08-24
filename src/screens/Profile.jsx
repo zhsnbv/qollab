@@ -4,6 +4,7 @@ import TabLayout from '../components/TabLayout';
 import { DotsIcon } from '../components/TopBar';
 import ScreenMenu from '../components/ScreenMenu';
 import SideMenu from '../components/SideMenu';
+import ProfileHero from '../components/ProfileHero';
 import {
   CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
   IdentificationCard, QrCode, AddressBook, Hash,
@@ -66,31 +67,7 @@ export default function Profile() {
     <>
     <TabLayout topbar={topbar}>
       <FadeIn><div className="profile">
-        {/* Шапка: оранжевая волна за аватаром, имя, должность и статус */}
-        <section className="profile-hero">
-          {/* Волна — готовая картинка целиком, отдельно под каждую тему
-              (в тёмной она насыщеннее). Вектор-гребень из макета убран: он
-              залит белым и на тёмном фоне читался белым пятном. Обе версии в
-              разметке, нужную показывает CSS — так переключение темы не ждёт
-              загрузки картинки. */}
-          <div className="profile-decor" aria-hidden="true">
-            <span className="profile-decor-wave">
-              <img className="profile-decor-img profile-decor-img--light" src="/img/profile/wave-light.png" alt="" />
-              <img className="profile-decor-img profile-decor-img--dark" src="/img/profile/wave-dark.png" alt="" />
-            </span>
-          </div>
-          <div className="profile-head">
-            <button className="profile-avatar-wrap" onClick={() => open('/profile/photo')} aria-label="Фото профиля">
-              <img className="profile-avatar" src={me.avatar} alt="" />
-              <span className="profile-avatar-cam">
-                <img src="/img/profile/camera.svg" alt="" width="16" height="16" />
-              </span>
-            </button>
-            <h2 className="profile-name">{me.name}</h2>
-            <div className="profile-role">{me.role}</div>
-            <button className="status-btn"><Plus size={12} weight="bold" />Установить статус</button>
-          </div>
-        </section>
+        <ProfileHero me={me} onPhoto={() => open('/profile/photo')} />
 
         {/* Быстрые действия — четыре плитки под шапкой */}
         <div className="quick-wrap">

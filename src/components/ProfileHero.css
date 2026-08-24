@@ -1,0 +1,81 @@
+/* Центрированная шапка профиля (PROFILE_V2). 3D-линия убрана: она жёстко
+   привязана к пропорциям макета и мешает менять композицию. Место под будущую
+   иллюстрацию — .phero-art, сейчас там мягкая подложка в цвете акцента. */
+.phero {
+  position: relative;
+  background: linear-gradient(180deg, var(--color-white) 62%, var(--page-bg) 100%);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+/* Подложка-заглушка: сюда встанет иллюстрация, поэтому она отдельным слоем и
+   не завязана на размеры аватарки. */
+.phero-art {
+  position: absolute;
+  left: 50%;
+  top: -46%;
+  width: 150%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 62%,
+    var(--color-primary-bg) 0%,
+    color-mix(in srgb, var(--color-primary-bg) 45%, transparent) 55%,
+    transparent 72%
+  );
+  pointer-events: none;
+}
+.phero > *:not(.phero-art) { position: relative; z-index: 1; }
+
+.phero-avatar {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  padding: 0;
+  border: 0;
+  background: none;
+  transition: transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.phero-avatar:active { transform: scale(0.97); }
+.phero-avatar img.ava {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  border-radius: 50%;
+  border: 8px solid var(--color-primary);
+  box-sizing: border-box;
+}
+.phero-cam {
+  position: absolute; right: 3px; bottom: 3px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--color-primary);
+  border: 3px solid var(--color-white);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.phero-name {
+  margin-top: var(--space-4);
+  font-size: 25px; font-weight: 600;
+  letter-spacing: -0.5px; color: var(--color-heading);
+  text-wrap: balance;
+}
+.phero-role {
+  margin-top: var(--space-1);
+  font-size: 14px; font-weight: 500; color: var(--color-weak);
+}
+.phero-status {
+  margin-top: var(--space-3);
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: var(--radius-pill);
+  background: var(--color-primary-bg);
+  border: 1px solid var(--color-primary);
+  font-size: 12px; font-weight: 500; line-height: 20px;
+  color: var(--color-primary);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.phero-status:active { opacity: 0.6; }
