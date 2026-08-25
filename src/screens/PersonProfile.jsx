@@ -11,6 +11,7 @@ import ScreenMenu from '../components/ScreenMenu';
 import { getPerson } from '../data/person';
 import { useScrolled } from '../utils/useScrolled';
 import ProfileHero from '../components/ProfileHero';
+import ProfileTabs from '../components/ProfileTabs';
 import Toast from '../components/Toast';
 import './Profile.css';
 import './ChatProfile.css';
@@ -115,19 +116,7 @@ export default function PersonProfile() {
             </div>
           </ProfileHero>
 
-          <div className="pp-tabs no-scrollbar">
-            {TABS.map(({ id: tid, label, Icon, count }) => (
-              <button
-                key={tid}
-                className={`cp-tab ${tab === tid ? 'active' : ''}`}
-                onClick={() => setTab(tid)}
-              >
-                <Icon />
-                {label}
-                {count && <span className="pp-tab-count">{count(p)}</span>}
-              </button>
-            ))}
-          </div>
+          <ProfileTabs tabs={TABS} value={tab} onChange={setTab} data={p} />
 
           {tab === 'info' && (<>
           {/* Корпоративные данные */}

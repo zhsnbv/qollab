@@ -10,6 +10,7 @@ import { groupProfiles, userProfiles } from '../data/chatProfiles';
 import { useScrolled } from '../utils/useScrolled';
 import { DotsIcon } from '../components/TopBar';
 import ProfileHero from '../components/ProfileHero';
+import ProfileTabs from '../components/ProfileTabs';
 import ScreenMenu from '../components/ScreenMenu';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ActionSheet from '../components/ActionSheet';
@@ -123,19 +124,7 @@ export default function GroupProfile() {
             </div>
           </ProfileHero>
 
-          <div className="pp-tabs no-scrollbar">
-            {TABS.map(({ id: tid, label, Icon, count }) => (
-              <button
-                key={tid}
-                className={`cp-tab ${tab === tid ? 'active' : ''}`}
-                onClick={() => setTab(tid)}
-              >
-                <Icon />
-                {label}
-                {count && <span className="pp-tab-count">{count(g)}</span>}
-              </button>
-            ))}
-          </div>
+          <ProfileTabs tabs={TABS} value={tab} onChange={setTab} data={g} />
 
           {tab === 'members' && (<>
             <section className="pcard">
