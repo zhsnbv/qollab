@@ -34,7 +34,6 @@ const SOUND_MODES = [
   { id: 'mentions', label: 'Только упоминания', Icon: Mention24Filled },
   { id: 'off', label: 'Выключить звук', Icon: AlertOff24Filled, danger: true },
 ];
-const SOUND_LABEL = { on: 'Звук', mentions: 'Упоминания', off: 'Без звука' };
 const SOUND_ICON = { on: Alert24Filled, mentions: Mention24Filled, off: AlertOff24Filled };
 const SOUND_TOAST = {
   on: 'Уведомления включены',
@@ -85,7 +84,8 @@ export default function GroupProfile() {
   };
 
   const actions = [
-    { id: 'sound', label: SOUND_LABEL[sound], Icon: SOUND_ICON[sound], onClick: () => setSoundOpen(true) },
+    // Подпись постоянная, режим читается по иконке: колокольчик, @ или зачёркнутый
+    { id: 'sound', label: 'Звук', Icon: SOUND_ICON[sound], onClick: () => setSoundOpen(true) },
     { id: 'walkie', label: 'Рация', Icon: WalkieTalkie24Filled, onClick: () => setToast('Рация включена') },
     { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },
     { id: 'leave', label: 'Покинуть', Icon: SignOut24Filled, danger: true, onClick: () => setConfirmLeave(true) },

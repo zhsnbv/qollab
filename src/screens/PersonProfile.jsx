@@ -78,7 +78,7 @@ export default function PersonProfile() {
     { id: 'call', label: 'Звонок', Icon: Call24Filled, onClick: () => setToast(`Звоним: ${p.name}`) },
     { id: 'thanks', label: 'Рахмет', Icon: Heart24Filled, onClick: () => setToast('Рахмет отправлен') },
     { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },
-    { id: 'mute', label: muted ? 'Включить' : 'Звук', Icon: muted ? AlertOff24Filled : Alert24Filled, onClick: toggleMute },
+    { id: 'mute', label: 'Звук', Icon: muted ? AlertOff24Filled : Alert24Filled, onClick: toggleMute },
   ];
 
   // Пилюля — только установленный статус. Присутствие всегда строкой под ним:
