@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  CaretLeft, CaretRight, ChatCircle, Phone, Heart,
+  CaretLeft, CaretRight, ChatCircle, Phone, Heart, FileText, LinkSimple, Play,
 } from '@phosphor-icons/react';
 import { Alert24Regular, Search24Regular, Share24Regular } from '@fluentui/react-icons';
 import { DotsIcon } from '../components/TopBar';
@@ -12,6 +12,7 @@ import ProfileHero from '../components/ProfileHero';
 import ActionSheet from '../components/ActionSheet';
 import Toast from '../components/Toast';
 import './Profile.css';
+import './ChatProfile.css';
 import './PersonProfile.css';
 
 // Профиль коллеги: та же вёрстка, что у своего профиля (карточки .pcard,
@@ -46,6 +47,16 @@ function CountCard({ value, label, onOpen }) {
   );
 }
 
+// Вкладки профиля: «Сведения» — вся анкета, остальные — то, что было
+// «Общим с вами», только прямо на экране, без перехода.
+const TABS = [
+  { id: 'info', label: 'Сведения' },
+  { id: 'media', label: 'Медиа' },
+  { id: 'files', label: 'Файлы' },
+  { id: 'links', label: 'Ссылки' },
+  { id: 'groups', label: 'Общие группы' },
+];
+
 export default function PersonProfile() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,6 +68,7 @@ export default function PersonProfile() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [screenMenu, setScreenMenu] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [tab, setTab] = useState('info');
   const [toast, setToast] = useState('');
 
   const close = () => {
@@ -117,11 +129,9 @@ export default function PersonProfile() {
 
       <div className="pp-scroll" onScroll={onScroll}>
         <div className="profile">
-          <ProfileHero me={p} status={status} />
-
-          {/* Быстрые действия — тот же ряд плиток, что в своём профиле */}
-          <div className="quick-wrap">
-            <div className="quick-row">
+          <ProfileHero me={p} status={status}>
+            {/* Действия и вкладки — в том же блоке, что аватар: общий фон */}
+            <div className="pp-actions">
               {actions.map(({ id: aid, label, Icon, onClick }) => (
                 <button className="quick-item" key={aid} onClick={onClick}>
                   <span className="quick-ico"><Icon size={20} weight="fill" /></span>
@@ -129,22 +139,21 @@ export default function PersonProfile() {
                 </button>
               ))}
             </div>
-          </div>
 
-          {/* Общее с вами */}
-          <section className="pcard">
-            <div className="pcard-head">
-              <h3>Общее с вами</h3>
-              <button className="refresh-btn" onClick={() => openShared('files')}>Показать всё</button>
+            <div className="pp-tabs no-scrollbar">
+              {TABS.map((t) => (
+                <button
+                  key={t.id}
+                  className={`cp-tab ${tab === t.id ? 'active' : ''}`}
+                  onClick={() => setTab(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
-            <div className="count-row">
-              <CountCard value={p.files.length} label="Файлы" onOpen={() => openShared('files')} />
-              <CountCard value={p.media.length} label="Медиа" onOpen={() => openShared('media')} />
-              <CountCard value={p.links.length} label="Ссылки" onOpen={() => openShared('links')} />
-              <CountCard value={p.groups.length} label="Группы" onOpen={() => openShared('groups')} />
-            </div>
-          </section>
+          </ProfileHero>
 
+          {tab === 'info' && (<>
           {/* Корпоративные данные */}
           <section className="pcard">
             <div className="pcard-head"><h3>Корпоративные данные</h3></div>
@@ -241,6 +250,72 @@ export default function PersonProfile() {
               </div>
             </div>
           </section>
+          </>)}
+
+          {tab === 'media' && (
+            <section className="pcard pcard--flush">
+              <div className="pp-media">
+                {p.media.map((m) => (
+                  <div className="cp-media-cell" key={m.id}>
+                    <img src={m.img} alt="" loading="lazy" />
+                    {m.video && (
+                      <>
+                        <span className="cp-media-play"><Play size={20} weight="fill" /></span>
+                        <span className="cp-media-time">{m.video}</span>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {tab === 'files' && (
+            <section className="pcard">
+              <div className="cp-rows">
+                {p.files.map((f) => (
+                  <div className="cp-row cp-row--file" key={f.id}>
+                    <span className="cp-file-ico"><FileText size={20} weight="fill" /></span>
+                    <span className="cp-row-texts">
+                      <span className="cp-row-title">{f.name}</span>
+                      <span className="cp-row-sub">{f.size}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {tab === 'links' && (
+            <section className="pcard">
+              <div className="cp-rows">
+                {p.links.map((l) => (
+                  <div className="cp-row" key={l.id}>
+                    <span className="cp-file-ico"><LinkSimple size={20} weight="bold" /></span>
+                    <span className="cp-row-texts">
+                      <span className="cp-row-title cp-row-title--link">{l.url}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {tab === 'groups' && (
+            <section className="pcard">
+              <div className="cp-rows">
+                {p.groups.map((g) => (
+                  <button className="cp-row" key={g.id} onClick={() => setToast(g.name)}>
+                    <span className="pp-group-ava">
+                      {g.img ? <img src={g.img} alt="" /> : g.initials}
+                    </span>
+                    <span className="cp-row-texts"><span className="cp-row-title">{g.name}</span></span>
+                    <CaretRight size={18} color="var(--color-light)" />
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
 

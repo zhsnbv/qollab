@@ -6,7 +6,7 @@ import './ProfileHero.css';
 // проверяем сейчас, прежняя с 3D-линией — на случай отката (см. src/config.js).
 // status — то, что стоит под должностью: у себя это кнопка «Установить
 // статус», у коллеги — его статус и строка присутствия.
-export default function ProfileHero({ me, onPhoto, status }) {
+export default function ProfileHero({ me, onPhoto, status, children }) {
   if (!PROFILE_V2) return <ClassicHero me={me} onPhoto={onPhoto} />;
 
   const avatar = me.avatar
@@ -32,6 +32,7 @@ export default function ProfileHero({ me, onPhoto, status }) {
       {status ?? (
         <button className="status-btn phero-status"><Plus size={12} weight="bold" />Установить статус</button>
       )}
+      {children}
     </section>
   );
 }
