@@ -63,7 +63,7 @@
 
 .stsheet-apply {
   margin-top: var(--space-1);
-  height: 48px; border-radius: var(--radius-md);
+  height: 48px; border-radius: var(--radius-pill);
   background: var(--color-primary); color: #fff;
   font-size: 16px; font-weight: 500;
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;

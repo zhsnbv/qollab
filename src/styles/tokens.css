@@ -75,10 +75,10 @@ html, body {
 
 body {
   font-family: var(--font-base);
-  /* Цифры пропорциональные — в Inter табличные рисуют «1» с ножкой, и она
-     выбивается из остального текста. Где числа должны стоять колонкой,
-     табличность включается точечно классом .nums-tabular. */
-  font-variant-numeric: proportional-nums;
+  /* Табличные цифры по всему интерфейсу: счётчики, суммы и время меняются,
+     не сдвигая соседний текст. Единица в Inter при этом рисуется с ножкой —
+     это цена одинаковой ширины. */
+  font-variant-numeric: tabular-nums;
   color: var(--color-text);
   /* Белый, а не --page-bg: Safari подкрашивает свою адресную строку/статус-бар
      цветом фона body (не тем, что реально нарисовано поверх), поэтому серый
@@ -185,10 +185,6 @@ button { font-family: inherit; border: none; background: none; cursor: pointer; 
 .scroll-area--tabbar {
   padding-bottom: calc(81px + max(25px, env(safe-area-inset-bottom)));
 }
-
-/* Числа в колонку: включаем табличные цифры адресно — например в таблицах
-   и там, где значение меняется на месте и не должно дёргать соседний текст. */
-.nums-tabular { font-variant-numeric: tabular-nums; }
 
 /* Спиннер подгрузки (инфинити-скролл) */
 .spinner {
