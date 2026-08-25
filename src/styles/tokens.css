@@ -198,7 +198,7 @@ button { border: none; background: none; cursor: pointer; }
    работает свайп вниз, поэтому она вынесена в отдельный элемент. */
 .sheet-top {
   display: flex; flex-direction: column;
-  padding: var(--space-3) var(--space-4) var(--space-4);
+  padding: var(--space-3) var(--space-4) var(--space-3);
   touch-action: none;
 }
 .sheet-grab {
@@ -210,7 +210,7 @@ button { border: none; background: none; cursor: pointer; }
    вправо сам, а высота строки держится кнопкой. */
 .sheet-head {
   display: flex; align-items: center; justify-content: space-between;
-  gap: var(--space-4); margin-top: var(--space-3);
+  gap: var(--space-4); margin-top: var(--space-2);
 }
 .sheet-head > :first-child:not(.sheet-close) { flex: 1; min-width: 0; }
 .sheet-close {
