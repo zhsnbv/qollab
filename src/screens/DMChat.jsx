@@ -154,7 +154,8 @@ export default function DMChat() {
         initials: chat?.initials,
         tint: chat?.tint,
       },
-      background: state?.background,
+      // Под профилем остаётся сам чат, а не список чатов
+      background: location,
     },
   });
   const [closing, setClosing] = useState(false);

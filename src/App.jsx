@@ -56,23 +56,11 @@ function Shell() {
   return authed ? <AppRoutes /> : <Auth />;
 }
 
-function AppRoutes() {
-  const location = useLocation();
-  const background = location.state?.background;
-  // Таб-бар рендерим здесь, а не внутри TabLayout: так он переживает смену
-  // роута и плашка успевает доехать до нового таба, а не создаётся заново.
-  const showNav = TAB_ROUTES.includes((background || location).pathname);
-
+// Роуты оверлеев вынесены отдельно: их рендерим дважды — текущий экран и,
+// если он открыт поверх другого оверлея, его подложку.
+function OverlayRoutes({ location }) {
   return (
-    <>
-      <Routes location={background || location}>
-        <Route path="/" element={<Home />} />
-        <Route path="/posts" element={<Posts />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/chats" element={<Chats />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-      <Routes>
+    <Routes location={location}>
         <Route path="/chats/prodev" element={<ChatRoom />} />
         <Route path="/chats/dm" element={<DMChat />} />
         <Route path="/article" element={<ArticleView />} />
@@ -97,6 +85,33 @@ function AppRoutes() {
             поэтому «назад» и история браузера работают без своего стека. */}
         <Route path="/app/*" element={<MiniApp />} />
       </Routes>
+  );
+}
+
+function AppRoutes() {
+  const location = useLocation();
+  const background = location.state?.background;
+  // Таб-бар рендерим здесь, а не внутри TabLayout: так он переживает смену
+  // роута и плашка успевает доехать до нового таба, а не создаётся заново.
+  const showNav = TAB_ROUTES.includes((background || location).pathname);
+
+  // Под оверлеем может лежать не вкладка, а другой оверлей: из чата
+  // открывается профиль, и чат должен остаться под ним. Иначе на время
+  // профиля под ним рендерится список чатов и мелькает при возврате.
+  const underOverlay = background && !TAB_ROUTES.includes(background.pathname) ? background : null;
+  const tabLocation = underOverlay?.state?.background || background || location;
+
+  return (
+    <>
+      <Routes location={tabLocation}>
+        <Route path="/" element={<Home />} />
+        <Route path="/posts" element={<Posts />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/chats" element={<Chats />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+      {underOverlay && <OverlayRoutes location={underOverlay} />}
+      <OverlayRoutes />
       {showNav && <BottomNav />}
     </>
   );
