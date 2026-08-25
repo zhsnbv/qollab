@@ -40,11 +40,6 @@
   animation: pinlist-up 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 @keyframes pinlist-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.pinlist-header {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: var(--space-2) var(--space-4) var(--space-4);
-}
 .pinlist-title { font-size: 18px; font-weight: 700; color: var(--color-heading); }
 .pinlist-body {
   flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;

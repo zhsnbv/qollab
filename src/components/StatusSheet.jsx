@@ -16,10 +16,9 @@ export default function StatusSheet({ value, onClose, onPick }) {
       <div className="stsheet-wrap">
         <button className="stsheet-scrim" onClick={onClose} aria-label="Закрыть" />
         <div className={`stsheet ${swipe.className}`} style={swipe.style} role="dialog" aria-label="Мой статус">
-          <SheetTop onClose={onClose} swipe={swipe} />
-          <div className="stsheet-head">
-            <h3>Мой статус</h3>
-          </div>
+          <SheetTop onClose={onClose} swipe={swipe}>
+            <h3 className="stsheet-title">Мой статус</h3>
+          </SheetTop>
 
           <div className="stsheet-list">
             {STATUSES.map(({ id, label, hint, tone, Icon }) => (

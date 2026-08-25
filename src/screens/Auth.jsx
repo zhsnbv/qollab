@@ -276,10 +276,9 @@ export default function Auth() {
           <div className="auth-sheet-wrap">
             <button className="auth-sheet-scrim" onClick={() => setSheet(false)} aria-label="Закрыть" />
             <div className={`auth-sheet ${sheetSwipe.className}`} style={sheetSwipe.style}>
-              <SheetTop onClose={() => setSheet(false)} swipe={sheetSwipe} />
-              <div className="auth-sheet-header">
+              <SheetTop onClose={() => setSheet(false)} swipe={sheetSwipe}>
                 <h3 className="auth-sheet-title">Выберите пространство</h3>
-              </div>
+              </SheetTop>
               <div className="auth-sheet-list">
                 {companies.map((c) => (
                   <button

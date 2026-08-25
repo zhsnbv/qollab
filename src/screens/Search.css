@@ -213,11 +213,6 @@
 }
 .fs-overlay.open .fs-sheet { transform: translateY(0); }
 
-.fs-head {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: var(--space-2) var(--space-4) var(--space-3);
-}
 .fs-title { font-size: 18px; font-weight: 700; color: var(--color-heading); }
 .fs-reset {
   font-size: 14px; font-weight: 500; color: var(--color-primary);

@@ -44,10 +44,9 @@ export default function ForwardSheet({ onClose, onPick }) {
     <div className="fwd-wrap">
       <button className="fwd-scrim" onClick={onClose} aria-label="Закрыть" />
       <div className={`fwd-sheet ${swipe.className}`} style={swipe.style}>
-        <SheetTop onClose={onClose} swipe={swipe} />
-        <div className="fwd-header">
+        <SheetTop onClose={onClose} swipe={swipe}>
           <h3 className="fwd-title">Выберите чат</h3>
-        </div>
+        </SheetTop>
 
         <div className="fwd-search-wrap">
           <div className="fwd-search">

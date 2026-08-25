@@ -132,12 +132,6 @@ html.kb .comments-sheet { padding-bottom: var(--kb, 0px); }
 html.kb .comments-input-row { padding-bottom: var(--space-2); }
 
 
-.comments-header {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 var(--space-4) var(--space-3);
-  border-bottom: 1px solid var(--color-border);
-}
 .comments-title { font-size: 17px; font-weight: 700; color: var(--color-heading, var(--color-text)); }
 .comments-title span { color: var(--color-weak); font-weight: 500; }
 

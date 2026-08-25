@@ -38,11 +38,10 @@ export default function ServicesSheet() {
         style={swipe.style}
         onClick={(e) => e.stopPropagation()}
       >
-        <SheetTop onClose={close} swipe={swipe} />
-        <div className="svcsheet-header">
+        <SheetTop onClose={close} swipe={swipe}>
           <h2 className="svcsheet-title">Все сервисы</h2>
           <ViewToggle view={view} onChange={setView} />
-        </div>
+        </SheetTop>
 
         <div className="svcsheet-body">
           {serviceCategories.map((cat) => (

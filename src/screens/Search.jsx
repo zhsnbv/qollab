@@ -66,11 +66,10 @@ function FilterSheet({ kind, open, onClose, value, onChange }) {
         style={swipe.style}
         onClick={(e) => e.stopPropagation()}
       >
-        <SheetTop onClose={onClose} swipe={swipe} />
-        <div className="fs-head">
+        <SheetTop onClose={onClose} swipe={swipe}>
           <h2 className="fs-title">Фильтр</h2>
           <button className="fs-reset" onClick={reset}>Сбросить фильтр</button>
-        </div>
+        </SheetTop>
 
         <div className="fs-body">
           {kind === 'full' && (

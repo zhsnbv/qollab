@@ -29,11 +29,6 @@
 @keyframes svcsheet-out { from { transform: translateY(0); } to { transform: translateY(100%); } }
 
 
-.svcsheet-header {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: var(--space-2) var(--space-4) var(--space-4);
-}
 .svcsheet-title { font-size: 18px; font-weight: 700; color: var(--color-heading); }
 
 /* Переключатель список/сетка — в components/ViewToggle.css (общий с вкладкой) */

@@ -36,10 +36,9 @@ export function PinnedList({ items, onClose, onUnpin, onUnpinAll }) {
     <div className="pinlist-wrap">
       <button className="pinlist-scrim" onClick={onClose} aria-label="Закрыть" />
       <div className={`pinlist ${swipe.className}`} style={swipe.style}>
-        <SheetTop onClose={onClose} swipe={swipe} />
-        <div className="pinlist-header">
+        <SheetTop onClose={onClose} swipe={swipe}>
           <h3 className="pinlist-title">Закреплённые сообщения</h3>
-        </div>
+        </SheetTop>
 
         <div className="pinlist-body">
           {items.map((m) => (

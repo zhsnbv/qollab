@@ -22,8 +22,9 @@ export default function ActionSheet({ title, items, onClose, onPick, selected, i
     <Portal><div className="asheet-wrap">
       <button className="asheet-scrim" onClick={onClose} aria-label="Закрыть" />
       <div className={`asheet ${swipe.className}`} style={swipe.style}>
-        <SheetTop onClose={onClose} swipe={swipe} />
-        {title && <h3 className="asheet-title">{title}</h3>}
+        <SheetTop onClose={onClose} swipe={swipe}>
+          {title && <h3 className="asheet-title">{title}</h3>}
+        </SheetTop>
         <div className="asheet-list">
           {items.map(({ id, label, sub, Icon, danger }) => (
             <button

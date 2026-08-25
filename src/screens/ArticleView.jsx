@@ -73,10 +73,9 @@ function CommentsSheet({ open, onClose, count }) {
         style={swipe.style}
         onClick={(e) => e.stopPropagation()}
       >
-        <SheetTop onClose={onClose} swipe={swipe} />
-        <div className="comments-header">
+        <SheetTop onClose={onClose} swipe={swipe}>
           <h2 className="comments-title">Комментарии <span>{comments.length}</span></h2>
-        </div>
+        </SheetTop>
         <div className="comments-list">
           {comments.map((c) => (
             <div className="comment-row" key={c.id}>
