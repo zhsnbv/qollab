@@ -213,11 +213,6 @@
 }
 .fs-overlay.open .fs-sheet { transform: translateY(0); }
 
-.fs-handle {
-  width: 36px; height: 4px; border-radius: var(--radius-pill);
-  background: var(--color-border); margin: var(--space-3) auto var(--space-2);
-  flex-shrink: 0;
-}
 .fs-head {
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: space-between;

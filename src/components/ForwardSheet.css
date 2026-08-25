@@ -9,21 +9,11 @@
   animation: fwd-up 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 @keyframes fwd-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.fwd-handle {
-  width: 36px; height: 4px; border-radius: var(--radius-pill); flex-shrink: 0;
-  background: var(--color-border); margin: var(--space-3) auto var(--space-1);
-}
 .fwd-header {
   flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
   padding: var(--space-2) var(--space-4) var(--space-3);
 }
 .fwd-title { font-size: 18px; font-weight: 700; color: var(--color-heading); }
-.fwd-close {
-  width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%;
-  background: var(--color-background); color: var(--color-weak);
-  display: flex; align-items: center; justify-content: center;
-}
-.fwd-close:active { opacity: 0.6; }
 
 .fwd-search-wrap { flex-shrink: 0; padding: 0 var(--space-4) var(--space-3); }
 .fwd-search {

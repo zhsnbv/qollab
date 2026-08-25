@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import SheetTop from './SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 import { Checkmark20Filled } from '@fluentui/react-icons';
 import Portal from './Portal';
 import { pushScrim, popScrim } from '../utils/scrim';
@@ -8,6 +10,7 @@ import './ActionSheet.css';
 // до нижней части экрана дотянуться проще, и это тот же паттерн, что у
 // остальных шитов прототипа.
 export default function ActionSheet({ title, items, onClose, onPick, selected, iconsLeft }) {
+  const swipe = useSheetSwipe(onClose);
   // Режим выбора: иконка уходит влево, справа у активного пункта — галочка.
   // iconsLeft — та же раскладка, но без галочек (список вложений).
   const isSelect = selected !== undefined;
@@ -18,8 +21,8 @@ export default function ActionSheet({ title, items, onClose, onPick, selected, i
   return (
     <Portal><div className="asheet-wrap">
       <button className="asheet-scrim" onClick={onClose} aria-label="Закрыть" />
-      <div className="asheet">
-        <span className="asheet-handle" />
+      <div className={`asheet ${swipe.className}`} style={swipe.style}>
+        <SheetTop onClose={onClose} swipe={swipe} />
         {title && <h3 className="asheet-title">{title}</h3>}
         <div className="asheet-list">
           {items.map(({ id, label, sub, Icon, danger }) => (

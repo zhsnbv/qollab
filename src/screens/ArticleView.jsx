@@ -7,6 +7,8 @@ import { basePosts } from '../data/feed';
 import { Sk } from '../components/Skeleton';
 import { useKeyboardInset } from '../utils/useKeyboardInset';
 import './ArticleView.css';
+import SheetTop from '../components/SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 
 // Мок-комментарии для боттом-шита — как в Medium: аватар, имя, текст, лайк.
 const commentAuthors = [
@@ -44,6 +46,7 @@ const myAvatar = '/img/profile/avatar-photo.png';
 
 // Боттом-шит с комментариями — открывается по тапу на счётчик комментов.
 function CommentsSheet({ open, onClose, count }) {
+  const swipe = useSheetSwipe(onClose);
   const initial = useMemo(() => buildComments(Number(String(count ?? 0).replace(/\s/g, ''))), [count]);
   const [comments, setComments] = useState(initial);
   const [input, setInput] = useState('');
@@ -65,11 +68,14 @@ function CommentsSheet({ open, onClose, count }) {
 
   return (
     <div className={`comments-overlay ${open ? 'open' : ''}`} onClick={onClose} aria-hidden={!open}>
-      <div className="comments-sheet" onClick={(e) => e.stopPropagation()}>
-        <span className="comments-handle" />
+      <div
+        className={`comments-sheet ${swipe.className}`}
+        style={swipe.style}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <SheetTop onClose={onClose} swipe={swipe} />
         <div className="comments-header">
           <h2 className="comments-title">Комментарии <span>{comments.length}</span></h2>
-          <button className="comments-close" onClick={onClose} aria-label="Закрыть"><X size={20} /></button>
         </div>
         <div className="comments-list">
           {comments.map((c) => (

@@ -28,11 +28,6 @@
 @keyframes svcsheet-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @keyframes svcsheet-out { from { transform: translateY(0); } to { transform: translateY(100%); } }
 
-.svcsheet-handle {
-  width: 36px; height: 4px; border-radius: var(--radius-pill);
-  background: var(--color-border); margin: var(--space-3) auto var(--space-1);
-  flex-shrink: 0;
-}
 
 .svcsheet-header {
   flex-shrink: 0;

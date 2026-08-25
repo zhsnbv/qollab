@@ -8,6 +8,8 @@ import { allServices } from '../data/services';
 import { basePosts, events } from '../data/feed';
 import { employees, guests, searchChannels, enterprises } from '../data/people';
 import './Search.css';
+import SheetTop from '../components/SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 
 // Вкладки поиска — как в макете (node 23930-6898).
 const TABS = [
@@ -49,6 +51,7 @@ function PersonAvatar({ person, index }) {
 // Боттом-шит фильтра. simple — только «Предприятие» (сотрудники, гости),
 // full — плюс тип публикации, сортировка и диапазон дат (публикации).
 function FilterSheet({ kind, open, onClose, value, onChange }) {
+  const swipe = useSheetSwipe(onClose);
   const [orgQuery, setOrgQuery] = useState('');
   if (!kind) return null;
 
@@ -58,8 +61,12 @@ function FilterSheet({ kind, open, onClose, value, onChange }) {
 
   return (
     <div className={`fs-overlay ${open ? 'open' : ''}`} onClick={onClose} aria-hidden={!open}>
-      <div className="fs-sheet" onClick={(e) => e.stopPropagation()}>
-        <span className="fs-handle" />
+      <div
+        className={`fs-sheet ${swipe.className}`}
+        style={swipe.style}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <SheetTop onClose={onClose} swipe={swipe} />
         <div className="fs-head">
           <h2 className="fs-title">Фильтр</h2>
           <button className="fs-reset" onClick={reset}>Сбросить фильтр</button>

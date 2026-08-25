@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ViewToggle from '../components/ViewToggle';
 import { serviceCategories } from '../data/services';
 import './ServicesSheet.css';
+import SheetTop from '../components/SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 
 // Боттом-шит «Все сервисы» (Figma node 23762-7978) — вызывается с Главной по
 // тапу на плитку «Все сервисы». В отличие от Статьи/Чата (которые перекрывают
@@ -19,6 +21,7 @@ export default function ServicesSheet() {
     setClosing(true);
     setTimeout(() => navigate(-1), 260);
   };
+  const swipe = useSheetSwipe(close);
 
   // Мини-апп открываем поверх Главной, а не поверх шита: пробрасываем тот же
   // background, с которым открыли сам шит, — иначе после «назад» из мини-аппа
@@ -30,8 +33,12 @@ export default function ServicesSheet() {
 
   return (
     <div className={`svcsheet-overlay ${closing ? 'closing' : ''}`} onClick={close}>
-      <div className={`svcsheet ${closing ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
-        <span className="svcsheet-handle" />
+      <div
+        className={`svcsheet ${closing ? 'closing' : ''} ${swipe.className}`}
+        style={swipe.style}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <SheetTop onClose={close} swipe={swipe} />
         <div className="svcsheet-header">
           <h2 className="svcsheet-title">Все сервисы</h2>
           <ViewToggle view={view} onChange={setView} />

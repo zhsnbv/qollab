@@ -5,6 +5,8 @@ import { ChevronDown20Regular, Checkmark20Filled, Dismiss20Regular } from '@flue
 import { useCompany } from '../context/CompanyContext';
 import OnboardingArt from '../components/OnboardingArt';
 import './Auth.css';
+import SheetTop from '../components/SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 
 // Авторизация (Figma node 24627-79594): онбординг → выбор рабочего
 // пространства → номер телефона → SMS-код, плюс отдельная ветка гостя.
@@ -111,6 +113,7 @@ function Turnstile({ done }) {
 }
 
 export default function Auth() {
+  const sheetSwipe = useSheetSwipe(() => setSheet(false));
   const { signIn } = useAuth();
   const [step, setStep] = useState(STEP.onboarding);
   const { company, companyId, setCompanyId, companies } = useCompany();
@@ -272,13 +275,10 @@ export default function Auth() {
         {sheet && (
           <div className="auth-sheet-wrap">
             <button className="auth-sheet-scrim" onClick={() => setSheet(false)} aria-label="Закрыть" />
-            <div className="auth-sheet">
-              <span className="auth-sheet-handle" />
+            <div className={`auth-sheet ${sheetSwipe.className}`} style={sheetSwipe.style}>
+              <SheetTop onClose={() => setSheet(false)} swipe={sheetSwipe} />
               <div className="auth-sheet-header">
                 <h3 className="auth-sheet-title">Выберите пространство</h3>
-                <button className="auth-sheet-close" onClick={() => setSheet(false)} aria-label="Закрыть">
-                  <Dismiss20Regular />
-                </button>
               </div>
               <div className="auth-sheet-list">
                 {companies.map((c) => (

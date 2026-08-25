@@ -131,11 +131,6 @@
 html.kb .comments-sheet { padding-bottom: var(--kb, 0px); }
 html.kb .comments-input-row { padding-bottom: var(--space-2); }
 
-.comments-handle {
-  width: 36px; height: 4px; border-radius: var(--radius-pill);
-  background: var(--color-border); margin: var(--space-3) auto var(--space-2);
-  flex-shrink: 0;
-}
 
 .comments-header {
   flex-shrink: 0;
@@ -145,12 +140,6 @@ html.kb .comments-input-row { padding-bottom: var(--space-2); }
 }
 .comments-title { font-size: 17px; font-weight: 700; color: var(--color-heading, var(--color-text)); }
 .comments-title span { color: var(--color-weak); font-weight: 500; }
-.comments-close {
-  width: 32px; height: 32px; border-radius: var(--radius-pill); background: var(--color-background);
-  display: flex; align-items: center; justify-content: center; color: var(--color-text);
-  flex-shrink: 0; transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
-}
-.comments-close:active { opacity: 0.6; }
 
 .comments-list {
   flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;

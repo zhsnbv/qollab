@@ -193,6 +193,32 @@ button { border: none; background: none; cursor: pointer; }
   padding-bottom: calc(81px + max(25px, env(safe-area-inset-bottom)));
 }
 
+/* ── Общее для листов снизу ─────────────────────────────────────────────
+   Шапка листа: ручка по центру и кнопка закрытия справа. По этой же зоне
+   работает свайп вниз, поэтому она вынесена в отдельный элемент. */
+.sheet-top {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  touch-action: none;
+}
+.sheet-grab {
+  width: 36px; height: 4px; border-radius: var(--radius-pill);
+  background: var(--color-background);
+}
+.sheet-close {
+  position: absolute; right: var(--space-4); top: 50%;
+  transform: translateY(-50%);
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--color-background); color: var(--color-weak);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.sheet-close:active { opacity: 0.6; }
+.sheet-close svg { width: 16px; height: 16px; }
+/* Возврат панели после недотянутого свайпа */
+.sheet-snap { transition: transform 0.26s cubic-bezier(0.32, 0.72, 0, 1); }
+
 /* Спиннер подгрузки (инфинити-скролл) */
 .spinner {
   width: 22px;

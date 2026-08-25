@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import SheetTop from './SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 import { Search24Regular, Dismiss20Regular, Bookmark20Filled } from '@fluentui/react-icons';
 import { employees } from '../data/employees';
 import './ForwardSheet.css';
@@ -18,6 +20,7 @@ const ACTIVE = [
 const norm = (s) => (s || '').toLowerCase();
 
 export default function ForwardSheet({ onClose, onPick }) {
+  const swipe = useSheetSwipe(onClose);
   const [query, setQuery] = useState('');
   const q = norm(query.trim());
 
@@ -40,11 +43,10 @@ export default function ForwardSheet({ onClose, onPick }) {
   return (
     <div className="fwd-wrap">
       <button className="fwd-scrim" onClick={onClose} aria-label="Закрыть" />
-      <div className="fwd-sheet">
-        <span className="fwd-handle" />
+      <div className={`fwd-sheet ${swipe.className}`} style={swipe.style}>
+        <SheetTop onClose={onClose} swipe={swipe} />
         <div className="fwd-header">
           <h3 className="fwd-title">Выберите чат</h3>
-          <button className="fwd-close" onClick={onClose} aria-label="Закрыть"><Dismiss20Regular /></button>
         </div>
 
         <div className="fwd-search-wrap">

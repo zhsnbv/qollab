@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Dismiss20Regular } from '@fluentui/react-icons';
 import Portal from './Portal';
+import SheetTop from './SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 import { STATUSES } from '../data/statuses';
 import './StatusSheet.css';
 
@@ -8,17 +9,16 @@ import './StatusSheet.css';
 // подтверждается кнопкой: пункт можно примерить, не применяя сразу.
 export default function StatusSheet({ value, onClose, onPick }) {
   const [picked, setPicked] = useState(value || null);
+  const swipe = useSheetSwipe(onClose);
 
   return (
     <Portal>
       <div className="stsheet-wrap">
         <button className="stsheet-scrim" onClick={onClose} aria-label="Закрыть" />
-        <div className="stsheet" role="dialog" aria-label="Мой статус">
+        <div className={`stsheet ${swipe.className}`} style={swipe.style} role="dialog" aria-label="Мой статус">
+          <SheetTop onClose={onClose} swipe={swipe} />
           <div className="stsheet-head">
             <h3>Мой статус</h3>
-            <button className="stsheet-close" onClick={onClose} aria-label="Закрыть">
-              <Dismiss20Regular />
-            </button>
           </div>
 
           <div className="stsheet-list">

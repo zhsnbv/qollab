@@ -1,4 +1,6 @@
 import { Pin16Filled, TextBulletListSquare24Regular, Dismiss20Regular } from '@fluentui/react-icons';
+import SheetTop from './SheetTop';
+import useSheetSwipe from '../utils/useSheetSwipe';
 import './PinnedBar.css';
 
 // Плашка закреплённого сообщения под шапкой чата: показывает последнее,
@@ -29,14 +31,14 @@ function previewOf(m) {
 
 // Список закреплённых — лист снизу, как остальные шиты прототипа
 export function PinnedList({ items, onClose, onUnpin, onUnpinAll }) {
+  const swipe = useSheetSwipe(onClose);
   return (
     <div className="pinlist-wrap">
       <button className="pinlist-scrim" onClick={onClose} aria-label="Закрыть" />
-      <div className="pinlist">
-        <span className="pinlist-handle" />
+      <div className={`pinlist ${swipe.className}`} style={swipe.style}>
+        <SheetTop onClose={onClose} swipe={swipe} />
         <div className="pinlist-header">
           <h3 className="pinlist-title">Закреплённые сообщения</h3>
-          <button className="pinlist-close" onClick={onClose} aria-label="Закрыть"><Dismiss20Regular /></button>
         </div>
 
         <div className="pinlist-body">
