@@ -11,6 +11,7 @@ import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
+import AttachSheet from '../components/AttachSheet';
 import ComposeInput from '../components/ComposeInput';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular, Call24Filled,
 } from '@fluentui/react-icons';
@@ -170,6 +171,7 @@ export default function DMChat() {
   const [confirm, setConfirm] = useState(null);
   const [notice, setNotice] = useState([]);
   const [toast, setToast] = useState('');
+  const [attachOpen, setAttachOpen] = useState(false);
   const [phase, setPhase] = useState('connecting'); // connecting | empty | chat
   const [messages, setMessages] = useState(() => (chat && !isEmptyChat(chat) ? buildHistory(chat) : []));
   const [typing, setTyping] = useState(false);
@@ -399,7 +401,9 @@ export default function DMChat() {
       )}
 
       <div className="cr-writebar">
-        <button className="cr-write-btn" aria-label="Вложение"><Plus size={24} color="var(--color-text)" /></button>
+        <button className="cr-write-btn" aria-label="Вложение" onClick={() => setAttachOpen(true)}>
+          <Plus size={24} color="var(--color-text)" />
+        </button>
         <div className="cr-input">
           <ComposeInput
             value={input}
@@ -446,6 +450,12 @@ export default function DMChat() {
         />
       )}
 
+      {attachOpen && (
+        <AttachSheet
+          onClose={() => setAttachOpen(false)}
+          onPick={(text) => { setAttachOpen(false); setToast(text); }}
+        />
+      )}
       <Toast text={toast} onDone={() => setToast('')} />
 
       {confirm && (

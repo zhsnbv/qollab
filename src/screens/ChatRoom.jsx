@@ -10,6 +10,7 @@ import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
+import AttachSheet from '../components/AttachSheet';
 import ComposeInput from '../components/ComposeInput';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import './ChatRoom.css';
@@ -104,6 +105,7 @@ export default function ChatRoom() {
   // переписку.
   const [notice, setNotice] = useState([]);
   const [toast, setToast] = useState('');
+  const [attachOpen, setAttachOpen] = useState(false);
 
   const addNotice = (text) => setNotice((n) => [...n, { id: `n${Date.now()}`, text }]);
 
@@ -371,7 +373,9 @@ export default function ChatRoom() {
       )}
 
       <div className="cr-writebar">
-        <button className="cr-write-btn" aria-label="Вложение"><Plus size={24} color="var(--color-text)" /></button>
+        <button className="cr-write-btn" aria-label="Вложение" onClick={() => setAttachOpen(true)}>
+          <Plus size={24} color="var(--color-text)" />
+        </button>
         <div className="cr-input">
           <ComposeInput
             value={input}
@@ -418,6 +422,12 @@ export default function ChatRoom() {
         />
       )}
 
+      {attachOpen && (
+        <AttachSheet
+          onClose={() => setAttachOpen(false)}
+          onPick={(text) => { setAttachOpen(false); setToast(text); }}
+        />
+      )}
       <Toast text={toast} onDone={() => setToast('')} />
 
       {confirm && (
