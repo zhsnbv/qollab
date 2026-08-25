@@ -50,10 +50,10 @@ export const employees = [
     avatar: '/img/chats/daniyar.png',
   },
   {
-    id: 'aray-abisheva', name: 'Арай Абишева',
+    id: 'erlan-abishev', name: 'Ерлан Абишев',
     company: 'Казахстанский электролизный завод',
     phone: '+77017300987', role: 'Юрист',
-    initials: 'АА', tint: 'orange',
+    initials: 'ЕА', tint: 'orange',
   },
   {
     id: 'timur-mukashev', name: 'Тимур Мукашев',

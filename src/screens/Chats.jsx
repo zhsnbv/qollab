@@ -21,7 +21,7 @@ const baseChats = [
   { profileId: 'ayazhan', avatar: '/img/chats/ayazhan.png', title: 'Аяжан Сериккызы', preview: 'Салем, там задача', time: '13:21', online: true, unreadCount: 2 },
   { avatar: '/img/chats/daniyar.png', title: 'Данияр Кенжебаев', preview: 'Вот зал куда мы ходим', time: '10:51', online: true, contentIcon: VideoCamera, attachKind: 'video' },
   { avatar: '/img/chats/qollab-group.png', title: 'Групповой чат qollab', kind: 'group', sender: 'Айдар С.:', preview: 'Вот скрин приложения с о', time: '10:01', muted: true, contentIcon: Camera, attachKind: 'photo' },
-  { avatar: '/img/chats/aray.png', title: 'Арай Абишева', preview: 'Подпиши этот договор', time: '09:01', contentIcon: FileText, attachKind: 'document' },
+  { avatar: '/img/chats/aray.png', title: 'Ерлан Абишев', preview: 'Подпиши этот договор', time: '09:01', contentIcon: FileText, attachKind: 'document' },
 ];
 
 // Дальше — бесконечная мок-лента: уникальные фото-аватарки (randomuser.me,

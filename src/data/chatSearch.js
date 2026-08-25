@@ -7,7 +7,7 @@ export const recentPeople = [
   { id: 'alua', name: 'Алуа', avatar: '/img/chats/ayazhan.png' },
   { id: 'kanat', name: 'Канат', avatar: '/img/chats/daniyar.png' },
   { id: 'arman', name: 'Арман', avatar: '/img/chats/aray.png' },
-  { id: 'aray', name: 'Арай', avatar: '/img/chats/aray.png' },
+  { id: 'erlan', name: 'Ерлан', avatar: '/img/chats/aray.png' },
 ];
 
 export const chatMessages = [
@@ -36,7 +36,7 @@ export const chatMessages = [
     time: '10:51', text: 'Вот зал куда мы ходим на тренировки',
   },
   {
-    id: 'm7', chat: 'Арай Абишева', avatar: '/img/chats/aray.png',
+    id: 'm7', chat: 'Ерлан Абишев', avatar: '/img/chats/aray.png',
     time: '09:01', text: 'Подпиши этот договор до конца недели',
   },
   {

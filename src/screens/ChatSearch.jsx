@@ -41,7 +41,7 @@ export default function ChatSearch() {
 
   const people = searchEmployees(query);
   // «Активные» — те, с кем чат уже заведён: у них есть карточка в демо-данных
-  const activeIds = new Set(['nurlan-ibragimov', 'aizhan-serikkyzy', 'daniyar-kenzhebaev', 'aray-abisheva']);
+  const activeIds = new Set(['nurlan-ibragimov', 'aizhan-serikkyzy', 'daniyar-kenzhebaev', 'erlan-abishev']);
   const activePeople = people.filter((e) => activeIds.has(e.id));
   const globalPeople = people.filter((e) => !activeIds.has(e.id));
   const messages = searchMessages(query);
