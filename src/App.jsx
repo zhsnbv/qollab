@@ -95,11 +95,17 @@ function AppRoutes() {
   // роута и плашка успевает доехать до нового таба, а не создаётся заново.
   const showNav = TAB_ROUTES.includes((background || location).pathname);
 
-  // Под оверлеем может лежать не вкладка, а другой оверлей: из чата
-  // открывается профиль, и чат должен остаться под ним. Иначе на время
-  // профиля под ним рендерится список чатов и мелькает при возврате.
-  const underOverlay = background && !TAB_ROUTES.includes(background.pathname) ? background : null;
-  const tabLocation = underOverlay?.state?.background || background || location;
+  // Под оверлеем может лежать не вкладка, а цепочка других оверлеев: из чата
+  // открывается профиль группы, из него — профиль участника. Раскручиваем её
+  // до вкладки и рендерим все промежуточные экраны, иначе нижний слой
+  // размонтируется и при возврате въезжает заново.
+  const underOverlays = [];
+  let root = background;
+  while (root && !TAB_ROUTES.includes(root.pathname)) {
+    underOverlays.unshift(root);
+    root = root.state?.background;
+  }
+  const tabLocation = root || background || location;
 
   return (
     <>
@@ -113,7 +119,7 @@ function AppRoutes() {
       {/* Слои рендерим одним списком с ключом по пути: при закрытии верхнего
           экрана нижний остаётся тем же инстансом и не проигрывает анимацию
           входа заново — иначе при «назад» он въезжает как новый. */}
-      {[underOverlay, location].filter(Boolean).map((loc) => (
+      {[...underOverlays, location].map((loc) => (
         <OverlayRoutes key={loc.pathname} location={loc} />
       ))}
       {showNav && <BottomNav />}

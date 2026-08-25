@@ -74,9 +74,11 @@ export default function GroupProfile() {
     setTimeout(() => navigate(-1), 240);
   };
 
-  // Участника открываем объединённым профилем — тем же экраном, что из чата
+  // Участника открываем объединённым профилем — тем же экраном, что из чата.
+  // Фоном становится сам профиль группы: под карточкой участника должен
+  // остаться он, иначе при возврате группа въезжает заново.
   const openMember = (memberId) => navigate(PROFILE_V2 ? '/person' : '/chat-profile', {
-    state: { id: memberId, kind: 'user', background },
+    state: { id: memberId, kind: 'user', background: location },
   });
 
   const pickSound = (mode) => {
