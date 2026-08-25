@@ -328,6 +328,7 @@ export default function ChatRoom() {
                 reactions={reactions[msg.id]}
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={onLongPress}
+                onSwipeReply={setReply}
                 />
                 ))}
               </section>

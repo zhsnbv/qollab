@@ -400,3 +400,16 @@ html.kb .cr-compose { bottom: 54px; }
   margin-top: 6px;
 }
 .msg-footer .msg-time-row--inline { margin-left: auto; padding-bottom: 2px; color: var(--msg-time); }
+
+/* Свайп вправо по сообщению — быстрый ответ. Плашка со стрелкой проявляется
+   по мере протяжки, сообщение возвращается на место с анимацией. */
+.msg { position: relative; }
+.msg--snap { transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1); }
+.msg-reply-hint {
+  position: absolute; left: -40px; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--color-background); color: var(--color-weak);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.msg-reply-hint svg { width: 16px; height: 16px; }

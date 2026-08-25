@@ -358,6 +358,7 @@ export default function DMChat() {
                 reactions={reactions[msg.id]}
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={onLongPress}
+                onSwipeReply={setReply}
               />
             ))}
             {notice.map((n) => (

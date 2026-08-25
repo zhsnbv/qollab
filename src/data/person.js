@@ -16,6 +16,18 @@ const WORK_STATUS = {
   nurlan: statusById('brb'),
 };
 
+// Остальным раздаём статусы по имени: примерно у каждого третьего он есть,
+// иначе в списке чатов почти никто не показывал бы статус. Хеш отдельный —
+// тот, что решает про историю переписки, распределён иначе.
+const SPREAD = ['busy', 'away', 'off', 'dnd', 'brb'];
+const nameHash = (str) => [...str].reduce((n, c) => (n * 33 + c.charCodeAt(0)) >>> 0, 5381);
+const spreadStatus = (person) => {
+  const h = nameHash(person.name);
+  // Индекс берём из другого разряда: h % 5 уже решает, есть ли статус, и
+  // при том же основании все получали бы один и тот же.
+  return h % 5 < 2 ? statusById(SPREAD[Math.floor(h / 5) % SPREAD.length]) : null;
+};
+
 // «Обо мне» человек пишет сам; в прототипе текст общий — своего у карточек
 // собеседников в данных нет.
 const ABOUT = 'Работаю над продуктами группы: аналитика, процессы и запуск новых '
@@ -86,7 +98,7 @@ export function getPerson(id, employee) {
     about: ABOUT,
     thanks: 21,
     interests: ['Баскетбол', 'Кино', 'Музыка', 'Путешествия'],
-    work: WORK_STATUS[base.id] || null,
+    work: WORK_STATUS[base.id] || spreadStatus(base),
     dismissed: !!employee?.dismissed,
     team: structure.team,
     supervisor: structure.supervisor,

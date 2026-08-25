@@ -152,6 +152,16 @@ html[data-theme="dark"] .profile-decor-img--dark { display: block; }
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .quick-label { font-size: 12px; font-weight: 500; line-height: 17px; color: var(--color-text); white-space: nowrap; }
+/* В тёмной теме подложка иконки почти совпадала с фоном карточки — берём
+   акцент с прозрачностью, он читается и не спорит с текстом. */
+html[data-theme="dark"] .quick-ico {
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
+}
+html[data-theme="dark"] .quick-ico--danger {
+  background: color-mix(in srgb, var(--color-danger) 22%, transparent);
+  color: #ff8a80;
+}
 
 /* ── Мои задачи: 2 карточки + одна во всю ширину ─────────────────────────── */
 .task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }

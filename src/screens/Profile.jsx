@@ -7,6 +7,7 @@ import SideMenu from '../components/SideMenu';
 import ProfileHero from '../components/ProfileHero';
 import StatusBubble from '../components/StatusBubble';
 import StatusSheet from '../components/StatusSheet';
+import StatusActions from '../components/StatusActions';
 import { statusById } from '../data/statuses';
 import {
   CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
@@ -57,6 +58,8 @@ export default function Profile() {
   // Статус живёт в состоянии экрана: в прототипе его некуда сохранять
   const [status, setStatus] = useState(null);
   const [statusOpen, setStatusOpen] = useState(false);
+  // Тап по готовому статусу открывает не выбор, а два действия: сменить и снять
+  const [statusMenu, setStatusMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const open = (path) => navigate(path, { state: { background: location } });
@@ -87,7 +90,7 @@ export default function Profile() {
           me={me}
           onPhoto={() => open('/profile/photo')}
           status={status
-            ? <StatusBubble status={statusById(status)} onClick={() => setStatusOpen(true)} />
+            ? <StatusBubble status={statusById(status)} onClick={() => setStatusMenu(true)} />
             : (
               <button className="status-btn phero-status" onClick={() => setStatusOpen(true)}>
                 <Plus size={12} weight="bold" />Установить статус
@@ -280,6 +283,13 @@ export default function Profile() {
     </TabLayout>
     {/* Вне TabLayout: внутри .scroll-area панель обрезалась бы его
         переполнением и ездила вместе с контентом. */}
+    {statusMenu && (
+      <StatusActions
+        onClose={() => setStatusMenu(false)}
+        onEdit={() => { setStatusMenu(false); setStatusOpen(true); }}
+        onClear={() => { setStatusMenu(false); setStatus(null); }}
+      />
+    )}
     {statusOpen && (
       <StatusSheet
         value={status}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Play, Stop, FileText, Check, Checks, Clock } from '@phosphor-icons/react';
+import { ArrowReply20Regular } from '@fluentui/react-icons';
 import MessageReactions from './MessageReactions';
 
 // Псевдослучайная волна для войса (стабильная между рендерами)
@@ -129,14 +130,78 @@ function useLongPress(onLongPress, msg) {
   };
 }
 
+// Свайп вправо по сообщению — быстрый ответ. Тянем за пальцем с
+// сопротивлением; если увели дальше порога и отпустили — открываем ответ.
+const SWIPE_MAX = 72;
+const SWIPE_TRIGGER = 48;
+
+function useSwipeReply(onReply, msg) {
+  const [dx, setDx] = useState(0);
+  const [snap, setSnap] = useState(false);
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const active = useRef(false);
+  // Текущее смещение держим и в ref: обработчик отпускания читает его сразу,
+  // не дожидаясь следующего рендера.
+  const shift = useRef(0);
+
+  if (!onReply) return { dx: 0, snap: false, handlers: {} };
+
+  const start = (e) => {
+    const t = e.touches[0];
+    startX.current = t.clientX;
+    startY.current = t.clientY;
+    active.current = true;
+    shift.current = 0;
+    setSnap(false);
+  };
+
+  const move = (e) => {
+    if (!active.current) return;
+    const t = e.touches[0];
+    const moveX = t.clientX - startX.current;
+    const moveY = t.clientY - startY.current;
+    // Вертикальную прокрутку не перехватываем
+    if (Math.abs(moveY) > Math.abs(moveX)) { active.current = false; shift.current = 0; setDx(0); return; }
+    if (moveX <= 0) { shift.current = 0; setDx(0); return; }
+    shift.current = Math.min(SWIPE_MAX, moveX * 0.6);
+    setDx(shift.current);
+  };
+
+  const end = () => {
+    if (!active.current) return;
+    active.current = false;
+    setSnap(true);
+    if (shift.current >= SWIPE_TRIGGER) onReply(msg);
+    shift.current = 0;
+    setDx(0);
+  };
+
+  return {
+    dx,
+    snap,
+    handlers: { onTouchStart: start, onTouchMove: move, onTouchEnd: end, onTouchCancel: end },
+  };
+}
+
 export default function Message({
   msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor,
-  reactions, onToggleReaction, onLongPress, withAvatarSlot = true,
+  reactions, onToggleReaction, onLongPress, onSwipeReply, withAvatarSlot = true,
 }) {
   const showAuthor = firstOfGroup && !mine && authorLabel;
   const press = useLongPress(onLongPress, msg);
+  const swipe = useSwipeReply(onSwipeReply, msg);
   return (
-    <div className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''}`}>
+    <div
+      className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''} ${swipe.snap ? 'msg--snap' : ''}`}
+      style={swipe.dx ? { transform: `translateX(${swipe.dx}px)` } : undefined}
+      {...swipe.handlers}
+    >
+      {swipe.dx > 0 && (
+        <span className="msg-reply-hint" style={{ opacity: Math.min(1, swipe.dx / SWIPE_TRIGGER) }}>
+          <ArrowReply20Regular />
+        </span>
+      )}
       {!mine && withAvatarSlot && <span className="msg-avatar-slot">{lastOfGroup && avatar}</span>}
       <div className="msg-col" {...press}>
         {msg.kind === 'photo' || msg.kind === 'video' ? (

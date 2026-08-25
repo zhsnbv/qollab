@@ -110,8 +110,12 @@ function AppRoutes() {
         <Route path="/chats" element={<Chats />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
-      {underOverlay && <OverlayRoutes location={underOverlay} />}
-      <OverlayRoutes />
+      {/* Слои рендерим одним списком с ключом по пути: при закрытии верхнего
+          экрана нижний остаётся тем же инстансом и не проигрывает анимацию
+          входа заново — иначе при «назад» он въезжает как новый. */}
+      {[underOverlay, location].filter(Boolean).map((loc) => (
+        <OverlayRoutes key={loc.pathname} location={loc} />
+      ))}
       {showNav && <BottomNav />}
     </>
   );

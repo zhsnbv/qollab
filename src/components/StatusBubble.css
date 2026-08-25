@@ -3,7 +3,7 @@
    12 занимает сам хвостик. */
 .sbubble {
   position: relative;
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
   padding: 6px 9px;
   border-radius: 32px;
@@ -14,15 +14,15 @@
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 button.sbubble:active { opacity: 0.7; }
-/* Хвостик — треугольник в цвет верхней точки градиента */
-.sbubble::after {
-  content: "";
-  position: absolute; left: 50%; top: -12px;
-  width: 16px; height: 12px; transform: translateX(-50%);
-  background: var(--sb-from);
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+/* Хвостик — в цвет верхней точки градиента, бока вогнутые */
+.sbubble-tail {
+  position: absolute; left: 50%; top: -8px;
+  transform: translateX(-50%);
+  color: var(--sb-from);
 }
 .sbubble svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--sb-text); }
+/* Хвостик — в цвет верхней точки градиента, а не текста */
+.sbubble svg.sbubble-tail { width: 16px; height: 9px; color: var(--sb-from); }
 .sbubble span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Тона взяты из палитры макета: заливка светлая, глиф и текст насыщенные */
@@ -38,8 +38,9 @@ html[data-theme="dark"] .sbubble {
   background: color-mix(in srgb, var(--sb-to) 26%, var(--color-white));
   color: color-mix(in srgb, var(--sb-to) 70%, #fff);
 }
-html[data-theme="dark"] .sbubble::after { background: color-mix(in srgb, var(--sb-to) 26%, var(--color-white)); }
+html[data-theme="dark"] .sbubble-tail { color: color-mix(in srgb, var(--sb-to) 26%, var(--color-white)); }
 html[data-theme="dark"] .sbubble svg { color: color-mix(in srgb, var(--sb-to) 70%, #fff); }
+html[data-theme="dark"] .sbubble svg.sbubble-tail { color: color-mix(in srgb, var(--sb-to) 26%, var(--color-white)); }
 
 /* Кнопка «Установить статус» стоит на месте бабла */
 .phero .status-btn.phero-status { margin-top: var(--space-3); }
