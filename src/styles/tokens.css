@@ -128,7 +128,14 @@ input, textarea, [contenteditable] { -webkit-user-select: text; user-select: tex
   padding-right: var(--space-4);
 }
 
-button { font-family: inherit; border: none; background: none; cursor: pointer; }
+/* font-variant-numeric наследуется, но у кнопок и полей ввода браузер ставит
+   свой шрифт целиком и сбрасывает его — цифры в них переставали быть
+   табличными (плитки баланса, счётчики). */
+button, input, textarea, select {
+  font-family: inherit;
+  font-variant-numeric: inherit;
+}
+button { border: none; background: none; cursor: pointer; }
 
 /* Тактильность: кликабельные элементы гаснут по прозрачности при нажатии.
    Помечаются классом .pressable (или это делают точечные правила экранов). */
