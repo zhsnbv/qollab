@@ -175,22 +175,48 @@ export function ServicesSkeleton() {
 export function ProfileSkeleton() {
   return (
     <div className="sk-screen">
-      <div className="sk-card" style={{ borderRadius: '0 0 16px 16px', marginTop: 0 }}>
-        <Sk w={112} h={112} circle style={{ marginBottom: 24 }} />
-        <Sk w="60%" h={22} style={{ marginBottom: 8 }} />
-        <Sk w="40%" h={14} />
-        <Row gap={16} style={{ marginTop: 20 }}>
-          <Sk w={213} h={104} r={16} style={{ flex: 'none' }} />
-          <Sk w={213} h={104} r={16} style={{ flex: 'none' }} />
+      {/* Шапка: аватар по центру, бабл статуса, имя с должностью и ряд
+          быстрых действий — всё в одном блоке, как на готовом экране */}
+      <div className="sk-card sk-card--hero">
+        <Sk w={128} h={128} circle />
+        <Sk w={148} h={28} r={999} style={{ marginTop: 12 }} />
+        <Sk w={200} h={25} style={{ marginTop: 12 }} />
+        <Sk w={132} h={14} style={{ marginTop: 6 }} />
+        <Row gap={8} style={{ marginTop: 16, width: '100%' }}>
+          {[...Array(4)].map((_, i) => (
+            <span className="sk-quick" key={i}>
+              <Sk w={36} h={36} r={12} />
+              <Sk w="70%" h={12} />
+            </span>
+          ))}
         </Row>
       </div>
-      <div style={{ padding: '8px 16px 0' }}><Sk w="100%" h={48} r={16} /></div>
+
+      {/* Баланс: заголовок и четыре плитки */}
       <div className="sk-card">
-        <Sk w={90} h={16} style={{ marginBottom: 16 }} />
+        <Row gap={16} style={{ marginBottom: 16 }}>
+          <Sk w={90} h={16} />
+          <Sk w={150} h={14} style={{ marginLeft: 'auto' }} />
+        </Row>
         <div className="sk-grid sk-grid--2">
           {[...Array(4)].map((_, i) => <Sk key={i} w="100%" h={78} r={8} />)}
         </div>
       </div>
+
+      {/* Следующая карточка — списком строк */}
+      <div className="sk-card">
+        <Sk w={120} h={16} style={{ marginBottom: 16 }} />
+        {[...Array(3)].map((_, i) => (
+          <Row gap={12} key={i} style={{ marginBottom: i === 2 ? 0 : 14 }}>
+            <Sk w={40} h={40} circle style={{ flex: 'none' }} />
+            <span style={{ flex: 1 }}>
+              <Sk w="55%" h={14} style={{ marginBottom: 6 }} />
+              <Sk w="35%" h={12} />
+            </span>
+          </Row>
+        ))}
+      </div>
     </div>
   );
 }
+

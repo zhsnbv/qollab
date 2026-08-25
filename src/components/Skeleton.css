@@ -31,3 +31,16 @@
 
 .sk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 16px; }
 .sk-grid--2 { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Шапка профиля в скелетоне: содержимое по центру, скругление только снизу */
+.sk-card--hero {
+  margin-top: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  display: flex; flex-direction: column; align-items: center;
+}
+.sk-quick {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 10px 0;
+}
