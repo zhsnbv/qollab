@@ -9,10 +9,7 @@
   animation: asheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
 }
 @keyframes asheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.asheet-title {
-  padding: var(--space-2) var(--space-4) var(--space-3);
-  font-size: 18px; font-weight: 700; color: var(--color-heading);
-}
+.asheet-title { font-size: 18px; font-weight: 700; color: var(--color-heading); }
 .asheet-list { display: flex; flex-direction: column; }
 /* Подпись слева, иконка справа — как в контекстных меню iOS */
 .asheet-item {

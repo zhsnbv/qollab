@@ -198,7 +198,7 @@ button { border: none; background: none; cursor: pointer; }
    работает свайп вниз, поэтому она вынесена в отдельный элемент. */
 .sheet-top {
   display: flex; flex-direction: column;
-  padding: var(--space-3) var(--space-4) 0;
+  padding: var(--space-3) var(--space-4) var(--space-4);
   touch-action: none;
 }
 .sheet-grab {
