@@ -80,7 +80,7 @@ export default function ChatRoom() {
   const navigate = useNavigate();
   const location = useLocation();
   // Профили открываем поверх чата: он остаётся под ними смонтированным
-  const openProfile = (id, kind) => navigate(PROFILE_V2 && kind !== 'group' ? '/person' : '/chat-profile', {
+  const openProfile = (id, kind) => navigate(PROFILE_V2 ? (kind === 'group' ? '/group' : '/person') : '/chat-profile', {
     state: { id, kind, background: location.state?.background },
   });
 

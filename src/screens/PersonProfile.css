@@ -52,6 +52,9 @@
   padding: 0 var(--space-4); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4));
 }
 
+/* Выход из группы — единственное действие в ряду, которое стоит выделить */
+.quick-ico--danger { background: var(--danger-bg); color: var(--color-danger); }
+
 /* Медиа-сетка занимает карточку целиком: отступы карточке не нужны */
 .pcard--flush { padding: 0; overflow: hidden; }
 .pp-media { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }

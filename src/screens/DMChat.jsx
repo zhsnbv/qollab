@@ -142,7 +142,7 @@ export default function DMChat() {
   // Профиль собеседника: у демо-чатов есть свой id, у остальных карточка
   // собирается из строки списка — иначе всем открывался бы один и тот же
   // человек. Группа по-прежнему уходит на прежний экран.
-  const openProfile = () => navigate(PROFILE_V2 && chat?.kind !== 'group' ? '/person' : '/chat-profile', {
+  const openProfile = () => navigate(PROFILE_V2 ? (chat?.kind === 'group' ? '/group' : '/person') : '/chat-profile', {
     state: {
       id: chat?.profileId,
       kind: 'user',

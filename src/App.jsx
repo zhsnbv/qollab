@@ -19,6 +19,7 @@ import ChannelView from './screens/ChannelView';
 import EventView from './screens/EventView';
 import ChatProfile from './screens/ChatProfile';
 import PersonProfile from './screens/PersonProfile';
+import GroupProfile from './screens/GroupProfile';
 import NewChat from './screens/NewChat';
 import ChatSearch from './screens/ChatSearch';
 import Settings from './screens/Settings';
@@ -87,6 +88,7 @@ function AppRoutes() {
         <Route path="/event" element={<EventView />} />
         <Route path="/chat-profile" element={<ChatProfile />} />
         <Route path="/person" element={<PersonProfile />} />
+        <Route path="/group" element={<GroupProfile />} />
         <Route path="/new-chat" element={<NewChat />} />
         <Route path="/chat-search" element={<ChatSearch />} />
         <Route path="/settings" element={<Settings />} />
