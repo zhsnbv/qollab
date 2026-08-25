@@ -44,12 +44,26 @@
   display: flex; gap: var(--space-2);
   align-self: stretch; margin-top: var(--space-4);
 }
+/* Переключатель живёт между блоками, на сером фоне: белая пилюля читается
+   как карточка, активная — акцентная. Внутри белого блока они сливались бы
+   с ним, поэтому вынесены наружу. */
 .pp-tabs {
   display: flex; gap: var(--space-2);
-  align-self: stretch; overflow-x: auto;
-  margin-top: var(--space-3);
-  /* Пилюли доезжают до краёв блока, а не обрываются на его padding */
-  padding: 0 var(--space-4); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4));
+  overflow-x: auto; padding: 0 var(--space-4);
+}
+.pp-tabs .cp-tab {
+  background: var(--color-white);
+  box-shadow: var(--nav-edge);
+}
+.pp-tabs .cp-tab.active { background: var(--color-primary); color: #fff; box-shadow: none; }
+.pp-tab-count { margin-left: 6px; color: var(--color-weak); font-variant-numeric: tabular-nums; }
+.pp-tabs .cp-tab.active .pp-tab-count { color: rgba(255, 255, 255, 0.75); }
+
+/* Медиа-сетка распирает карточку до краёв, но заголовок остаётся на месте */
+.pp-media {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  margin: 0 calc(-1 * var(--space-4)) calc(-1 * var(--space-5));
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg); overflow: hidden;
 }
 
 /* Иконки Fluent приходят 24px и распирают плитку — приводим к прежним 20 */
@@ -58,9 +72,6 @@
 /* Выход из группы — единственное действие в ряду, которое стоит выделить */
 .quick-ico--danger { background: var(--danger-bg); color: var(--color-danger); }
 
-/* Медиа-сетка занимает карточку целиком: отступы карточке не нужны */
-.pcard--flush { padding: 0; overflow: hidden; }
-.pp-media { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
 
 /* Аватарка группы в списке */
 .pp-group-ava {

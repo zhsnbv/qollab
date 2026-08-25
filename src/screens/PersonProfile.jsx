@@ -23,10 +23,10 @@ import './PersonProfile.css';
 // «Общим с вами», только прямо на экране, без перехода.
 const TABS = [
   { id: 'info', label: 'Сведения' },
-  { id: 'media', label: 'Медиа' },
-  { id: 'files', label: 'Файлы' },
-  { id: 'links', label: 'Ссылки' },
-  { id: 'groups', label: 'Общие группы' },
+  { id: 'media', label: 'Медиа', count: (p) => p.media.length },
+  { id: 'files', label: 'Файлы', count: (p) => p.files.length },
+  { id: 'links', label: 'Ссылки', count: (p) => p.links.length },
+  { id: 'groups', label: 'Общие группы', count: (p) => p.groups.length },
 ];
 
 export default function PersonProfile() {
@@ -112,19 +112,20 @@ export default function PersonProfile() {
                 </button>
               ))}
             </div>
-
-            <div className="pp-tabs no-scrollbar">
-              {TABS.map((t) => (
-                <button
-                  key={t.id}
-                  className={`cp-tab ${tab === t.id ? 'active' : ''}`}
-                  onClick={() => setTab(t.id)}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
           </ProfileHero>
+
+          <div className="pp-tabs no-scrollbar">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                className={`cp-tab ${tab === t.id ? 'active' : ''}`}
+                onClick={() => setTab(t.id)}
+              >
+                {t.label}
+                {t.count && <span className="pp-tab-count">{t.count(p)}</span>}
+              </button>
+            ))}
+          </div>
 
           {tab === 'info' && (<>
           {/* Корпоративные данные */}
@@ -226,7 +227,11 @@ export default function PersonProfile() {
           </>)}
 
           {tab === 'media' && (
-            <section className="pcard pcard--flush">
+            <section className="pcard">
+              <div className="pcard-head">
+                <h3>Медиа</h3>
+                <span className="pcard-note">{p.media.length}</span>
+              </div>
               <div className="pp-media">
                 {p.media.map((m) => (
                   <div className="cp-media-cell" key={m.id}>
@@ -245,6 +250,10 @@ export default function PersonProfile() {
 
           {tab === 'files' && (
             <section className="pcard">
+              <div className="pcard-head">
+                <h3>Файлы</h3>
+                <span className="pcard-note">{p.files.length}</span>
+              </div>
               <div className="cp-rows">
                 {p.files.map((f) => (
                   <div className="cp-row cp-row--file" key={f.id}>
@@ -261,6 +270,10 @@ export default function PersonProfile() {
 
           {tab === 'links' && (
             <section className="pcard">
+              <div className="pcard-head">
+                <h3>Ссылки</h3>
+                <span className="pcard-note">{p.links.length}</span>
+              </div>
               <div className="cp-rows">
                 {p.links.map((l) => (
                   <div className="cp-row" key={l.id}>
@@ -276,6 +289,10 @@ export default function PersonProfile() {
 
           {tab === 'groups' && (
             <section className="pcard">
+              <div className="pcard-head">
+                <h3>Общие группы</h3>
+                <span className="pcard-note">{p.groups.length}</span>
+              </div>
               <div className="cp-rows">
                 {p.groups.map((g) => (
                   <button className="cp-row" key={g.id} onClick={() => setToast(g.name)}>

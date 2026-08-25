@@ -22,10 +22,10 @@ import './PersonProfile.css';
 // вкладками одним блоком, ниже карточки. Отличается набор: вместо рахмета
 // «Покинуть», а к вкладкам добавляются участники.
 const TABS = [
-  { id: 'members', label: 'Участники' },
-  { id: 'media', label: 'Медиа' },
-  { id: 'files', label: 'Файлы' },
-  { id: 'links', label: 'Ссылки' },
+  { id: 'members', label: 'Участники', count: (g) => g.membersCount },
+  { id: 'media', label: 'Медиа', count: (g) => g.media.length },
+  { id: 'files', label: 'Файлы', count: (g) => g.files.length },
+  { id: 'links', label: 'Ссылки', count: (g) => g.links.length },
 ];
 
 // У группы звук не переключатель, а три режима — выбираем листом снизу
@@ -120,19 +120,20 @@ export default function GroupProfile() {
                 </button>
               ))}
             </div>
-
-            <div className="pp-tabs no-scrollbar">
-              {TABS.map((t) => (
-                <button
-                  key={t.id}
-                  className={`cp-tab ${tab === t.id ? 'active' : ''}`}
-                  onClick={() => setTab(t.id)}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
           </ProfileHero>
+
+          <div className="pp-tabs no-scrollbar">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                className={`cp-tab ${tab === t.id ? 'active' : ''}`}
+                onClick={() => setTab(t.id)}
+              >
+                {t.label}
+                {t.count && <span className="pp-tab-count">{t.count(g)}</span>}
+              </button>
+            ))}
+          </div>
 
           {tab === 'members' && (<>
             <section className="pcard">
@@ -166,7 +167,11 @@ export default function GroupProfile() {
           </>)}
 
           {tab === 'media' && (
-            <section className="pcard pcard--flush">
+            <section className="pcard">
+              <div className="pcard-head">
+                <h3>Медиа</h3>
+                <span className="pcard-note">{g.media.length}</span>
+              </div>
               <div className="pp-media">
                 {g.media.map((m) => (
                   <div className="cp-media-cell" key={m.id}>
@@ -185,6 +190,10 @@ export default function GroupProfile() {
 
           {tab === 'files' && (
             <section className="pcard">
+              <div className="pcard-head">
+                <h3>Файлы</h3>
+                <span className="pcard-note">{g.files.length}</span>
+              </div>
               <div className="cp-rows">
                 {g.files.map((f) => (
                   <div className="cp-row cp-row--file" key={f.id}>
@@ -201,6 +210,10 @@ export default function GroupProfile() {
 
           {tab === 'links' && (
             <section className="pcard">
+              <div className="pcard-head">
+                <h3>Ссылки</h3>
+                <span className="pcard-note">{g.links.length}</span>
+              </div>
               <div className="cp-rows">
                 {g.links.map((l) => (
                   <div className="cp-row" key={l.id}>
