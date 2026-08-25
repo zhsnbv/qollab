@@ -16,7 +16,7 @@
   z-index: 2;
   flex-shrink: 0; background: var(--color-white);
   padding: var(--space-3) var(--space-4);
-  padding-top: calc(var(--space-3) + env(safe-area-inset-top));
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
   display: flex; align-items: center; gap: var(--space-3);
 }
 .pp-back {

@@ -103,10 +103,14 @@ input, textarea, [contenteditable] { -webkit-user-select: text; user-select: tex
 /* Классы перечислены явно: [class$="-top"] смотрит на весь атрибут целиком,
    а у шапки со скроллом он оканчивается на hdr-shadow. */
 .cp-top, .nc-top, .cs-top, .ev-top, .st-top, .fav-top, .nt-top, .ng-top,
-.se-top, .cv-top, .ar-top, .ma-top, .pv-top, .pp-top, .cr-header {
+.se-top, .cv-top, .ar-header, .ma-top, .pv-top, .pp-top, .cr-header {
   position: relative;
   z-index: 1;
   transition: box-shadow 0.25s ease;
+  /* Одна высота на всех экранах: кнопка 40 плюс отступы. Контент шапки
+     (аватар с двумя строками в чате) в эту же высоту укладывается. */
+  min-height: calc(64px + env(safe-area-inset-top));
+  box-sizing: border-box;
 }
 
 /* Распорка справа в шапке: занимает место кнопки, но сама невидима */

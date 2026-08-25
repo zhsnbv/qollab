@@ -15,8 +15,8 @@
   flex-shrink: 0;
   background: var(--color-white);
   display: flex; align-items: center; gap: var(--space-3);
-  padding: var(--space-2) var(--space-2);
-  padding-top: max(var(--space-2), env(safe-area-inset-top));
+  padding: var(--space-3) var(--space-2);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
 }
 .fav-back {
   width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
