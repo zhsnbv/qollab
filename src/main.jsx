@@ -1,3 +1,6 @@
+// Inter подключаем локально: в стеке он был указан, но не загружался —
+// и весь интерфейс рисовался системным шрифтом.
+import '@fontsource-variable/inter';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/tokens.css';
