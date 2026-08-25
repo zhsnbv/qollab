@@ -15,6 +15,8 @@ import {
   me, quickActions, balance, myTasks, sosContacts,
   corpData, structure, indicators, interests, certificates,
 } from '../data/profile';
+import './ChatProfile.css';
+import './PersonProfile.css';
 import './Profile.css';
 
 const QUICK_ICONS = { IdentificationCard, QrCode, AddressBook, Hash };
@@ -36,11 +38,20 @@ function StatCard({ value, label, emoji, img }) {
   );
 }
 
+// Вкладки — как в профиле коллеги: анкета отдельно, личные разделы отдельно
+const TABS = [
+  { id: 'info', label: 'Сведения' },
+  { id: 'tasks', label: 'Задачи' },
+  { id: 'sos', label: 'SOS-контакты' },
+  { id: 'certs', label: 'Сертификаты' },
+];
+
 export default function Profile() {
   const loading = useSkeleton();
   const navigate = useNavigate();
   const location = useLocation();
   const [menu, setMenu] = useState(false);
+  const [tab, setTab] = useState('info');
   const [menuOpen, setMenuOpen] = useState(false);
 
   const open = (path) => navigate(path, { state: { background: location } });
@@ -67,11 +78,9 @@ export default function Profile() {
     <>
     <TabLayout topbar={topbar}>
       <FadeIn><div className="profile">
-        <ProfileHero me={me} onPhoto={() => open('/profile/photo')} />
-
-        {/* Быстрые действия — четыре плитки под шапкой */}
-        <div className="quick-wrap">
-          <div className="quick-row">
+        <ProfileHero me={me} onPhoto={() => open('/profile/photo')}>
+          {/* Действия и вкладки — в том же блоке, что аватар: общий фон */}
+          <div className="pp-actions">
             {quickActions.map(({ id, label, icon }) => {
               const Icon = QUICK_ICONS[icon];
               return (
@@ -82,8 +91,21 @@ export default function Profile() {
               );
             })}
           </div>
-        </div>
 
+          <div className="pp-tabs no-scrollbar">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                className={`cp-tab ${tab === t.id ? 'active' : ''}`}
+                onClick={() => setTab(t.id)}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </ProfileHero>
+
+        {tab === 'info' && (<>
         {/* Баланс */}
         <section className="pcard">
           <div className="pcard-head">
@@ -93,51 +115,6 @@ export default function Profile() {
           <div className="stat-grid">
             {balance.map((b) => <StatCard key={b.id} {...b} />)}
           </div>
-        </section>
-
-        {/* Мои задачи */}
-        <section className="pcard">
-          <div className="pcard-head">
-            <h3>Мои задачи</h3>
-            <button className="refresh-btn"><ArrowsClockwise size={12} />Обновить</button>
-          </div>
-          <div className="task-grid">
-            {myTasks.map((t) => {
-              const Icon = TASK_ICONS[t.icon];
-              return (
-                <button className={`task-card ${t.wide ? 'wide' : ''}`} key={t.id}>
-                  <span className="task-top">
-                    <span className="task-title">{t.title}</span>
-                    <CaretRight size={12} color="var(--color-light)" />
-                  </span>
-                  <span className="task-value">{t.value}</span>
-                  <span className="task-source">{Icon && <Icon size={16} />}{t.source}</span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* SOS-контакты */}
-        <section className="pcard">
-          <div className="pcard-head">
-            <h3>SOS-контакты</h3>
-            <button className="refresh-btn"><Plus size={12} weight="bold" />Добавить контакт</button>
-          </div>
-          <div className="sos-list">
-            {sosContacts.map((c) => (
-              <div className="sos-row" key={c.id}>
-                <div className="sos-line">
-                  <span className="sos-name">{c.name}</span>
-                  <span className="sos-tag">{c.tag}</span>
-                  <button className="sos-more" aria-label="Действия"><DotsThreeVertical size={16} weight="bold" /></button>
-                </div>
-                <span className="sos-phone">{c.phone}</span>
-                {c.note && <span className="sos-note">{c.note}</span>}
-              </div>
-            ))}
-          </div>
-          <p className="sos-hint">SOS-контакты не видны другим сотрудникам — только вам, руководителю, HR и СБ.</p>
         </section>
 
         {/* Корпоративные данные */}
@@ -222,7 +199,58 @@ export default function Profile() {
             </div>
           </div>
         </section>
+        </>)}
 
+        {tab === 'tasks' && (<>
+        {/* Мои задачи */}
+        <section className="pcard">
+          <div className="pcard-head">
+            <h3>Мои задачи</h3>
+            <button className="refresh-btn"><ArrowsClockwise size={12} />Обновить</button>
+          </div>
+          <div className="task-grid">
+            {myTasks.map((t) => {
+              const Icon = TASK_ICONS[t.icon];
+              return (
+                <button className={`task-card ${t.wide ? 'wide' : ''}`} key={t.id}>
+                  <span className="task-top">
+                    <span className="task-title">{t.title}</span>
+                    <CaretRight size={12} color="var(--color-light)" />
+                  </span>
+                  <span className="task-value">{t.value}</span>
+                  <span className="task-source">{Icon && <Icon size={16} />}{t.source}</span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+        </>)}
+
+        {tab === 'sos' && (<>
+        {/* SOS-контакты */}
+        <section className="pcard">
+          <div className="pcard-head">
+            <h3>SOS-контакты</h3>
+            <button className="refresh-btn"><Plus size={12} weight="bold" />Добавить контакт</button>
+          </div>
+          <div className="sos-list">
+            {sosContacts.map((c) => (
+              <div className="sos-row" key={c.id}>
+                <div className="sos-line">
+                  <span className="sos-name">{c.name}</span>
+                  <span className="sos-tag">{c.tag}</span>
+                  <button className="sos-more" aria-label="Действия"><DotsThreeVertical size={16} weight="bold" /></button>
+                </div>
+                <span className="sos-phone">{c.phone}</span>
+                {c.note && <span className="sos-note">{c.note}</span>}
+              </div>
+            ))}
+          </div>
+          <p className="sos-hint">SOS-контакты не видны другим сотрудникам — только вам, руководителю, HR и СБ.</p>
+        </section>
+        </>)}
+
+        {tab === 'certs' && (<>
         {/* Мои сертификаты */}
         <section className="pcard">
           <div className="pcard-head">
@@ -252,6 +280,8 @@ export default function Profile() {
             </div>
           ))}
         </section>
+        </>)}
+
       </div></FadeIn>
     </TabLayout>
     {/* Вне TabLayout: внутри .scroll-area панель обрезалась бы его
