@@ -10,6 +10,9 @@ import {
   IdentificationCard, QrCode, AddressBook, Hash,
   UserFocus, Headset,
 } from '@phosphor-icons/react';
+import {
+  ContactCard24Filled, QrCode24Filled, PersonNote24Filled, NumberSymbol24Filled,
+} from '@fluentui/react-icons';
 import { useSkeleton, ProfileSkeleton, FadeIn } from '../components/Skeleton';
 import {
   me, quickActions, balance, myTasks, sosContacts,
@@ -18,7 +21,13 @@ import {
 import './PersonProfile.css';
 import './Profile.css';
 
-const QUICK_ICONS = { IdentificationCard, QrCode, AddressBook, Hash };
+// Иконки быстрых действий — из Fluent, как в остальных профилях
+const QUICK_ICONS = {
+  IdentificationCard: ContactCard24Filled,
+  QrCode: QrCode24Filled,
+  AddressBook: PersonNote24Filled,
+  Hash: NumberSymbol24Filled,
+};
 const TASK_ICONS = { UserFocus, Headset };
 
 // Плитка со значением: эмодзи или картинка + число + подпись
@@ -75,7 +84,7 @@ export default function Profile() {
               const Icon = QUICK_ICONS[icon];
               return (
                 <button className="quick-item" key={id}>
-                  <span className="quick-ico">{Icon && <Icon size={20} weight="fill" />}</span>
+                  <span className="quick-ico">{Icon && <Icon />}</span>
                   <span className="quick-label">{label}</span>
                 </button>
               );

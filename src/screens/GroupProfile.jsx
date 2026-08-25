@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { CaretLeft, CaretRight, FileText, LinkSimple, Play } from '@phosphor-icons/react';
 import {
-  CaretLeft, CaretRight, ChatCircle, Phone, SignOut, MagnifyingGlass,
-  BellSimple, BellSimpleSlash, FileText, LinkSimple, Play,
-} from '@phosphor-icons/react';
+  WalkieTalkie24Filled, Search24Filled, SignOut24Filled,
+  Alert24Filled, AlertOff24Filled, Mention24Filled,
+} from '@fluentui/react-icons';
 import { groupProfiles, userProfiles } from '../data/chatProfiles';
 import { useScrolled } from '../utils/useScrolled';
 import { DotsIcon } from '../components/TopBar';
 import ProfileHero from '../components/ProfileHero';
 import ScreenMenu from '../components/ScreenMenu';
 import ConfirmDialog from '../components/ConfirmDialog';
+import ActionSheet from '../components/ActionSheet';
 import Toast from '../components/Toast';
 import { PROFILE_V2 } from '../config';
 import './Profile.css';
@@ -20,12 +22,25 @@ import './PersonProfile.css';
 // вкладками одним блоком, ниже карточки. Отличается набор: вместо рахмета
 // «Покинуть», а к вкладкам добавляются участники.
 const TABS = [
-  { id: 'info', label: 'Сведения' },
   { id: 'members', label: 'Участники' },
   { id: 'media', label: 'Медиа' },
   { id: 'files', label: 'Файлы' },
   { id: 'links', label: 'Ссылки' },
 ];
+
+// У группы звук не переключатель, а три режима — выбираем листом снизу
+const SOUND_MODES = [
+  { id: 'on', label: 'Включить звук', Icon: Alert24Filled },
+  { id: 'mentions', label: 'Только упоминания', Icon: Mention24Filled },
+  { id: 'off', label: 'Выключить звук', Icon: AlertOff24Filled, danger: true },
+];
+const SOUND_LABEL = { on: 'Звук', mentions: 'Упоминания', off: 'Без звука' };
+const SOUND_ICON = { on: Alert24Filled, mentions: Mention24Filled, off: AlertOff24Filled };
+const SOUND_TOAST = {
+  on: 'Уведомления включены',
+  mentions: 'Уведомления только при упоминании',
+  off: 'Уведомления отключены',
+};
 
 function MemberAvatar({ item }) {
   if (item.avatar || item.img) {
@@ -47,8 +62,9 @@ export default function GroupProfile() {
 
   const [closing, setClosing] = useState(false);
   const [screenMenu, setScreenMenu] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [tab, setTab] = useState('info');
+  const [sound, setSound] = useState('on');
+  const [soundOpen, setSoundOpen] = useState(false);
+  const [tab, setTab] = useState('members');
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [toast, setToast] = useState('');
 
@@ -62,17 +78,17 @@ export default function GroupProfile() {
     state: { id: memberId, kind: 'user', background },
   });
 
-  const toggleMute = () => {
-    setMuted((m) => !m);
-    setToast(muted ? 'Уведомления включены' : 'Уведомления отключены');
+  const pickSound = (mode) => {
+    setSound(mode);
+    setSoundOpen(false);
+    setToast(SOUND_TOAST[mode]);
   };
 
   const actions = [
-    { id: 'write', label: 'Написать', Icon: ChatCircle, onClick: () => navigate(-1) },
-    { id: 'call', label: 'Звонок', Icon: Phone, onClick: () => setToast('Групповой звонок') },
-    { id: 'leave', label: 'Покинуть', Icon: SignOut, danger: true, onClick: () => setConfirmLeave(true) },
-    { id: 'search', label: 'Поиск', Icon: MagnifyingGlass, onClick: () => setToast('Поиск по переписке') },
-    { id: 'mute', label: muted ? 'Включить' : 'Звук', Icon: muted ? BellSimpleSlash : BellSimple, onClick: toggleMute },
+    { id: 'sound', label: SOUND_LABEL[sound], Icon: SOUND_ICON[sound], onClick: () => setSoundOpen(true) },
+    { id: 'walkie', label: 'Рация', Icon: WalkieTalkie24Filled, onClick: () => setToast('Рация включена') },
+    { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },
+    { id: 'leave', label: 'Покинуть', Icon: SignOut24Filled, danger: true, onClick: () => setConfirmLeave(true) },
   ];
 
   const hero = {
@@ -92,13 +108,14 @@ export default function GroupProfile() {
 
       <div className="pp-scroll" onScroll={onScroll}>
         <div className="profile">
-          <ProfileHero me={hero} status={<span className="phero-presence">Открытая группа</span>}>
+          <ProfileHero
+            me={hero}
+            status={<span className="phero-presence">{g.privacy === 'private' ? 'Приватная группа' : 'Открытая группа'}</span>}
+          >
             <div className="pp-actions">
               {actions.map(({ id: aid, label, Icon, onClick, danger }) => (
                 <button className="quick-item" key={aid} onClick={onClick}>
-                  <span className={`quick-ico ${danger ? 'quick-ico--danger' : ''}`}>
-                    <Icon size={20} weight="fill" />
-                  </span>
+                  <span className={`quick-ico ${danger ? 'quick-ico--danger' : ''}`}><Icon /></span>
                   <span className="quick-label">{label}</span>
                 </button>
               ))}
@@ -117,24 +134,17 @@ export default function GroupProfile() {
             </div>
           </ProfileHero>
 
-          {tab === 'info' && (
+          {tab === 'members' && (<>
             <section className="pcard">
-              <div className="pcard-head"><h3>Сведения</h3></div>
+              <div className="pcard-head"><h3>Ссылка-приглашение</h3></div>
               <div className="data-list">
-                <div className="data-row">
-                  <div className="data-label">Участников</div>
-                  <span className="data-value">{g.membersCount}</span>
-                </div>
                 <div className="data-row last">
-                  <div className="data-label">Ссылка-приглашение</div>
                   <p className="data-about">{g.description}</p>
                   <button className="data-more" onClick={() => setToast('Ссылка скопирована')}>Скопировать</button>
                 </div>
               </div>
             </section>
-          )}
 
-          {tab === 'members' && (
             <section className="pcard">
               <div className="pcard-head">
                 <h3>Участники</h3>
@@ -153,7 +163,7 @@ export default function GroupProfile() {
                 ))}
               </div>
             </section>
-          )}
+          </>)}
 
           {tab === 'media' && (
             <section className="pcard pcard--flush">
@@ -214,6 +224,14 @@ export default function GroupProfile() {
           danger
           onConfirm={() => { setConfirmLeave(false); setToast('Вы покинули группу'); }}
           onCancel={() => setConfirmLeave(false)}
+        />
+      )}
+      {soundOpen && (
+        <ActionSheet
+          title="Уведомления группы"
+          items={SOUND_MODES}
+          onClose={() => setSoundOpen(false)}
+          onPick={pickSound}
         />
       )}
       <ScreenMenu open={screenMenu} onClose={() => setScreenMenu(false)} />

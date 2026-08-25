@@ -52,6 +52,9 @@
   padding: 0 var(--space-4); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4));
 }
 
+/* Иконки Fluent приходят 24px и распирают плитку — приводим к прежним 20 */
+.quick-ico svg { width: 20px; height: 20px; }
+
 /* Выход из группы — единственное действие в ряду, которое стоит выделить */
 .quick-ico--danger { background: var(--danger-bg); color: var(--color-danger); }
 

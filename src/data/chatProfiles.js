@@ -86,6 +86,8 @@ export const groupProfiles = {
     name: 'PR01DEV + ROBOTS',
     avatar: '/img/chats/bts-pr.png',
     membersCount: 73,
+    // open | private — от этого зависит подпись под названием
+    privacy: 'open',
     description: 'https://link.qollab.kz/?command=invite&token=ve4dEx-5PWLxPnMVpBfbUSoRluDFN0eMF',
     members: [
       { id: 'dinara', name: 'Динара Т.', role: 'Бизнес-аналитик' },

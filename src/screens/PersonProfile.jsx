@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { CaretLeft, CaretRight, FileText, LinkSimple, Play } from '@phosphor-icons/react';
 import {
-  CaretLeft, CaretRight, ChatCircle, Phone, Heart, MagnifyingGlass,
-  BellSimple, BellSimpleSlash, FileText, LinkSimple, Play,
-} from '@phosphor-icons/react';
+  Chat24Filled, Call24Filled, Heart24Filled, Search24Filled,
+  Alert24Filled, AlertOff24Filled,
+} from '@fluentui/react-icons';
 import { DotsIcon } from '../components/TopBar';
 import ScreenMenu from '../components/ScreenMenu';
 import { getPerson } from '../data/person';
@@ -73,11 +74,11 @@ export default function PersonProfile() {
   // «Ещё» больше нет: поиск и звук вынесены в ряд, а «поделиться ссылкой»
   // живёт в «трёх точках» шапки.
   const actions = [
-    { id: 'write', label: 'Написать', Icon: ChatCircle, onClick: write },
-    { id: 'call', label: 'Звонок', Icon: Phone, onClick: () => setToast(`Звоним: ${p.name}`) },
-    { id: 'thanks', label: 'Рахмет', Icon: Heart, onClick: () => setToast('Рахмет отправлен') },
-    { id: 'search', label: 'Поиск', Icon: MagnifyingGlass, onClick: () => setToast('Поиск по переписке') },
-    { id: 'mute', label: muted ? 'Включить' : 'Звук', Icon: muted ? BellSimpleSlash : BellSimple, onClick: toggleMute },
+    { id: 'write', label: 'Написать', Icon: Chat24Filled, onClick: write },
+    { id: 'call', label: 'Звонок', Icon: Call24Filled, onClick: () => setToast(`Звоним: ${p.name}`) },
+    { id: 'thanks', label: 'Рахмет', Icon: Heart24Filled, onClick: () => setToast('Рахмет отправлен') },
+    { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },
+    { id: 'mute', label: muted ? 'Включить' : 'Звук', Icon: muted ? AlertOff24Filled : Alert24Filled, onClick: toggleMute },
   ];
 
   // Пилюля — только установленный статус. Присутствие всегда строкой под ним:
@@ -106,7 +107,7 @@ export default function PersonProfile() {
             <div className="pp-actions">
               {actions.map(({ id: aid, label, Icon, onClick }) => (
                 <button className="quick-item" key={aid} onClick={onClick}>
-                  <span className="quick-ico"><Icon size={20} weight="fill" /></span>
+                  <span className="quick-ico"><Icon /></span>
                   <span className="quick-label">{label}</span>
                 </button>
               ))}
