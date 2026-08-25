@@ -4,6 +4,7 @@ import { CaretLeft, CaretRight, FileText, LinkSimple, Play } from '@phosphor-ico
 import {
   WalkieTalkie24Filled, Search24Filled, SignOut24Filled,
   Alert24Filled, AlertOff24Filled, Mention24Filled,
+  People16Regular, Image16Regular, Document16Regular, Link16Regular,
 } from '@fluentui/react-icons';
 import { groupProfiles, userProfiles } from '../data/chatProfiles';
 import { useScrolled } from '../utils/useScrolled';
@@ -22,10 +23,10 @@ import './PersonProfile.css';
 // вкладками одним блоком, ниже карточки. Отличается набор: вместо рахмета
 // «Покинуть», а к вкладкам добавляются участники.
 const TABS = [
-  { id: 'members', label: 'Участники', count: (g) => g.membersCount },
-  { id: 'media', label: 'Медиа', count: (g) => g.media.length },
-  { id: 'files', label: 'Файлы', count: (g) => g.files.length },
-  { id: 'links', label: 'Ссылки', count: (g) => g.links.length },
+  { id: 'members', label: 'Участники', Icon: People16Regular, count: (g) => g.membersCount },
+  { id: 'media', label: 'Медиа', Icon: Image16Regular, count: (g) => g.media.length },
+  { id: 'files', label: 'Файлы', Icon: Document16Regular, count: (g) => g.files.length },
+  { id: 'links', label: 'Ссылки', Icon: Link16Regular, count: (g) => g.links.length },
 ];
 
 // У группы звук не переключатель, а три режима — выбираем листом снизу
@@ -123,14 +124,15 @@ export default function GroupProfile() {
           </ProfileHero>
 
           <div className="pp-tabs no-scrollbar">
-            {TABS.map((t) => (
+            {TABS.map(({ id: tid, label, Icon, count }) => (
               <button
-                key={t.id}
-                className={`cp-tab ${tab === t.id ? 'active' : ''}`}
-                onClick={() => setTab(t.id)}
+                key={tid}
+                className={`cp-tab ${tab === tid ? 'active' : ''}`}
+                onClick={() => setTab(tid)}
               >
-                {t.label}
-                {t.count && <span className="pp-tab-count">{t.count(g)}</span>}
+                <Icon />
+                {label}
+                {count && <span className="pp-tab-count">{count(g)}</span>}
               </button>
             ))}
           </div>

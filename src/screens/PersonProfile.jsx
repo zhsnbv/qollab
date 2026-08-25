@@ -4,6 +4,7 @@ import { CaretLeft, CaretRight, FileText, LinkSimple, Play } from '@phosphor-ico
 import {
   Chat24Filled, Call24Filled, Heart24Filled, Search24Filled,
   Alert24Filled, AlertOff24Filled,
+  PersonInfo16Regular, Image16Regular, Document16Regular, Link16Regular, People16Regular,
 } from '@fluentui/react-icons';
 import { DotsIcon } from '../components/TopBar';
 import ScreenMenu from '../components/ScreenMenu';
@@ -22,11 +23,11 @@ import './PersonProfile.css';
 // Вкладки профиля: «Сведения» — вся анкета, остальные — то, что было
 // «Общим с вами», только прямо на экране, без перехода.
 const TABS = [
-  { id: 'info', label: 'Сведения' },
-  { id: 'media', label: 'Медиа', count: (p) => p.media.length },
-  { id: 'files', label: 'Файлы', count: (p) => p.files.length },
-  { id: 'links', label: 'Ссылки', count: (p) => p.links.length },
-  { id: 'groups', label: 'Общие группы', count: (p) => p.groups.length },
+  { id: 'info', label: 'Сведения', Icon: PersonInfo16Regular },
+  { id: 'media', label: 'Медиа', Icon: Image16Regular, count: (p) => p.media.length },
+  { id: 'files', label: 'Файлы', Icon: Document16Regular, count: (p) => p.files.length },
+  { id: 'links', label: 'Ссылки', Icon: Link16Regular, count: (p) => p.links.length },
+  { id: 'groups', label: 'Общие группы', Icon: People16Regular, count: (p) => p.groups.length },
 ];
 
 export default function PersonProfile() {
@@ -115,14 +116,15 @@ export default function PersonProfile() {
           </ProfileHero>
 
           <div className="pp-tabs no-scrollbar">
-            {TABS.map((t) => (
+            {TABS.map(({ id: tid, label, Icon, count }) => (
               <button
-                key={t.id}
-                className={`cp-tab ${tab === t.id ? 'active' : ''}`}
-                onClick={() => setTab(t.id)}
+                key={tid}
+                className={`cp-tab ${tab === tid ? 'active' : ''}`}
+                onClick={() => setTab(tid)}
               >
-                {t.label}
-                {t.count && <span className="pp-tab-count">{t.count(p)}</span>}
+                <Icon />
+                {label}
+                {count && <span className="pp-tab-count">{count(p)}</span>}
               </button>
             ))}
           </div>

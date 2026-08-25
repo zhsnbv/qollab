@@ -49,8 +49,13 @@
    с ним, поэтому вынесены наружу. */
 .pp-tabs {
   display: flex; gap: var(--space-2);
-  overflow-x: auto; padding: 0 var(--space-4);
+  overflow-x: auto;
+  /* Вертикальные отступы складываются с общим gap: ряд стоит свободнее,
+     чем карточки между собой */
+  padding: var(--space-2) var(--space-4);
 }
+.pp-tabs .cp-tab { display: inline-flex; align-items: center; gap: 6px; }
+.pp-tabs .cp-tab svg { width: 16px; height: 16px; flex-shrink: 0; }
 .pp-tabs .cp-tab {
   background: var(--color-white);
   box-shadow: var(--nav-edge);
