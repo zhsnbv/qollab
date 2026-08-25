@@ -61,7 +61,7 @@
   box-shadow: var(--nav-edge);
 }
 .pp-tabs .cp-tab.active { background: var(--color-primary); color: #fff; box-shadow: none; }
-.pp-tab-count { margin-left: 6px; color: var(--color-weak); font-variant-numeric: tabular-nums; }
+.pp-tab-count { margin-left: 6px; color: var(--color-weak); }
 .pp-tabs .cp-tab.active .pp-tab-count { color: rgba(255, 255, 255, 0.75); }
 
 /* Медиа-сетка распирает карточку до краёв, но заголовок остаётся на месте */

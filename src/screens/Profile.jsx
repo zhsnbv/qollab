@@ -5,6 +5,9 @@ import { DotsIcon } from '../components/TopBar';
 import ScreenMenu from '../components/ScreenMenu';
 import SideMenu from '../components/SideMenu';
 import ProfileHero from '../components/ProfileHero';
+import StatusBubble from '../components/StatusBubble';
+import ActionSheet from '../components/ActionSheet';
+import { STATUSES, statusById } from '../data/statuses';
 import {
   CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
   IdentificationCard, QrCode, AddressBook, Hash,
@@ -12,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 import {
   ContactCard24Filled, QrCode24Filled, PersonNote24Filled, NumberSymbol24Filled,
+  DismissCircle24Regular,
 } from '@fluentui/react-icons';
 import { useSkeleton, ProfileSkeleton, FadeIn } from '../components/Skeleton';
 import {
@@ -46,11 +50,17 @@ function StatCard({ value, label, emoji, img }) {
   );
 }
 
+// Пункты листа: те же статусы плюс пояснение, что увидят коллеги
+const STATUS_ITEMS = STATUSES.map(({ id, label, hint, Icon }) => ({ id, label, sub: hint, Icon }));
+
 export default function Profile() {
   const loading = useSkeleton();
   const navigate = useNavigate();
   const location = useLocation();
   const [menu, setMenu] = useState(false);
+  // Статус живёт в состоянии экрана: в прототипе его некуда сохранять
+  const [status, setStatus] = useState(null);
+  const [statusOpen, setStatusOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const open = (path) => navigate(path, { state: { background: location } });
@@ -77,7 +87,17 @@ export default function Profile() {
     <>
     <TabLayout topbar={topbar}>
       <FadeIn><div className="profile">
-        <ProfileHero me={me} onPhoto={() => open('/profile/photo')}>
+        <ProfileHero
+          me={me}
+          onPhoto={() => open('/profile/photo')}
+          status={status
+            ? <StatusBubble status={statusById(status)} onClick={() => setStatusOpen(true)} />
+            : (
+              <button className="status-btn phero-status" onClick={() => setStatusOpen(true)}>
+                <Plus size={12} weight="bold" />Установить статус
+              </button>
+            )}
+        >
           {/* Быстрые действия — в том же блоке, что аватар: общий фон */}
           <div className="pp-actions">
             {quickActions.map(({ id, label, icon }) => {
@@ -264,6 +284,17 @@ export default function Profile() {
     </TabLayout>
     {/* Вне TabLayout: внутри .scroll-area панель обрезалась бы его
         переполнением и ездила вместе с контентом. */}
+    {statusOpen && (
+      <ActionSheet
+        title="Мой статус"
+        items={status
+          ? [...STATUS_ITEMS, { id: 'clear', label: 'Убрать статус', Icon: DismissCircle24Regular, danger: true }]
+          : STATUS_ITEMS}
+        selected={status || ''}
+        onClose={() => setStatusOpen(false)}
+        onPick={(id) => { setStatus(id === 'clear' ? null : id); setStatusOpen(false); }}
+      />
+    )}
     <SideMenu open={menu} onClose={() => setMenu(false)} />
     <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </>

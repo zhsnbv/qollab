@@ -112,7 +112,7 @@ export default function GroupProfile() {
         <div className="profile">
           <ProfileHero
             me={hero}
-            status={<span className="phero-presence">{g.privacy === 'private' ? 'Приватная группа' : 'Открытая группа'}</span>}
+            presence={g.privacy === 'private' ? 'Приватная группа' : 'Открытая группа'}
           >
             <div className="pp-actions">
               {actions.map(({ id: aid, label, Icon, onClick, danger }) => (

@@ -19,7 +19,7 @@
   background: var(--color-white);
   min-height: 100%;
   /* Цифры моноширинные — время и бейдж непрочитанных не должны «прыгать» */
-  font-variant-numeric: tabular-nums;
+ 
 }
 
 .chat-row {
@@ -126,7 +126,7 @@
   font-weight: 400;
   color: var(--color-weak);
   letter-spacing: -0.56px;
-  font-variant-numeric: tabular-nums;
+ 
 }
 
 /* Бейдж непрочитанных — справа, на месте, где раньше были галочки */
@@ -143,7 +143,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-variant-numeric: tabular-nums;
+ 
 }
 
 .chat-sentinel { height: 1px; }

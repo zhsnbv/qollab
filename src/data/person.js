@@ -4,12 +4,16 @@
 import { userProfiles } from './chatProfiles';
 import { employees } from './employees';
 import { structure } from './profile';
+import { statusById, vacationStatus } from './statuses';
 
-// Рабочие статусы: приходили бы из HR и настроек уведомлений. В прототипе
-// проставлены двум людям, чтобы видеть оба варианта.
+// Статусы коллег: обычные человек ставит себе сам, отпуск приезжает из HR
+// вместе с датами. В прототипе розданы нескольким людям, чтобы были видны
+// разные варианты бабла.
 const WORK_STATUS = {
-  arman: { kind: 'vacation', text: 'В отпуске до 3 сентября', note: 'Замещает', deputy: 'Кульманов Данияр' },
-  madina: { kind: 'dnd', text: 'Не беспокоить', note: 'Ответит после 18:00' },
+  arman: vacationStatus('25 авг', '3 сен'),
+  madina: statusById('dnd'),
+  dinara: statusById('busy'),
+  nurlan: statusById('brb'),
 };
 
 // «Обо мне» человек пишет сам; в прототипе текст общий — своего у карточек

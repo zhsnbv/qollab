@@ -1,0 +1,40 @@
+/* Бабл статуса под аватаркой: перекрывает её нижний край, хвостик смотрит
+   вверх — как в макете (Figma 25206-90416). */
+.sbubble {
+  position: relative;
+  margin-top: -14px;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px 5px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 13px; font-weight: 500; line-height: 18px;
+  color: var(--color-text);
+  background: var(--sb-bg, var(--color-background));
+  max-width: 100%;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.sbubble:active { opacity: 0.7; }
+.sbubble::after {
+  content: "";
+  position: absolute; left: 50%; top: -4px;
+  width: 12px; height: 8px; transform: translateX(-50%);
+  background: var(--sb-bg, var(--color-background));
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.sbubble svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--sb-ico, var(--color-weak)); }
+.sbubble span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Тона статусов: подложка светлая, глиф насыщенный */
+.sbubble--danger { --sb-bg: var(--danger-bg); --sb-ico: var(--color-danger); }
+.sbubble--warning { --sb-bg: #fff7e6; --sb-ico: #faad14; }
+.sbubble--violet { --sb-bg: #f4f0ff; --sb-ico: #722ed1; }
+.sbubble--success { --sb-bg: #eaf9f2; --sb-ico: var(--color-success); }
+.sbubble--muted { --sb-bg: var(--color-background); --sb-ico: var(--color-weak); }
+.sbubble--accent { --sb-bg: var(--color-primary-bg); --sb-ico: var(--color-primary); }
+
+html[data-theme="dark"] .sbubble--warning { --sb-bg: #3a2f14; --sb-ico: #f0b429; }
+html[data-theme="dark"] .sbubble--violet { --sb-bg: #2a2440; --sb-ico: #b48ef0; }
+html[data-theme="dark"] .sbubble--success { --sb-bg: #16301f; --sb-ico: #4ad991; }
+
+/* Кнопка «Установить статус» стоит на месте бабла, поэтому подтягиваем её
+   так же — иначе она висела бы ниже, чем статус у коллег. */
+.phero .status-btn.phero-status { margin-top: -10px; }

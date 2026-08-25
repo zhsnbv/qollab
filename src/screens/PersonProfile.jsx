@@ -13,6 +13,7 @@ import EmptyTab from '../components/EmptyTab';
 import { getPerson } from '../data/person';
 import { useScrolled } from '../utils/useScrolled';
 import ProfileHero from '../components/ProfileHero';
+import StatusBubble from '../components/StatusBubble';
 import ProfileTabs from '../components/ProfileTabs';
 import Toast from '../components/Toast';
 import './Profile.css';
@@ -85,17 +86,6 @@ export default function PersonProfile() {
     { id: 'mute', label: 'Звук', Icon: muted ? AlertOff24Filled : Alert24Filled, onClick: toggleMute },
   ];
 
-  // Пилюля — только установленный статус. Присутствие всегда строкой под ним:
-  // это не статус, а факт последнего визита.
-  const status = (
-    <>
-      {p.work && (
-        <span className={`status-btn phero-status status-btn--${p.work.kind}`}>{p.work.text}</span>
-      )}
-      <div className="phero-presence">{p.status}</div>
-    </>
-  );
-
   return (
     <div className={`person ${closing ? 'closing' : ''}`}>
       <header className={`pp-top ${scrolled ? 'hdr-shadow' : ''}`}>
@@ -106,7 +96,11 @@ export default function PersonProfile() {
 
       <div className="pp-scroll" onScroll={onScroll}>
         <div className="profile">
-          <ProfileHero me={p} status={status}>
+          <ProfileHero
+            me={p}
+            status={<StatusBubble status={p.work} />}
+            presence={p.status}
+          >
             {/* Действия и вкладки — в том же блоке, что аватар: общий фон */}
             <div className="pp-actions">
               {actions.map(({ id: aid, label, Icon, onClick }) => (

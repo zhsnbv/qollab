@@ -71,7 +71,7 @@
 .post-actions { display: flex; align-items: center; gap: var(--space-5); margin-top: var(--space-4); }
 .post-act {
   display: flex; align-items: center; gap: 6px;
-  font-size: 13px; color: var(--color-weak); font-variant-numeric: tabular-nums;
+  font-size: 13px; color: var(--color-weak);
   transition: opacity 0.12s, color 0.15s; -webkit-tap-highlight-color: transparent;
 }
 .post-act:active { opacity: 0.55; }

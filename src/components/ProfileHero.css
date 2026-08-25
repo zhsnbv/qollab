@@ -58,7 +58,7 @@ html[data-theme="dark"] .phero-avatar .ava--initials.tint-blue { background: #16
 }
 
 .phero-name {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   font-size: 25px; font-weight: 600;
   letter-spacing: -0.5px; color: var(--color-heading);
   text-wrap: balance;

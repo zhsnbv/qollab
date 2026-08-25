@@ -20,14 +20,17 @@ export default function ActionSheet({ title, items, onClose, onPick, selected })
         <span className="asheet-handle" />
         {title && <h3 className="asheet-title">{title}</h3>}
         <div className="asheet-list">
-          {items.map(({ id, label, Icon, danger }) => (
+          {items.map(({ id, label, sub, Icon, danger }) => (
             <button
               className={`asheet-item ${danger ? 'danger' : ''} ${isSelect ? 'select' : ''}`}
               key={id}
               onClick={() => onPick(id)}
             >
               {isSelect && <Icon />}
-              <span className="asheet-label">{label}</span>
+              <span className="asheet-label">
+                {label}
+                {sub && <span className="asheet-sub">{sub}</span>}
+              </span>
               {isSelect
                 ? (selected === id && <Checkmark20Filled className="asheet-check" />)
                 : <Icon />}

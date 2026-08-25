@@ -9,7 +9,7 @@
   animation: cr-slide-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   /* Цифры моноширинные — иначе таймер войса, время сообщений и т.п.
      «прыгают» по ширине при смене значения */
-  font-variant-numeric: tabular-nums;
+ 
 }
 .chatroom.closing { animation: cr-slide-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
 /* Клавиатура: каркас уже сжат до видимой области (--vvh), поэтому панель
