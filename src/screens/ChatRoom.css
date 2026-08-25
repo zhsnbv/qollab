@@ -49,12 +49,15 @@ html.kb .cr-body { padding-bottom: 56px; }
 .cr-title { font-size: 15px; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cr-subtitle { font-size: 12px; font-weight: 500; color: var(--color-weak); line-height: 1.5; }
 .cr-subtitle.accent { color: var(--color-primary); }
+/* Серый глиф в сером кружке — тот же паттерн, что у кнопок в шапках */
 .cr-walkie {
   width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--color-background);
+  color: var(--color-weak);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .cr-walkie:active { opacity: 0.6; }
+.cr-walkie svg { width: 20px; height: 20px; }
 
 /* Тело */
 .cr-body {

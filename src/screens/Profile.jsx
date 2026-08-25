@@ -6,8 +6,8 @@ import ScreenMenu from '../components/ScreenMenu';
 import SideMenu from '../components/SideMenu';
 import ProfileHero from '../components/ProfileHero';
 import StatusBubble from '../components/StatusBubble';
-import ActionSheet from '../components/ActionSheet';
-import { STATUSES, statusById } from '../data/statuses';
+import StatusSheet from '../components/StatusSheet';
+import { statusById } from '../data/statuses';
 import {
   CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
   IdentificationCard, QrCode, AddressBook, Hash,
@@ -15,7 +15,6 @@ import {
 } from '@phosphor-icons/react';
 import {
   ContactCard24Filled, QrCode24Filled, PersonNote24Filled, NumberSymbol24Filled,
-  DismissCircle24Regular,
 } from '@fluentui/react-icons';
 import { useSkeleton, ProfileSkeleton, FadeIn } from '../components/Skeleton';
 import {
@@ -49,9 +48,6 @@ function StatCard({ value, label, emoji, img }) {
     </button>
   );
 }
-
-// Пункты листа: те же статусы плюс пояснение, что увидят коллеги
-const STATUS_ITEMS = STATUSES.map(({ id, label, hint, Icon }) => ({ id, label, sub: hint, Icon }));
 
 export default function Profile() {
   const loading = useSkeleton();
@@ -285,14 +281,10 @@ export default function Profile() {
     {/* Вне TabLayout: внутри .scroll-area панель обрезалась бы его
         переполнением и ездила вместе с контентом. */}
     {statusOpen && (
-      <ActionSheet
-        title="Мой статус"
-        items={status
-          ? [...STATUS_ITEMS, { id: 'clear', label: 'Убрать статус', Icon: DismissCircle24Regular, danger: true }]
-          : STATUS_ITEMS}
-        selected={status || ''}
+      <StatusSheet
+        value={status}
         onClose={() => setStatusOpen(false)}
-        onPick={(id) => { setStatus(id === 'clear' ? null : id); setStatusOpen(false); }}
+        onPick={(id) => { setStatus(id); setStatusOpen(false); }}
       />
     )}
     <SideMenu open={menu} onClose={() => setMenu(false)} />

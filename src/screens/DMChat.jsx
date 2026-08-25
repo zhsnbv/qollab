@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CaretLeft, Plus, Microphone, PaperPlaneRight, Phone } from '@phosphor-icons/react';
+import { CaretLeft, Plus, Microphone, PaperPlaneRight } from '@phosphor-icons/react';
 import { dayLabel } from '../utils/chatDate';
 import { useKeyboardInset } from '../utils/useKeyboardInset';
 import { ConnectingSkeleton, EmptyState } from '../components/ChatState';
@@ -12,7 +12,8 @@ import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import ComposeInput from '../components/ComposeInput';
-import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
+import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular, Call24Filled,
+} from '@fluentui/react-icons';
 import './ChatRoom.css';
 import { PROFILE_V2 } from '../config';
 
@@ -326,7 +327,7 @@ export default function DMChat() {
           </span>
         </button>
         {!chat.kind && (
-          <button className="cr-walkie" aria-label="Позвонить"><Phone size={20} color="var(--color-text)" /></button>
+          <button className="cr-walkie" aria-label="Позвонить"><Call24Filled /></button>
         )}
       </header>
 
