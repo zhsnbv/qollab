@@ -8,7 +8,7 @@ import ProfileHero from '../components/ProfileHero';
 import StatusBubble from '../components/StatusBubble';
 import StatusSheet from '../components/StatusSheet';
 import StatusActions from '../components/StatusActions';
-import { statusById } from '../data/statuses';
+import { emptyStatus, statusById } from '../data/statuses';
 import {
   CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
   IdentificationCard, QrCode, AddressBook, Hash,
@@ -91,11 +91,7 @@ export default function Profile() {
           onPhoto={() => open('/profile/photo')}
           status={status
             ? <StatusBubble status={statusById(status)} onClick={() => setStatusMenu(true)} />
-            : (
-              <button className="status-btn phero-status" onClick={() => setStatusOpen(true)}>
-                <Plus size={12} weight="bold" />Установить статус
-              </button>
-            )}
+            : <StatusBubble status={emptyStatus} onClick={() => setStatusOpen(true)} />}
         >
           {/* Быстрые действия — в том же блоке, что аватар: общий фон */}
           <div className="pp-actions">

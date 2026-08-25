@@ -1,6 +1,6 @@
 import {
   SubtractCircle24Filled, PersonWalking24Filled, Clock24Filled,
-  ClockAlarm24Filled, WeatherMoon24Filled, Beach24Filled,
+  ClockAlarm24Filled, WeatherMoon24Filled, Beach24Filled, Add16Filled,
 } from '@fluentui/react-icons';
 
 // Статусы, которые человек ставит себе сам (Figma 25206-90416). Отпуск сюда не
@@ -41,5 +41,14 @@ export const vacationStatus = (from, to) => ({
   tone: 'accent',
   Icon: Beach24Filled,
 });
+
+// Пустое состояние в своём профиле — тот же бабл, только серый и с плюсом
+// (Figma 25206-90416): отдельной кнопки в макете нет.
+export const emptyStatus = {
+  id: 'none',
+  short: 'Установить статус',
+  tone: 'empty',
+  Icon: Add16Filled,
+};
 
 export const statusById = (id) => STATUSES.find((s) => s.id === id);

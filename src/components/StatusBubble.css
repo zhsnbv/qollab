@@ -32,6 +32,11 @@ button.sbubble:active { opacity: 0.7; }
 .sbubble--violet  { --sb-from: #efdbff; --sb-to: #d3adf7; --sb-text: #391085; }
 .sbubble--success { --sb-from: #d9f7be; --sb-to: #b7eb8f; --sb-text: #237804; }
 .sbubble--accent  { --sb-from: #ffe7ba; --sb-to: #ffd591; --sb-text: #ad4e00; }
+/* Пустое состояние: серая пилюля цвета подложек интерфейса */
+.sbubble--empty {
+  --sb-from: var(--color-background); --sb-to: var(--color-background);
+  --sb-text: var(--color-text);
+}
 
 /* В тёмной теме те же тона приглушаем, иначе пилюля светится */
 html[data-theme="dark"] .sbubble {
