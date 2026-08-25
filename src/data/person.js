@@ -41,6 +41,12 @@ const CORP = {
   chief: structure.supervisor.name,
 };
 
+// Часть собеседников — «пустые»: общих файлов и групп с ними нет. Решаем по
+// имени, а не случайно при рендере, иначе один и тот же человек то с
+// вложениями, то без.
+const hash = (str) => [...str].reduce((n, c) => (n * 31 + c.charCodeAt(0)) % 997, 7);
+const hasHistory = (person) => !!userProfiles[person.id] || hash(person.name) % 2 === 0;
+
 // Собеседник приходит либо как id известного профиля, либо строкой справочника
 // (тогда переписки с ним ещё нет и счётчики нулевые).
 export function getPerson(id, employee) {
@@ -58,8 +64,8 @@ export function getPerson(id, employee) {
   const fromDirectory = employees.find((e) => e.id === base.id || e.name === base.name);
 
   // Вложения в прототипе общие: у собеседников без своей карточки берём тот
-  // же демонабор, иначе переписка выглядела бы пустой.
-  const demo = userProfiles.ayazhan;
+  // же демонабор — но только у тех, с кем «есть история».
+  const demo = hasHistory(base) ? userProfiles.ayazhan : { groups: [], media: [], files: [], links: [] };
 
   return {
     ...CORP,

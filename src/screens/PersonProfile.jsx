@@ -5,9 +5,11 @@ import {
   Chat24Filled, Call24Filled, Heart24Filled, Search24Filled,
   Alert24Filled, AlertOff24Filled,
   PersonInfo16Regular, Image16Regular, Document16Regular, Link16Regular, People16Regular,
+  Image24Filled, Document24Filled, Link24Filled, People24Filled,
 } from '@fluentui/react-icons';
 import { DotsIcon } from '../components/TopBar';
 import ScreenMenu from '../components/ScreenMenu';
+import EmptyTab from '../components/EmptyTab';
 import { getPerson } from '../data/person';
 import { useScrolled } from '../utils/useScrolled';
 import ProfileHero from '../components/ProfileHero';
@@ -223,6 +225,13 @@ export default function PersonProfile() {
                 <h3>Медиа</h3>
                 <span className="pcard-note">{p.media.length}</span>
               </div>
+              {p.media.length === 0 ? (
+                <EmptyTab
+                  Icon={Image24Filled}
+                  title="Общих фото и видео нет"
+                  text={`Вы ещё не отправляли друг другу медиа`}
+                />
+              ) : (
               <div className="pp-media">
                 {p.media.map((m) => (
                   <div className="cp-media-cell" key={m.id}>
@@ -236,6 +245,7 @@ export default function PersonProfile() {
                   </div>
                 ))}
               </div>
+              )}
             </section>
           )}
 
@@ -245,6 +255,13 @@ export default function PersonProfile() {
                 <h3>Файлы</h3>
                 <span className="pcard-note">{p.files.length}</span>
               </div>
+              {p.files.length === 0 ? (
+                <EmptyTab
+                  Icon={Document24Filled}
+                  title="Файлов пока нет"
+                  text="Документы из переписки появятся здесь"
+                />
+              ) : (
               <div className="cp-rows">
                 {p.files.map((f) => (
                   <div className="cp-row cp-row--file" key={f.id}>
@@ -256,6 +273,7 @@ export default function PersonProfile() {
                   </div>
                 ))}
               </div>
+              )}
             </section>
           )}
 
@@ -265,6 +283,13 @@ export default function PersonProfile() {
                 <h3>Ссылки</h3>
                 <span className="pcard-note">{p.links.length}</span>
               </div>
+              {p.links.length === 0 ? (
+                <EmptyTab
+                  Icon={Link24Filled}
+                  title="Ссылок пока нет"
+                  text="Ссылки из переписки будут собираться здесь"
+                />
+              ) : (
               <div className="cp-rows">
                 {p.links.map((l) => (
                   <div className="cp-row" key={l.id}>
@@ -275,6 +300,7 @@ export default function PersonProfile() {
                   </div>
                 ))}
               </div>
+              )}
             </section>
           )}
 
@@ -284,6 +310,13 @@ export default function PersonProfile() {
                 <h3>Общие группы</h3>
                 <span className="pcard-note">{p.groups.length}</span>
               </div>
+              {p.groups.length === 0 ? (
+                <EmptyTab
+                  Icon={People24Filled}
+                  title="Общих групп нет"
+                  text="Вы пока не состоите в одних и тех же группах"
+                />
+              ) : (
               <div className="cp-rows">
                 {p.groups.map((g) => (
                   <button className="cp-row" key={g.id} onClick={() => setToast(g.name)}>
@@ -295,6 +328,7 @@ export default function PersonProfile() {
                   </button>
                 ))}
               </div>
+              )}
             </section>
           )}
         </div>

@@ -106,3 +106,19 @@
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Пустая вкладка: карточка с иконкой и объяснением, без списка */
+.pp-empty {
+  padding: var(--space-8) var(--space-5);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: var(--space-2);
+}
+.pp-empty-ico {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--color-background); color: var(--color-light);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-2);
+}
+.pp-empty-ico svg { width: 28px; height: 28px; }
+.pp-empty-title { font-size: 16px; font-weight: 600; color: var(--color-text); }
+.pp-empty-sub { font-size: 13px; color: var(--color-weak); line-height: 1.4; max-width: 260px; }
