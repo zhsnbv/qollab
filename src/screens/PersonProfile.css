@@ -20,8 +20,8 @@
   display: flex; align-items: center; gap: var(--space-3);
 }
 .pp-back {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--color-background); color: var(--color-text);
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--color-background); color: var(--color-weak);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }

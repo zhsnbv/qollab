@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { CaretLeft } from '@phosphor-icons/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  ChevronLeft24Regular, Search24Regular, Dismiss12Regular, Info24Regular,
+  Search24Regular, Dismiss12Regular, Info24Regular,
   SearchInfo24Filled,
 } from '@fluentui/react-icons';
 import { useScrolled } from '../utils/useScrolled';
@@ -89,7 +90,7 @@ export default function ChatSearch() {
   return (
     <div className={`chatsearch ${closing ? 'closing' : ''}`}>
       <header className={`cs-top ${scrolled ? 'hdr-shadow' : ''}`}>
-        <button className="cs-back" onClick={close} aria-label="Назад"><ChevronLeft24Regular /></button>
+        <button className="cs-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="cs-title">Поиск</h1>
         <span className="cs-back hdr-spacer" aria-hidden="true" />
       </header>

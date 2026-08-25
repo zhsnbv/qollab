@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { CaretLeft } from '@phosphor-icons/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  ChevronLeft24Regular, ChevronRight20Regular, Search24Regular, Dismiss12Regular,
-  Info24Regular, PeopleAdd24Regular, Organization24Regular,
+  ChevronRight20Regular, Search24Regular, Dismiss12Regular,
+  Info24Regular, PeopleAdd24Regular, Organization24Filled,
   Whiteboard24Regular, PersonAdd24Regular, Search24Filled,
 } from '@fluentui/react-icons';
 import { searchEmployees } from '../data/employees';
@@ -69,7 +70,7 @@ export default function NewChat() {
   return (
     <div className={`newchat ${closing ? 'closing' : ''}`}>
       <header className={`nc-top ${scrolled ? 'hdr-shadow' : ''}`}>
-        <button className="nc-back" onClick={close} aria-label="Назад"><ChevronLeft24Regular /></button>
+        <button className="nc-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="nc-title">Написать сообщение</h1>
         <span className="nc-back hdr-spacer" aria-hidden="true" />
       </header>
@@ -90,7 +91,7 @@ export default function NewChat() {
             </button>
           )}
         </div>
-        <button className="nc-struct" aria-label="Оргструктура"><Organization24Regular /></button>
+        <button className="nc-struct" aria-label="Оргструктура"><Organization24Filled /></button>
       </div>
 
       <button className="nc-group">

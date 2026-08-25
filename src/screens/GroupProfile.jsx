@@ -103,7 +103,7 @@ export default function GroupProfile() {
   return (
     <div className={`person ${closing ? 'closing' : ''}`}>
       <header className={`pp-top ${scrolled ? 'hdr-shadow' : ''}`}>
-        <button className="pp-back" onClick={close} aria-label="Назад"><CaretLeft size={22} /></button>
+        <button className="pp-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="pp-title">Группа</h1>
         <button className="pp-back" onClick={() => setScreenMenu(true)} aria-label="Меню"><DotsIcon /></button>
       </header>
