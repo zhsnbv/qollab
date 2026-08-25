@@ -7,9 +7,11 @@ import './ActionSheet.css';
 // Контекстное меню экрана — листом снизу, а не выпадающим меню: на телефоне
 // до нижней части экрана дотянуться проще, и это тот же паттерн, что у
 // остальных шитов прототипа.
-export default function ActionSheet({ title, items, onClose, onPick, selected }) {
-  // Режим выбора: иконка уходит влево, справа у активного пункта — галочка
+export default function ActionSheet({ title, items, onClose, onPick, selected, iconsLeft }) {
+  // Режим выбора: иконка уходит влево, справа у активного пункта — галочка.
+  // iconsLeft — та же раскладка, но без галочек (список вложений).
   const isSelect = selected !== undefined;
+  const leading = isSelect || iconsLeft;
 
   // Затемняем заодно и полосу статуса: оверлей должен перекрывать весь экран
   useEffect(() => { pushScrim(); return popScrim; }, []);
@@ -22,18 +24,17 @@ export default function ActionSheet({ title, items, onClose, onPick, selected })
         <div className="asheet-list">
           {items.map(({ id, label, sub, Icon, danger }) => (
             <button
-              className={`asheet-item ${danger ? 'danger' : ''} ${isSelect ? 'select' : ''}`}
+              className={`asheet-item ${danger ? 'danger' : ''} ${leading ? 'select' : ''}`}
               key={id}
               onClick={() => onPick(id)}
             >
-              {isSelect && <Icon />}
+              {leading && <Icon />}
               <span className="asheet-label">
                 {label}
                 {sub && <span className="asheet-sub">{sub}</span>}
               </span>
-              {isSelect
-                ? (selected === id && <Checkmark20Filled className="asheet-check" />)
-                : <Icon />}
+              {isSelect && selected === id && <Checkmark20Filled className="asheet-check" />}
+              {!leading && <Icon />}
             </button>
           ))}
         </div>
