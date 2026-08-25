@@ -54,12 +54,13 @@
      чем карточки между собой */
   padding: var(--space-2) var(--space-4);
 }
-.pp-tabs .cp-tab { display: inline-flex; align-items: center; gap: 6px; }
-.pp-tabs .cp-tab svg { width: 16px; height: 16px; flex-shrink: 0; }
 .pp-tabs .cp-tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px var(--space-4); font-size: 15px;
   background: var(--color-white);
   box-shadow: var(--nav-edge);
 }
+.pp-tabs .cp-tab svg { width: 18px; height: 18px; flex-shrink: 0; }
 .pp-tabs .cp-tab.active { background: var(--color-primary); color: #fff; box-shadow: none; }
 .pp-tab-count { margin-left: 6px; color: var(--color-weak); }
 .pp-tabs .cp-tab.active .pp-tab-count { color: rgba(255, 255, 255, 0.75); }
