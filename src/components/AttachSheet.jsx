@@ -3,26 +3,28 @@ import {
 } from '@fluentui/react-icons';
 import ActionSheet from './ActionSheet';
 
-// Вложения из чата: тот же лист, что у остальных меню приложения — иконка
-// справа, «Отмена» внизу.
+// Вложения из чата. Все пункты — глаголы в одной форме: человек читает не
+// «что это», а «что произойдёт». Первые два создают новое, вторые два берут
+// готовое — разница видна по глаголу, поясняющие подписи не нужны.
 const ITEMS = [
-  { id: 'photo', label: 'Снять фото', Icon: Camera24Regular },
-  { id: 'video', label: 'Снять видео', Icon: Video24Regular },
-  { id: 'gallery', label: 'Галерея', Icon: ImageMultiple24Regular },
-  { id: 'file', label: 'Файл', Icon: Document24Regular },
+  { id: 'photo', label: 'Сделать фото', Icon: Camera24Regular },
+  { id: 'video', label: 'Записать видео', Icon: Video24Regular },
+  { id: 'gallery', label: 'Выбрать из галереи', Icon: ImageMultiple24Regular },
+  { id: 'file', label: 'Выбрать файл', Icon: Document24Regular },
 ];
 
+// В прототипе пикеров нет — честно говорим, что откроется в приложении
 const TOASTS = {
-  photo: 'Открыли бы камеру',
-  video: 'Открыли бы съёмку видео',
-  gallery: 'Открыли бы галерею',
-  file: 'Открыли бы выбор файла',
+  photo: 'Откроется камера',
+  video: 'Откроется запись видео',
+  gallery: 'Откроется галерея',
+  file: 'Откроется выбор файла',
 };
 
 export default function AttachSheet({ onClose, onPick }) {
   return (
     <ActionSheet
-      title="Вложение"
+      title="Прикрепить"
       iconsLeft
       items={ITEMS}
       onClose={onClose}
