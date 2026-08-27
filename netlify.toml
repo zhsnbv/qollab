@@ -1,6 +1,8 @@
 # example netlify.toml
 [build]
-  command = "npm run build"
+  # Собираем приложение и сторибук: CLI выполняет эту же команду
+  # перед выкладкой, поэтому /storybook не теряется.
+  command = "npm run build:all"
   functions = "netlify/functions"
   publish = "dist"
 
