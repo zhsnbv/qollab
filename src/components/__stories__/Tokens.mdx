@@ -1,0 +1,62 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Основы/Токены" />
+
+# Токены
+
+Значения ниже читаются прямо из подключённых стилей: переключите тему или
+пространство в верхней панели — таблица пересчитается.
+
+<div className="sb-tokens" />
+
+<style>{`
+  .sb-tokens { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .sb-token { border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden; }
+  .sb-token .chip { height: 54px; }
+  .sb-token .meta { padding: 9px 11px; background: var(--color-white); display: flex; flex-direction: column; gap: 2px; }
+  .sb-token .nm { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--color-text); }
+  .sb-token .vl { font-size: 11.5px; color: var(--color-weak); }
+`}</style>
+
+<script>{`
+  (function () {
+    const NAMES = [
+      ['--page-bg', 'фон под карточками'],
+      ['--color-white', 'карточки и бары'],
+      ['--color-background', 'пилюли и подложки'],
+      ['--color-text', 'основной текст'],
+      ['--color-weak', 'подписи'],
+      ['--color-light', 'шевроны'],
+      ['--color-border', 'границы'],
+      ['--color-primary', 'действия'],
+      ['--color-primary-bg', 'подложка акцента'],
+      ['--color-success', 'подтверждение'],
+      ['--color-danger', 'разрушающее'],
+    ];
+    function paint() {
+      const host = document.querySelector('.sb-tokens');
+      if (!host) return;
+      const cs = getComputedStyle(document.documentElement);
+      host.innerHTML = NAMES.map(([n, use]) => {
+        const v = cs.getPropertyValue(n).trim();
+        return '<div class="sb-token"><div class="chip" style="background:' + v + '"></div>'
+          + '<div class="meta"><span class="nm">' + n + '</span>'
+          + '<span class="vl">' + v + ' · ' + use + '</span></div></div>';
+      }).join('');
+    }
+    paint();
+    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-company'] });
+  })();
+`}</script>
+
+## Шкала отступов
+
+Шаг сетки — 4 пикселя: `--space-1` … `--space-8` дают 4, 8, 12, 16, 20, 24, 32.
+Между блоками — 8, внутри карточки — 16–20.
+
+## Радиусы
+
+`--radius-sm` 8 — плитка внутри карточки, `--radius-md` 12 — подложка иконки,
+`--radius-lg` 16 — карточка, `--radius-xl` 20 — верх листа снизу,
+`--radius-pill` — пилюли и крупные кнопки. Вложенный элемент скруглён слабее
+родителя.
