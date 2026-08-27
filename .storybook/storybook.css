@@ -11,10 +11,19 @@
   display: flex;
   flex-direction: column;
 }
-/* Истории с листами: панель прижата к низу рамки, поэтому рамке нужна
-   предсказуемая высота, а прокрутка внутри — не нужна. */
-.sb-device--full { min-height: 560px; }
-.sb-device--full .sb-canvas { overflow: hidden; }
+/* Экраны, листы и оверлеи: рамка получает пропорции настоящего телефона,
+   а поля убираются — экран сам знает свои отступы, и лишние 16px по краям
+   врут о вёрстке. Прокрутку берёт на себя содержимое. */
+.sb-device--full {
+  height: 780px;
+  min-height: 780px;
+}
+.sb-device--full .sb-canvas {
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+  display: block;
+}
 .sb-canvas {
   flex: 1;
   overflow-y: auto;

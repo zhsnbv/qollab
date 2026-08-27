@@ -1,4 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
+import { CompanyProvider } from '../src/context/CompanyContext';
+import { AuthProvider } from '../src/context/AuthContext';
+import { FavoritesProvider } from '../src/context/FavoritesContext';
 import '../src/styles/tokens.css';
 import '../src/styles/companies.css';
 import '@fontsource-variable/inter';
@@ -37,21 +40,32 @@ export const globalTypes = {
 export const initialGlobals = { theme: 'light', company: 'erg' };
 
 // Portal монтирует листы и тосты в .device — в историях эта обёртка тоже нужна,
-// иначе оверлеи окажутся не в том слое.
+// иначе оверлеи окажутся не в том слое. Провайдеры берём настоящие, из
+// приложения: экранам нужны компания, вход и избранное, а подделка контекста
+// быстро разъедется с тем, что показывает прод.
 const DeviceFrame = (Story, context) => {
   const { theme, company } = context.globals;
   document.documentElement.dataset.theme = theme;
-  if (company === 'erg') delete document.documentElement.dataset.company;
-  else document.documentElement.dataset.company = company;
+  // CompanyProvider читает выбор из sessionStorage, поэтому тулбар пишет туда же,
+  // а key заставляет провайдер перечитать значение при переключении.
+  try { sessionStorage.setItem('qollab.company', company); } catch { /* ignore */ }
 
   const full = context.parameters.device === 'full';
+  const route = context.parameters.route || '/';
+
   return (
-    <MemoryRouter>
-      <div className={`device sb-device ${full ? 'sb-device--full' : ''}`}>
-        <div className="sb-canvas">
-          <Story />
-        </div>
-      </div>
+    <MemoryRouter initialEntries={[route]}>
+      <CompanyProvider key={company}>
+        <AuthProvider>
+          <FavoritesProvider>
+            <div className={`device sb-device ${full ? 'sb-device--full' : ''}`}>
+              <div className="sb-canvas">
+                <Story />
+              </div>
+            </div>
+          </FavoritesProvider>
+        </AuthProvider>
+      </CompanyProvider>
     </MemoryRouter>
   );
 };
@@ -63,7 +77,15 @@ export const parameters = {
   controls: { expanded: true },
   options: {
     storySort: {
-      order: ['Основы', 'Атомы', 'Молекулы', 'Организмы', 'Экраны'],
+      order: [
+        'Начало', ['Введение', 'Установка', 'Как добавлять'],
+        'Основы',
+        'Атомы',
+        'Молекулы',
+        'Организмы',
+        'Паттерны',
+        'Экраны',
+      ],
     },
   },
 };
