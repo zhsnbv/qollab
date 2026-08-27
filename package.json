@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
-    "build:all": "npm run build && npm run build-storybook && cp -r storybook-static dist/storybook"
+    "build:all": "npm run build && npm run build-storybook && rm -rf dist/storybook && cp -r storybook-static dist/storybook"
   },
   "dependencies": {
     "@fluentui/react-icons": "^2.0.337",
