@@ -13,6 +13,8 @@ export default function ActionSheet({ title, items, onClose, onPick, selected, i
   const swipe = useSheetSwipe(onClose);
   // Режим выбора: иконка уходит влево, справа у активного пункта — галочка.
   // iconsLeft — та же раскладка, но без галочек (список вложений).
+  // Иконка необязательна: в списках-справочниках (степень родства) её нет,
+  // и без проверки пункт валил бы весь лист.
   const isSelect = selected !== undefined;
   const leading = isSelect || iconsLeft;
 
@@ -32,13 +34,13 @@ export default function ActionSheet({ title, items, onClose, onPick, selected, i
               key={id}
               onClick={() => onPick(id)}
             >
-              {leading && <Icon />}
+              {leading && Icon && <Icon />}
               <span className="asheet-label">
                 {label}
                 {sub && <span className="asheet-sub">{sub}</span>}
               </span>
               {isSelect && selected === id && <Checkmark20Filled className="asheet-check" />}
-              {!leading && <Icon />}
+              {!leading && Icon && <Icon />}
             </button>
           ))}
         </div>

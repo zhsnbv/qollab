@@ -8,18 +8,23 @@ import ProfileHero from '../components/ProfileHero';
 import StatusBubble from '../components/StatusBubble';
 import StatusSheet from '../components/StatusSheet';
 import StatusActions from '../components/StatusActions';
+import ActionSheet from '../components/ActionSheet';
+import ConfirmDialog from '../components/ConfirmDialog';
+import SosSheet from '../components/SosSheet';
+import Toast from '../components/Toast';
 import { emptyStatus, statusById } from '../data/statuses';
 import {
-  CaretRight, Info, ArrowsClockwise, Plus, DotsThreeVertical, SquaresFour,
+  CaretRight, Info, ArrowsClockwise, Plus, SquaresFour,
   IdentificationCard, QrCode, AddressBook, Hash,
   UserFocus, Headset,
 } from '@phosphor-icons/react';
 import {
   ContactCard24Filled, QrCode24Filled, PersonNote24Filled, NumberSymbol24Filled,
+  Edit24Regular, Delete24Regular,
 } from '@fluentui/react-icons';
 import { useSkeleton, ProfileSkeleton, FadeIn } from '../components/Skeleton';
 import {
-  me, quickActions, balance, myTasks, sosContacts,
+  me, quickActions, balance, myTasks, sosContacts as initialSos,
   corpData, structure, indicators, interests, certificates,
 } from '../data/profile';
 import './PersonProfile.css';
@@ -61,6 +66,22 @@ export default function Profile() {
   // Тап по готовому статусу открывает не выбор, а два действия: сменить и снять
   const [statusMenu, setStatusMenu] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // SOS-контакты редактируются прямо на экране: в прототипе их некуда
+  // сохранять, поэтому список живёт в состоянии.
+  const [sos, setSos] = useState(initialSos);
+  // Тап по строке открывает действия, «Изменить» — ту же форму, что «Добавить»
+  const [sosMenu, setSosMenu] = useState(null);
+  const [sosForm, setSosForm] = useState(null);
+  const [sosDelete, setSosDelete] = useState(null);
+  const [toast, setToast] = useState('');
+
+  const saveSos = (c) => {
+    setSos((list) => (c.id
+      ? list.map((x) => (x.id === c.id ? { ...x, ...c } : x))
+      : [...list, { ...c, id: `s${Date.now()}` }]));
+    setSosForm(null);
+    setToast(c.id ? 'Контакт изменён' : 'Контакт добавлен');
+  };
 
   const open = (path) => navigate(path, { state: { background: location } });
 
@@ -145,19 +166,26 @@ export default function Profile() {
         <section className="pcard">
           <div className="pcard-head">
             <h3>SOS-контакты</h3>
-            <button className="refresh-btn"><Plus size={12} weight="bold" />Добавить контакт</button>
+            <button className="refresh-btn" onClick={() => setSosForm({})}>
+              <Plus size={12} weight="bold" />Добавить контакт
+            </button>
           </div>
+          {!sos.length && (
+            <p className="sos-empty">
+              Добавьте близкого человека — ему позвонят, если с вами что-то случится на работе.
+            </p>
+          )}
           <div className="sos-list">
-            {sosContacts.map((c) => (
-              <div className="sos-row" key={c.id}>
-                <div className="sos-line">
+            {sos.map((c) => (
+              <button className="sos-row" key={c.id} onClick={() => setSosMenu(c)}>
+                <span className="sos-line">
                   <span className="sos-name">{c.name}</span>
                   <span className="sos-tag">{c.tag}</span>
-                  <button className="sos-more" aria-label="Действия"><DotsThreeVertical size={16} weight="bold" /></button>
-                </div>
+                  <CaretRight size={14} weight="bold" color="var(--color-light)" />
+                </span>
                 <span className="sos-phone">{c.phone}</span>
                 {c.note && <span className="sos-note">{c.note}</span>}
-              </div>
+              </button>
             ))}
           </div>
           <p className="sos-hint">SOS-контакты не видны другим сотрудникам — только вам, руководителю, HR и СБ.</p>
@@ -293,6 +321,44 @@ export default function Profile() {
         onPick={(id) => { setStatus(id); setStatusOpen(false); }}
       />
     )}
+    {sosMenu && (
+      <ActionSheet
+        title={sosMenu.name}
+        items={[
+          { id: 'edit', label: 'Изменить', Icon: Edit24Regular },
+          { id: 'delete', label: 'Удалить контакт', Icon: Delete24Regular, danger: true },
+        ]}
+        onClose={() => setSosMenu(null)}
+        onPick={(id) => {
+          const c = sosMenu;
+          setSosMenu(null);
+          if (id === 'edit') setSosForm(c);
+          else setSosDelete(c);
+        }}
+      />
+    )}
+    {sosForm && (
+      <SosSheet
+        contact={sosForm.id ? sosForm : null}
+        onClose={() => setSosForm(null)}
+        onSave={saveSos}
+      />
+    )}
+    {sosDelete && (
+      <ConfirmDialog
+        title="Удалить контакт?"
+        text={`${sosDelete.name} перестанет быть SOS-контактом. Это можно будет добавить заново.`}
+        confirmLabel="Удалить"
+        danger
+        onConfirm={() => {
+          setSos((list) => list.filter((x) => x.id !== sosDelete.id));
+          setSosDelete(null);
+          setToast('Контакт удалён');
+        }}
+        onCancel={() => setSosDelete(null)}
+      />
+    )}
+    <Toast text={toast} onDone={() => setToast('')} />
     <SideMenu open={menu} onClose={() => setMenu(false)} />
     <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </>
