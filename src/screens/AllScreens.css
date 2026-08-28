@@ -3,11 +3,14 @@
    поэтому на ней возвращаем документу обычную прокрутку. */
 html.gallery, html.gallery body {
   position: static;
-  overflow: auto;
   height: auto;
   min-height: 100%;
 }
+/* Прокручивается только вьюпорт: второй контейнер на body ни к чему,
+   а лишний скролл-контейнер — лишний способ проглотить жест. */
+html.gallery { overflow: auto; }
 html.gallery body {
+  overflow: visible;
   display: block;
   padding: 0;
   background: var(--page-bg);
@@ -73,17 +76,20 @@ html.gallery #root { height: auto; }
    от 402×874, и настоящий экран должен остаться настоящим. */
 .gal-frame {
   width: 232px; height: 504px;
-  border-radius: 22px; overflow: hidden;
+  border-radius: 22px;
+  /* clip, а не hidden: внутри рамки лежит экран 402×874, и с hidden она
+     становится скролл-контейнером — колесо и палец уходили в неё, а страница
+     стояла на месте. clip обрезает так же, но контейнером не становится. */
+  overflow: hidden;
+  overflow: clip;
   background: var(--color-white);
   border: 1px solid var(--color-border);
   box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.06);
+  /* Витрину смотрят, а не листают в ней списки: рамка не ловит ни касания,
+     ни колесо — жест целиком достаётся странице. */
+  pointer-events: none;
 }
 .gal-device {
-  /* Витрину смотрят, а не листают в ней списки: рамки не ловят касания.
-     Иначе жест уходил в pull-to-refresh вкладки или во внутреннюю прокрутку
-     чата, и сама страница не скроллилась — на телефоне почти вся её площадь
-     занята рамками. */
-  pointer-events: none;
   width: 402px; height: 874px;
   max-width: none; margin: 0;
   transform: scale(0.5774); /* 232 / 402 */
