@@ -137,6 +137,11 @@ button, input, textarea, select {
 }
 button { border: none; background: none; cursor: pointer; }
 
+/* Каретка везде акцентная: и в полях формы, и в contenteditable — поле ввода
+   сообщения сделано именно так. Системная синяя выбивалась из оранжевой темы
+   ровно там, где взгляд и так сфокусирован. */
+input, textarea, select, [contenteditable] { caret-color: var(--color-primary); }
+
 /* Тактильность: кликабельные элементы гаснут по прозрачности при нажатии.
    Помечаются классом .pressable (или это делают точечные правила экранов). */
 .pressable { transition: opacity 0.12s ease, transform 0.12s ease; -webkit-tap-highlight-color: transparent; }
