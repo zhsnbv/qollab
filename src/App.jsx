@@ -27,6 +27,8 @@ import {
   NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
 } from './screens/SettingsPages';
 import ProfilePhoto from './screens/ProfilePhoto';
+import ProfileQr from './screens/ProfileQr';
+import IdCard from './screens/IdCard';
 import Auth from './screens/Auth';
 import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
@@ -90,6 +92,8 @@ function OverlayRoutes({ location }) {
         <Route path="/settings/help/device" element={<DeviceInfo />} />
         <Route path="/settings/privacy" element={<Privacy />} />
         <Route path="/profile/photo" element={<ProfilePhoto />} />
+        <Route path="/profile/qr" element={<ProfileQr />} />
+        <Route path="/profile/id" element={<IdCard />} />
         {/* Мини-аппы: уровень навигации зашит в путь (/app/mytasks/it/closed),
             поэтому «назад» и история браузера работают без своего стека. */}
         <Route path="/app/*" element={<MiniApp />} />

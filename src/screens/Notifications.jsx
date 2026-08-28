@@ -23,7 +23,13 @@ export default function Notifications() {
       <header className={`nt-top ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="nt-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="nt-title">Уведомления</h1>
-        <button className="nt-gear" aria-label="Настройки уведомлений"><GearSix size={20} weight="fill" /></button>
+        <button
+          className="nt-gear"
+          aria-label="Настройка уведомлений"
+          onClick={() => navigate('/settings/notifications', { state: { background: location } })}
+        >
+          <GearSix size={20} weight="fill" />
+        </button>
       </header>
 
       <div className="nt-scroll" onScroll={onScroll}>

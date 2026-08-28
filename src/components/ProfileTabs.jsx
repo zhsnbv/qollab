@@ -24,7 +24,9 @@ export default function ProfileTabs({ tabs, value, onChange, data }) {
           className={`cp-tab ${value === id ? 'active' : ''}`}
           onClick={() => onChange(id)}
         >
-          <Icon />
+          {/* Иконка необязательна: у вкладок ID-карты её нет, а без проверки
+              отсутствие валило весь ряд */}
+          {Icon && <Icon />}
           {label}
           {count && <span className="pp-tab-count">{count(data)}</span>}
         </button>

@@ -30,7 +30,13 @@
 .nt-back:active, .nt-gear:active { opacity: 0.5; }
 /* Серый глиф в сером кружке — как кнопки шапок на остальных экранах */
 .nt-gear { border-radius: var(--radius-pill); background: var(--color-background); color: var(--color-weak); }
-.nt-title { flex: 1; text-align: center; font-size: 18px; font-weight: 600; color: var(--color-text); }
+/* Тот же размер, что у остальных шапок оверлеев (.pp-title, .st-title):
+   восемнадцатый кегль остался от старой вёрстки и выбивался. */
+.nt-title {
+  flex: 1; min-width: 0; text-align: center;
+  font-size: 17px; font-weight: 600; color: var(--color-heading);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
 .nt-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: var(--space-4); }
 .nt-scroll::-webkit-scrollbar { display: none; }

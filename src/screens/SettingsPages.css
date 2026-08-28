@@ -37,8 +37,13 @@
 
 /* Привязка устройства */
 .sp-link { padding: var(--space-5) var(--space-4); text-align: center; }
+/* Иллюстрация из макета, две версии под тему — как у волны в профиле:
+   у светлой стол белый, у тёмной графитовый. */
 .sp-link-art { margin-bottom: var(--space-3); display: flex; justify-content: center; }
-.sp-link-art svg { width: 168px; height: auto; }
+.sp-link-art img { width: 200px; height: 200px; object-fit: contain; }
+.sp-link-art .sp-art--dark { display: none; }
+html[data-theme="dark"] .sp-link-art .sp-art--light { display: none; }
+html[data-theme="dark"] .sp-link-art .sp-art--dark { display: block; }
 .sp-link-text { font-size: 14px; line-height: 1.45; color: var(--color-weak); }
 .sp-link-text b { color: var(--color-primary); font-weight: 400; }
 .sp-btn {

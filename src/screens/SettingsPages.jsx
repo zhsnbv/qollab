@@ -71,33 +71,6 @@ export function Permissions() {
 
 const DEVICE_ICONS = { phone: DeviceMobile, desktop: Monitor };
 
-// Монитор с QR-кодом. Рисуем вектором, а не картинкой: иллюстрация нужна
-// в одном месте, зато сама перекрашивается под тему и пространство.
-function LinkArt() {
-  const cell = (x, y, w = 1, h = 1) => (
-    <rect key={`${x}-${y}-${w}`} x={x * 4} y={y * 4} width={w * 4} height={h * 4} rx="1" fill="currentColor" />
-  );
-  return (
-    <svg viewBox="0 0 168 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QR-код на экране компьютера">
-      <rect x="34" y="8" width="100" height="72" rx="8" fill="var(--color-primary)" />
-      <rect x="41" y="15" width="86" height="58" rx="4" fill="var(--color-white)" />
-      <g transform="translate(62 22)" color="var(--color-primary)">
-        {cell(0, 0, 3, 1)}{cell(0, 1)}{cell(2, 1)}{cell(0, 2, 3, 1)}
-        {cell(8, 0, 3, 1)}{cell(8, 1)}{cell(10, 1)}{cell(8, 2, 3, 1)}
-        {cell(5, 0)}{cell(5, 2)}{cell(4, 4)}{cell(6, 4)}{cell(8, 4)}{cell(2, 4)}{cell(0, 4)}
-        {cell(0, 6, 3, 1)}{cell(0, 7)}{cell(2, 7)}{cell(0, 8, 3, 1)}
-        {cell(5, 6)}{cell(7, 7)}{cell(9, 6)}{cell(10, 8)}{cell(6, 8)}{cell(8, 8)}
-      </g>
-      <rect x="76" y="84" width="16" height="8" rx="2" fill="var(--color-primary)" opacity="0.4" />
-      <rect x="58" y="94" width="52" height="8" rx="4" fill="var(--color-primary)" opacity="0.25" />
-      <rect x="2" y="52" width="26" height="46" rx="6" fill="var(--color-primary)" />
-      <rect x="5.5" y="55.5" width="19" height="39" rx="3" fill="var(--color-white)" />
-      <rect x="140" y="52" width="26" height="46" rx="6" fill="var(--color-primary)" />
-      <rect x="143.5" y="55.5" width="19" height="39" rx="3" fill="var(--color-white)" />
-    </svg>
-  );
-}
-
 // Устройства: привязка веб-версии по QR и список сессий. Завершение чужих
 // сессий — разрушающее действие, поэтому красным и с подтверждением.
 export function Devices() {
@@ -132,7 +105,10 @@ export function Devices() {
   return (
     <SettingsPage title="Устройства">
       <section className="st-card sp-link">
-        <div className="sp-link-art" aria-hidden><LinkArt /></div>
+        <div className="sp-link-art">
+          <img className="sp-art--light" src="/img/settings/devices-light.png" alt="" />
+          <img className="sp-art--dark" src="/img/settings/devices-dark.png" alt="" />
+        </div>
         <p className="sp-link-text">
           Отсканируйте QR-код и откройте <b>qollab.kz</b>, чтобы связать
           веб-версию с этой учётной записью.

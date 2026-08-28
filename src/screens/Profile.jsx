@@ -8,6 +8,7 @@ import ProfileHero from '../components/ProfileHero';
 import StatusBubble from '../components/StatusBubble';
 import StatusSheet from '../components/StatusSheet';
 import StatusActions from '../components/StatusActions';
+import VCardSheet from '../components/VCardSheet';
 import ActionSheet from '../components/ActionSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
 import SosSheet from '../components/SosSheet';
@@ -74,6 +75,7 @@ export default function Profile() {
   const [sosForm, setSosForm] = useState(null);
   const [sosDelete, setSosDelete] = useState(null);
   const [toast, setToast] = useState('');
+  const [vcard, setVcard] = useState(false);
 
   const saveSos = (c) => {
     setSos((list) => (c.id
@@ -84,6 +86,15 @@ export default function Profile() {
   };
 
   const open = (path) => navigate(path, { state: { background: location } });
+
+  // Что делает каждая плитка под шапкой. «QR-код» и «Визитка» ведут в один
+  // лист: это одна и та же визитка, просто названная двумя привычными словами.
+  const QUICK_ACTIONS = {
+    id: () => open('/profile/id'),
+    qr: () => setVcard(true),
+    vc: () => setVcard(true),
+    num: () => open('/profile/qr'),
+  };
 
   const topbar = (
     <header className="topbar">
@@ -119,7 +130,7 @@ export default function Profile() {
             {quickActions.map(({ id, label, icon }) => {
               const Icon = QUICK_ICONS[icon];
               return (
-                <button className="quick-item" key={id}>
+                <button className="quick-item" key={id} onClick={QUICK_ACTIONS[id]}>
                   <span className="quick-ico">{Icon && <Icon />}</span>
                   <span className="quick-label">{label}</span>
                 </button>
@@ -359,6 +370,7 @@ export default function Profile() {
       />
     )}
     <Toast text={toast} onDone={() => setToast('')} />
+    {vcard && <VCardSheet onClose={() => setVcard(false)} />}
     <SideMenu open={menu} onClose={() => setMenu(false)} />
     <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </>

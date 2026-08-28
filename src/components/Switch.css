@@ -16,7 +16,8 @@
   background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
 }
-.switch:checked { background: var(--color-success); }
+/* Включённый — акцентом: зелёный здесь системный, из iOS, а не наш */
+.switch:checked { background: var(--color-primary); }
 .switch:checked::after { transform: translateX(20px); }
 .switch:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 

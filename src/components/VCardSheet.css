@@ -1,0 +1,31 @@
+/* Лист QR-визитки */
+.vcs-wrap { position: absolute; inset: 0; z-index: 62; display: flex; align-items: flex-end; }
+.vcs-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); animation: vcs-fade 0.2s ease; }
+@keyframes vcs-fade { from { opacity: 0; } }
+.vcs {
+  position: relative; width: 100%;
+  background: var(--color-white);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding-bottom: max(var(--space-6), env(safe-area-inset-bottom));
+  animation: vcs-up 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+@keyframes vcs-up { from { transform: translateY(100%); } }
+.vcs-title { font-size: 18px; font-weight: 700; color: var(--color-heading); }
+.vcs-body {
+  padding: 0 var(--space-4);
+  display: flex; flex-direction: column; align-items: center;
+}
+.vcs-text {
+  font-size: 14px; line-height: 1.45; color: var(--color-weak); text-align: center;
+  margin-bottom: var(--space-5);
+}
+/* Белое поле под кодом — сканеру нужна «тихая зона», а в тёмной теме код
+   на графите не прочитается вовсе. */
+.vcs-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  border: 1px solid var(--color-border);
+}
+.vcs-name { margin-top: var(--space-5); font-size: 18px; font-weight: 700; color: var(--color-heading); }
+.vcs-role { margin-top: 2px; font-size: 14px; color: var(--color-weak); }

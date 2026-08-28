@@ -1,0 +1,61 @@
+/* Пропуск: экран показывают охране, поэтому на нём только код, время и имя —
+   ни таб-бара, ни лишних действий. */
+.pqr {
+  position: absolute; inset: 0; z-index: 50;
+  background: var(--color-white);
+  display: flex; flex-direction: column;
+  animation: pqr-in 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.pqr.closing { animation: pqr-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes pqr-in { from { transform: translateX(100%); } }
+@keyframes pqr-out { to { transform: translateX(100%); } }
+
+.pqr-top {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
+  min-height: calc(64px + env(safe-area-inset-top));
+}
+/* Стрелка «назад» здесь без серого кружка: на пустом экране кружок остаётся
+   единственным пятном и перетягивает внимание с кода. */
+.pqr-back {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-primary);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.pqr-back:active { opacity: 0.5; }
+.pqr-title {
+  flex: 1; min-width: 0; text-align: center;
+  font-size: 17px; font-weight: 600; color: var(--color-heading);
+}
+
+.pqr-body {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: var(--space-6) var(--space-4) max(var(--space-6), env(safe-area-inset-bottom));
+}
+/* Белое поле вокруг кода обязательно: сканеру нужна «тихая зона», а в тёмной
+   теме код на графите не прочитается вовсе. */
+.pqr-card {
+  margin-top: auto;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.02);
+  border: 1px solid var(--color-border);
+}
+/* Время — самое крупное на экране: его сверяют первым */
+.pqr-clock {
+  margin-top: var(--space-8);
+  font-size: 40px; font-weight: 700; line-height: 1.1;
+  color: var(--color-primary); font-variant-numeric: tabular-nums;
+}
+.pqr-date { margin-top: var(--space-2); font-size: 17px; color: var(--color-text); font-variant-numeric: tabular-nums; }
+.pqr-person { margin-top: auto; padding-top: var(--space-8); text-align: center; }
+.pqr-name { font-size: 20px; font-weight: 700; color: var(--color-heading); }
+.pqr-role { margin-top: var(--space-1); font-size: 16px; color: var(--color-weak); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pqr, .pqr.closing { animation: none; }
+}

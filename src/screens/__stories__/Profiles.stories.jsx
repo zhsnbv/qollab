@@ -2,6 +2,8 @@ import PersonProfile from '../PersonProfile';
 import { employees } from '../../data/employees';
 import GroupProfile from '../GroupProfile';
 import ProfilePhoto from '../ProfilePhoto';
+import ProfileQr from '../ProfileQr';
+import IdCard from '../IdCard';
 import Settings from '../Settings';
 import Favorites from '../Favorites';
 
@@ -71,6 +73,39 @@ export const Группа = {
         story:
           'Та же композиция, что у человека: шапка, действия, вкладки. Вместо «Ещё» — «Покинуть '
           + 'группу» красным, с подтверждением.',
+      },
+    },
+  },
+};
+
+export const Пропуск = {
+  render: () => <ProfileQr />,
+  parameters: {
+    route: '/profile/qr',
+    docs: {
+      description: {
+        story:
+          'Открывается плиткой «Таб. номер». Часы идут с секундами и не останавливаются: по ним '
+          + 'охрана отличает живой экран от скриншота — на снимке время застынет. Код тоже меняется '
+          + 'каждую секунду, так что переслать статичную картинку не выйдет. Белое поле вокруг кода '
+          + 'обязательно и в тёмной теме: сканеру нужна «тихая зона».',
+      },
+    },
+  },
+};
+
+export const IDКарта = {
+  name: 'Моя ID карта',
+  render: () => <IdCard />,
+  parameters: {
+    route: '/profile/id',
+    docs: {
+      description: {
+        story:
+          'Карточка сотрудника и документы об обучении. Заголовок экрана свой, а не «Профиль»: '
+          + 'человек ушёл с вкладки и должен видеть, где он. Фото прямоугольное со скруглением, '
+          + 'а не круг, — это документ, а не аватар. Статус выбирается тем же листом действий, '
+          + 'что и остальные списки, а не нативным select.',
       },
     },
   },

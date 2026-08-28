@@ -343,3 +343,9 @@ html[data-theme="dark"] .cr-empty-circle--main { box-shadow: 0 8px 4px rgba(0, 0
 html[data-theme="dark"] .service-icon[src$="/all.png"] { filter: invert(0.88) hue-rotate(180deg); }
 /* Та же история у плашки «Все каналы» в Ленте — глиф тёмный на тёмном */
 html[data-theme="dark"] .channel-avatar--all img { filter: invert(0.85) hue-rotate(180deg); }
+
+/* QR: чёрный код на белом поле — контраст важнее темы, сканер читает
+   инверсию хуже. Поэтому в тёмной теме подложка тоже светлая. */
+.qr { display: block; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.qr svg path:first-child { fill: none; }
