@@ -79,6 +79,11 @@ html.gallery #root { height: auto; }
   box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.06);
 }
 .gal-device {
+  /* Витрину смотрят, а не листают в ней списки: рамки не ловят касания.
+     Иначе жест уходил в pull-to-refresh вкладки или во внутреннюю прокрутку
+     чата, и сама страница не скроллилась — на телефоне почти вся её площадь
+     занята рамками. */
+  pointer-events: none;
   width: 402px; height: 874px;
   max-width: none; margin: 0;
   transform: scale(0.5774); /* 232 / 402 */

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar from '../components/TopBar';
@@ -12,6 +12,7 @@ import Toast from '../components/Toast';
 import { useSkeleton, ChatsSkeleton, FadeIn } from '../components/Skeleton';
 import ErgizAvatar from '../components/ErgizAvatar';
 import { workStatusOf } from '../data/person';
+import { DeviceHost } from '../components/Portal';
 import './Chats.css';
 
 // Первый экран — данные из Figma-макета Chats (Type=Chats), аватары в public/img/chats.
@@ -130,13 +131,18 @@ export default function Chats() {
   const [confirm, setConfirm] = useState(false);
   const [toast, setToast] = useState('');
 
-  // Таб-бар живёт в App, поэтому убираем его классом на <html>: пробрасывать
-  // ради этого состояние наверх пришлось бы через все вкладки.
+  // Таб-бар живёт в App, поэтому убираем его классом на самом «телефоне»:
+  // пробрасывать ради этого состояние наверх пришлось бы через все вкладки.
+  // Класс именно на рамке, а не на <html>: в витрине всех экранов рамок много,
+  // и с <html> режим выбора одной карточки прятал бы таб-бар у всех.
+  const deviceHost = useContext(DeviceHost);
   useEffect(() => {
     if (!selecting) return undefined;
-    document.documentElement.classList.add('selecting');
-    return () => document.documentElement.classList.remove('selecting');
-  }, [selecting]);
+    const host = deviceHost || document.querySelector('.device');
+    if (!host) return undefined;
+    host.classList.add('selecting');
+    return () => host.classList.remove('selecting');
+  }, [selecting, deviceHost]);
 
   // Список id текущего экрана — нужен «Прочитать все», когда ничего не выбрано
   const chatIdsRef = useRef([]);

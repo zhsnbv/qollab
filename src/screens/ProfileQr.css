@@ -17,15 +17,17 @@
   padding-top: max(var(--space-3), env(safe-area-inset-top));
   min-height: calc(64px + env(safe-area-inset-top));
 }
-/* Стрелка «назад» здесь без серого кружка: на пустом экране кружок остаётся
-   единственным пятном и перетягивает внимание с кода. */
+/* «Назад» как на остальных экранах: серый глиф в сером кружке */
 .pqr-back {
   width: 40px; height: 40px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  color: var(--color-primary);
+  border-radius: var(--radius-pill); background: var(--color-background);
+  color: var(--color-weak);
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .pqr-back:active { opacity: 0.5; }
+/* Правый близнец держит заголовок по центру и фона не носит */
+.pqr-back.pqr-spacer { background: none; pointer-events: none; }
 .pqr-title {
   flex: 1; min-width: 0; text-align: center;
   font-size: 17px; font-weight: 600; color: var(--color-heading);

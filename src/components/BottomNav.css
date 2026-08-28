@@ -15,8 +15,9 @@
   pointer-events: none;
 }
 
-/* Режим выбора чатов ставит на это место свою панель действий (см. Chats.css) */
-html.selecting .bottomnav { display: none; }
+/* Режим выбора чатов ставит на это место свою панель действий (см. Chats.css).
+   Класс висит на самом «телефоне»: в витрине всех экранов рамок много. */
+.device.selecting .bottomnav { display: none; }
 
 .bottomnav-row {
   position: relative;

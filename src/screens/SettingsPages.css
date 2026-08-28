@@ -1,10 +1,9 @@
 /* Подэкраны настроек. Каркас (шапка, прокрутка, выезд) — в SettingsPage,
    здесь только то, чем эти экраны отличаются друг от друга. */
 
-/* Строка со свитчем. Строки уведомлений живут в карточке, разрешения — прямо
-   на фоне: в макете у них нет подложки, разделяют их сами промежутки. */
+/* Строка со свитчем. Всегда в белой карточке — как строки основного меню
+   настроек: на голом сером фоне список читался как черновик. */
 .sp-list { background: var(--color-white); border-radius: var(--radius-lg); overflow: hidden; }
-.sp-list--plain { background: none; }
 .sp-row {
   position: relative;
   width: 100%; min-height: 60px;
@@ -17,7 +16,9 @@
   content: ''; position: absolute; top: 0; left: 68px; right: 0; height: 1px;
   background: var(--color-border);
 }
-.sp-list--plain .sp-row::before { display: none; }
+/* У разрешений слева контурный глиф, а не кружок сервиса: разделитель
+   начинается под текстом. */
+.sp-list .sp-row:has(.sp-perm-ico) + .sp-row::before { left: 52px; }
 .sp-label { flex: 1; min-width: 0; font-size: 15px; color: var(--color-text); }
 
 /* Иконка сервиса: эмодзи в круге, у своих сервисов — лого qollab */

@@ -49,7 +49,7 @@ export function Permissions() {
   const [on, setOn] = useState(() => Object.fromEntries(permissions.map((p) => [p.id, p.on])));
   return (
     <SettingsPage title="Настройки разрешений">
-      <div className="sp-list sp-list--plain">
+      <div className="sp-list">
         {permissions.map((p) => {
           const Icon = PERM_ICONS[p.icon];
           return (

@@ -34,9 +34,9 @@ export default function ProfileQr() {
   return (
     <div className={`pqr ${closing ? 'closing' : ''}`}>
       <header className="pqr-top">
-        <button className="pqr-back" onClick={close} aria-label="Назад"><CaretLeft size={26} /></button>
+        <button className="pqr-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="pqr-title">Показать QR</h1>
-        <span className="pqr-back" aria-hidden />
+        <span className="pqr-back pqr-spacer" aria-hidden />
       </header>
 
       <div className="pqr-body">
