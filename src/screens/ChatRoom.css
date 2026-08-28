@@ -75,8 +75,15 @@ html.kb .cr-body { padding-bottom: 56px; }
 /* Пустое состояние */
 .cr-empty {
   min-height: 100%;
+  display: flex; flex-direction: column;
+  padding: var(--space-4);
+}
+/* Иллюстрация с подписью центрируется в свободном месте, плашка про шифрование
+   остаётся внизу — она сноска, а не часть приглашения написать. */
+.cr-empty-main {
+  flex: 1;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: var(--space-2); padding: var(--space-4);
+  gap: var(--space-2);
 }
 .cr-empty-icons { display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-2); }
 .cr-empty-circle {
@@ -439,24 +446,17 @@ html.kb .cr-compose { bottom: 54px; }
 }
 
 /* ── Чат с ассистентом ───────────────────────────────────────────────────── */
-/* Про шифрование говорим один раз в начале переписки — это не сообщение,
-   поэтому не бабл, а широкая плашка на всю ленту. */
+/* Про шифрование говорим в пустом чате, внизу: это не сообщение, поэтому не
+   бабл, а плашка — и не в начале живой переписки, где она заняла бы экран
+   вместо самих сообщений. */
 .cr-notice {
-  margin: var(--space-2) 0 var(--space-4);
+  margin-top: var(--space-6);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: var(--color-background);
-  font-size: 14px; line-height: 1.4; color: var(--color-weak); text-align: center;
+  font-size: 13px; line-height: 1.45; color: var(--color-weak); text-align: center;
 }
-/* Полоса «новые сообщения» тянется во всю ширину ленты, компенсируя её поля:
-   она делит переписку, а пилюля посреди строки так не читается. */
 .cr-notice-ico { margin-right: 5px; }
-.cr-unread {
-  margin: var(--space-2) calc(-1 * var(--space-3)) var(--space-3);
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-background);
-  font-size: 14px; font-weight: 500; color: var(--color-text); text-align: center;
-}
 /* Подсказки ассистента: пустое поле ввода не объясняет, о чём его спрашивать.
    Стоят слева, под его сообщением — это его предложения, не мои ответы. */
 .cr-prompts {

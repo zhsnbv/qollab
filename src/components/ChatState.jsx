@@ -25,10 +25,13 @@ export function ConnectingSkeleton() {
   );
 }
 
-// Пустой чат — ещё нет переписки.
+// Пустой чат — ещё нет переписки. Про шифрование говорим именно здесь: пока
+// сообщений нет, место свободно, а в начале живой переписки плашка занимала бы
+// экран вместо самих сообщений.
 export function EmptyState() {
   return (
     <div className="cr-empty">
+      <div className="cr-empty-main">
       <div className="cr-empty-icons">
         <span className="cr-empty-circle cr-empty-circle--side" style={{ transform: 'rotate(-6deg)' }}>
           <User size={30} color="var(--color-light)" />
@@ -42,6 +45,12 @@ export function EmptyState() {
       </div>
       <div className="cr-empty-title">Нет сообщений</div>
       <div className="cr-empty-sub">Напишите что-нибудь, чтобы начать чат</div>
+      </div>
+      <p className="cr-notice">
+        <span className="cr-notice-ico">🔒</span>
+        Сообщения в qollab защищены шифрованием. Читать их можете только вы
+        и участники чата.
+      </p>
     </div>
   );
 }

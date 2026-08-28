@@ -396,20 +396,7 @@ export default function DMChat() {
         {phase === 'empty' && <EmptyState />}
         {phase === 'chat' && (
           <div className="cr-messages">
-            {chat.kind === 'bot' && (
-              <>
-                <p className="cr-notice">
-                  <span className="cr-notice-ico">🔒</span>
-                  Ваши сообщения в чатах в qollab защищены шифрованием. Читать их можете
-                  только вы и участники чата.
-                </p>
-                <div className="cr-day">{dayLabel(chat.time)}</div>
-                <div className="cr-unread">Новые сообщения</div>
-              </>
-            )}
-            {chat.kind !== 'bot' && (
-              <div className="cr-day">{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}</div>
-            )}
+            <div className="cr-day">{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}</div>
             {items.map((msg) => (
               <Message
                 key={msg.id}

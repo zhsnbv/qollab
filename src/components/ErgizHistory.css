@@ -6,8 +6,8 @@
 }
 .ergh-search {
   display: flex; align-items: center; gap: var(--space-2);
-  height: 44px; padding: 0 var(--space-3);
-  border-radius: var(--radius-md); background: var(--color-background);
+  height: 44px; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill); background: var(--color-background);
 }
 .ergh-search input {
   flex: 1; min-width: 0; border: none; outline: none; background: none;
@@ -18,8 +18,8 @@
    от самих диалогов, иначе он читался бы как ещё один разговор. */
 .ergh-archive {
   display: flex; align-items: center; gap: var(--space-2);
-  height: 48px; padding: 0 var(--space-3);
-  border: 1px solid var(--color-border); border-radius: var(--radius-md);
+  height: 48px; padding: 0 var(--space-4);
+  border: 1px solid var(--color-border); border-radius: var(--radius-pill);
   font-size: 15px; color: var(--color-text);
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
