@@ -1,0 +1,120 @@
+/* Страница целиком зафиксирована ради «резинки» на iPhone: прокручивается
+   только .scroll-area внутри каркаса. Витрине это мешает — она сама длинная,
+   поэтому на ней возвращаем документу обычную прокрутку. */
+html.gallery, html.gallery body {
+  position: static;
+  overflow: auto;
+  height: auto;
+  min-height: 100%;
+}
+html.gallery body {
+  display: block;
+  padding: 0;
+  background: var(--page-bg);
+}
+html.gallery #root { height: auto; }
+
+/* Витрина всех экранов. Живёт вне рамки «телефона»: рамок тут полсотни,
+   и им нужна вся ширина окна. */
+.gal {
+  min-height: 100dvh;
+  background: var(--page-bg);
+  padding-bottom: var(--space-8);
+}
+
+.gal-top {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-5) var(--space-5) 0;
+}
+.gal-head h1 { font-size: 24px; font-weight: 700; color: var(--color-heading); }
+.gal-head p { margin-top: var(--space-1); font-size: 14px; color: var(--color-weak); }
+
+/* Фильтр по разделам — тот же ряд пилюль, что в профиле */
+.gal-nav {
+  display: flex; gap: var(--space-2);
+  margin-top: var(--space-4); padding-bottom: var(--space-4);
+  overflow-x: auto;
+}
+.gal-chip {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border); background: var(--color-white);
+  font-size: 14px; font-weight: 500; color: var(--color-text);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.gal-chip:active { opacity: 0.6; }
+.gal-chip.active { background: var(--color-primary); border-color: transparent; color: #fff; }
+.gal-chip-count { font-size: 12px; opacity: 0.65; font-variant-numeric: tabular-nums; }
+
+.gal-group { padding: var(--space-6) var(--space-5) 0; }
+.gal-group-title {
+  display: flex; align-items: baseline; gap: var(--space-2);
+  font-size: 18px; font-weight: 700; color: var(--color-heading);
+}
+.gal-group-count { font-size: 14px; font-weight: 500; color: var(--color-weak); }
+.gal-group-hint { margin-top: var(--space-1); font-size: 14px; color: var(--color-weak); max-width: 62ch; }
+
+.gal-grid {
+  margin-top: var(--space-5);
+  display: grid;
+  /* Ширина колонки — ширина уменьшенной рамки: карточки не растягиваются,
+     иначе подписи разъезжаются, а рамки остаются на месте. */
+  grid-template-columns: repeat(auto-fill, minmax(232px, max-content));
+  gap: var(--space-6) var(--space-5);
+  justify-content: start;
+}
+
+.gal-cell { display: flex; flex-direction: column; gap: var(--space-3); width: 232px; }
+/* Рамку уменьшаем трансформом, а не процентами: внутри всё считает пиксели
+   от 402×874, и настоящий экран должен остаться настоящим. */
+.gal-frame {
+  width: 232px; height: 504px;
+  border-radius: 22px; overflow: hidden;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.06);
+}
+.gal-device {
+  width: 402px; height: 874px;
+  max-width: none; margin: 0;
+  transform: scale(0.5774); /* 232 / 402 */
+  transform-origin: top left;
+  /* Внутри витрины высоту задаём сами: --vvh считает видимую область окна,
+     а рамок в окне много. */
+  height: 874px;
+}
+/* Витрина живёт вне .device приложения, поэтому подпираем переменные, на
+   которые опираются экраны: иначе безопасные зоны схлопываются в ноль
+   только визуально, а таб-бар уезжает за край рамки. */
+.gal-device .scroll-area { scrollbar-width: none; }
+.gal-device .scroll-area::-webkit-scrollbar { display: none; }
+
+.gal-caption { display: flex; flex-direction: column; gap: 2px; }
+.gal-title { font-size: 14px; font-weight: 600; color: var(--color-heading); }
+.gal-note { font-size: 13px; line-height: 1.35; color: var(--color-weak); }
+
+@media (max-width: 560px) {
+  .gal-top, .gal-group { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .gal-grid { grid-template-columns: repeat(auto-fill, minmax(160px, max-content)); gap: var(--space-5) var(--space-4); }
+  .gal-cell { width: 160px; }
+  .gal-frame { width: 160px; height: 348px; border-radius: 16px; }
+  .gal-device { transform: scale(0.398); }
+}
+
+/* Переключатели темы и пространства: те же атрибуты на <html>, что в
+   приложении, поэтому перекрашиваются разом все рамки. */
+.gal-switches { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); }
+.gal-seg {
+  display: inline-flex; padding: 3px;
+  border-radius: var(--radius-pill); background: var(--color-background);
+}
+.gal-seg-btn {
+  padding: 6px var(--space-4); border-radius: var(--radius-pill);
+  font-size: 13px; font-weight: 500; color: var(--color-weak);
+  transition: background 0.15s, color 0.15s; -webkit-tap-highlight-color: transparent;
+}
+.gal-seg-btn.active { background: var(--color-white); color: var(--color-text); box-shadow: var(--nav-edge); }

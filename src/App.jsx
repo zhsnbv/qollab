@@ -30,6 +30,7 @@ import ProfilePhoto from './screens/ProfilePhoto';
 import ProfileQr from './screens/ProfileQr';
 import IdCard from './screens/IdCard';
 import Auth from './screens/Auth';
+import AllScreens from './screens/AllScreens';
 import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
@@ -162,19 +163,32 @@ export default function App() {
     return () => clearTimeout(t);
   }, [exiting]);
 
+  // Витрина всех экранов живёт не только вне рамки «телефона», но и вне
+  // общего роутера: у каждой её карточки свой MemoryRouter, а вложенных
+  // роутеров react-router не допускает.
+  const gallery = window.location.pathname === '/all';
+
   return (
-    <BrowserRouter>
-      <CompanyProvider><AuthProvider><FavoritesProvider>
-        <div className="device">
-          <div className={`app-reveal${exiting ? ' app-reveal--in' : ''}`}>
-            {/* Роуты монтируем только в момент ухода сплэша — иначе таймер
-                скелетона «Главной» успевает истечь ещё под непрозрачным
-                сплэшем, и после его ухода скелетон просто не виден. */}
-            {exiting && <Shell />}
-          </div>
-          {!splashDone && <Splash exiting={exiting} />}
-        </div>
-      </FavoritesProvider></AuthProvider></CompanyProvider>
-    </BrowserRouter>
+    <CompanyProvider><AuthProvider><FavoritesProvider>
+      {gallery ? <AllScreens /> : (
+        <BrowserRouter>
+          <Device exiting={exiting} splashDone={splashDone} />
+        </BrowserRouter>
+      )}
+    </FavoritesProvider></AuthProvider></CompanyProvider>
+  );
+}
+
+function Device({ exiting, splashDone }) {
+  return (
+    <div className="device">
+      <div className={`app-reveal${exiting ? ' app-reveal--in' : ''}`}>
+        {/* Роуты монтируем только в момент ухода сплэша — иначе таймер
+            скелетона «Главной» успевает истечь ещё под непрозрачным
+            сплэшем, и после его ухода скелетон просто не виден. */}
+        {exiting && <Shell />}
+      </div>
+      {!splashDone && <Splash exiting={exiting} />}
+    </div>
   );
 }
