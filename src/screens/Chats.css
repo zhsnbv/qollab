@@ -208,3 +208,9 @@ html[data-theme="dark"] .chat-avatar-status {
   background: color-mix(in srgb, var(--sb-to) 34%, var(--color-white));
   color: color-mix(in srgb, var(--sb-to) 78%, #fff);
 }
+
+/* Строка, которую не выбирают: «Избранное» и ассистент. Гасим её целиком —
+   пустой кружок рядом с активными читался бы как «просто не отмечено». */
+.chat-check--off { border-style: dashed; border-color: var(--color-border); }
+.chat-row.locked { opacity: 0.45; }
+.chat-row.locked:active { background: transparent; }

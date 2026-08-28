@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, GearSix } from '@phosphor-icons/react';
 import { notificationGroups } from '../data/notifications';
 import './Notifications.css';
@@ -10,6 +10,7 @@ import { useScrolled } from '../utils/useScrolled';
 export default function Notifications() {
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
+  const location = useLocation();
   const [closing, setClosing] = useState(false);
 
   const close = () => {
@@ -28,7 +29,7 @@ export default function Notifications() {
       <div className="nt-scroll" onScroll={onScroll}>
         <div className="nt-card">
           {notificationGroups.map((g) => (
-            <button className="nt-row" key={g.id} onClick={() => navigate(`/notifications/${g.id}`)}>
+            <button className="nt-row" key={g.id} onClick={() => navigate(`/notifications/${g.id}`, { state: { background: location } })}>
               {/* Кольцо, а не заливка: в макете у групп именно «бублик» своего цвета */}
               <span className="nt-ring" style={{ borderColor: g.tone }} />
               <span className="nt-texts">

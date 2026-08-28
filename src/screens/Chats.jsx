@@ -141,6 +141,10 @@ export default function Chats() {
   // Список id текущего экрана — нужен «Прочитать все», когда ничего не выбрано
   const chatIdsRef = useRef([]);
 
+  // «Избранное» и ассистента не выбирают: это не переписка с человеком, их
+  // нельзя ни удалить, ни оставить непрочитанными.
+  const selectable = (chat) => !chat.kind || chat.kind === 'group';
+
   const toggle = (id) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   const exitSelect = () => { setSelecting(false); setPicked([]); };
   const markRead = () => {
@@ -177,10 +181,10 @@ export default function Chats() {
     .map((c, i) => ({ ...c, id: c.id || `base-${i}` }))
     .filter((c) => !removed.includes(c.id))
     .map((c) => (read.includes(c.id) ? { ...c, unreadCount: undefined } : c));
-  chatIdsRef.current = chats.map((c) => c.id);
+  chatIdsRef.current = chats.filter(selectable).map((c) => c.id);
 
   const openChat = (chat) => {
-    if (selecting) { toggle(chat.id); return; }
+    if (selecting) { if (selectable(chat)) toggle(chat.id); return; }
     if (chat.kind === 'system') return;
     if (chat.to) { navigate(chat.to, { state: { background: location } }); return; }
     // contentIcon/icon — React-компоненты, history.pushState не умеет их клонировать
@@ -237,13 +241,18 @@ export default function Chats() {
         {chats.map((chat) => (
           <li
             key={chat.id}
-            className={`chat-row ${selecting ? 'selecting' : ''} ${picked.includes(chat.id) ? 'picked' : ''}`}
+            className={`chat-row ${selecting ? 'selecting' : ''} ${picked.includes(chat.id) ? 'picked' : ''}${selecting && !selectable(chat) ? ' locked' : ''}`}
             onClick={() => openChat(chat)}
           >
-            {selecting && (
-              <span className="chat-check" aria-hidden>
-                <Checkmark20Filled />
-              </span>
+            {selecting && (selectable(chat)
+              ? (
+                <span className="chat-check" aria-hidden>
+                  <Checkmark20Filled />
+                </span>
+              )
+              /* Место всё равно занимаем: без него строка съезжала бы влево
+                 и список выглядел бы рваным. */
+              : <span className="chat-check chat-check--off" aria-hidden />
             )}
             <Avatar chat={chat} />
             <div className="chat-body">

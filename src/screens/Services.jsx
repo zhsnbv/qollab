@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { MagnifyingGlass, X, SmileySad, GearSix } from '@phosphor-icons/react';
 import TabLayout from '../components/TabLayout';
 import TopBar from '../components/TopBar';
@@ -15,6 +15,7 @@ const norm = (s) => (s || '').toLowerCase();
 export default function Services() {
   const loading = useSkeleton();
   const navigate = useNavigate();
+  const location = useLocation();
   const [view, setView] = useState('list');
   const [query, setQuery] = useState('');
   const q = norm(query.trim());
@@ -29,7 +30,7 @@ export default function Services() {
   }, [q]);
 
   const found = categories.reduce((n, c) => n + c.items.length, 0);
-  const openApp = (app) => navigate(`/app/${app}`);
+  const openApp = (app) => navigate(`/app/${app}`, { state: { background: location } });
 
   const topbar = (
     <TopBar
@@ -38,7 +39,7 @@ export default function Services() {
         <>
           {/* Шестерёнка ведёт в настройку избранного — тот же экран, что и
               «Настроить» на Главной (Figma node 24860-3477) */}
-          <button className="topbar-btn topbar-btn--muted" aria-label="Настроить избранное" onClick={() => navigate('/favorites')}>
+          <button className="topbar-btn topbar-btn--muted" aria-label="Настроить избранное" onClick={() => navigate('/favorites', { state: { background: location } })}>
             <GearSix size={20} weight="fill" />
           </button>
           <ViewToggle view={view} onChange={setView} />

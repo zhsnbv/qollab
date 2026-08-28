@@ -142,15 +142,18 @@ button { border: none; background: none; cursor: pointer; }
    ровно там, где взгляд и так сфокусирован. */
 input, textarea, select, [contenteditable] { caret-color: var(--color-primary); }
 
-/* Палитра статусов из макета: заливка светлая, глиф и текст насыщенные.
-   Один источник на бабл под аватаркой (.sbubble) и кружок в списке чатов
-   (.sdot) — иначе два набора хексов разъедутся на первой правке. */
-.tone--warning { --sb-from: #fff1b8; --sb-to: #ffe58f; --sb-text: #ad6800; }
-.tone--danger  { --sb-from: #ffccc7; --sb-to: #ffa39e; --sb-text: #a8071a; }
-.tone--muted   { --sb-from: #f0f0f0; --sb-to: #d9d9d9; --sb-text: #595959; }
-.tone--violet  { --sb-from: #efdbff; --sb-to: #d3adf7; --sb-text: #391085; }
-.tone--success { --sb-from: #d9f7be; --sb-to: #b7eb8f; --sb-text: #237804; }
-.tone--accent  { --sb-from: #ffe7ba; --sb-to: #ffd591; --sb-text: #ad4e00; }
+/* Палитра статусов: светлая заливка, насыщенные глиф и текст. Один источник
+   на бабл под аватаркой (.sbubble) и кружок в списке чатов — иначе два набора
+   хексов разъедутся на первой правке.
+   Прежние тона брались из ant-подобной палитры и читались мутно: тёмно-коричневый
+   текст на горчичной заливке. Здесь заливка чище, а текст ярче и того же тона —
+   каждая пара даёт не меньше 4.5:1 на самой тёмной точке градиента. */
+.tone--warning { --sb-from: #fff6e0; --sb-to: #ffefc7; --sb-text: #8f5600; }
+.tone--danger  { --sb-from: #ffecea; --sb-to: #ffdcd8; --sb-text: #c4271b; }
+.tone--muted   { --sb-from: #f2f3f5; --sb-to: #e7e9ec; --sb-text: #4b5157; }
+.tone--violet  { --sb-from: #f1ebfe; --sb-to: #e4dafc; --sb-text: #5b34c4; }
+.tone--success { --sb-from: #e6faee; --sb-to: #d1f5df; --sb-text: #087443; }
+.tone--accent  { --sb-from: #fff0de; --sb-to: #ffe1c2; --sb-text: #9a4a08; }
 /* Пустое состояние: серая пилюля цвета подложек интерфейса */
 .tone--empty {
   --sb-from: var(--color-background); --sb-to: var(--color-background);
