@@ -296,8 +296,10 @@ export default function DMChat() {
 
   const pinnedMessages = messages.filter((m) => pinnedIds.includes(m.id));
 
+  // preset — текст подсказки ассистента. Проверяем тип, а не просто наличие:
+  // onClick передаёт сюда событие клика, и оно уходило вместо сообщения.
   const send = (preset) => {
-    const text = (preset ?? input).trim();
+    const text = (typeof preset === 'string' ? preset : input).trim();
     if (!text) return;
 
     if (editing) {
@@ -487,7 +489,7 @@ export default function DMChat() {
           />
         </div>
         {input.trim() ? (
-          <button className="cr-write-btn cr-send" onClick={send} aria-label="Отправить"><PaperPlaneRight size={22} weight="fill" color="#fff" /></button>
+          <button className="cr-write-btn cr-send" onClick={() => send()} aria-label="Отправить"><PaperPlaneRight size={22} weight="fill" color="#fff" /></button>
         ) : (
           <button className="cr-write-btn" aria-label="Голосовое"><Microphone size={24} color="var(--color-text)" /></button>
         )}
