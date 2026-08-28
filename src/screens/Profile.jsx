@@ -347,7 +347,7 @@ export default function Profile() {
     {sosDelete && (
       <ConfirmDialog
         title="Удалить контакт?"
-        text={`${sosDelete.name} перестанет быть SOS-контактом. Это можно будет добавить заново.`}
+        text={`${sosDelete.name} перестанет быть SOS-контактом. Контакт можно будет добавить заново.`}
         confirmLabel="Удалить"
         danger
         onConfirm={() => {

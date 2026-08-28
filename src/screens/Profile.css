@@ -90,7 +90,11 @@ html[data-theme="dark"] .profile-decor-img--dark { display: block; }
 }
 
 /* Сетка мини-карточек 2xN */
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+/* Шаг между плитками — 8, как между карточками: плитка со своей рамкой и
+   фоном — такой же блок. 16–20 в гайдлайне описывает поля карточки, а не
+   просветы внутри неё. Раньше баланс стоял на 16, а задачи на 8, и два
+   одинаковых по устройству ряда выглядели по-разному. */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
 .stat-card {
   background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm);
   padding: var(--space-4); display: flex; flex-direction: column; gap: 6px; text-align: left;
