@@ -14,6 +14,14 @@ export const employees = [
     initials: 'ИИ', dismissed: true,
   },
   {
+    id: 'ekaterina', name: 'Екатерина Брунер', dismissed: true,
+    // У уволенного из карточки остаётся только телефон и дата последнего входа:
+    // должность, подразделение и руководитель к нему уже не относятся.
+    phone: '+7 (701) 413-49-44',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    lastSeen: '19.06.2026 в 14:55',
+  },
+  {
     id: 'aliya-seitova', name: 'Алия Сеитова',
     company: 'Шубарколь Комир',
     phone: '+77015500234', role: 'Бухгалтер',

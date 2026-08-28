@@ -5,8 +5,10 @@ import './ProfileHero.css';
 // Шапка своего профиля. Две версии живут рядом: центрированная — то, что
 // проверяем сейчас, прежняя с 3D-линией — на случай отката (см. src/config.js).
 // status — бабл под аватаркой (у себя кнопка «Установить статус»),
+// badge — пилюля под именем (например «Бывший сотрудник»: это не статус,
+// а факт из HR, и хвостик к аватарке ему не нужен),
 // presence — строка «был(-а) в сети» под должностью.
-export default function ProfileHero({ me, onPhoto, status, presence, children }) {
+export default function ProfileHero({ me, onPhoto, status, badge, presence, children }) {
   if (!PROFILE_V2) return <ClassicHero me={me} onPhoto={onPhoto} />;
 
   const avatar = me.avatar
@@ -29,6 +31,7 @@ export default function ProfileHero({ me, onPhoto, status, presence, children })
       )}
       {status}
       <h2 className="phero-name">{me.name}</h2>
+      {badge}
       {me.role && <div className="phero-role">{me.role}</div>}
       {presence && <div className="phero-presence">{presence}</div>}
       {children}

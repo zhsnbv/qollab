@@ -11,6 +11,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import { useSkeleton, ChatsSkeleton, FadeIn } from '../components/Skeleton';
 import ErgizAvatar from '../components/ErgizAvatar';
+import { workStatusOf } from '../data/person';
 import './Chats.css';
 
 // Первый экран — данные из Figma-макета Chats (Type=Chats), аватары в public/img/chats.
@@ -25,6 +26,13 @@ const baseChats = [
   { avatar: '/img/chats/daniyar.png', title: 'Данияр Кенжебаев', preview: 'Вот зал куда мы ходим', time: '10:51', online: true, contentIcon: VideoCamera, attachKind: 'video' },
   { avatar: '/img/chats/qollab-group.png', title: 'Групповой чат qollab', kind: 'group', sender: 'Айдар С.:', preview: 'Вот скрин приложения с о', time: '10:01', muted: true, contentIcon: Camera, attachKind: 'photo' },
   { avatar: '/img/chats/aray.png', title: 'Ерлан Абишев', preview: 'Подпиши этот договор', time: '09:01', contentIcon: FileText, attachKind: 'document' },
+  // Уволенный: переписка остаётся, писать в неё уже нельзя
+  {
+    id: 'ekaterina', profileId: 'ekaterina', dismissed: true,
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    title: 'Екатерина Брунер', preview: 'спасибо!', time: '08.08',
+    lastSeen: '19.06.2026 в 14:55',
+  },
 ];
 
 // Дальше — бесконечная мок-лента: уникальные фото-аватарки (randomuser.me,
@@ -86,10 +94,21 @@ function Avatar({ chat }) {
   if (chat.kind === 'bot') {
     return <div className="chat-avatar chat-avatar--bot"><ErgizAvatar size={56} /></div>;
   }
+  // Статус перебивает «онлайн»: он конкретнее — человек может быть в сети
+  // и при этом «Не беспокоить». У групп и уволенных статуса нет; группу узнаём
+  // по kind, по своей комнате и по подписи отправителя в превью.
+  const group = chat.kind === 'group' || !!chat.to || !!chat.sender;
+  const status = group || chat.dismissed
+    ? null
+    : workStatusOf({ id: chat.profileId, name: chat.title });
   return (
     <div className="chat-avatar">
       <img src={chat.avatar} alt="" loading="lazy" />
-      {chat.online && <span className="chat-avatar-online" />}
+      {status ? (
+        <span className={`chat-avatar-status tone--${status.tone}`} title={status.short}>
+          <status.Icon />
+        </span>
+      ) : chat.online && <span className="chat-avatar-online" />}
     </div>
   );
 }

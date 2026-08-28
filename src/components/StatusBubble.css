@@ -25,18 +25,8 @@ button.sbubble:active { opacity: 0.7; }
 .sbubble svg.sbubble-tail { width: 16px; height: 9px; color: var(--sb-from); }
 .sbubble span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Тона взяты из палитры макета: заливка светлая, глиф и текст насыщенные */
-.sbubble--warning { --sb-from: #fff1b8; --sb-to: #ffe58f; --sb-text: #ad6800; }
-.sbubble--danger  { --sb-from: #ffccc7; --sb-to: #ffa39e; --sb-text: #a8071a; }
-.sbubble--muted   { --sb-from: #f0f0f0; --sb-to: #d9d9d9; --sb-text: #595959; }
-.sbubble--violet  { --sb-from: #efdbff; --sb-to: #d3adf7; --sb-text: #391085; }
-.sbubble--success { --sb-from: #d9f7be; --sb-to: #b7eb8f; --sb-text: #237804; }
-.sbubble--accent  { --sb-from: #ffe7ba; --sb-to: #ffd591; --sb-text: #ad4e00; }
-/* Пустое состояние: серая пилюля цвета подложек интерфейса */
-.sbubble--empty {
-  --sb-from: var(--color-background); --sb-to: var(--color-background);
-  --sb-text: var(--color-text);
-}
+/* Тона живут в tokens.css: ими красится и этот бабл, и кружок статуса
+   в списке чатов — палитра одна на оба. */
 
 /* В тёмной теме те же тона приглушаем, иначе пилюля светится */
 html[data-theme="dark"] .sbubble {

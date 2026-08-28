@@ -177,7 +177,9 @@
 }
 .chats-act {
   flex: 1; height: 52px; border-radius: var(--radius-pill);
-  background: var(--nav-bg);
+  /* Прозрачнее таб-бара: при 0.8 блюр под кнопкой почти не читается, а он
+     здесь и нужен — панель стоит поверх списка. */
+  background: color-mix(in srgb, var(--color-white) 62%, transparent);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
   box-shadow: var(--nav-edge), var(--nav-shadow);
@@ -190,3 +192,19 @@
    иначе панель перестраивается на каждый тап по чекбоксу. */
 .chats-act:disabled { color: var(--color-disabled); }
 .chats-act:disabled:active { opacity: 1; }
+
+/* Кружок статуса на аватарке — на месте зелёной точки «онлайн» и вместо неё:
+   статус конкретнее присутствия, поэтому при обоих показываем его. */
+.chat-avatar-status {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--color-white);
+  background: var(--sb-to); color: var(--sb-text);
+  display: flex; align-items: center; justify-content: center;
+  box-sizing: content-box;
+}
+.chat-avatar-status svg { width: 13px; height: 13px; }
+html[data-theme="dark"] .chat-avatar-status {
+  background: color-mix(in srgb, var(--sb-to) 34%, var(--color-white));
+  color: color-mix(in srgb, var(--sb-to) 78%, #fff);
+}

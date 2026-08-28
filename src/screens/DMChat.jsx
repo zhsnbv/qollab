@@ -81,6 +81,17 @@ function isEmptyChat(chat) {
 function buildHistory(chat) {
   if (!chat) return [];
   const attach = attachmentFor(chat);
+  if (chat.dismissed) {
+    return [
+      { id: 1, mine: false, text: 'Добрый день!', time: '09:30' },
+      { id: 2, mine: false, text: 'у меня по макетам поправка небольшая, можете плз где SAP все заменить на UserRepo', time: '09:30' },
+      { id: 3, mine: true, text: 'Добрый день. Хорошо', time: '09:30', status: 'read' },
+      { id: 4, mine: false, text: 'поменяли стратегию)', time: '09:31' },
+      { id: 5, mine: false, text: 'спасибо!', time: '09:31' },
+      { id: 6, mine: true, text: 'Да не за что) до полудня поправлю 🤝', time: '09:31', status: 'read' },
+      { id: 7, mine: false, text: '👍', time: '09:54' },
+    ];
+  }
   if (chat.kind === 'bot') {
     return [
       { id: 1, mine: false, author: 'ERGiz', text: 'Привет! Я ERGiz — ваш AI-помощник qollab 🤖 Чем могу помочь?', time: '13:40' },
@@ -108,8 +119,17 @@ function replyFor(chat) {
 function subtitleFor(chat) {
   if (chat.kind === 'bot') return 'AI-помощник qollab';
   if (chat.kind === 'group') return 'Групповой чат';
+  // У уволенного показываем точную дату последнего входа: «недавно» о человеке,
+  // которого в компании уже нет, звучит неправдой.
+  if (chat.dismissed) return `был(-а) в сети ${chat.lastSeen || 'давно'}`;
   return chat.online ? 'в сети' : 'был(а) недавно';
 }
+
+// «Екатерина Брунер» → «Екатерина Б» — так подписан системный чип в чате
+const shortName = (name = '') => {
+  const [first, last] = name.split(' ');
+  return last ? `${first} ${last[0]}` : first;
+};
 
 // ERGiz — рамка+звезда вёрсткой (ErgizAvatar), у остальных — фото, а если его
 // нет (сотрудник из справочника) — инициалы, иначе в шапке пустой кружок.
@@ -329,7 +349,7 @@ export default function DMChat() {
             <span className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</span>
           </span>
         </button>
-        {!chat.kind && (
+        {!chat.kind && !chat.dismissed && (
           <button className="cr-walkie" aria-label="Позвонить"><Call24Filled /></button>
         )}
       </header>
@@ -359,10 +379,16 @@ export default function DMChat() {
                 withAvatarSlot={chat.kind === 'group'}
                 reactions={reactions[msg.id]}
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
-                onLongPress={onLongPress}
-                onSwipeReply={setReply}
+                onLongPress={chat.dismissed ? undefined : onLongPress}
+                onSwipeReply={chat.dismissed ? undefined : setReply}
               />
             ))}
+            {chat.dismissed && (
+              <>
+                <div className="cr-day">08.08.2026</div>
+                <div className="msg-status-chip">{shortName(chat.title)} покинул(-а) организацию</div>
+              </>
+            )}
             {notice.map((n) => (
               <div className="msg-status-chip" key={n.id}>{n.text}</div>
             ))}
@@ -400,6 +426,16 @@ export default function DMChat() {
         </div>
       )}
 
+      {chat.dismissed ? (
+        /* Плашка занимает место поля ввода: та же плавающая «стеклянная»
+           подложка, только вместо кнопок — объяснение, почему писать нельзя. */
+        <div className="cr-writebar cr-writebar--locked">
+          <p className="cr-locked">
+            Пользователь больше не является сотрудником компании.
+            Отправка новых сообщений недоступна.
+          </p>
+        </div>
+      ) : (
       <div className="cr-writebar">
         <button className="cr-write-btn" aria-label="Вложение" onClick={() => setAttachOpen(true)}>
           <Plus size={24} color="var(--color-text)" />
@@ -418,6 +454,7 @@ export default function DMChat() {
           <button className="cr-write-btn" aria-label="Голосовое"><Microphone size={24} color="var(--color-text)" /></button>
         )}
       </div>
+      )}
 
       {menu && (
         <MessageMenu

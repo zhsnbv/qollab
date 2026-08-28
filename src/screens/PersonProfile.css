@@ -123,3 +123,21 @@
 .pp-empty-ico svg { width: 28px; height: 28px; }
 .pp-empty-title { font-size: 16px; font-weight: 600; color: var(--color-text); }
 .pp-empty-sub { font-size: 13px; color: var(--color-weak); line-height: 1.4; max-width: 260px; }
+
+/* Профиль уволенного: пилюля на месте бабла статуса — без хвостика и иконки,
+   это не статус, а факт из HR. */
+.phero-dismissed {
+  margin-top: var(--space-2);
+  display: inline-flex; align-items: center;
+  padding: 5px 12px; border-radius: var(--radius-pill);
+  background: var(--color-primary-bg); color: var(--color-primary);
+  font-size: 13px; font-weight: 500; line-height: 16px;
+}
+.pp-dismissed-hint {
+  padding: 0 var(--space-4);
+  font-size: 14px; line-height: 1.4; color: var(--color-weak);
+}
+
+/* Телефон уволенного — единственная ссылка на экране: подчёркивание браузера
+   спорит с остальными значениями в карточках, они его не носят. */
+a.data-value.link { text-decoration: none; }

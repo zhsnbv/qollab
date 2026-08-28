@@ -7,7 +7,7 @@ export default function StatusBubble({ status, onClick }) {
   const { Icon, short, tone } = status;
   const Tag = onClick ? 'button' : 'span';
   return (
-    <Tag className={`sbubble sbubble--${tone}`} onClick={onClick} type={onClick ? 'button' : undefined}>
+    <Tag className={`sbubble tone--${tone}`} onClick={onClick} type={onClick ? 'button' : undefined}>
       {/* Хвостик рисуем вектором: у него вогнутые бока, поэтому обычный
           CSS-треугольник тут не подходит */}
       <svg className="sbubble-tail" width="16" height="9" viewBox="0 0 16 9" aria-hidden="true">

@@ -142,6 +142,21 @@ button { border: none; background: none; cursor: pointer; }
    ровно там, где взгляд и так сфокусирован. */
 input, textarea, select, [contenteditable] { caret-color: var(--color-primary); }
 
+/* Палитра статусов из макета: заливка светлая, глиф и текст насыщенные.
+   Один источник на бабл под аватаркой (.sbubble) и кружок в списке чатов
+   (.sdot) — иначе два набора хексов разъедутся на первой правке. */
+.tone--warning { --sb-from: #fff1b8; --sb-to: #ffe58f; --sb-text: #ad6800; }
+.tone--danger  { --sb-from: #ffccc7; --sb-to: #ffa39e; --sb-text: #a8071a; }
+.tone--muted   { --sb-from: #f0f0f0; --sb-to: #d9d9d9; --sb-text: #595959; }
+.tone--violet  { --sb-from: #efdbff; --sb-to: #d3adf7; --sb-text: #391085; }
+.tone--success { --sb-from: #d9f7be; --sb-to: #b7eb8f; --sb-text: #237804; }
+.tone--accent  { --sb-from: #ffe7ba; --sb-to: #ffd591; --sb-text: #ad4e00; }
+/* Пустое состояние: серая пилюля цвета подложек интерфейса */
+.tone--empty {
+  --sb-from: var(--color-background); --sb-to: var(--color-background);
+  --sb-text: var(--color-text);
+}
+
 /* Тактильность: кликабельные элементы гаснут по прозрачности при нажатии.
    Помечаются классом .pressable (или это делают точечные правила экранов). */
 .pressable { transition: opacity 0.12s ease, transform 0.12s ease; -webkit-tap-highlight-color: transparent; }

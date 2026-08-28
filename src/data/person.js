@@ -63,18 +63,29 @@ const CORP = {
 const hash = (str) => [...str].reduce((n, c) => (n * 31 + c.charCodeAt(0)) % 997, 7);
 const hasHistory = (person) => !!userProfiles[person.id] || hash(person.name) % 2 === 0;
 
+// Рабочий статус человека — тот же, что показывает профиль. Список чатов
+// берёт его отсюда же, иначе в двух местах он был бы разным.
+export const workStatusOf = (person) => (
+  person && person.name ? (WORK_STATUS[person.id] || spreadStatus(person)) : null
+);
+
 // Собеседник приходит либо как id известного профиля, либо строкой справочника
 // (тогда переписки с ним ещё нет и счётчики нулевые).
 export function getPerson(id, employee) {
-  const base = userProfiles[id] || (employee && {
-    id: employee.id,
-    name: employee.name,
-    role: employee.role,
-    phone: employee.phone,
-    avatar: employee.avatar,
-    initials: employee.initials,
-    tint: employee.tint,
-    status: employee.dismissed ? 'Сотрудник уволен' : 'был(-а) в сети недавно',
+  // Человека из справочника узнаём и по id: чат уволенного передаёт только его,
+  // и без этой ветки профиль подставлял первого попавшегося коллегу.
+  const src = employee || employees.find((e) => e.id === id);
+  const base = userProfiles[id] || (src && {
+    id: src.id,
+    name: src.name,
+    role: src.role,
+    phone: src.phone,
+    avatar: src.avatar,
+    initials: src.initials,
+    tint: src.tint,
+    status: src.dismissed
+      ? `был(-а) в сети ${src.lastSeen || 'давно'}`
+      : 'был(-а) в сети недавно',
   }) || userProfiles.ayazhan;
 
   const fromDirectory = employees.find((e) => e.id === base.id || e.name === base.name);
@@ -99,7 +110,7 @@ export function getPerson(id, employee) {
     thanks: 21,
     interests: ['Баскетбол', 'Кино', 'Музыка', 'Путешествия'],
     work: WORK_STATUS[base.id] || spreadStatus(base),
-    dismissed: !!employee?.dismissed,
+    dismissed: !!(employee?.dismissed || fromDirectory?.dismissed),
     team: structure.team,
     supervisor: structure.supervisor,
   };

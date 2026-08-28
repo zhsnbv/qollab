@@ -417,3 +417,23 @@ html.kb .cr-compose { bottom: 54px; }
   pointer-events: none;
 }
 .msg-reply-hint svg { width: 16px; height: 16px; }
+
+/* Чат с уволенным: писать нельзя, поэтому на месте поля — объяснение.
+   Подложка та же «стеклянная», что у кнопок, иначе плашка выглядела бы
+   приклеенной к экрану, а не плавающей вместе с остальным writebar. */
+.cr-writebar--locked { display: block; }
+/* Плашка втрое выше поля ввода, поэтому и просвет под лентой больше: иначе
+   системный чип «покинул(-а) организацию» прячется под ней. */
+.chatroom:has(.cr-writebar--locked) .cr-body {
+  padding-bottom: calc(128px + max(0px, env(safe-area-inset-bottom)));
+}
+.cr-locked {
+  pointer-events: auto;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-white) 62%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--nav-edge), 0 8px 40px rgba(0, 0, 0, 0.12);
+  font-size: 13px; line-height: 1.4; text-align: center; color: var(--color-weak);
+}

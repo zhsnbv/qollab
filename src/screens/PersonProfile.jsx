@@ -86,6 +86,47 @@ export default function PersonProfile() {
     { id: 'mute', label: 'Звук', Icon: muted ? AlertOff24Filled : Alert24Filled, onClick: toggleMute },
   ];
 
+  // Профиль уволенного — тот же шаблон, но урезанный: действий над человеком,
+  // которого нет в компании, не осталось, а корпоративные данные к нему уже
+  // не относятся. Остаётся то, что ещё имеет смысл: как его зовут, как с ним
+  // связаться вне qollab и почему всё остальное недоступно.
+  if (p.dismissed) {
+    return (
+      <div className={`person ${closing ? 'closing' : ''}`}>
+        <header className={`pp-top ${scrolled ? 'hdr-shadow' : ''}`}>
+          <button className="pp-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
+          <h1 className="pp-title">Профиль</h1>
+        </header>
+
+        <div className="pp-scroll" onScroll={onScroll}>
+          <div className="profile">
+            <ProfileHero
+              me={{ ...p, role: undefined }}
+              badge={<span className="phero-dismissed">Бывший сотрудник</span>}
+              presence={p.status}
+            />
+
+            <section className="pcard">
+              <div className="data-list">
+                <div className="data-row last">
+                  <div className="data-label">Мобильный телефон</div>
+                  <div className="data-value-line">
+                    <a className="data-value link" href={`tel:${p.phone.replace(/[^+\d]/g, '')}`}>{p.phone}</a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <p className="pp-dismissed-hint">
+              Пользователь больше не является сотрудником компании.
+              Переписка в архиве, новые сообщения недоступны.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`person ${closing ? 'closing' : ''}`}>
       <header className={`pp-top ${scrolled ? 'hdr-shadow' : ''}`}>
