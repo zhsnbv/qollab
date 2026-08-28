@@ -13,6 +13,7 @@ import { miniApps } from '../data/miniapps';
 import { servicesById } from '../context/FavoritesContext';
 import { useSkeleton } from '../components/Skeleton';
 import ActionSheet from '../components/ActionSheet';
+import Switch from '../components/Switch';
 import Toast from '../components/Toast';
 import {
   ArrowSync24Regular, Share24Regular, PhoneAdd24Regular,
@@ -247,12 +248,11 @@ export default function MiniApp() {
       {!loading && screen?.favorite && (
         <label className="ma-fav">
           <span>Добавить в избранное</span>
-          <input
-            type="checkbox"
+          <Switch
             checked={!!favs[favKey]}
-            onChange={(e) => setFavs((f) => ({ ...f, [favKey]: e.target.checked }))}
+            onChange={(on) => setFavs((f) => ({ ...f, [favKey]: on }))}
+            label="Добавить в избранное"
           />
-          <span className="ma-switch" />
         </label>
       )}
 

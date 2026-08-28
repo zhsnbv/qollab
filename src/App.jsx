@@ -23,6 +23,9 @@ import GroupProfile from './screens/GroupProfile';
 import NewChat from './screens/NewChat';
 import ChatSearch from './screens/ChatSearch';
 import Settings from './screens/Settings';
+import {
+  NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
+} from './screens/SettingsPages';
 import ProfilePhoto from './screens/ProfilePhoto';
 import Auth from './screens/Auth';
 import Splash from './components/Splash';
@@ -80,6 +83,12 @@ function OverlayRoutes({ location }) {
         <Route path="/new-chat" element={<NewChat />} />
         <Route path="/chat-search" element={<ChatSearch />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/notifications" element={<NotificationSettings />} />
+        <Route path="/settings/devices" element={<Devices />} />
+        <Route path="/settings/permissions" element={<Permissions />} />
+        <Route path="/settings/help" element={<Help />} />
+        <Route path="/settings/help/device" element={<DeviceInfo />} />
+        <Route path="/settings/privacy" element={<Privacy />} />
         <Route path="/profile/photo" element={<ProfilePhoto />} />
         {/* Мини-аппы: уровень навигации зашит в путь (/app/mytasks/it/closed),
             поэтому «назад» и история браузера работают без своего стека. */}

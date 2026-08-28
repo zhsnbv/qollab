@@ -1,0 +1,103 @@
+/* Подэкраны настроек. Каркас (шапка, прокрутка, выезд) — в SettingsPage,
+   здесь только то, чем эти экраны отличаются друг от друга. */
+
+/* Строка со свитчем. Строки уведомлений живут в карточке, разрешения — прямо
+   на фоне: в макете у них нет подложки, разделяют их сами промежутки. */
+.sp-list { background: var(--color-white); border-radius: var(--radius-lg); overflow: hidden; }
+.sp-list--plain { background: none; }
+.sp-row {
+  position: relative;
+  width: 100%; min-height: 60px;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.sp-list .sp-row + .sp-row::before {
+  content: ''; position: absolute; top: 0; left: 68px; right: 0; height: 1px;
+  background: var(--color-border);
+}
+.sp-list--plain .sp-row::before { display: none; }
+.sp-label { flex: 1; min-width: 0; font-size: 15px; color: var(--color-text); }
+
+/* Иконка сервиса: эмодзи в круге, у своих сервисов — лого qollab */
+.sp-app {
+  width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%;
+  background: var(--color-background);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; line-height: 1;
+}
+/* Свои сервисы подписаны иконкой приложения — она уже есть как app-icon.svg,
+   рисовать под них отдельные эмодзи не нужно. */
+.sp-app--logo {
+  background: url('/app-icon.svg') center / cover no-repeat;
+}
+/* Разрешения: контурный глиф акцентом, без подложки — как в макете */
+.sp-perm-ico { width: 24px; flex-shrink: 0; display: flex; color: var(--color-primary); }
+
+/* Привязка устройства */
+.sp-link { padding: var(--space-5) var(--space-4); text-align: center; }
+.sp-link-art { margin-bottom: var(--space-3); display: flex; justify-content: center; }
+.sp-link-art svg { width: 168px; height: auto; }
+.sp-link-text { font-size: 14px; line-height: 1.45; color: var(--color-weak); }
+.sp-link-text b { color: var(--color-primary); font-weight: 400; }
+.sp-btn {
+  width: 100%; min-height: 52px; margin-top: var(--space-4);
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary); color: #fff;
+  font-size: 16px; font-weight: 500;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.sp-btn:active { opacity: 0.8; }
+
+/* Заголовок группы капсом — так в макете отделены «это устройство»
+   и «активные сессии» от карточки привязки */
+.sp-caps { margin-top: var(--space-5); text-transform: uppercase; letter-spacing: 0.4px; }
+
+.sp-session { min-height: 64px; }
+.sp-session:disabled { cursor: default; }
+.sp-session-ico {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%;
+  background: #1677ff; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.sp-session-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sp-session-name { font-size: 16px; font-weight: 500; color: var(--color-heading); }
+.sp-session-when { font-size: 13px; color: var(--color-weak); }
+.st-card .sp-row + .sp-row::before {
+  content: ''; position: absolute; top: 0; left: var(--space-4); right: var(--space-4);
+  height: 1px; background: var(--color-border);
+}
+.sp-danger .sp-label, .sp-danger .sp-session-ico { color: var(--color-danger); }
+.sp-danger .sp-session-ico { background: var(--danger-bg); }
+.sp-hint {
+  padding: var(--space-2) var(--space-4) 0;
+  font-size: 13px; line-height: 1.4; color: var(--color-weak);
+}
+
+/* Данные об устройстве: подписи и значения столбиком — так карточку удобно
+   читать и на скриншоте, который пришлют в поддержку. */
+.sp-info { padding: var(--space-5) var(--space-4); }
+.sp-info-title { font-size: 18px; font-weight: 700; color: var(--color-heading); }
+.sp-info-list {
+  margin-top: var(--space-4); padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+.sp-info-row dt { font-size: 14px; color: var(--color-weak); }
+.sp-info-row dd { margin-top: 2px; font-size: 15px; font-weight: 600; color: var(--color-heading); }
+.sp-info .sp-btn { margin-top: var(--space-5); }
+
+/* Документ: длинный текст, поэтому строки шире, а разделы отбиты сильнее
+   абзацев — иначе в сплошной нумерации теряется структура. */
+.sp-doc { padding: var(--space-5) var(--space-4); }
+.sp-doc-updated { font-size: 13px; color: var(--color-weak); margin-bottom: var(--space-4); }
+.sp-doc-title {
+  margin: var(--space-6) 0 var(--space-3);
+  font-size: 16px; font-weight: 600; color: var(--color-heading);
+}
+.sp-doc section:first-of-type .sp-doc-title { margin-top: 0; }
+.sp-doc-p { font-size: 14px; line-height: 1.55; color: var(--color-text); margin-bottom: var(--space-3); }
+.sp-doc-list { margin: 0 0 var(--space-3) var(--space-5); }
+.sp-doc-list li { font-size: 14px; line-height: 1.55; color: var(--color-text); list-style: disc; margin-bottom: var(--space-1); }

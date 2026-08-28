@@ -1,0 +1,25 @@
+/* Переключатель: сам input и есть видимая часть — приводим его к нужному виду
+   через appearance: none. Так не нужен ни скрытый чекбокс рядом, ни label
+   вокруг, и компонент вставляется в любую строку. */
+.switch {
+  appearance: none; -webkit-appearance: none;
+  width: 51px; height: 31px; flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-light);
+  position: relative; cursor: pointer;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 27px; height: 27px; border-radius: var(--radius-pill);
+  background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.switch:checked { background: var(--color-success); }
+.switch:checked::after { transform: translateX(20px); }
+.switch:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .switch, .switch::after { transition: none; }
+}
