@@ -147,3 +147,46 @@
 }
 
 .chat-sentinel { height: 1px; }
+
+/* ── Режим выбора ────────────────────────────────────────────────────────── */
+/* Круглая галочка слева. Пустая — обводка, выбранная — заливка акцентом;
+   сам глиф внутри есть всегда, но у невыбранной он прозрачный: так кружок
+   не меняет размер при нажатии. */
+.chat-check {
+  width: 24px; height: 24px; flex-shrink: 0;
+  border-radius: 50%; border: 1.5px solid var(--color-light);
+  display: flex; align-items: center; justify-content: center;
+  color: transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.chat-check svg { width: 16px; height: 16px; }
+.chat-row.picked .chat-check {
+  background: var(--color-primary); border-color: var(--color-primary); color: #fff;
+}
+.chat-row.picked { background: var(--color-primary-bg); }
+/* В режиме выбора строка ничего не открывает, поэтому нажатие только красим */
+.chat-row.selecting:active { background: var(--color-background); }
+
+/* Панель действий на месте таб-бара. Ту же зону занимает .bottomnav, поэтому
+   геометрия у них общая — иначе кнопки прыгали бы при входе в режим. */
+.chats-actionbar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 20;
+  display: flex; gap: var(--space-2);
+  padding: 16px 20px max(25px, env(safe-area-inset-bottom));
+  background: var(--nav-fade);
+}
+.chats-act {
+  flex: 1; height: 52px; border-radius: var(--radius-pill);
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--nav-edge), var(--nav-shadow);
+  font-size: 16px; font-weight: 500; color: var(--color-primary);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.chats-act:active { opacity: 0.6; }
+.chats-act--danger { color: var(--color-danger); }
+/* Пока ничего не выбрано, удалять нечего: кнопка гаснет, а не исчезает —
+   иначе панель перестраивается на каждый тап по чекбоксу. */
+.chats-act:disabled { color: var(--color-disabled); }
+.chats-act:disabled:active { opacity: 1; }

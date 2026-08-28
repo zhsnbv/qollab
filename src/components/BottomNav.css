@@ -15,6 +15,9 @@
   pointer-events: none;
 }
 
+/* Режим выбора чатов ставит на это место свою панель действий (см. Chats.css) */
+html.selecting .bottomnav { display: none; }
+
 .bottomnav-row {
   position: relative;
   height: 65px;
