@@ -7,13 +7,22 @@ import { structure } from './profile';
 import { statusById, vacationStatus } from './statuses';
 
 // Статусы коллег: обычные человек ставит себе сам, отпуск приезжает из HR
-// вместе с датами. В прототипе розданы нескольким людям, чтобы были видны
-// разные варианты бабла.
+// вместе с датами. В прототипе розданы вручную, чтобы разные варианты были
+// видны сразу — и в бабле профиля, и кружком в списке чатов.
+//
+// Ключ — id профиля или имя: первые строки списка чатов написаны руками и id
+// не имеют, а раздача по хешу до них не доставала — первый статус выпадал на
+// десятую строку, ниже экрана, и казалось, что их нет вовсе.
 const WORK_STATUS = {
   arman: vacationStatus('25 авг', '3 сен'),
   madina: statusById('dnd'),
   dinara: statusById('busy'),
   nurlan: statusById('brb'),
+  'Аяжан Сериккызы': statusById('busy'),
+  'Данияр Кенжебаев': statusById('brb'),
+  'Ерлан Абишев': statusById('dnd'),
+  'Нурлан Бейсенов': statusById('off'),
+  'Мадина Жумагулова': statusById('away'),
 };
 
 // Остальным раздаём статусы по имени: примерно у каждого третьего он есть,
@@ -27,6 +36,8 @@ const spreadStatus = (person) => {
   // при том же основании все получали бы один и тот же.
   return h % 5 < 2 ? statusById(SPREAD[Math.floor(h / 5) % SPREAD.length]) : null;
 };
+
+const pickStatus = (person) => WORK_STATUS[person.id] || WORK_STATUS[person.name] || spreadStatus(person);
 
 // «Обо мне» человек пишет сам; в прототипе текст общий — своего у карточек
 // собеседников в данных нет.
@@ -65,9 +76,7 @@ const hasHistory = (person) => !!userProfiles[person.id] || hash(person.name) % 
 
 // Рабочий статус человека — тот же, что показывает профиль. Список чатов
 // берёт его отсюда же, иначе в двух местах он был бы разным.
-export const workStatusOf = (person) => (
-  person && person.name ? (WORK_STATUS[person.id] || spreadStatus(person)) : null
-);
+export const workStatusOf = (person) => (person && person.name ? pickStatus(person) : null);
 
 // Собеседник приходит либо как id известного профиля, либо строкой справочника
 // (тогда переписки с ним ещё нет и счётчики нулевые).
@@ -109,7 +118,7 @@ export function getPerson(id, employee) {
     about: ABOUT,
     thanks: 21,
     interests: ['Баскетбол', 'Кино', 'Музыка', 'Путешествия'],
-    work: WORK_STATUS[base.id] || spreadStatus(base),
+    work: pickStatus(base),
     dismissed: !!(employee?.dismissed || fromDirectory?.dismissed),
     team: structure.team,
     supervisor: structure.supervisor,
