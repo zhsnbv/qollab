@@ -29,8 +29,15 @@ export default function NotificationGroup() {
     );
   }
 
-  // Группируем по дню, сохраняя порядок: разделитель рисуем при смене дня.
-  let lastDay = null;
+  // Каждый день — своя секция: липкая пилюля живёт внутри неё, поэтому
+  // следующая дата естественно выталкивает предыдущую, а не накладывается.
+  // Так же собрана лента чата.
+  const daySections = group.items.reduce((acc, n) => {
+    const last = acc[acc.length - 1];
+    if (last && last.day === n.day) last.items.push(n);
+    else acc.push({ day: n.day, items: [n] });
+    return acc;
+  }, []);
 
   return (
     <div className={`ngroup ${closing ? 'closing' : ''}`}>
@@ -46,15 +53,11 @@ export default function NotificationGroup() {
       </header>
 
       <div className="ng-scroll">
-        {group.items.map((n, i) => {
-          const showDay = n.day !== lastDay;
-          lastDay = n.day;
-          return (
-            <div key={i}>
-              {showDay && (
-                <div className="ng-day"><span className="ng-day-line" />{n.day}<span className="ng-day-line" /></div>
-              )}
-              <div className="ng-row">
+        {daySections.map((section) => (
+          <section className="ng-day-section" key={section.day}>
+            <div className="ng-day">{section.day}</div>
+            {section.items.map((n, i) => (
+              <div className="ng-row" key={i}>
                 <span className="ng-row-avatar" style={{ background: group.tone }}>
                   <BellSimple size={16} weight="fill" color="#fff" />
                 </span>
@@ -67,9 +70,9 @@ export default function NotificationGroup() {
                   <div className="ng-time">{n.time}</div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            ))}
+          </section>
+        ))}
         <div className="ng-bottom-spacer" />
       </div>
     </div>

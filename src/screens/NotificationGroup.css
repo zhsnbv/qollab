@@ -46,13 +46,27 @@
 .ng-scroll::-webkit-scrollbar { display: none; }
 .ng-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
 
-/* Разделитель дня: линия — текст — линия */
+/* Секция одного дня: липкая пилюля живёт внутри неё, поэтому следующая дата
+   выталкивает предыдущую, а не накладывается на неё. */
+.ng-day-section { display: flex; flex-direction: column; }
+/* Пилюля дня — та же, что в ленте чата: прилипает к верху, чтобы при прокрутке
+   было видно, к какому дню относятся уведомления на экране. Линии по бокам
+   убраны — прилипшая пилюля читается поверх карточек. */
 .ng-day {
-  display: flex; align-items: center; gap: var(--space-2);
+  position: sticky;
+  top: var(--space-2);
+  z-index: 3;
+  align-self: center;
   margin: var(--space-4) 0;
-  font-size: 13px; color: var(--color-weak);
+  padding: 5px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: var(--nav-edge);
+  font-size: 13px; font-weight: 500; color: var(--color-weak);
+  white-space: nowrap;
 }
-.ng-day-line { flex: 1; height: 1px; background: var(--color-border); }
 
 /* Строка = аватар группы + карточка уведомления. Аватар прижат к низу
    карточки, как в макете. */
