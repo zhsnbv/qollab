@@ -143,7 +143,7 @@ export default function Profile() {
         <section className="pcard">
           <div className="pcard-head">
             <h3>Баланс</h3>
-            <span className="pcard-note">Этот блок виден только вам</span>
+            <span className="pcard-note">Виден только вам</span>
           </div>
           <div className="stat-grid">
             {balance.map((b) => <StatCard key={b.id} {...b} />)}
@@ -154,6 +154,10 @@ export default function Profile() {
         <section className="pcard">
           <div className="pcard-head">
             <h3>Мои задачи</h3>
+            {/* Блок такой же приватный, как баланс, — и подпись у него та же.
+                «Этот блок» из прежней формулировки было лишним: подпись стоит
+                внутри блока, и рядом с «Обновить» она перестала помещаться. */}
+            <span className="pcard-note">Виден только вам</span>
             <button className="refresh-btn"><ArrowsClockwise size={12} />Обновить</button>
           </div>
           <div className="task-grid">

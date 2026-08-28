@@ -29,6 +29,17 @@ function activeIndex(pathname) {
   return i === -1 ? 0 : i;
 }
 
+// Повторный тап по активному табу возвращает список наверх — привычка из
+// системных приложений. Роут при этом не меняется, поэтому переход отменяем:
+// иначе экран перемонтировался бы ради ничего.
+function scrollTabToTop(e) {
+  e.preventDefault();
+  const area = document.querySelector('.scroll-area');
+  if (!area || area.scrollTop === 0) return;
+  const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  area.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' });
+}
+
 export default function BottomNav() {
   const location = useLocation();
   // Оверлеи (канал, статья, уведомления, поиск) открываются поверх вкладки и
@@ -86,6 +97,7 @@ export default function BottomNav() {
             // таба чернела, хотя плашка оставалась под ним. Красим по тому же
             // index, по которому позиционируется плашка.
             className={() => `navtab${i === index ? ' active' : ''}`}
+            onClick={(e) => { if (i === index) scrollTabToTop(e); }}
           >
             <span className="navtab-icon-wrap">
               <NavIcon name={icon} active={i === index} />

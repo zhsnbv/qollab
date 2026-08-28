@@ -79,7 +79,8 @@
   width: 100%; margin-top: 2px;
   background: var(--color-primary); color: #fff;
   font-size: 14px; font-weight: 600;
-  padding: 8px var(--space-4); border-radius: var(--radius-sm);
+  /* Капсула: по гайдлайну крупная кнопка с заливкой всегда скруглена нацело */
+  padding: 10px var(--space-4); border-radius: var(--radius-pill);
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .ng-action:active { opacity: 0.85; }

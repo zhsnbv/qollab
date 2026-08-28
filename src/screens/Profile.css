@@ -80,10 +80,20 @@ html[data-theme="dark"] .profile-decor-img--dark { display: block; }
 
 /* Белые блоки */
 .pcard { background: var(--color-white); border-radius: var(--radius-lg); padding: var(--space-5) var(--space-4); }
-.pcard-head { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-5); }
-.pcard-head h3 { flex: 1; font-size: 16px; font-weight: 600; color: var(--color-text); }
-.pcard-note { font-size: 14px; font-weight: 500; color: var(--color-weak); }
+.pcard-head { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-5); }
+.pcard-head h3 { flex: none; font-size: 16px; font-weight: 600; color: var(--color-text); }
+/* Подпись занимает остаток строки и прижимается вправо: в «Моих задачах»
+   правее неё стоит ещё и «Обновить», и без сжатия строка не помещалась. */
+.pcard-note {
+  flex: 1; min-width: 0; text-align: right;
+  font-size: 13px; font-weight: 500; color: var(--color-weak);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* Если подписи нет, остаток строки забирает заголовок */
+.pcard-head h3:only-child { flex: 1; }
+.pcard-head h3 + .refresh-btn { margin-left: auto; }
 .refresh-btn {
+  flex: none;
   display: flex; align-items: center; gap: var(--space-1);
   border: 1px solid var(--color-border); border-radius: var(--radius-pill);
   padding: var(--space-1) var(--space-3); font-size: 13px; color: var(--color-text);
