@@ -1,0 +1,54 @@
+/* История диалогов с ассистентом внутри боковой панели */
+.ergh-head {
+  padding: var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+.ergh-search {
+  display: flex; align-items: center; gap: var(--space-2);
+  height: 44px; padding: 0 var(--space-3);
+  border-radius: var(--radius-md); background: var(--color-background);
+}
+.ergh-search input {
+  flex: 1; min-width: 0; border: none; outline: none; background: none;
+  font-size: 15px; color: var(--color-text);
+}
+.ergh-search input::placeholder { color: var(--color-weak); }
+/* Архив — не строка списка, а вход на второй уровень: обводка отделяет его
+   от самих диалогов, иначе он читался бы как ещё один разговор. */
+.ergh-archive {
+  display: flex; align-items: center; gap: var(--space-2);
+  height: 48px; padding: 0 var(--space-3);
+  border: 1px solid var(--color-border); border-radius: var(--radius-md);
+  font-size: 15px; color: var(--color-text);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ergh-archive:active { opacity: 0.6; }
+.ergh-archive svg:first-child { color: var(--color-weak); flex-shrink: 0; }
+.ergh-archive > svg:last-child { margin-left: auto; }
+
+.ergh-section {
+  padding: var(--space-4) var(--space-4) var(--space-2);
+  font-size: 13px; font-weight: 600; color: var(--color-weak);
+}
+.ergh-row {
+  display: block; width: 100%; text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.ergh-row:active { background: var(--color-background); }
+.ergh-line { display: flex; align-items: baseline; gap: var(--space-2); }
+.ergh-title {
+  flex: 1; min-width: 0; font-size: 15px; font-weight: 500; color: var(--color-heading);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ergh-time { font-size: 13px; color: var(--color-weak); flex-shrink: 0; }
+.ergh-preview {
+  display: block; margin-top: 2px; font-size: 13px; color: var(--color-weak);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ergh-empty {
+  padding: var(--space-6) var(--space-4);
+  font-size: 14px; line-height: 1.4; color: var(--color-weak); text-align: center;
+}

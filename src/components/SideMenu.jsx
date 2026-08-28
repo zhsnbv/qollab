@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  X, CaretRight,
+  X, CaretLeft, CaretRight,
   FileText, Package, CalendarDots, GraduationCap, ClipboardText,
   CheckSquareOffset, AirplaneTilt, Umbrella, ClockCounterClockwise,
   FileArrowDown, IdentificationBadge, Wallet,
@@ -14,11 +14,13 @@ const ICONS = {
   FileArrowDown, IdentificationBadge, Wallet,
 };
 
-// Боковое меню рабочих сервисов профиля. Открывается иконкой в шапке:
-// сервисов до дюжины, и списком на самом экране они перевешивали всё
-// остальное. Закрытие анимируем через состояние, а не размонтирование, —
-// иначе панель исчезала бы мгновенно, без обратного хода.
-export default function SideMenu({ open, onClose }) {
+// Боковая панель. По умолчанию — рабочие сервисы профиля: их до дюжины, и
+// списком на самом экране они перевешивали всё остальное. С children панель
+// показывает что угодно другое (история диалогов ассистента) — механика
+// открытия одна на всех, дублировать её незачем.
+// Закрытие анимируем через состояние, а не размонтирование, — иначе панель
+// исчезала бы мгновенно, без обратного хода.
+export default function SideMenu({ open, onClose, title, onBack, children }) {
   const [visible, setVisible] = useState(open);
   const [closing, setClosing] = useState(false);
 
@@ -47,13 +49,18 @@ export default function SideMenu({ open, onClose }) {
   return (
     <div className={`sidemenu ${closing ? 'closing' : ''}`}>
       <button className="sidemenu-scrim" onClick={onClose} aria-label="Закрыть меню" />
-      <aside className="sidemenu-panel" role="dialog" aria-label="Рабочие сервисы">
+      <aside className="sidemenu-panel" role="dialog" aria-label={title || 'Рабочие сервисы'}>
         <header className="sidemenu-top">
-          <h2 className="sidemenu-title">Рабочие сервисы</h2>
-          <button className="sidemenu-close" onClick={onClose} aria-label="Закрыть"><X size={24} /></button>
+          {onBack && (
+            <button className="sidemenu-close" onClick={onBack} aria-label="Назад"><CaretLeft size={24} /></button>
+          )}
+          <h2 className="sidemenu-title">{title || 'Рабочие сервисы'}</h2>
+          {!onBack && (
+            <button className="sidemenu-close" onClick={onClose} aria-label="Закрыть"><X size={24} /></button>
+          )}
         </header>
         <div className="sidemenu-scroll">
-          {workServices.map(({ id, label, icon }) => {
+          {children || workServices.map(({ id, label, icon }) => {
             const Icon = ICONS[icon];
             return (
               <button className="sidemenu-row" key={id}>

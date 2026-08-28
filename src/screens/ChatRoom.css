@@ -437,3 +437,38 @@ html.kb .cr-compose { bottom: 54px; }
   box-shadow: var(--nav-edge), 0 8px 40px rgba(0, 0, 0, 0.12);
   font-size: 13px; line-height: 1.4; text-align: center; color: var(--color-weak);
 }
+
+/* ── Чат с ассистентом ───────────────────────────────────────────────────── */
+/* Про шифрование говорим один раз в начале переписки — это не сообщение,
+   поэтому не бабл, а широкая плашка на всю ленту. */
+.cr-notice {
+  margin: var(--space-2) 0 var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+  font-size: 14px; line-height: 1.4; color: var(--color-weak); text-align: center;
+}
+/* Полоса «новые сообщения» тянется во всю ширину ленты, компенсируя её поля:
+   она делит переписку, а пилюля посреди строки так не читается. */
+.cr-notice-ico { margin-right: 5px; }
+.cr-unread {
+  margin: var(--space-2) calc(-1 * var(--space-3)) var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-background);
+  font-size: 14px; font-weight: 500; color: var(--color-text); text-align: center;
+}
+/* Подсказки ассистента: пустое поле ввода не объясняет, о чём его спрашивать.
+   Стоят слева, под его сообщением — это его предложения, не мои ответы. */
+.cr-prompts {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: var(--space-2); margin: var(--space-2) 0 var(--space-3);
+}
+.cr-prompt {
+  max-width: 86%; text-align: left;
+  padding: 10px var(--space-4);
+  border: 1px solid var(--color-border); border-radius: var(--radius-pill);
+  background: var(--color-white);
+  font-size: 15px; line-height: 1.3; color: var(--color-primary);
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.cr-prompt:active { opacity: 0.6; }

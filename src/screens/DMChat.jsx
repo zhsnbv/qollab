@@ -5,6 +5,8 @@ import { dayLabel } from '../utils/chatDate';
 import { useKeyboardInset } from '../utils/useKeyboardInset';
 import { ConnectingSkeleton, EmptyState } from '../components/ChatState';
 import ErgizAvatar from '../components/ErgizAvatar';
+import ErgizHistory from '../components/ErgizHistory';
+import { ergizPrompts, ergizAnswers } from '../data/ergiz';
 import Message from '../components/Message';
 import MessageMenu from '../components/MessageMenu';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
@@ -14,6 +16,7 @@ import Toast from '../components/Toast';
 import AttachSheet from '../components/AttachSheet';
 import ComposeInput from '../components/ComposeInput';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular, Call24Filled,
+  ChatAdd24Filled, TextBulletListLtr24Filled,
 } from '@fluentui/react-icons';
 import './ChatRoom.css';
 import { PROFILE_V2 } from '../config';
@@ -93,10 +96,10 @@ function buildHistory(chat) {
     ];
   }
   if (chat.kind === 'bot') {
-    return [
-      { id: 1, mine: false, author: 'ERGiz', text: 'Привет! Я ERGiz — ваш AI-помощник qollab 🤖 Чем могу помочь?', time: '13:40' },
-      { id: 2, mine: false, author: 'ERGiz', text: chat.preview, time: chat.time, ...attach },
-    ];
+    return [{
+      id: 1, mine: false, author: 'ERGiz', time: chat.time,
+      text: 'Привет, я Ергиз! Я работаю цифровым ассистентом в ERG. Чем я могу помочь?',
+    }];
   }
   if (chat.kind === 'group') {
     return [
@@ -110,8 +113,10 @@ function buildHistory(chat) {
   ];
 }
 
-function replyFor(chat) {
-  if (chat.kind === 'bot') return { author: 'ERGiz', text: pick(botReplies) };
+function replyFor(chat, question) {
+  // На подсказку у ассистента есть готовый ответ — иначе он отвечал бы
+  // случайной фразой на собственное же предложение спросить.
+  if (chat.kind === 'bot') return { author: 'ERGiz', text: ergizAnswers[question] || pick(botReplies) };
   if (chat.kind === 'group') return { author: pick(groupNames), text: pick(groupReplies) };
   return { author: chat.title, text: pick(dmReplies) };
 }
@@ -122,10 +127,10 @@ function subtitleFor(chat) {
   // У уволенного показываем точную дату последнего входа: «недавно» о человеке,
   // которого в компании уже нет, звучит неправдой.
   if (chat.dismissed) return `был(-а) в сети ${chat.lastSeen || 'давно'}`;
-  return chat.online ? 'в сети' : 'был(а) недавно';
+  return chat.online ? 'в сети' : 'был(-а) в сети недавно';
 }
 
-// «Екатерина Брунер» → «Екатерина Б» — так подписан системный чип в чате
+// «Екатерина Сорокина» → «Екатерина С» — так подписан системный чип в чате
 const shortName = (name = '') => {
   const [first, last] = name.split(' ');
   return last ? `${first} ${last[0]}` : first;
@@ -175,6 +180,9 @@ export default function DMChat() {
         initials: chat?.initials,
         tint: chat?.tint,
       },
+      // Присутствие берём из строки чата: в шапке написано «в сети», и профиль
+      // не должен тут же сообщать, что человек был недавно.
+      online: !!chat?.online,
       // Под профилем остаётся сам чат, а не список чатов
       background: location,
     },
@@ -192,6 +200,7 @@ export default function DMChat() {
   const [notice, setNotice] = useState([]);
   const [toast, setToast] = useState('');
   const [attachOpen, setAttachOpen] = useState(false);
+  const [history, setHistory] = useState(false);
   const [phase, setPhase] = useState('connecting'); // connecting | empty | chat
   const [messages, setMessages] = useState(() => (chat && !isEmptyChat(chat) ? buildHistory(chat) : []));
   const [typing, setTyping] = useState(false);
@@ -287,8 +296,8 @@ export default function DMChat() {
 
   const pinnedMessages = messages.filter((m) => pinnedIds.includes(m.id));
 
-  const send = () => {
-    const text = input.trim();
+  const send = (preset) => {
+    const text = (preset ?? input).trim();
     if (!text) return;
 
     if (editing) {
@@ -313,7 +322,7 @@ export default function DMChat() {
     timersRef.current.push(setTimeout(() => setTyping(true), 400));
     timersRef.current.push(setTimeout(() => {
       setTyping(false);
-      const r = replyFor(chat);
+      const r = replyFor(chat, text);
       setMessages((m) => {
         const withRead = chat.kind === 'group' ? m : m.map((msg) => (msg.mine ? { ...msg, status: 'read' } : msg));
         return [...withRead, { id: ++uidRef.current, mine: false, author: r.author, text: r.text, time: now() }];
@@ -322,6 +331,18 @@ export default function DMChat() {
   };
 
   const onKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
+
+  // Новый разговор с ассистентом: прежний уходит в историю, на экране снова
+  // приветствие с подсказками. Прошлые диалоги не удаляются — они в «Диалогах».
+  const newDialog = () => {
+    timersRef.current.forEach(clearTimeout);
+    setTyping(false);
+    setReply(null);
+    setEditing(null);
+    setInput('');
+    setMessages(buildHistory(chat));
+    setToast('Новый диалог');
+  };
 
   // Группировка: имя — на первом сообщении серии одного автора, аватар и
   // «хвостик» бабла — на последнем. Имя показываем только в групповых чатах
@@ -349,6 +370,16 @@ export default function DMChat() {
             <span className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</span>
           </span>
         </button>
+        {chat.kind === 'bot' && (
+          <>
+            <button className="cr-walkie" onClick={newDialog} aria-label="Новый диалог">
+              <ChatAdd24Filled />
+            </button>
+            <button className="cr-walkie" onClick={() => setHistory(true)} aria-label="Диалоги">
+              <TextBulletListLtr24Filled />
+            </button>
+          </>
+        )}
         {!chat.kind && !chat.dismissed && (
           <button className="cr-walkie" aria-label="Позвонить"><Call24Filled /></button>
         )}
@@ -365,7 +396,20 @@ export default function DMChat() {
         {phase === 'empty' && <EmptyState />}
         {phase === 'chat' && (
           <div className="cr-messages">
-            <div className="cr-day">{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}</div>
+            {chat.kind === 'bot' && (
+              <>
+                <p className="cr-notice">
+                  <span className="cr-notice-ico">🔒</span>
+                  Ваши сообщения в чатах в qollab защищены шифрованием. Читать их можете
+                  только вы и участники чата.
+                </p>
+                <div className="cr-day">{dayLabel(chat.time)}</div>
+                <div className="cr-unread">Новые сообщения</div>
+              </>
+            )}
+            {chat.kind !== 'bot' && (
+              <div className="cr-day">{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}</div>
+            )}
             {items.map((msg) => (
               <Message
                 key={msg.id}
@@ -383,6 +427,13 @@ export default function DMChat() {
                 onSwipeReply={chat.dismissed ? undefined : setReply}
               />
             ))}
+            {chat.kind === 'bot' && !messages.some((m) => m.mine) && !typing && (
+              <div className="cr-prompts">
+                {ergizPrompts.map((q) => (
+                  <button className="cr-prompt" key={q} onClick={() => send(q)}>{q}</button>
+                ))}
+              </div>
+            )}
             {chat.dismissed && (
               <>
                 <div className="cr-day">08.08.2026</div>
@@ -493,6 +544,12 @@ export default function DMChat() {
           onPick={(text) => { setAttachOpen(false); setToast(text); }}
         />
       )}
+      <ErgizHistory
+        open={history}
+        onClose={() => setHistory(false)}
+        onPick={(d) => setToast(`Диалог «${d.title}» открыт`)}
+      />
+
       <Toast text={toast} onDone={() => setToast('')} />
 
       {confirm && (

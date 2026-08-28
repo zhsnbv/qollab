@@ -38,8 +38,11 @@ export default function PersonProfile() {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, onScroll] = useScrolled();
-  const { id, employee, background } = location.state || {};
+  const { id, employee, background, online } = location.state || {};
   const p = getPerson(id, employee);
+  // «в сети» — не строка из данных, а текущее состояние: оно приходит оттуда,
+  // откуда профиль открыли. Без этого шапка чата и профиль расходились.
+  const presence = online ? 'в сети' : p.status;
 
   const [closing, setClosing] = useState(false);
   const [screenMenu, setScreenMenu] = useState(false);
@@ -64,7 +67,7 @@ export default function PersonProfile() {
     state: {
       chat: {
         profileId: p.id, title: p.name, avatar: p.avatar,
-        initials: p.initials, tint: p.tint, online: true,
+        initials: p.initials, tint: p.tint, online: !!online,
         fresh: true, preview: '', time: '',
       },
       background,
@@ -102,11 +105,14 @@ export default function PersonProfile() {
           <div className="profile">
             <ProfileHero
               me={{ ...p, role: undefined }}
-              badge={<span className="phero-dismissed">Бывший сотрудник</span>}
+              badge={<span className="sbubble sbubble--flat tone--muted">Бывший сотрудник</span>}
               presence={p.status}
             />
 
+            {/* Та же карточка корпоративных данных, что у работающего коллеги, —
+                просто из неё осталась одна доступная строка */}
             <section className="pcard">
+              <div className="pcard-head"><h3>Корпоративные данные</h3></div>
               <div className="data-list">
                 <div className="data-row last">
                   <div className="data-label">Мобильный телефон</div>
@@ -140,7 +146,7 @@ export default function PersonProfile() {
           <ProfileHero
             me={p}
             status={<StatusBubble status={p.work} />}
-            presence={p.status}
+            presence={presence}
           >
             {/* Действия и вкладки — в том же блоке, что аватар: общий фон */}
             <div className="pp-actions">

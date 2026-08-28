@@ -14,7 +14,7 @@ export const employees = [
     initials: 'ИИ', dismissed: true,
   },
   {
-    id: 'ekaterina', name: 'Екатерина Брунер', dismissed: true,
+    id: 'ekaterina', name: 'Екатерина Сорокина', dismissed: true,
     // У уволенного из карточки остаётся только телефон и дата последнего входа:
     // должность, подразделение и руководитель к нему уже не относятся.
     phone: '+7 (701) 413-49-44',

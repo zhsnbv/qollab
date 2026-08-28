@@ -39,3 +39,7 @@ html[data-theme="dark"] .sbubble svg.sbubble-tail { color: color-mix(in srgb, va
 
 /* Кнопка «Установить статус» стоит на месте бабла */
 .phero .status-btn.phero-status { margin-top: var(--space-3); }
+
+/* Плоский вариант бабла: та же пилюля, но без хвостика и иконки. Нужен там,
+   где подпись стоит под именем и указывать ей не на что («Бывший сотрудник»). */
+.sbubble--flat { margin-top: var(--space-2); padding: 5px 12px; }

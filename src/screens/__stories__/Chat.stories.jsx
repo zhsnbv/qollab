@@ -45,6 +45,32 @@ export const Личный = {
   },
 };
 
+export const Ассистент = {
+  render: () => <DMChat />,
+  parameters: {
+    route: {
+      pathname: '/chats/dm',
+      state: {
+        chat: {
+          kind: 'bot', avatar: '/img/chats/ergiz-avatar.png',
+          title: 'ERGiz – Искусственный интеллект',
+          preview: 'Привет! хочу задать вам пару коротких вопросов', time: '13:44',
+        },
+      },
+    },
+    docs: {
+      description: {
+        story:
+          'Про шифрование говорим один раз в начале переписки — это не сообщение, поэтому широкая '
+          + 'плашка, а не бабл. Под приветствием три подсказки: пустое поле ввода не объясняет, '
+          + 'о чём ассистента вообще можно спросить. Нажмите любую — она уходит как ваше сообщение, '
+          + 'и на неё есть готовый ответ. Как только вы спросили сами, подсказки убираются. '
+          + 'В шапке — новый диалог и история разговоров.',
+      },
+    },
+  },
+};
+
 export const Уволенный = {
   render: () => <DMChat />,
   parameters: {
@@ -54,7 +80,7 @@ export const Уволенный = {
         chat: {
           id: 'ekaterina', profileId: 'ekaterina', dismissed: true,
           avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-          title: 'Екатерина Брунер', preview: 'спасибо!', time: '08.08',
+          title: 'Екатерина Сорокина', preview: 'спасибо!', time: '08.08',
           lastSeen: '19.06.2026 в 14:55',
         },
       },

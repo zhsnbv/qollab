@@ -30,7 +30,7 @@ const baseChats = [
   {
     id: 'ekaterina', profileId: 'ekaterina', dismissed: true,
     avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-    title: 'Екатерина Брунер', preview: 'спасибо!', time: '08.08',
+    title: 'Екатерина Сорокина', preview: 'спасибо!', time: '08.08',
     lastSeen: '19.06.2026 в 14:55',
   },
 ];
