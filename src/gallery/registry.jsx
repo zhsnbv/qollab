@@ -28,6 +28,7 @@ import {
   NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
 } from '../screens/SettingsPages';
 import BottomNav from '../components/BottomNav';
+import Splash from '../components/Splash';
 import ScreenMenu from '../components/ScreenMenu';
 import SideMenu from '../components/SideMenu';
 import StatusSheet from '../components/StatusSheet';
@@ -64,6 +65,12 @@ const routed = (path, Screen) => () => (
 // половина смысла листа — как он ложится на то, из чего вызван.
 const over = (Screen, Overlay) => () => (<><Screen /><Overlay /></>);
 
+// Экраны идут по сценарию, а не по типу: вход, потом каждая вкладка со своими
+// ветками, и оверлей стоит сразу за тем экраном, откуда вызывается. Так видно
+// путь целиком, а не отдельно «все экраны» и отдельно «все листы».
+// kind: 'overlay' — только пометка в подписи, на рендер не влияет.
+const sheet = (item) => ({ ...item, kind: 'overlay' });
+
 const dmChat = {
   profileId: 'ayazhan', avatar: '/img/chats/ayazhan.png',
   title: 'Аяжан Сериккызы', preview: 'Салем, там задача', time: '13:21', online: true,
@@ -90,186 +97,102 @@ const at = (pathname, state) => ({ pathname, state });
 
 export const SCREEN_GROUPS = [
   {
-    id: 'tabs',
-    title: 'Вкладки',
-    hint: 'Пять корневых разделов. У всех общий каркас: шапка, прокрутка, потягивание для обновления.',
+    id: 'entry',
+    title: 'Вход',
+    hint: 'С чего начинается сессия: заставка и авторизация по номеру. Пространство выбирают здесь — от него зависят цвета всего приложения.',
     items: [
-      { id: 'home', title: 'Главная', route: '/', render: tab(Home) },
-      { id: 'posts', title: 'Лента', route: '/posts', render: tab(Posts) },
-      { id: 'services', title: 'Сервисы', route: '/services', render: tab(Services) },
-      { id: 'chats', title: 'Чаты', route: '/chats', render: tab(Chats) },
-      { id: 'profile', title: 'Профиль', route: '/profile', render: tab(Profile) },
+      { id: 'splash', title: 'Заставка', route: '/', render: () => <Splash /> },
       {
-        id: 'chats-select', title: 'Чаты: режим выбора',
-        note: 'Карандаш в шапке; таб-бар уступает место действиям',
-        route: '/chats', render: () => <ChatsSelecting />,
+        id: 'auth', title: 'Вход', note: 'Онбординг → пространство → номер → код',
+        route: '/auth', render: () => <Auth />,
       },
     ],
   },
   {
-    id: 'chat',
-    title: 'Переписка',
-    hint: 'Групповой чат рисует ChatRoom, всё остальное — DMChat: личные, ассистент, архив уволенного.',
+    id: 'home',
+    title: 'Главная',
+    hint: 'Точка входа в рабочий день: избранные сервисы, задачи, публикации. Отсюда уходят в уведомления и глобальный поиск.',
     items: [
-      { id: 'room', title: 'Групповой чат', route: '/chats/prodev', render: () => <ChatRoom /> },
+      { id: 'home', title: 'Главная', route: '/', render: tab(Home) },
+      sheet({
+        id: 'screen-menu', title: 'Меню «трёх точек»', note: 'Одно и то же на всех кор-экранах',
+        route: '/', render: over(Home, () => <ScreenMenu open onClose={noop} onRefresh={noop} />),
+      }),
+      { id: 'search', title: 'Глобальный поиск', route: '/search', render: () => <Search /> },
+      { id: 'banner', title: 'Баннер', route: '/banner', render: () => <BannerDetail /> },
+      { id: 'notifications', title: 'Уведомления', note: 'По колокольчику в шапке', route: '/notifications', render: () => <Notifications /> },
+      {
+        id: 'notif-group', title: 'Группа уведомлений', note: 'Дни — липкие пилюли, как в чате',
+        route: '/notifications/esed', render: routed('/notifications/:groupId', NotificationGroup),
+      },
+      {
+        id: 'set-notif', title: 'Настройка уведомлений', note: 'Шестерёнка в шапке уведомлений',
+        route: '/settings/notifications', render: () => <NotificationSettings />,
+      },
+    ],
+  },
+  {
+    id: 'feed',
+    title: 'Лента',
+    hint: 'Публикации и мероприятия компании. Из карточки — на саму публикацию, оттуда в канал.',
+    items: [
+      { id: 'posts', title: 'Лента', route: '/posts', render: tab(Posts) },
+      { id: 'article', title: 'Публикация', route: '/article', render: () => <ArticleView /> },
+      { id: 'channel', title: 'Канал', route: '/channel/erg-news', render: routed('/channel/:channelId', ChannelView) },
+      { id: 'event', title: 'Мероприятие', route: at('/event', { id: events[0].id }), render: () => <EventView /> },
+    ],
+  },
+  {
+    id: 'services',
+    title: 'Сервисы',
+    hint: 'Каталог рабочих сервисов. Сервис открывается мини-приложением внутри qollab, избранное настраивается шестерёнкой.',
+    items: [
+      { id: 'services', title: 'Сервисы', route: '/services', render: tab(Services) },
+      { id: 'services-all', title: 'Каталог сервисов', route: '/services/sheet', render: () => <ServicesSheet /> },
+      { id: 'miniapp', title: 'Мини-приложение', route: '/app/esed', render: routed('/app/*', MiniApp) },
+      { id: 'favorites', title: 'Настройка избранного', route: '/favorites', render: () => <Favorites /> },
+    ],
+  },
+  {
+    id: 'chats',
+    title: 'Чаты',
+    hint: 'От списка к переписке. Групповой чат рисует ChatRoom, всё остальное — DMChat: личные, ассистент, архив уволенного.',
+    items: [
+      { id: 'chats', title: 'Список чатов', route: '/chats', render: tab(Chats) },
+      {
+        id: 'chats-select', title: 'Режим выбора', note: 'Карандаш в шапке; таб-бар уступает место действиям',
+        route: '/chats', render: () => <ChatsSelecting />,
+      },
+      { id: 'new-chat', title: 'Новый чат', route: '/new-chat', render: () => <NewChat /> },
       { id: 'dm', title: 'Личный чат', route: at('/chats/dm', { chat: dmChat }), render: () => <DMChat /> },
+      { id: 'room', title: 'Групповой чат', route: '/chats/prodev', render: () => <ChatRoom /> },
+      { id: 'dm-group', title: 'Группа из списка', route: at('/chats/dm', { chat: groupChat }), render: () => <DMChat /> },
       {
         id: 'dm-empty', title: 'Пустой чат', note: 'Переписки ещё нет: внизу плашка про шифрование',
         route: at('/chats/dm', { chat: emptyChat }), render: () => <DMChat />,
       },
       {
-        id: 'dm-bot', title: 'Ассистент', note: 'Подсказки под приветствием, история диалогов в шапке',
-        route: at('/chats/dm', { chat: botChat }), render: () => <DMChat />,
-      },
-      {
         id: 'dm-dismissed', title: 'Чат с уволенным', note: 'Писать нельзя: на месте поля — объяснение',
         route: at('/chats/dm', { chat: dismissedChat }), render: () => <DMChat />,
       },
-      { id: 'dm-group', title: 'Группа из списка', route: at('/chats/dm', { chat: groupChat }), render: () => <DMChat /> },
-      { id: 'new-chat', title: 'Новый чат', route: '/new-chat', render: () => <NewChat /> },
-      { id: 'chat-search', title: 'Поиск в чате', route: '/chat-search', render: () => <ChatSearch /> },
-    ],
-  },
-  {
-    id: 'profiles',
-    title: 'Профили',
-    hint: 'Профиль коллеги один на всё приложение: и из оргструктуры, и из чата открывается он же.',
-    items: [
-      { id: 'person', title: 'Коллега', route: at('/person', { id: 'ayazhan', online: true }), render: () => <PersonProfile /> },
-      {
-        id: 'person-empty', title: 'Коллега без общей истории', note: 'Вкладки честно пустые, а не с нулями',
-        route: at('/person', { id: 'aliya-seitova', employee: employees.find((e) => e.id === 'aliya-seitova') }),
-        render: () => <PersonProfile />,
-      },
-      {
-        id: 'person-dismissed', title: 'Профиль уволенного', note: 'Тот же шаблон, но урезанный',
-        route: at('/person', { id: 'ekaterina' }), render: () => <PersonProfile />,
-      },
-      { id: 'group-profile', title: 'Профиль группы', route: at('/group', { id: 'prodev' }), render: () => <GroupProfile /> },
-      { id: 'photo', title: 'Фото профиля', route: '/profile/photo', render: () => <ProfilePhoto /> },
-      { id: 'id-card', title: 'Моя ID карта', route: '/profile/id', render: () => <IdCard /> },
-      { id: 'pass', title: 'Пропуск по QR', note: 'Часы идут: по ним живой экран отличают от скриншота', route: '/profile/qr', render: () => <ProfileQr /> },
-    ],
-  },
-  {
-    id: 'content',
-    title: 'Контент',
-    hint: 'Всё, что открывается поверх вкладок. Под ними остаётся живой экран, поэтому прокрутка возвращается на место.',
-    items: [
-      { id: 'article', title: 'Публикация', route: '/article', render: () => <ArticleView /> },
-      { id: 'event', title: 'Мероприятие', route: at('/event', { id: events[0].id }), render: () => <EventView /> },
-      { id: 'channel', title: 'Канал', route: '/channel/erg-news', render: routed('/channel/:channelId', ChannelView) },
-      { id: 'banner', title: 'Баннер', route: '/banner', render: () => <BannerDetail /> },
-      { id: 'miniapp', title: 'Мини-приложение', route: '/app/esed', render: routed('/app/*', MiniApp) },
-      { id: 'services-all', title: 'Каталог сервисов', route: '/services/sheet', render: () => <ServicesSheet /> },
-      { id: 'favorites', title: 'Настройка избранного', route: '/favorites', render: () => <Favorites /> },
-    ],
-  },
-  {
-    id: 'system',
-    title: 'Системные',
-    hint: 'Вход, поиск и уведомления — то, что окружает основной сценарий.',
-    items: [
-      { id: 'auth', title: 'Вход', route: '/auth', render: () => <Auth /> },
-      { id: 'search', title: 'Глобальный поиск', route: '/search', render: () => <Search /> },
-      { id: 'notifications', title: 'Уведомления', route: '/notifications', render: () => <Notifications /> },
-      {
-        id: 'notif-group', title: 'Группа уведомлений', note: 'Дни — липкие пилюли, как в чате',
-        route: '/notifications/esed', render: routed('/notifications/:groupId', NotificationGroup),
-      },
-    ],
-  },
-  {
-    id: 'settings',
-    title: 'Настройки',
-    hint: 'Каркас у подэкранов общий: шапка с «назад», прокрутка и выезд справа.',
-    items: [
-      { id: 'settings', title: 'Настройки', route: '/settings', render: () => <Settings /> },
-      { id: 'set-notif', title: 'Настройка уведомлений', route: '/settings/notifications', render: () => <NotificationSettings /> },
-      { id: 'set-devices', title: 'Устройства', route: '/settings/devices', render: () => <Devices /> },
-      { id: 'set-perms', title: 'Разрешения', route: '/settings/permissions', render: () => <Permissions /> },
-      { id: 'set-help', title: 'Помощь', route: '/settings/help', render: () => <Help /> },
-      { id: 'set-device-info', title: 'Данные об устройстве', route: '/settings/help/device', render: () => <DeviceInfo /> },
-      { id: 'set-privacy', title: 'Конфиденциальность', route: '/settings/privacy', render: () => <Privacy /> },
-    ],
-  },
-  {
-    id: 'overlays',
-    title: 'Листы и оверлеи',
-    hint: 'Каждый показан поверх того экрана, откуда вызывается: половина смысла листа — как он ложится на то, из чего открыт.',
-    items: [
-      {
-        id: 'screen-menu', title: 'Меню «трёх точек»', note: 'Поверх Главной; одно и то же на всех кор-экранах',
-        route: '/', render: over(Home, () => <ScreenMenu open onClose={noop} onRefresh={noop} />),
-      },
-      {
-        id: 'side-menu', title: 'Рабочие сервисы', note: 'Поверх Профиля',
-        route: '/profile', render: over(Profile, () => <SideMenu open onClose={noop} />),
-      },
-      {
-        id: 'status-sheet', title: 'Выбор статуса', note: 'Поверх Профиля',
-        route: '/profile', render: over(Profile, () => <StatusSheet value={null} onClose={noop} onPick={noop} />),
-      },
-      {
-        id: 'status-actions', title: 'Действия со статусом', note: 'Поверх Профиля, если статус уже стоит',
-        route: '/profile', render: over(Profile, () => <StatusActions onClose={noop} onEdit={noop} onClear={noop} />),
-      },
-      {
-        id: 'vcard', title: 'QR-визитка', note: 'Поверх Профиля, по «QR-коду» и «Визитке»',
-        route: '/profile', render: over(Profile, () => <VCardSheet onClose={noop} />),
-      },
-      {
-        id: 'sos-menu', title: 'Действия по SOS-контакту', note: 'Поверх Профиля, тапом по строке',
-        route: '/profile',
-        render: over(Profile, () => (
-          <ActionSheet
-            title={sosContacts[0].name}
-            items={[
-              { id: 'edit', label: 'Изменить', Icon: Edit24Regular },
-              { id: 'delete', label: 'Удалить контакт', Icon: Delete24Regular, danger: true },
-            ]}
-            onClose={noop}
-            onPick={noop}
-          />
-        )),
-      },
-      {
-        id: 'sos-add', title: 'Добавить SOS-контакт', note: 'Поверх Профиля; та же форма и для изменения',
-        route: '/profile', render: over(Profile, () => <SosSheet onClose={noop} onSave={noop} />),
-      },
-      {
-        id: 'sos-edit', title: 'Изменить SOS-контакт', note: 'Та же форма, заполненная',
-        route: '/profile', render: over(Profile, () => <SosSheet contact={sosContacts[0]} onClose={noop} onSave={noop} />),
-      },
-      {
-        id: 'sos-delete', title: 'Удаление контакта', note: 'Необратимое действие спрашивает подтверждение',
-        route: '/profile',
-        render: over(Profile, () => (
-          <ConfirmDialog
-            title="Удалить контакт?"
-            text={`${sosContacts[0].name} перестанет быть SOS-контактом. Контакт можно будет добавить заново.`}
-            confirmLabel="Удалить" danger onConfirm={noop} onCancel={noop}
-          />
-        )),
-      },
-      {
-        id: 'attach', title: 'Прикрепить', note: 'Поверх чата, по «плюсу» у поля ввода',
+      sheet({
+        id: 'attach', title: 'Прикрепить', note: 'По «плюсу» у поля ввода',
         route: '/chats/prodev', render: over(ChatRoom, () => <AttachSheet onClose={noop} onPick={noop} />),
-      },
-      {
+      }),
+      sheet({
         id: 'msg-menu', title: 'Меню сообщения', note: 'Долгое нажатие: бабл поднимается над размытым фоном',
         route: '/chats/prodev', render: () => <MessageMenuDemo />,
-      },
-      {
+      }),
+      sheet({
         id: 'msg-menu-mine', title: 'Меню своего сообщения', note: 'У своего добавляется «Изменить»',
         route: '/chats/prodev', render: () => <MessageMenuDemo mine />,
-      },
-      {
-        id: 'forward', title: 'Переслать', note: 'Поверх чата; «Избранное» первым — туда пересылают чаще',
+      }),
+      sheet({
+        id: 'forward', title: 'Переслать', note: '«Избранное» первым — туда пересылают чаще',
         route: '/chats/prodev', render: over(ChatRoom, () => <ForwardSheet onClose={noop} onPick={noop} />),
-      },
-      {
-        id: 'pinned', title: 'Закреплённые', note: 'Поверх чата, из полосы под шапкой',
+      }),
+      sheet({
+        id: 'pinned', title: 'Закреплённые', note: 'Из полосы под шапкой чата',
         route: '/chats/prodev',
         render: over(ChatRoom, () => (
           <PinnedList
@@ -280,9 +203,44 @@ export const SCREEN_GROUPS = [
             onClose={noop} onUnpin={noop} onUnpinAll={noop}
           />
         )),
+      }),
+      { id: 'chat-search', title: 'Поиск в чате', route: '/chat-search', render: () => <ChatSearch /> },
+    ],
+  },
+  {
+    id: 'assistant',
+    title: 'Ассистент',
+    hint: 'Ергиз — отдельная ветка чатов: подсказки вместо пустого поля, разговоры хранятся историей.',
+    items: [
+      {
+        id: 'dm-bot', title: 'Чат с ассистентом', note: 'Подсказки под приветствием',
+        route: at('/chats/dm', { chat: botChat }), render: () => <DMChat />,
+      },
+      sheet({
+        id: 'ergiz-history', title: 'Диалоги ассистента', note: 'Поиск, архив и прошлые разговоры',
+        route: at('/chats/dm', { chat: botChat }),
+        render: over(DMChat, () => <ErgizHistory open onClose={noop} onPick={noop} />),
+      }),
+    ],
+  },
+  {
+    id: 'people',
+    title: 'Собеседник',
+    hint: 'Открывается из шапки чата и из оргструктуры — экран один и тот же. Отличается только то, что о человеке известно.',
+    items: [
+      { id: 'person', title: 'Профиль коллеги', route: at('/person', { id: 'ayazhan', online: true }), render: () => <PersonProfile /> },
+      {
+        id: 'person-empty', title: 'Без общей истории', note: 'Вкладки честно пустые, а не с нулями',
+        route: at('/person', { id: 'aliya-seitova', employee: employees.find((e) => e.id === 'aliya-seitova') }),
+        render: () => <PersonProfile />,
       },
       {
-        id: 'mute', title: 'Звук чата', note: 'Поверх профиля группы',
+        id: 'person-dismissed', title: 'Профиль уволенного', note: 'Тот же шаблон, но урезанный',
+        route: at('/person', { id: 'ekaterina' }), render: () => <PersonProfile />,
+      },
+      { id: 'group-profile', title: 'Профиль группы', route: at('/group', { id: 'prodev' }), render: () => <GroupProfile /> },
+      sheet({
+        id: 'mute', title: 'Звук чата', note: 'Три режима вместо переключателя',
         route: at('/group', { id: 'prodev' }),
         render: over(GroupProfile, () => (
           <ActionSheet
@@ -295,9 +253,9 @@ export const SCREEN_GROUPS = [
             selected="on" onClose={noop} onPick={noop}
           />
         )),
-      },
-      {
-        id: 'leave', title: 'Выход из группы', note: 'Поверх профиля группы',
+      }),
+      sheet({
+        id: 'leave', title: 'Выход из группы', note: 'Необратимое действие спрашивает подтверждение',
         route: at('/group', { id: 'prodev' }),
         render: over(GroupProfile, () => (
           <ConfirmDialog
@@ -306,14 +264,82 @@ export const SCREEN_GROUPS = [
             confirmLabel="Покинуть" danger onConfirm={noop} onCancel={noop}
           />
         )),
-      },
-      {
-        id: 'ergiz-history', title: 'Диалоги ассистента', note: 'Поверх чата с Ергиз',
-        route: at('/chats/dm', { chat: botChat }),
-        render: over(DMChat, () => <ErgizHistory open onClose={noop} onPick={noop} />),
-      },
-      {
-        id: 'lang', title: 'Выбор языка', note: 'Поверх Настроек',
+      }),
+    ],
+  },
+  {
+    id: 'me',
+    title: 'Свой профиль',
+    hint: 'Статус, визитка и пропуск, корпоративные данные и SOS-контакты. Отсюда же — рабочие сервисы и настройки.',
+    items: [
+      { id: 'profile', title: 'Профиль', route: '/profile', render: tab(Profile) },
+      sheet({
+        id: 'status-sheet', title: 'Выбор статуса', note: 'Пункт можно примерить, не применяя сразу',
+        route: '/profile', render: over(Profile, () => <StatusSheet value={null} onClose={noop} onPick={noop} />),
+      }),
+      sheet({
+        id: 'status-actions', title: 'Действия со статусом', note: 'Если статус уже стоит',
+        route: '/profile', render: over(Profile, () => <StatusActions onClose={noop} onEdit={noop} onClear={noop} />),
+      }),
+      sheet({
+        id: 'vcard', title: 'QR-визитка', note: 'По «QR-коду» и «Визитке» — лист один',
+        route: '/profile', render: over(Profile, () => <VCardSheet onClose={noop} />),
+      }),
+      { id: 'pass', title: 'Пропуск по QR', note: 'По «Таб. номеру». Часы идут: так живой экран отличают от скриншота', route: '/profile/qr', render: () => <ProfileQr /> },
+      { id: 'id-card', title: 'Моя ID карта', route: '/profile/id', render: () => <IdCard /> },
+      { id: 'photo', title: 'Фото профиля', route: '/profile/photo', render: () => <ProfilePhoto /> },
+      sheet({
+        id: 'sos-menu', title: 'Действия по SOS-контакту', note: 'Тапом по строке целиком',
+        route: '/profile',
+        render: over(Profile, () => (
+          <ActionSheet
+            title={sosContacts[0].name}
+            items={[
+              { id: 'edit', label: 'Изменить', Icon: Edit24Regular },
+              { id: 'delete', label: 'Удалить контакт', Icon: Delete24Regular, danger: true },
+            ]}
+            onClose={noop}
+            onPick={noop}
+          />
+        )),
+      }),
+      sheet({
+        id: 'sos-add', title: 'Добавить SOS-контакт', note: 'Та же форма и для изменения',
+        route: '/profile', render: over(Profile, () => <SosSheet onClose={noop} onSave={noop} />),
+      }),
+      sheet({
+        id: 'sos-edit', title: 'Изменить SOS-контакт', note: 'Форма заполнена',
+        route: '/profile', render: over(Profile, () => <SosSheet contact={sosContacts[0]} onClose={noop} onSave={noop} />),
+      }),
+      sheet({
+        id: 'sos-delete', title: 'Удаление контакта',
+        route: '/profile',
+        render: over(Profile, () => (
+          <ConfirmDialog
+            title="Удалить контакт?"
+            text={`${sosContacts[0].name} перестанет быть SOS-контактом. Контакт можно будет добавить заново.`}
+            confirmLabel="Удалить" danger onConfirm={noop} onCancel={noop}
+          />
+        )),
+      }),
+      sheet({
+        id: 'side-menu', title: 'Рабочие сервисы', note: 'Иконка в шапке профиля',
+        route: '/profile', render: over(Profile, () => <SideMenu open onClose={noop} />),
+      }),
+      sheet({
+        id: 'toast', title: 'Тост', note: 'Живёт пару секунд и ничего не оставляет',
+        route: '/profile', render: over(Profile, () => <Toast text="Рахмет отправлен" onDone={noop} duration={10 ** 7} />),
+      }),
+    ],
+  },
+  {
+    id: 'settings',
+    title: 'Настройки',
+    hint: 'Открываются шестерёнкой в профиле. Каркас у подэкранов общий: шапка с «назад», прокрутка и выезд справа.',
+    items: [
+      { id: 'settings', title: 'Настройки', route: '/settings', render: () => <Settings /> },
+      sheet({
+        id: 'lang', title: 'Выбор языка',
         route: '/settings',
         render: over(Settings, () => (
           <ActionSheet
@@ -322,9 +348,14 @@ export const SCREEN_GROUPS = [
             selected="ru" onClose={noop} onPick={noop}
           />
         )),
-      },
-      {
-        id: 'logout', title: 'Выход из аккаунта', note: 'Поверх Настроек',
+      }),
+      { id: 'set-devices', title: 'Устройства', route: '/settings/devices', render: () => <Devices /> },
+      { id: 'set-perms', title: 'Разрешения', route: '/settings/permissions', render: () => <Permissions /> },
+      { id: 'set-help', title: 'Помощь', route: '/settings/help', render: () => <Help /> },
+      { id: 'set-device-info', title: 'Данные об устройстве', route: '/settings/help/device', render: () => <DeviceInfo /> },
+      { id: 'set-privacy', title: 'Конфиденциальность', route: '/settings/privacy', render: () => <Privacy /> },
+      sheet({
+        id: 'logout', title: 'Выход из аккаунта',
         route: '/settings',
         render: over(Settings, () => (
           <ConfirmDialog
@@ -333,11 +364,7 @@ export const SCREEN_GROUPS = [
             confirmLabel="Выйти" danger onConfirm={noop} onCancel={noop}
           />
         )),
-      },
-      {
-        id: 'toast', title: 'Тост', note: 'Поверх Профиля: живёт пару секунд и ничего не оставляет',
-        route: '/profile', render: over(Profile, () => <Toast text="Рахмет отправлен" onDone={noop} duration={10 ** 7} />),
-      },
+      }),
     ],
   },
 ];

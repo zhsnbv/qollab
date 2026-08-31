@@ -105,7 +105,15 @@ html.gallery #root { height: auto; }
 .gal-device .scroll-area::-webkit-scrollbar { display: none; }
 
 .gal-caption { display: flex; flex-direction: column; gap: 2px; }
-.gal-title { font-size: 14px; font-weight: 600; color: var(--color-heading); }
+.gal-title {
+  display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap;
+  font-size: 14px; font-weight: 600; color: var(--color-heading);
+}
+.gal-tag {
+  padding: 1px 7px; border-radius: var(--radius-pill);
+  background: var(--color-background); color: var(--color-weak);
+  font-size: 11px; font-weight: 500; letter-spacing: 0.2px;
+}
 .gal-note { font-size: 13px; line-height: 1.35; color: var(--color-weak); }
 
 @media (max-width: 560px) {

@@ -25,7 +25,7 @@ function Cell({ item }) {
     return () => io.disconnect();
   }, [live]);
 
-  const { title, note, route, render } = item;
+  const { title, note, route, render, kind } = item;
   const entry = typeof route === 'string' ? route : route || '/';
 
   return (
@@ -40,7 +40,12 @@ function Cell({ item }) {
         </div>
       </div>
       <figcaption className="gal-caption">
-        <span className="gal-title">{title}</span>
+        <span className="gal-title">
+          {title}
+          {/* Оверлеи стоят вперемешку с экранами — рядом с тем, откуда
+              вызываются, — поэтому помечаем, что это лист, а не экран. */}
+          {kind === 'overlay' && <span className="gal-tag">оверлей</span>}
+        </span>
         {note && <span className="gal-note">{note}</span>}
       </figcaption>
     </figure>
