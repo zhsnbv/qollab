@@ -15,6 +15,10 @@ export default function ErgizAvatar({ size = 40 }) {
   const badge = Math.round(size * 0.393);
   const ring = Math.max(2, Math.round(size * 0.054));
   const icon = Math.round(badge * 0.55);
+  // Центр значка лежит на окружности аватарки — по диагонали вниз вправо:
+  // до точки касания от края бокса остаётся R·(1−cos45°), а центр нужно
+  // сдвинуть ещё на половину значка наружу.
+  const offset = (size / 2) * (1 - Math.SQRT1_2) - badge / 2;
   return (
     <span className="ergiz-avatar" style={{ width: size, height: size }}>
       <span className="ergiz-avatar-ring">
@@ -22,7 +26,7 @@ export default function ErgizAvatar({ size = 40 }) {
       </span>
       <span
         className="ergiz-avatar-badge"
-        style={{ width: badge, height: badge, borderWidth: ring }}
+        style={{ width: badge, height: badge, borderWidth: ring, right: offset, bottom: offset }}
       >
         <Sparkle size={icon} weight="fill" />
       </span>

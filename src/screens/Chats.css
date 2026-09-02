@@ -62,8 +62,15 @@
 /* «В сети» и статус — один кружок с одинаковым обрамлением, отличается только
    содержимое: у присутствия его нет. Геометрия общая (см. .chat-avatar-status),
    иначе два индикатора на соседних строках прыгали по размеру. */
+/* Центр индикатора лежит ровно на окружности аватарки — по диагонали вниз
+   вправо. До точки касания от края бокса остаётся R·(1−cos45°), а центр
+   кружка нужно сдвинуть ещё на его половину наружу. Минус кант аватарки:
+   абсолютные потомки считаются от её padding-бокса, то есть уже без него.
+   При аватарке 56, кружке 22 и канте 1 выходит −3.8px. */
 .chat-avatar-online {
-  position: absolute; bottom: 0; right: 0;
+  position: absolute;
+  bottom: calc(56px / 2 * 0.29289 - 22px / 2 - 1px);
+  right: calc(56px / 2 * 0.29289 - 22px / 2 - 1px);
   box-sizing: border-box;
   width: 22px; height: 22px; border-radius: 50%;
   background: var(--color-success);
@@ -200,7 +207,9 @@
    12px, то есть ровно по 2px с каждой стороны. При нецелом поле браузер
    округляет его в разные стороны, и иконка выглядит сдвинутой. */
 .chat-avatar-status {
-  position: absolute; bottom: 0; right: 0;
+  position: absolute;
+  bottom: calc(56px / 2 * 0.29289 - 22px / 2 - 1px);
+  right: calc(56px / 2 * 0.29289 - 22px / 2 - 1px);
   box-sizing: border-box;
   width: 22px; height: 22px; border-radius: 50%;
   border: 3px solid var(--color-white);
