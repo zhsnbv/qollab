@@ -148,15 +148,20 @@ input, textarea, select, [contenteditable] { caret-color: var(--color-primary); 
    Прежние тона брались из ant-подобной палитры и читались мутно: тёмно-коричневый
    текст на горчичной заливке. Здесь заливка чище, а текст ярче и того же тона —
    каждая пара даёт не меньше 4.5:1 на самой тёмной точке градиента. */
-/* --sb-solid — тот же оттенок заливкой: им красится кружок статуса, где глиф
-   белый (в тёмной теме — тёмный). Он ярче, чем --sb-text: тот подобран под
-   светлую подложку бабла и как заливка выглядел бурым. */
+/* У каждого тона три роли: --sb-from/--sb-to — светлая заливка бабла,
+   --sb-text — текст и глиф на ней, --sb-solid — тот же оттенок заливкой
+   (кружок статуса, где глиф белый). --sb-solid ярче, чем --sb-text: тот
+   подобран под светлую подложку и как фон выглядел бурым.
+   Зелёный из палитры убран: он занят индикатором «в сети», и статус того же
+   цвета на аватарке читался бы как присутствие. «Не на работе» ушло в синий
+   (луна — ночь), «в отпуске» — в морской. Оттенки разведены по кругу, чтобы
+   на 12 пикселях их нельзя было спутать. */
 .tone--warning { --sb-from: #fff6e0; --sb-to: #ffefc7; --sb-text: #8f5600; --sb-solid: #c77800; }
 .tone--danger  { --sb-from: #ffecea; --sb-to: #ffdcd8; --sb-text: #c4271b; --sb-solid: #e02f2f; }
 .tone--muted   { --sb-from: #f2f3f5; --sb-to: #e7e9ec; --sb-text: #4b5157; --sb-solid: #6e7377; }
-.tone--violet  { --sb-from: #f1ebfe; --sb-to: #e4dafc; --sb-text: #5b34c4; --sb-solid: #7048e8; }
-.tone--success { --sb-from: #e6faee; --sb-to: #d1f5df; --sb-text: #087443; --sb-solid: #1f9254; }
-.tone--accent  { --sb-from: #fff0de; --sb-to: #ffe1c2; --sb-text: #9a4a08; --sb-solid: #cc6f00; }
+.tone--violet  { --sb-from: #f1ebfe; --sb-to: #e4dafc; --sb-text: #5b34c4; --sb-solid: #8b5cf6; }
+.tone--night   { --sb-from: #e9eefc; --sb-to: #d7e0fa; --sb-text: #2440a8; --sb-solid: #2f56c9; }
+.tone--sea     { --sb-from: #e0f7f5; --sb-to: #c8f0ec; --sb-text: #0a6d68; --sb-solid: #0e8f8c; }
 /* Пустое состояние: серая пилюля цвета подложек интерфейса */
 .tone--empty {
   --sb-from: var(--color-background); --sb-to: var(--color-background);

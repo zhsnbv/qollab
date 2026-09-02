@@ -37,11 +37,9 @@
   display: flex; align-items: center; justify-content: center;
 }
 .stsheet-ico svg { width: 22px; height: 22px; }
-.stsheet-ico--danger { color: #f5222d; }
-.stsheet-ico--muted { color: var(--color-text); }
-.stsheet-ico--warning { color: #faad14; }
-.stsheet-ico--violet { color: #722ed1; }
-.stsheet-ico--success { color: #52c41a; }
+/* Цвет берём из общей палитры статусов (tokens.css): раньше здесь лежал свой
+   набор хексов, и лист расходился с баблом и кружком в списке чатов. */
+.stsheet-ico { color: var(--sb-solid); }
 
 .stsheet-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .stsheet-label { font-size: 16px; font-weight: 500; color: var(--color-heading); }

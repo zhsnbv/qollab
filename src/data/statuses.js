@@ -29,7 +29,7 @@ export const STATUSES = [
   {
     id: 'off', label: 'Не на работе', short: 'Не на работе',
     hint: 'Нерабочее время',
-    tone: 'success', Icon: WeatherMoon24Filled,
+    tone: 'night', Icon: WeatherMoon24Filled,
   },
 ];
 
@@ -38,7 +38,7 @@ export const STATUSES = [
 export const vacationStatus = (from, to) => ({
   id: 'vacation',
   short: `В отпуске ${from} – ${to}`,
-  tone: 'accent',
+  tone: 'sea',
   Icon: Beach24Filled,
 });
 

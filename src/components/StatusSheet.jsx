@@ -27,7 +27,7 @@ export default function StatusSheet({ value, onClose, onPick }) {
                 className="stsheet-item"
                 onClick={() => setPicked(picked === id ? null : id)}
               >
-                <span className={`stsheet-ico stsheet-ico--${tone}`}><Icon /></span>
+                <span className={`stsheet-ico tone--${tone}`}><Icon /></span>
                 <span className="stsheet-texts">
                   <span className="stsheet-label">{label}</span>
                   <span className="stsheet-hint">{hint}</span>

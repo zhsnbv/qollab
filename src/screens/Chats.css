@@ -59,16 +59,15 @@
 /* ERGiz: кольцо и звезда — вёрсткой (ErgizAvatar), убираем клип-контейнер */
 .chat-avatar--bot { border: none; overflow: visible; }
 
+/* «В сети» и статус — один кружок с одинаковым обрамлением, отличается только
+   содержимое: у присутствия его нет. Геометрия общая (см. .chat-avatar-status),
+   иначе два индикатора на соседних строках прыгали по размеру. */
 .chat-avatar-online {
-  position: absolute;
-  bottom: -1px;
-  right: -1px;
-  width: 14px;
-  height: 14px;
+  position: absolute; bottom: 0; right: 0;
+  box-sizing: border-box;
+  width: 20px; height: 20px; border-radius: 50%;
   background: var(--color-success);
-  border: 3px solid var(--color-white);
-  border-radius: var(--radius-pill);
-  box-sizing: content-box;
+  border: 2px solid var(--color-white);
 }
 
 .chat-body {
@@ -205,15 +204,13 @@
   box-sizing: border-box;
   width: 20px; height: 20px; border-radius: 50%;
   border: 2px solid var(--color-white);
-  background: var(--sb-solid); color: var(--color-white);
+  /* Глиф белый в обеих темах: цветной кружок с белым символом — привычный
+     индикатор присутствия, и одинаковый в светлой и тёмной он читается
+     одинаково. Заливка подобрана так, чтобы белое на ней держало контраст. */
+  background: var(--sb-solid); color: #fff;
   display: flex; align-items: center; justify-content: center;
 }
 .chat-avatar-status svg { width: 12px; height: 12px; display: block; }
-/* В тёмной теме тот же оттенок, но светлее: на тёмной подложке насыщенная
-   заливка глохнет, а глиф на ней уже тёмный. */
-html[data-theme="dark"] .chat-avatar-status {
-  background: color-mix(in srgb, var(--sb-solid) 72%, #fff);
-}
 
 /* Строка, которую не выбирают: «Избранное» и ассистент. Гасим её целиком —
    пустой кружок рядом с активными читался бы как «просто не отмечено». */
