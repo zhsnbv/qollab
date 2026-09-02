@@ -38,17 +38,23 @@ export default function PersonProfile() {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, onScroll] = useScrolled();
-  const { id, employee, background, online } = location.state || {};
+  const { id, employee, background, online, bot } = location.state || {};
   const p = getPerson(id, employee);
   // «в сети» — не строка из данных, а текущее состояние: оно приходит оттуда,
   // откуда профиль открыли. Без этого шапка чата и профиль расходились.
-  const presence = online ? 'в сети' : p.status;
+  // У ассистента присутствия нет вовсе — вместо него то же, что в шапке чата.
+  const presence = bot ? 'AI-помощник qollab' : (online ? 'в сети' : p.status);
+  // У ассистента нет анкеты: ни табельного номера, ни руководителя, ни
+  // благодарностей. Вкладка «Сведения» была бы пустой, поэтому её нет,
+  // и профиль открывается сразу на общем с ним.
+  // «Общие группы» у ассистента тоже нет: в группы его не добавляют.
+  const tabs = bot ? TABS.filter((t) => t.id !== 'info' && t.id !== 'groups') : TABS;
 
   const [closing, setClosing] = useState(false);
   const [screenMenu, setScreenMenu] = useState(false);
   const [muted, setMuted] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [tab, setTab] = useState('info');
+  const [tab, setTab] = useState(bot ? 'files' : 'info');
   const [toast, setToast] = useState('');
 
   const close = () => {
@@ -81,10 +87,14 @@ export default function PersonProfile() {
 
   // «Ещё» больше нет: поиск и звук вынесены в ряд, а «поделиться ссылкой»
   // живёт в «трёх точках» шапки.
+  // Ассистенту не звонят и не говорят «рахмет» — это не человек. Остаются
+  // действия над самой перепиской.
   const actions = [
     { id: 'write', label: 'Написать', Icon: Chat24Filled, onClick: write },
-    { id: 'call', label: 'Звонок', Icon: Call24Filled, onClick: () => setToast(`Звоним: ${p.name}`) },
-    { id: 'thanks', label: 'Рахмет', Icon: Heart24Filled, onClick: () => setToast('Рахмет отправлен') },
+    ...(bot ? [] : [
+      { id: 'call', label: 'Звонок', Icon: Call24Filled, onClick: () => setToast(`Звоним: ${p.name}`) },
+      { id: 'thanks', label: 'Рахмет', Icon: Heart24Filled, onClick: () => setToast('Рахмет отправлен') },
+    ]),
     { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },
     { id: 'mute', label: 'Звук', Icon: muted ? AlertOff24Filled : Alert24Filled, onClick: toggleMute },
   ];
@@ -159,7 +169,7 @@ export default function PersonProfile() {
             </div>
           </ProfileHero>
 
-          <ProfileTabs tabs={TABS} value={tab} onChange={setTab} data={p} />
+          <ProfileTabs tabs={tabs} value={tab} onChange={setTab} data={p} />
 
           {tab === 'info' && (<>
           {/* Корпоративные данные */}

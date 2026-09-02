@@ -29,6 +29,24 @@ const groups = [
 ];
 
 export const userProfiles = {
+  // Ассистент. Групп у него нет и быть не может, медиа он не присылает —
+  // зато присылает документы и ссылки на сервисы, поэтому только они.
+  ergiz: {
+    id: 'ergiz',
+    name: 'ERGiz – Искусственный интеллект',
+    avatar: '/img/chats/ergiz-avatar.png',
+    media: [],
+    files: [
+      { id: 'ef1', name: 'Справка с места работы.pdf', size: '84 КБ' },
+      { id: 'ef2', name: 'Памятка по отпуску.pdf', size: '210 КБ' },
+    ],
+    links: [
+      { id: 'el1', url: 'https://qollab.kz/services/vacation' },
+      { id: 'el2', url: 'https://qollab.kz/help' },
+    ],
+    groups: [],
+  },
+
   ayazhan: {
     id: 'ayazhan',
     name: 'Аяжан Сериккызы',

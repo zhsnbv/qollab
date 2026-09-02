@@ -171,7 +171,9 @@ export default function DMChat() {
   // человек. Группа по-прежнему уходит на прежний экран.
   const openProfile = () => navigate(PROFILE_V2 ? (chat?.kind === 'group' ? '/group' : '/person') : '/chat-profile', {
     state: {
-      id: chat?.profileId,
+      // У ассистента своя карточка в справочнике профилей: строка чата её
+      // не содержит, а собирать её здесь значило бы держать данные в экране.
+      id: chat?.kind === 'bot' ? 'ergiz' : chat?.profileId,
       kind: 'user',
       employee: chat?.profileId ? undefined : {
         id: chat?.title,
@@ -183,6 +185,7 @@ export default function DMChat() {
       // Присутствие берём из строки чата: в шапке написано «в сети», и профиль
       // не должен тут же сообщать, что человек был недавно.
       online: !!chat?.online,
+      bot: chat?.kind === 'bot',
       // Под профилем остаётся сам чат, а не список чатов
       background: location,
     },
