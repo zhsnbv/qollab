@@ -194,19 +194,25 @@
 .chats-act:disabled:active { opacity: 1; }
 
 /* Кружок статуса на аватарке — на месте зелёной точки «онлайн» и вместо неё:
-   статус конкретнее присутствия, поэтому при обоих показываем его. */
+   статус конкретнее присутствия, поэтому при обоих показываем его.
+   Заливка — насыщенный цвет оттенка, глиф — цвет поверхности: в светлой теме
+   белый, в тёмной тёмный, то есть вырезан из кружка.
+   Все размеры чётные: при 20px бокса и 13px глифа с каждой стороны
+   оставалось по 3.5px, браузер округлял их в разные стороны — и иконка
+   выглядела сдвинутой. */
 .chat-avatar-status {
   position: absolute; bottom: -2px; right: -2px;
-  width: 20px; height: 20px; border-radius: 50%;
+  box-sizing: border-box;
+  width: 24px; height: 24px; border-radius: 50%;
   border: 2px solid var(--color-white);
-  background: var(--sb-to); color: var(--sb-text);
+  background: var(--sb-text); color: var(--color-white);
   display: flex; align-items: center; justify-content: center;
-  box-sizing: content-box;
 }
-.chat-avatar-status svg { width: 13px; height: 13px; }
+.chat-avatar-status svg { width: 14px; height: 14px; display: block; }
+/* В тёмной теме насыщенный тон уходит в грязь на тёмной подложке — осветляем
+   его тинтом того же оттенка, чтобы кружок остался цветным пятном. */
 html[data-theme="dark"] .chat-avatar-status {
-  background: color-mix(in srgb, var(--sb-to) 34%, var(--color-white));
-  color: color-mix(in srgb, var(--sb-to) 78%, #fff);
+  background: color-mix(in srgb, var(--sb-text) 45%, var(--sb-to));
 }
 
 /* Строка, которую не выбирают: «Избранное» и ассистент. Гасим её целиком —
