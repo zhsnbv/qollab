@@ -201,18 +201,18 @@
    оставалось по 3.5px, браузер округлял их в разные стороны — и иконка
    выглядела сдвинутой. */
 .chat-avatar-status {
-  position: absolute; bottom: -2px; right: -2px;
+  position: absolute; bottom: 0; right: 0;
   box-sizing: border-box;
-  width: 24px; height: 24px; border-radius: 50%;
+  width: 20px; height: 20px; border-radius: 50%;
   border: 2px solid var(--color-white);
-  background: var(--sb-text); color: var(--color-white);
+  background: var(--sb-solid); color: var(--color-white);
   display: flex; align-items: center; justify-content: center;
 }
-.chat-avatar-status svg { width: 14px; height: 14px; display: block; }
-/* В тёмной теме насыщенный тон уходит в грязь на тёмной подложке — осветляем
-   его тинтом того же оттенка, чтобы кружок остался цветным пятном. */
+.chat-avatar-status svg { width: 12px; height: 12px; display: block; }
+/* В тёмной теме тот же оттенок, но светлее: на тёмной подложке насыщенная
+   заливка глохнет, а глиф на ней уже тёмный. */
 html[data-theme="dark"] .chat-avatar-status {
-  background: color-mix(in srgb, var(--sb-text) 45%, var(--sb-to));
+  background: color-mix(in srgb, var(--sb-solid) 72%, #fff);
 }
 
 /* Строка, которую не выбирают: «Избранное» и ассистент. Гасим её целиком —
