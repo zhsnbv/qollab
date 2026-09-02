@@ -65,9 +65,9 @@
 .chat-avatar-online {
   position: absolute; bottom: 0; right: 0;
   box-sizing: border-box;
-  width: 20px; height: 20px; border-radius: 50%;
+  width: 22px; height: 22px; border-radius: 50%;
   background: var(--color-success);
-  border: 2px solid var(--color-white);
+  border: 3px solid var(--color-white);
 }
 
 .chat-body {
@@ -196,14 +196,14 @@
    статус конкретнее присутствия, поэтому при обоих показываем его.
    Заливка — насыщенный цвет оттенка, глиф — цвет поверхности: в светлой теме
    белый, в тёмной тёмный, то есть вырезан из кружка.
-   Все размеры чётные: при 20px бокса и 13px глифа с каждой стороны
-   оставалось по 3.5px, браузер округлял их в разные стороны — и иконка
-   выглядела сдвинутой. */
+   Размеры подобраны так, чтобы поля выходили целыми: 22 − 3·2 = 16 под глиф
+   12px, то есть ровно по 2px с каждой стороны. При нецелом поле браузер
+   округляет его в разные стороны, и иконка выглядит сдвинутой. */
 .chat-avatar-status {
   position: absolute; bottom: 0; right: 0;
   box-sizing: border-box;
-  width: 20px; height: 20px; border-radius: 50%;
-  border: 2px solid var(--color-white);
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 3px solid var(--color-white);
   /* Глиф белый в обеих темах: цветной кружок с белым символом — привычный
      индикатор присутствия, и одинаковый в светлой и тёмной он читается
      одинаково. Заливка подобрана так, чтобы белое на ней держало контраст. */

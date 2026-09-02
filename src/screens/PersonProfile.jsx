@@ -14,6 +14,7 @@ import { getPerson } from '../data/person';
 import { useScrolled } from '../utils/useScrolled';
 import ProfileHero from '../components/ProfileHero';
 import StatusBubble from '../components/StatusBubble';
+import ErgizAvatar from '../components/ErgizAvatar';
 import ProfileTabs from '../components/ProfileTabs';
 import Toast from '../components/Toast';
 import './Profile.css';
@@ -155,7 +156,9 @@ export default function PersonProfile() {
         <div className="profile">
           <ProfileHero
             me={p}
-            status={<StatusBubble status={p.work} />}
+            /* У ассистента аватарка со своим оформлением — кольцо и значок ИИ */
+            avatarNode={bot ? <ErgizAvatar size={128} /> : undefined}
+            status={bot ? null : <StatusBubble status={p.work} />}
             presence={presence}
           >
             {/* Действия и вкладки — в том же блоке, что аватар: общий фон */}

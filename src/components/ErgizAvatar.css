@@ -23,15 +23,21 @@
   object-fit: cover;
 }
 
+/* Значок ИИ стоит там же, где кружок статуса у людей, и так же обведён цветом
+   поверхности. Заливка — тот же градиент, что у кольца: по нему ассистент
+   и отличается от статуса, у которого заливка сплошная. */
 .ergiz-avatar-badge {
   position: absolute;
-  right: -4%;
-  bottom: -4%;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: var(--color-white);
-  color: #d9639f;
-  box-shadow: 0 0 0 2px var(--color-white);
+  border-style: solid;
+  border-color: var(--color-white);
+  background: linear-gradient(135deg, #ff9a8b, #f6a6c9 45%, #a78bdb);
+  color: #fff;
 }
+.ergiz-avatar-badge svg { display: block; }

@@ -8,12 +8,14 @@ import './ProfileHero.css';
 // badge — пилюля под именем (например «Бывший сотрудник»: это не статус,
 // а факт из HR, и хвостик к аватарке ему не нужен),
 // presence — строка «был(-а) в сети» под должностью.
-export default function ProfileHero({ me, onPhoto, status, badge, presence, children }) {
+export default function ProfileHero({ me, onPhoto, status, badge, presence, avatarNode, children }) {
   if (!PROFILE_V2) return <ClassicHero me={me} onPhoto={onPhoto} />;
 
-  const avatar = me.avatar
+  // avatarNode — готовая аватарка со своим оформлением (кольцо и значок
+  // ассистента). Обычные фото и инициалы рисуем здесь же.
+  const avatar = avatarNode || (me.avatar
     ? <img className="ava" src={me.avatar} alt="" />
-    : <span className={`ava ava--initials tint-${me.tint || 'orange'}`}>{me.initials}</span>;
+    : <span className={`ava ava--initials tint-${me.tint || 'orange'}`}>{me.initials}</span>);
 
   return (
     <section className="phero">
