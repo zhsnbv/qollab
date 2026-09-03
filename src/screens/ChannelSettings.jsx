@@ -48,7 +48,9 @@ export default function ChannelSettings() {
     const moved = c.subscribed !== (section === 'mine');
     return (
       <div className={`chset-row ${moved ? 'moved' : ''}`}>
-        <img className="chset-ava" src={c.avatar} alt="" />
+        {c.avatar
+          ? <img className={`chset-ava ${c.fit === 'contain' ? 'chset-ava--contain' : ''}`} src={c.avatar} alt="" />
+          : <span className={`chset-ava chset-ava--initials tint-${c.tint || 'orange'}`}>{c.initials}</span>}
         <span className="chset-texts">
           <span className="chset-name">{c.name}</span>
           <span className="chset-sub">{c.subscribers}</span>
@@ -91,12 +93,7 @@ export default function ChannelSettings() {
           )}
         </div>
 
-        {/* Кнопки «Сохранить» нет: подписка применяется сразу. Объясняем только
-            то, что не видно само, — почему строки остались на месте. */}
-        <p className="chset-note">
-          Подписка применяется сразу. Списки пересоберутся, когда вы зайдёте
-          сюда снова, — чтобы строки не прыгали под рукой.
-        </p>
+        {/* Кнопки «Сохранить» нет: подписка применяется в момент нажатия */}
         <div className="fav-bottom-spacer" />
       </div>
 

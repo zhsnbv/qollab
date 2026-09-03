@@ -27,6 +27,19 @@
   object-fit: cover; background: var(--img-placeholder);
   border: 1px solid var(--avatar-edge);
 }
+/* Логотип с полями нельзя обрезать под круг, как фото */
+.chset-ava--contain { object-fit: contain; background: var(--color-white); }
+/* Канал без обложки — инициалами, теми же тонами, что аватарки в чатах */
+.chset-ava--initials {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 600; border: 0;
+  background: var(--color-primary-bg); color: var(--color-primary);
+}
+.chset-ava--initials.tint-green { background: #d9f7be; color: #52c41a; }
+.chset-ava--initials.tint-blue { background: #e6f4ff; color: #1677ff; }
+html[data-theme="dark"] .chset-ava--initials.tint-green { background: #1e3320; color: #7ee08a; }
+html[data-theme="dark"] .chset-ava--initials.tint-blue { background: #16283d; color: #6aaaf5; }
+
 .chset-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .chset-name {
   font-size: 15px; font-weight: 500; color: var(--color-heading);
@@ -46,9 +59,4 @@
 .chset-btn:active { opacity: 0.7; }
 .chset-btn--on {
   background: none; border-color: var(--color-border); color: var(--color-text);
-}
-
-.chset-note {
-  padding: var(--space-5) var(--space-4) 0;
-  font-size: 13px; line-height: 1.45; color: var(--color-weak);
 }

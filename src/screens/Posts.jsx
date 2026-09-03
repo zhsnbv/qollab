@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
-import { MagnifyingGlass, CaretRight, GearSix } from '@phosphor-icons/react';
+import { MagnifyingGlass, CaretRight, GearSix, Megaphone } from '@phosphor-icons/react';
 import { useSkeleton, PostsSkeleton, FadeIn } from '../components/Skeleton';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
-import { channels, basePosts, makePost, events } from '../data/feed';
+import { basePosts, makePost, events } from '../data/feed';
 import { channelScopes } from '../data/channels';
 import { useChannels } from '../context/ChannelsContext';
 import ScreenMenu from '../components/ScreenMenu';
@@ -62,9 +62,20 @@ export default function Posts() {
     return () => io.disconnect();
   }, [loading, tab, eventsDone]);
 
+  // Лента каналов — это подписки, а не отдельный список: раньше их было два,
+  // и настройка правила один, а полоса показывала другой.
+  const subscribed = channelList.filter((c) => c.subscribed);
+  const strip = [
+    { name: 'Все каналы', img: '/img/posts/ch-all.png', all: true },
+    ...subscribed.map((c) => ({ name: c.name, img: c.avatar, initials: c.initials, tint: c.tint, fit: c.fit })),
+  ];
+
   const allPosts = [...basePosts, ...Array.from({ length: extraCount }, (_, i) => makePost(i))];
-  const posts = channel === 'Все каналы' ? allPosts : allPosts.filter((p) => p.channel === channel);
-  const selectedChannel = channels.find((c) => c.name === channel && !c.all);
+  // «Все каналы» — это все мои каналы: публикации от того, на что не подписан,
+  // в ленте появляться не должны.
+  const myPosts = allPosts.filter((p) => subscribed.some((c) => c.name === p.channel));
+  const posts = channel === 'Все каналы' ? myPosts : myPosts.filter((p) => p.channel === channel);
+  const selectedChannel = strip.find((c) => c.name === channel && !c.all);
 
   // «Мои каналы» — те, что веду сам; в прототипе это подмножество подписок.
   const scoped = scope === 'subscribed'
@@ -147,11 +158,13 @@ export default function Posts() {
                 «Настройка» стоит в конце: начало ленты занято фильтрами, и
                 действие среди них читалось бы как ещё один канал. */}
             <div className="channel-row no-scrollbar">
-              {channels.map((ch, i) => (
+              {strip.map((ch, i) => (
                 <button className="channel-item" key={i} onClick={() => setChannel(ch.name)}>
                   <span className={`channel-ring ${channel === ch.name ? 'active' : ''} ${ch.all ? 'channel-ring--square' : ''}`}>
-                    <span className={`channel-avatar ${ch.all ? 'channel-avatar--all' : ''} ${ch.cu ? 'channel-avatar--cu' : ''}`}>
-                      <img src={ch.img} alt="" />
+                    <span className={`channel-avatar ${ch.all ? 'channel-avatar--all' : ''} ${ch.fit === 'contain' ? 'channel-avatar--cu' : ''}`}>
+                      {ch.img
+                        ? <img src={ch.img} alt="" />
+                        : <span className={`channel-initials tint-${ch.tint || 'orange'}`}>{ch.initials}</span>}
                     </span>
                   </span>
                   <span className="channel-name">{ch.name}</span>
@@ -177,10 +190,23 @@ export default function Posts() {
               </div>
             )}
 
-            <div className="post-list">
-              {posts.map((p, i) => <PostCard key={i} p={p} />)}
-              <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
-            </div>
+            {/* Без подписок лента пуста по делу, а не по ошибке — говорим,
+                что делать, и ведём туда же, куда ведёт «Настройка». */}
+            {!subscribed.length ? (
+              <div className="post-empty">
+                <Megaphone size={40} weight="fill" />
+                <b>Вы ни на что не подписаны</b>
+                <p>Выберите каналы — их публикации появятся в ленте</p>
+                <button onClick={() => navigate('/channels/settings', { state: { background: location } })}>
+                  Выбрать каналы
+                </button>
+              </div>
+            ) : (
+              <div className="post-list">
+                {posts.map((p, i) => <PostCard key={i} p={p} />)}
+                <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
+              </div>
+            )}
             {loadingMore && <div className="spinner-row"><span className="spinner" /></div>}
           </>
         )}
