@@ -5,6 +5,8 @@ export const channelList = [
   {
     id: 'erg-news',
     name: 'ERG News',
+    // Обязательный: на него подписывает компания, отписаться нельзя
+    required: true,
     avatar: '/img/posts/ch-erg-news.png',
     cover: '/img/posts/news/n1.jpg',
     posts: '1500 публикаций',
@@ -53,46 +55,46 @@ export const channelList = [
     about: 'Обучение и развитие персонала: курсы, программы кадрового резерва и корпоративные интенсивы.',
     subscribed: true,
   },
-  // Каналы без своей обложки — с инициалами: заводить под каждый картинку
-  // ради прототипа незачем, а список должен быть длиннее пяти строк, иначе
-  // в разделе «Доступные мне» нечего показывать.
+  // Каналы предприятий и служб. Аватарка есть у каждого: канала без лица
+  // не бывает — по нему его и узнают в ленте.
   {
-    id: 'ot-pb', name: 'Охрана труда и ПБ', initials: 'ОТ', tint: 'green',
+    id: 'ot-pb', name: 'Охрана труда и ПБ', avatar: '/img/posts/ch-ot.svg',
+    required: true,
     cover: '/img/posts/news/n3.jpg',
     posts: '420 публикаций', subscribers: '3 100 подписчиков',
     about: 'Правила, инструктажи и разборы происшествий. Обязателен для производственных площадок.',
-    subscribed: false,
+    subscribed: true,
   },
   {
-    id: 'hr', name: 'HR-портал', initials: 'HR', tint: 'blue',
+    id: 'hr', name: 'HR-портал', avatar: '/img/posts/ch-hr.svg',
     cover: '/img/posts/news/n4.jpg',
     posts: '860 публикаций', subscribers: '4 800 подписчиков',
     about: 'Вакансии, обучение, льготы и всё, что касается работы в группе.',
     subscribed: false,
   },
   {
-    id: 'it', name: 'IT-служба', initials: 'IT', tint: 'orange',
+    id: 'it', name: 'IT-служба', avatar: '/img/posts/ch-it.svg',
     cover: '/img/posts/news/n5.jpg',
     posts: '310 публикаций', subscribers: '2 400 подписчиков',
     about: 'Работы на сервисах, обновления qollab и ответы на частые вопросы.',
     subscribed: false,
   },
   {
-    id: 'union', name: 'Профсоюз', initials: 'ПР', tint: 'green',
+    id: 'union', name: 'Профсоюз', avatar: '/img/posts/ch-union.svg',
     cover: '/img/posts/news/n6.jpg',
     posts: '180 публикаций', subscribers: '1 900 подписчиков',
     about: 'Путёвки, материальная помощь, коллективный договор.',
     subscribed: false,
   },
   {
-    id: 'shubarkol', name: 'Шубарколь Комир', initials: 'ШК', tint: 'blue',
+    id: 'shubarkol', name: 'Шубарколь Комир', avatar: '/img/posts/ch-shubarkol.svg',
     cover: '/img/posts/news/n1.jpg',
     posts: '640 публикаций', subscribers: '1 100 подписчиков',
     about: 'Новости предприятия: добыча, смены, люди.',
     subscribed: false,
   },
   {
-    id: 'kez', name: 'Казахстанский электролизный завод', initials: 'КЭ', tint: 'orange',
+    id: 'kez', name: 'Казахстанский электролизный завод', avatar: '/img/posts/ch-kez.svg',
     cover: '/img/posts/news/n2.jpg',
     posts: '520 публикаций', subscribers: '980 подписчиков',
     about: 'Производство алюминия: показатели, проекты и жизнь завода.',

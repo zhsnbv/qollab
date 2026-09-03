@@ -7,12 +7,18 @@ import { channelList } from '../data/channels';
 const STORAGE_KEY = 'qollab.channels.v1';
 
 const defaults = channelList.filter((c) => c.subscribed).map((c) => c.id);
+// На эти каналы подписывает компания — отписаться нельзя, и в списке они
+// есть всегда, даже если в сохранённом наборе их не оказалось.
+const required = channelList.filter((c) => c.required).map((c) => c.id);
+const withRequired = (list) => [...new Set([...required, ...list])];
 
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     // Отсеиваем id, которых в каталоге уже нет (канал закрыли/переименовали)
-    if (Array.isArray(saved)) return saved.filter((id) => channelList.some((c) => c.id === id));
+    if (Array.isArray(saved)) {
+      return withRequired(saved.filter((id) => channelList.some((c) => c.id === id)));
+    }
   } catch { /* ignore */ }
   return defaults;
 }
@@ -29,11 +35,16 @@ export function ChannelsProvider({ children }) {
   const value = useMemo(() => ({
     subscribedIds,
     isSubscribed: (id) => subscribedIds.includes(id),
-    toggle: (id) => setSubscribedIds((list) => (
-      list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
-    )),
+    isRequired: (id) => required.includes(id),
+    toggle: (id) => setSubscribedIds((list) => {
+      if (required.includes(id)) return list;
+      return list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+    }),
     // Каналы с актуальным флагом: экраны читают его вместо поля из данных
-    channels: channelList.map((c) => ({ ...c, subscribed: subscribedIds.includes(c.id) })),
+    channels: channelList.map((c) => ({
+      ...c,
+      subscribed: c.required || subscribedIds.includes(c.id),
+    })),
   }), [subscribedIds]);
 
   return <ChannelsContext.Provider value={value}>{children}</ChannelsContext.Provider>;

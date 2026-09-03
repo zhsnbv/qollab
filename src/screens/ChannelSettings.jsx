@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CaretLeft } from '@phosphor-icons/react';
+import { CaretLeft, LockSimple } from '@phosphor-icons/react';
 import { useChannels } from '../context/ChannelsContext';
 import { useScrolled } from '../utils/useScrolled';
 import Toast from '../components/Toast';
@@ -28,7 +28,11 @@ export default function ChannelSettings() {
   const [wasSubscribed] = useState(() => new Set(layout.current));
 
   const byId = useMemo(() => Object.fromEntries(channels.map((c) => [c.id, c])), [channels]);
-  const mine = channels.filter((c) => wasSubscribed.has(c.id));
+  // Обязательные — наверху раздела: их нельзя тронуть, и они не должны
+  // мешаться среди тех, что человек выбрал сам.
+  const mine = channels
+    .filter((c) => wasSubscribed.has(c.id))
+    .sort((a, b) => Number(!!b.required) - Number(!!a.required));
   const rest = channels.filter((c) => !wasSubscribed.has(c.id));
 
   const close = () => {
@@ -45,22 +49,29 @@ export default function ChannelSettings() {
   const Row = ({ c, section }) => {
     // Строка «не на своём месте»: она уже не соответствует разделу, в котором
     // стоит, и переедет при следующем заходе. Гасим её, чтобы это читалось.
-    const moved = c.subscribed !== (section === 'mine');
+    const moved = !c.required && c.subscribed !== (section === 'mine');
     return (
       <div className={`chset-row ${moved ? 'moved' : ''}`}>
-        {c.avatar
-          ? <img className={`chset-ava ${c.fit === 'contain' ? 'chset-ava--contain' : ''}`} src={c.avatar} alt="" />
-          : <span className={`chset-ava chset-ava--initials tint-${c.tint || 'orange'}`}>{c.initials}</span>}
+        <img className={`chset-ava ${c.fit === 'contain' ? 'chset-ava--contain' : ''}`} src={c.avatar} alt="" />
         <span className="chset-texts">
           <span className="chset-name">{c.name}</span>
           <span className="chset-sub">{c.subscribers}</span>
         </span>
-        <button
-          className={`chset-btn ${c.subscribed ? 'chset-btn--on' : ''}`}
-          onClick={() => onToggle(c.id)}
-        >
-          {c.subscribed ? 'Отписаться' : 'Подписаться'}
-        </button>
+        {c.required ? (
+          /* Не кнопка: нажимать нечего, компания подписала на этот канал сама.
+             Причина сказана прямо, иначе выглядит как сломанная кнопка. */
+          <span className="chset-locked">
+            <LockSimple size={13} weight="fill" />
+            Обязательный
+          </span>
+        ) : (
+          <button
+            className={`chset-btn ${c.subscribed ? 'chset-btn--on' : ''}`}
+            onClick={() => onToggle(c.id)}
+          >
+            {c.subscribed ? 'Отписаться' : 'Подписаться'}
+          </button>
+        )}
       </div>
     );
   };
@@ -79,10 +90,8 @@ export default function ChannelSettings() {
           <span className="fav-count">{channels.filter((c) => c.subscribed).length}</span>
         </div>
         <div className="fav-list">
+          {/* Пустым этот раздел не бывает: обязательные каналы в нём всегда */}
           {mine.map((c) => <Row c={c} section="mine" key={c.id} />)}
-          {!mine.length && (
-            <p className="fav-empty">Подписок пока нет — выберите каналы из списка ниже</p>
-          )}
         </div>
 
         <h2 className="fav-section">Доступные мне</h2>

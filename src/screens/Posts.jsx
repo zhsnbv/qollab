@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
-import { MagnifyingGlass, CaretRight, GearSix, Megaphone } from '@phosphor-icons/react';
+import { MagnifyingGlass, CaretRight, GearSix } from '@phosphor-icons/react';
 import { useSkeleton, PostsSkeleton, FadeIn } from '../components/Skeleton';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { basePosts, makePost, events } from '../data/feed';
@@ -67,7 +67,7 @@ export default function Posts() {
   const subscribed = channelList.filter((c) => c.subscribed);
   const strip = [
     { name: 'Все каналы', img: '/img/posts/ch-all.png', all: true },
-    ...subscribed.map((c) => ({ name: c.name, img: c.avatar, initials: c.initials, tint: c.tint, fit: c.fit })),
+    ...subscribed.map((c) => ({ name: c.name, img: c.avatar, fit: c.fit })),
   ];
 
   const allPosts = [...basePosts, ...Array.from({ length: extraCount }, (_, i) => makePost(i))];
@@ -162,9 +162,7 @@ export default function Posts() {
                 <button className="channel-item" key={i} onClick={() => setChannel(ch.name)}>
                   <span className={`channel-ring ${channel === ch.name ? 'active' : ''} ${ch.all ? 'channel-ring--square' : ''}`}>
                     <span className={`channel-avatar ${ch.all ? 'channel-avatar--all' : ''} ${ch.fit === 'contain' ? 'channel-avatar--cu' : ''}`}>
-                      {ch.img
-                        ? <img src={ch.img} alt="" />
-                        : <span className={`channel-initials tint-${ch.tint || 'orange'}`}>{ch.initials}</span>}
+                      <img src={ch.img} alt="" />
                     </span>
                   </span>
                   <span className="channel-name">{ch.name}</span>
@@ -190,23 +188,11 @@ export default function Posts() {
               </div>
             )}
 
-            {/* Без подписок лента пуста по делу, а не по ошибке — говорим,
-                что делать, и ведём туда же, куда ведёт «Настройка». */}
-            {!subscribed.length ? (
-              <div className="post-empty">
-                <Megaphone size={40} weight="fill" />
-                <b>Вы ни на что не подписаны</b>
-                <p>Выберите каналы — их публикации появятся в ленте</p>
-                <button onClick={() => navigate('/channels/settings', { state: { background: location } })}>
-                  Выбрать каналы
-                </button>
-              </div>
-            ) : (
-              <div className="post-list">
-                {posts.map((p, i) => <PostCard key={i} p={p} />)}
-                <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
-              </div>
-            )}
+            {/* Пустой ленты не бывает: от обязательных каналов не отписаться */}
+            <div className="post-list">
+              {posts.map((p, i) => <PostCard key={i} p={p} />)}
+              <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
+            </div>
             {loadingMore && <div className="spinner-row"><span className="spinner" /></div>}
           </>
         )}
