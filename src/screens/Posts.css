@@ -56,6 +56,13 @@
 .channel-ring--square { border-radius: var(--radius-xl); }
 .channel-avatar--all { border-radius: var(--radius-lg); background: var(--color-background); }
 .channel-avatar--cu { background: var(--img-placeholder); }
+/* Вход в настройку каналов — не аватарка, поэтому серый глиф на подложке,
+   как у второстепенных кнопок в шапках. */
+.channel-avatar--set {
+  border-radius: var(--radius-lg); background: var(--color-background);
+  border-color: transparent; color: var(--color-weak);
+  display: flex; align-items: center; justify-content: center;
+}
 .channel-avatar--cu img { width: 43px; height: auto; object-fit: contain; }
 .channel-name {
   font-size: 12px; font-weight: 600; color: var(--color-text); text-align: center;

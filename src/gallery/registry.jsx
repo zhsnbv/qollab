@@ -19,6 +19,7 @@ import BannerDetail from '../screens/BannerDetail';
 import MiniApp from '../screens/MiniApp';
 import ServicesSheet from '../screens/ServicesSheet';
 import Favorites from '../screens/Favorites';
+import ChannelSettings from '../screens/ChannelSettings';
 import Auth from '../screens/Auth';
 import Search from '../screens/Search';
 import Notifications from '../screens/Notifications';
@@ -140,6 +141,11 @@ export const SCREEN_GROUPS = [
       { id: 'article', title: 'Публикация', route: '/article', render: () => <ArticleView /> },
       { id: 'channel', title: 'Канал', route: '/channel/erg-news', render: routed('/channel/:channelId', ChannelView) },
       { id: 'event', title: 'Мероприятие', route: at('/event', { id: events[0].id }), render: () => <EventView /> },
+      {
+        id: 'ch-settings', title: 'Настройка каналов',
+        note: 'Плитка «Настройка» в ленте каналов; без кнопки «Сохранить»',
+        route: '/channels/settings', render: () => <ChannelSettings />,
+      },
     ],
   },
   {

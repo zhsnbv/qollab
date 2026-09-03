@@ -1,0 +1,54 @@
+/* Экран уезжает вправо при закрытии — у избранного этого не было, оно
+   закрывается мгновенно. */
+.favscreen.closing { animation: fav-slide-out 0.26s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+@keyframes fav-slide-out { to { transform: translateX(100%); } }
+/* Место под таб-баром: у этого экрана нет нижней кнопки, которая его занимала */
+.fav-bottom-spacer { height: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+
+@media (prefers-reduced-motion: reduce) {
+  .favscreen, .favscreen.closing { animation: none; }
+}
+
+/* Настройка каналов. Каркас общий с избранными сервисами (.favscreen/.fav-*),
+   здесь только строка канала: у неё аватарка, две строки текста и кнопка
+   подписки вместо иконки «плюс/минус». */
+.chset-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  transition: opacity 0.18s;
+}
+/* Строка, которая уже не соответствует своему разделу и переедет при
+   следующем заходе: гасим, чтобы несоответствие читалось как временное. */
+.chset-row.moved { opacity: 0.5; }
+
+.chset-ava {
+  width: 44px; height: 44px; flex-shrink: 0; border-radius: var(--radius-pill);
+  object-fit: cover; background: var(--img-placeholder);
+  border: 1px solid var(--avatar-edge);
+}
+.chset-texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.chset-name {
+  font-size: 15px; font-weight: 500; color: var(--color-heading);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.chset-sub { font-size: 13px; color: var(--color-weak); }
+
+/* Кнопка подписки: капсула по гайдлайну. Подписан — спокойная обводка,
+   не подписан — акцент: действие важнее состояния. */
+.chset-btn {
+  flex-shrink: 0; height: 34px; padding: 0 var(--space-4);
+  border-radius: var(--radius-pill); border: 1px solid transparent;
+  background: var(--color-primary); color: #fff;
+  font-size: 14px; font-weight: 500;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.chset-btn:active { opacity: 0.7; }
+.chset-btn--on {
+  background: none; border-color: var(--color-border); color: var(--color-text);
+}
+
+.chset-note {
+  padding: var(--space-5) var(--space-4) 0;
+  font-size: 13px; line-height: 1.45; color: var(--color-weak);
+}

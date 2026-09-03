@@ -12,6 +12,7 @@ import ServicesSheet from './screens/ServicesSheet';
 import Search from './screens/Search';
 import BannerDetail from './screens/BannerDetail';
 import Favorites from './screens/Favorites';
+import ChannelSettings from './screens/ChannelSettings';
 import MiniApp from './screens/MiniApp';
 import Notifications from './screens/Notifications';
 import NotificationGroup from './screens/NotificationGroup';
@@ -36,6 +37,7 @@ import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CompanyProvider } from './context/CompanyContext';
+import { ChannelsProvider } from './context/ChannelsContext';
 import { useViewportFit } from './utils/useKeyboardInset';
 import { applyTheme, getThemeMode, watchSystemTheme } from './utils/theme';
 import './App.css';
@@ -76,6 +78,7 @@ function OverlayRoutes({ location }) {
         <Route path="/search" element={<Search />} />
         <Route path="/banner" element={<BannerDetail />} />
         <Route path="/favorites" element={<Favorites />} />
+        <Route path="/channels/settings" element={<ChannelSettings />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/notifications/:groupId" element={<NotificationGroup />} />
         <Route path="/channel/:channelId" element={<ChannelView />} />
@@ -169,13 +172,13 @@ export default function App() {
   const gallery = window.location.pathname === '/all';
 
   return (
-    <CompanyProvider><AuthProvider><FavoritesProvider>
+    <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider>
       {gallery ? <AllScreens /> : (
         <BrowserRouter>
           <Device exiting={exiting} splashDone={splashDone} />
         </BrowserRouter>
       )}
-    </FavoritesProvider></AuthProvider></CompanyProvider>
+    </ChannelsProvider></FavoritesProvider></AuthProvider></CompanyProvider>
   );
 }
 

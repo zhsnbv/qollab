@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
-import { MagnifyingGlass, CaretRight } from '@phosphor-icons/react';
+import { MagnifyingGlass, CaretRight, GearSix } from '@phosphor-icons/react';
 import { useSkeleton, PostsSkeleton, FadeIn } from '../components/Skeleton';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { channels, basePosts, makePost, events } from '../data/feed';
-import { channelList, channelScopes } from '../data/channels';
+import { channelScopes } from '../data/channels';
+import { useChannels } from '../context/ChannelsContext';
 import ScreenMenu from '../components/ScreenMenu';
 import './Posts.css';
 
@@ -17,6 +18,9 @@ export default function Posts() {
   const loading = useSkeleton();
   const navigate = useNavigate();
   const location = useLocation();
+  // Подписки берём из контекста, а не из данных: их правит экран настройки,
+  // и вкладка должна видеть изменения сразу.
+  const { channels: channelList } = useChannels();
   const openEvent = (e) => navigate('/event', { state: { id: e.id, background: location } });
   const [tab, setTab] = useState('posts'); // posts | channels | events
   const [channel, setChannel] = useState('Все каналы');
@@ -139,7 +143,9 @@ export default function Posts() {
 
         {tab === 'posts' && (
           <>
-            {/* Лента каналов — выбор любого канала или «Все каналы» */}
+            {/* Лента каналов — выбор любого канала или «Все каналы».
+                «Настройка» стоит в конце: начало ленты занято фильтрами, и
+                действие среди них читалось бы как ещё один канал. */}
             <div className="channel-row no-scrollbar">
               {channels.map((ch, i) => (
                 <button className="channel-item" key={i} onClick={() => setChannel(ch.name)}>
@@ -151,6 +157,15 @@ export default function Posts() {
                   <span className="channel-name">{ch.name}</span>
                 </button>
               ))}
+              <button
+                className="channel-item"
+                onClick={() => navigate('/channels/settings', { state: { background: location } })}
+              >
+                <span className="channel-ring channel-ring--square">
+                  <span className="channel-avatar channel-avatar--set"><GearSix size={26} weight="fill" /></span>
+                </span>
+                <span className="channel-name">Настройка</span>
+              </button>
             </div>
 
             {/* Шапка выбранного канала (Medium: имя + «Перейти в канал») */}
