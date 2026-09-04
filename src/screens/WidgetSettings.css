@@ -1,0 +1,66 @@
+/* Панель «Виджеты». Каркас общий с избранными сервисами (.favscreen/.fav-*),
+   здесь только сетка карточек с превью. */
+.wset-note {
+  padding: 0 var(--space-4) var(--space-4);
+  font-size: 13px; line-height: 1.45; color: var(--color-weak);
+}
+
+.wset-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  padding: 0 var(--space-4);
+}
+.wset-card {
+  background: var(--color-white); border-radius: 14px; padding: 10px;
+  border: 1px solid var(--color-border);
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+
+/* Уменьшенный вид самого виджета: добавляют то, что видят */
+.wset-prev {
+  height: 74px; border-radius: 9px; padding: var(--space-2);
+  background: var(--page-bg); overflow: hidden;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.wset-prev-top { display: flex; align-items: center; gap: 5px; }
+.wset-prev-ico {
+  width: 14px; height: 14px; border-radius: 5px; flex: none;
+  background: var(--color-primary-bg); color: var(--color-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.wset-prev-name {
+  font-size: 8px; font-weight: 600; color: var(--color-heading);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wset-prev-big { font-size: 15px; font-weight: 700; color: var(--color-heading); line-height: 1.1; }
+.wset-line { height: 5px; border-radius: var(--radius-pill); background: var(--color-light); opacity: 0.45; }
+.wset-line.accent { background: var(--color-primary); opacity: 0.8; }
+.wset-line.w70 { width: 70%; }
+.wset-line.w45 { width: 45%; }
+
+.wset-name { font-size: 12.5px; font-weight: 500; line-height: 1.25; color: var(--color-heading); }
+
+.wset-btn {
+  width: 100%; height: 32px; border-radius: var(--radius-pill);
+  border: 1px solid transparent; background: var(--color-primary); color: #fff;
+  font-size: 12.5px; font-weight: 500;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.wset-btn:active { opacity: 0.7; }
+.wset-btn--off { background: none; border-color: var(--color-border); color: var(--color-text); }
+
+.wset-locked {
+  height: 32px; display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-size: 12px; color: var(--color-weak);
+}
+.wset-locked svg { color: var(--color-light); }
+
+.wset-reset {
+  margin: var(--space-5) var(--space-4) 0; width: calc(100% - var(--space-4) * 2);
+  height: 44px; border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border); background: none; color: var(--color-text);
+  font-size: 15px;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.wset-reset:active { opacity: 0.6; }
+/* Набор и так по умолчанию — кнопке нечего делать */
+.wset-reset:disabled { color: var(--color-disabled); }

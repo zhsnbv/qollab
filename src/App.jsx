@@ -13,6 +13,7 @@ import Search from './screens/Search';
 import BannerDetail from './screens/BannerDetail';
 import Favorites from './screens/Favorites';
 import ChannelSettings from './screens/ChannelSettings';
+import WidgetSettings from './screens/WidgetSettings';
 import MiniApp from './screens/MiniApp';
 import Notifications from './screens/Notifications';
 import NotificationGroup from './screens/NotificationGroup';
@@ -38,6 +39,7 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CompanyProvider } from './context/CompanyContext';
 import { ChannelsProvider } from './context/ChannelsContext';
+import { WidgetsProvider } from './context/WidgetsContext';
 import { useViewportFit } from './utils/useKeyboardInset';
 import { applyTheme, getThemeMode, watchSystemTheme } from './utils/theme';
 import './App.css';
@@ -79,6 +81,7 @@ function OverlayRoutes({ location }) {
         <Route path="/banner" element={<BannerDetail />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/channels/settings" element={<ChannelSettings />} />
+        <Route path="/widgets/settings" element={<WidgetSettings />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/notifications/:groupId" element={<NotificationGroup />} />
         <Route path="/channel/:channelId" element={<ChannelView />} />
@@ -172,13 +175,13 @@ export default function App() {
   const gallery = window.location.pathname === '/all';
 
   return (
-    <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider>
+    <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><WidgetsProvider>
       {gallery ? <AllScreens /> : (
         <BrowserRouter>
           <Device exiting={exiting} splashDone={splashDone} />
         </BrowserRouter>
       )}
-    </ChannelsProvider></FavoritesProvider></AuthProvider></CompanyProvider>
+    </WidgetsProvider></ChannelsProvider></FavoritesProvider></AuthProvider></CompanyProvider>
   );
 }
 

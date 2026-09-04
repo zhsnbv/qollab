@@ -25,6 +25,7 @@ import Search from '../screens/Search';
 import Notifications from '../screens/Notifications';
 import NotificationGroup from '../screens/NotificationGroup';
 import Settings from '../screens/Settings';
+import WidgetSettings from '../screens/WidgetSettings';
 import {
   NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
 } from '../screens/SettingsPages';
@@ -115,6 +116,11 @@ export const SCREEN_GROUPS = [
     hint: 'Точка входа в рабочий день: избранные сервисы, задачи, публикации. Отсюда уходят в уведомления и глобальный поиск.',
     items: [
       { id: 'home', title: 'Главная', route: '/', render: tab(Home) },
+      {
+        id: 'widgets', title: 'Панель «Виджеты»',
+        note: 'Из ленты виджетов на главной; без кнопки «Сохранить»',
+        route: '/widgets/settings', render: () => <WidgetSettings />,
+      },
       sheet({
         id: 'screen-menu', title: 'Меню «трёх точек»', note: 'Одно и то же на всех кор-экранах',
         route: '/', render: over(Home, () => <ScreenMenu open onClose={noop} onRefresh={noop} />),

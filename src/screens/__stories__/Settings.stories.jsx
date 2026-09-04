@@ -1,4 +1,5 @@
 import Settings from '../Settings';
+import WidgetSettings from '../WidgetSettings';
 import {
   NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
 } from '../SettingsPages';
@@ -28,6 +29,23 @@ export const Список = {
         story:
           'Каждая строка знает, что делает: подэкран открывается оверлеем, выбор языка '
           + 'и оформления — листом снизу, выход и очистка кэша — подтверждением.',
+      },
+    },
+  },
+};
+
+export const Виджеты = {
+  name: 'Панель «Виджеты»',
+  render: () => <WidgetSettings />,
+  parameters: {
+    route: '/widgets/settings',
+    docs: {
+      description: {
+        story:
+          'Карточки в два столбца, в каждой уменьшенный вид самого виджета — человек добавляет '
+          + 'то, что видит. Кнопки «Сохранить» нет, изменения применяются сразу. У постоянных '
+          + 'виджетов кнопки нет вовсе: нажимать нечего, и причина сказана прямо — «Всегда '
+          + 'на главной». Скрыть оба настраиваемых можно: лента не опустеет, постоянные останутся.',
       },
     },
   },

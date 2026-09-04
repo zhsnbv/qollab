@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar, { DotsIcon } from '../components/TopBar';
 import ScreenMenu from '../components/ScreenMenu';
+import Widgets from '../components/Widgets';
 import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
 import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
@@ -136,6 +137,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Виджеты — сразу после сервисов. На вебе они стоят колонкой справа,
+            на телефоне такой колонки нет, поэтому лента с прокруткой вбок. */}
+        <Widgets />
 
         {/* Миссия и ценности — пока скрыт по просьбе заказчика (вернуть: убрать false &&) */}
         {false && (
