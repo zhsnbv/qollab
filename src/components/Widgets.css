@@ -1,115 +1,208 @@
 /* Лента виджетов на главной. Живёт не в .card, а сама по себе: карточки
-   виджетов и есть карточки, класть их внутрь ещё одной — двойная подложка. */
-.wgs { margin-bottom: var(--space-2); }
+   виджетов и есть карточки, класть их внутрь ещё одной — двойная подложка.
+
+   Геометрия из макета: карточка 346 при ширине экрана 402 и полях 16 —
+   следующая подглядывает на 24px. Высота одна на всех (303 = шапка 49 +
+   тело 252 + канты): иначе при листании секция прыгала бы по высоте. */
+/* Сверху 12 к 20, которые даёт карточка сервисов, — ровно 32 между секциями,
+   как в макете; снизу 20 от заголовка до ленты. */
+.wgs { --wgs-h: 303px; margin-top: var(--space-3); margin-bottom: var(--space-2); }
 .wgs-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 var(--space-4) var(--space-3);
+  padding: 0 var(--space-4) var(--space-5);
 }
 
-/* Лента выходит за поля экрана, чтобы карточки уезжали под край, а не
-   обрывались по нему: так видно, что лента длиннее экрана. */
 .wgs-rail {
-  display: flex; gap: 10px;
+  display: flex; gap: var(--space-4);
   overflow-x: auto; scroll-snap-type: x mandatory;
-  padding: 0 var(--space-4) var(--space-1);
+  scroll-padding-inline: var(--space-4);
+  padding: 0 var(--space-4);
   -webkit-overflow-scrolling: touch;
 }
-.wgs-card {
-  flex: none; width: 244px; min-height: 158px; scroll-snap-align: center;
-  background: var(--color-white); border-radius: var(--radius-lg);
-  padding: var(--space-3) 14px;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.02);
-  display: flex; flex-direction: column; gap: var(--space-3);
-  text-align: left;
-  transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
-}
-.wgs-card:active { opacity: 0.75; transform: scale(0.985); }
 
-.wgs-top { display: flex; align-items: center; gap: 9px; }
+.wgs-card {
+  /* 100% здесь — ширина содержимого ленты (экран минус поля), так что
+     карточка сама подстраивается под любой экран, а зазор до края держится. */
+  flex: none; width: calc(100% - 24px); height: var(--wgs-h);
+  scroll-snap-align: start;
+  display: flex; flex-direction: column; align-items: stretch;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden; text-align: left;
+  transition: opacity 0.12s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.wgs-card:active { opacity: 0.85; transform: scale(0.99); }
+
+/* Тон карточки: заливка шапки и цвет глифа. Один набор переменных на
+   карточку — тело подхватывает их же (точка непрочитанного, рельсы). */
+.wg-tone--info { --wg-tint: var(--wg-info-bg); --wg-accent: var(--wg-info); }
+.wg-tone--success { --wg-tint: var(--wg-success-bg); --wg-accent: var(--wg-success); }
+.wg-tone--primary { --wg-tint: var(--color-primary-bg); --wg-accent: var(--color-primary); }
+
+.wgs-cap {
+  flex: none; display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--wg-tint);
+  border-bottom: 1px solid var(--color-border);
+}
 .wgs-ico {
-  width: 28px; height: 28px; border-radius: 9px; flex: none;
-  background: var(--color-primary-bg); color: var(--color-primary);
+  flex: none; width: 24px; height: 24px; color: var(--wg-accent);
   display: flex; align-items: center; justify-content: center;
 }
-.wgs-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: var(--color-heading); }
-.wgs-pill {
-  flex: none; min-width: 20px; text-align: center;
-  padding: 2px 7px; border-radius: var(--radius-pill);
-  background: var(--color-primary); color: #fff;
-  font-size: 11px; font-weight: 600;
+.wgs-ico svg { width: 24px; height: 24px; display: block; }
+.wgs-name {
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 600; line-height: 1.2;
+  color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wgs-count {
+  flex: none; font-size: 14px; color: var(--color-weak);
+  font-variant-numeric: tabular-nums;
+}
+.wgs-chev { flex: none; width: 20px; height: 20px; color: var(--color-weak); display: block; }
+
+.wgs-body { flex: 1; min-height: 0; overflow: hidden; position: relative; }
+/* Строк больше, чем влезает: нижняя растворяется, чтобы обрыв читался как
+   «есть продолжение», а не как ошибка вёрстки. */
+.wgs-body--fade::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--color-white));
+  pointer-events: none;
 }
 
-.wgs-dots { display: flex; gap: 5px; justify-content: center; padding-top: var(--space-3); }
+.wgs-dots {
+  display: flex; gap: 3px; justify-content: center; padding-top: var(--space-5);
+}
 .wgs-dot {
-  width: 5px; height: 5px; border-radius: var(--radius-pill);
+  width: 3px; height: 3px; border-radius: 1px;
   background: var(--color-light); transition: width 0.2s, background 0.2s;
 }
-.wgs-dot.on { width: 16px; background: var(--color-primary); }
+.wgs-dot.on { width: 13px; background: var(--color-primary); }
 
-/* ── Содержимое виджетов ──────────────────────────────────────────────── */
-.wg-stack { display: flex; flex-direction: column; gap: 7px; }
-
-/* Встречи */
-.wg-meet { display: flex; gap: 9px; align-items: flex-start; }
-.wg-meet-cal {
-  width: 22px; height: 22px; border-radius: 7px; flex: none; margin-top: 1px;
-  background: var(--page-bg); color: var(--color-weak);
-  display: flex; align-items: center; justify-content: center;
+/* ── Встречи: таймлайн дня ────────────────────────────────────────────── */
+/* Строки одной высоты, слева — рельса состояния: прошедшие приглушённо
+   зелёные, идущая сейчас — сплошная, будущие серые. Поверх едет полоска
+   «сейчас»: по ней сразу видно, на какой встрече надо быть. */
+.wg-tl { position: relative; }
+.wg-tl-row {
+  height: 42px; display: flex; align-items: center; gap: var(--space-5);
+  padding: 0 18px;
+  border-left: 3px solid var(--wg-rail);
+  font-size: 13px; font-weight: 500; line-height: 1.4;
 }
-.wg-meet-t { flex: 1; min-width: 0; }
-.wg-meet-title {
-  display: block; font-size: 12.5px; font-weight: 500; color: var(--color-heading);
+.wg-tl-row { --wg-rail: var(--color-light); }
+.wg-tl-row--past { --wg-rail: var(--wg-success-soft); }
+.wg-tl-row--now { --wg-rail: var(--wg-success); background: var(--wg-success-bg); }
+
+.wg-tl-time {
+  flex: none; color: var(--msg-time);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.wg-tl-row--past .wg-tl-time { color: var(--wg-success-soft); }
+.wg-tl-row--now .wg-tl-time { color: var(--wg-success); }
+/* Время строки, на которую пришлась плашка «сейчас» */
+.wg-tl-row--masked .wg-tl-time { visibility: hidden; }
+.wg-tl-title {
+  flex: 1; min-width: 0; color: var(--color-heading);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wg-meet-time { display: block; font-size: 11.5px; color: var(--color-weak); margin-top: 1px; }
-/* Идущая сейчас подсвечена и стоит первой — по п. 1.1 ТЗ */
-.wg-meet--now {
-  background: var(--color-primary-bg); border-radius: 10px;
-  padding: 7px 8px; margin: -3px -4px;
-}
-.wg-meet--now .wg-meet-cal { background: var(--color-white); color: var(--color-primary); }
-.wg-meet--now .wg-meet-time { color: var(--color-primary); font-weight: 500; }
-.wg-more { margin-top: auto; font-size: 11.5px; color: var(--color-primary); }
 
-/* Почта */
-.wg-mail { display: flex; gap: var(--space-2); align-items: baseline; }
-.wg-mail-dot {
-  width: 6px; height: 6px; border-radius: var(--radius-pill); flex: none;
-  background: var(--color-primary); transform: translateY(-2px);
+.wg-now {
+  position: absolute; left: 0; right: 0; height: 0; padding-left: 18px;
+  display: flex; align-items: center; pointer-events: none;
+  transition: top 0.6s ease;
 }
-.wg-mail-dot--read { background: transparent; }
+/* Засечка на рельсе — не кружок: кружок пришлось бы сдвигать за левый край
+   карточки, и обрезка съедала бы половину. */
+.wg-now::before {
+  content: ''; position: absolute; left: 0; top: -8px;
+  width: 3px; height: 16px; border-radius: 2px;
+  background: var(--color-primary);
+}
+/* Хвост короткий и тает: во всю ширину он проходил бы по заголовку встречи
+   и читался как зачёркивание. */
+.wg-now::after {
+  content: ''; flex: 1; height: 2px; margin: 0 var(--space-4) 0 6px;
+  /* Пунктир, а не сплошная: сплошная проходит по заголовку встречи и
+     читается как зачёркивание, пунктир — как направляющая «вы здесь». */
+  background: repeating-linear-gradient(
+    to right, var(--color-primary) 0 7px, transparent 7px 12px
+  );
+  -webkit-mask-image: linear-gradient(to right, #000 0 35%, transparent 92%);
+  mask-image: linear-gradient(to right, #000 0 35%, transparent 92%);
+}
+/* Плашка встаёт ровно на колонку времени и перекрывает время своей строки:
+   иначе две цифры наезжают друг на друга. */
+.wg-now-chip {
+  flex: none; min-width: 44px; text-align: center;
+  padding: 2px 5px; border-radius: 6px;
+  background: var(--color-primary); color: #fff;
+  font-size: 10px; font-weight: 700; line-height: 12px;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ── Почта ────────────────────────────────────────────────────────────── */
+.wg-mail {
+  display: flex; flex-direction: column; gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.wg-mail:last-child { border-bottom: 0; }
+.wg-mail-top { display: flex; align-items: center; gap: var(--space-2); }
+.wg-dot {
+  flex: none; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--wg-accent);
+}
 .wg-mail-from {
-  flex: none; max-width: 84px; font-size: 12px; font-weight: 600; color: var(--color-heading);
+  flex: 1; min-width: 0; font-size: 14px; font-weight: 600; line-height: 17px;
+  color: var(--color-text);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wg-mail-sub {
-  flex: 1; min-width: 0; font-size: 12px; color: var(--color-weak);
+.wg-mail-time { flex: none; font-size: 12px; line-height: 17px; color: var(--color-weak); }
+.wg-mail-sub, .wg-mail-snip {
+  font-size: 14px; line-height: 17px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wg-mail-time { flex: none; font-size: 11px; color: var(--color-light); }
+.wg-mail-sub { color: var(--color-text); }
+.wg-mail-snip { color: var(--color-weak); }
 
-/* Постоянные */
-.wg-big { font-size: 30px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: var(--color-heading); }
-.wg-sub { margin-top: 2px; font-size: 12px; color: var(--color-weak); }
-.wg-text { font-size: 12.5px; line-height: 1.4; color: var(--color-text); }
-.wg-text b { font-weight: 600; }
-.wg-btn {
-  margin-top: auto; align-self: flex-start;
-  padding: 6px 14px; border-radius: var(--radius-pill);
-  background: var(--color-primary-bg); color: var(--color-primary);
-  font-size: 12.5px; font-weight: 500;
+/* ── Строки со ссылками и объявлениями ────────────────────────────────── */
+.wg-row {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
 }
-.wg-link { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--color-text); }
-.wg-link span {
-  width: 5px; height: 5px; border-radius: var(--radius-pill);
-  background: var(--color-primary); flex: none;
+.wg-row:last-child { border-bottom: 0; }
+.wg-row svg { flex: none; }
+.wg-row-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.wg-row-title {
+  font-size: 14px; font-weight: 600; line-height: 17px; color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wg-foot {
-  margin-top: auto; padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border);
-  font-size: 11px; color: var(--color-weak);
+.wg-row-sub {
+  font-size: 14px; line-height: 17px; color: var(--color-weak);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+
+/* ── Витрины с одной цифрой ───────────────────────────────────────────── */
+.wg-stat {
+  height: 100%; display: flex; flex-direction: column; justify-content: center;
+  padding: var(--space-4);
+}
+.wg-big {
+  font-size: 44px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;
+  color: var(--color-heading); font-variant-numeric: tabular-nums lining-nums;
+}
+.wg-big--sm { font-size: 28px; }
+.wg-sub { margin-top: var(--space-1); font-size: 14px; color: var(--color-text); }
+.wg-foot { margin-top: var(--space-3); font-size: 13px; line-height: 1.4; color: var(--color-weak); }
+
 /* Пустое состояние виджета — спокойное: карточка остаётся карточкой */
-.wg-msg { margin: auto 0; display: flex; flex-direction: column; gap: 6px; }
-.wg-msg b { font-size: 13px; font-weight: 600; color: var(--color-heading); }
-.wg-msg p { margin: 0; font-size: 12px; line-height: 1.4; color: var(--color-weak); }
+.wg-msg {
+  height: 100%; display: flex; flex-direction: column; justify-content: center;
+  gap: var(--space-1); padding: var(--space-4);
+}
+.wg-msg b { font-size: 14px; font-weight: 600; color: var(--color-heading); }
+.wg-msg p { margin: 0; font-size: 13px; line-height: 1.4; color: var(--color-weak); }

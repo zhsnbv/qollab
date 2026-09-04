@@ -9,14 +9,12 @@ import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
 import { basePosts, events } from '../data/feed';
 import { allServicesTile } from '../data/services';
+import { usefulLinks } from '../data/widgets';
+import { LINK_ICONS } from '../components/Widgets';
 import { banners } from '../data/banners';
 import { useFavorites } from '../context/FavoritesContext';
 import { unreadTotal } from '../data/notifications';
-import {
-  MagnifyingGlass, BellSimple,
-  Lifebuoy, Headset, CheckFat, HandHeart,
-  SuitcaseRolling, CaretRight,
-} from '@phosphor-icons/react';
+import { MagnifyingGlass, BellSimple, CaretRight } from '@phosphor-icons/react';
 import './Home.css';
 
 // Ассеты экспортированы из Figma в public/img/home (см. README).
@@ -26,14 +24,6 @@ const stories = [
   { img: '/img/home/story-3.png', name: 'Безопасность', seen: false },
   { img: '/img/home/story-4.png', name: 'Вакансии', seen: true },
   { img: '/img/home/story-5.png', name: 'Eco Life ERG', seen: true },
-];
-
-const actual = [
-  { Icon: Lifebuoy, title: 'Заявка в Service Desk', sub: 'Обратная связь' },
-  { Icon: Headset, title: 'Горячая линия ERG', sub: 'Сообщить о проблеме, задать вопрос' },
-  { Icon: CheckFat, title: 'ДРП в 1 клик!', sub: 'Зарегистрируйте проблему онлайн' },
-  { Icon: HandHeart, title: 'Жизненно важные правила', sub: 'Обязательно к ознакомлению' },
-  { Icon: SuitcaseRolling, title: 'Заявка на командировку', sub: 'Подайте заявку на командировку' },
 ];
 
 export default function Home() {
@@ -186,16 +176,20 @@ export default function Home() {
         {/* Актуальное */}
         <section className="card card--actual">
           <h3 className="section-title">Актуальное</h3>
-          {actual.map(({ Icon, title, sub }, i) => (
-            <div className="actual-row" key={i}>
-              <Icon size={24} color="var(--color-primary)" />
+          {/* Тот же список, что и в виджете «Полезные ссылки» — источник один */}
+          {usefulLinks.map(({ icon, title, sub }) => {
+            const Icon = LINK_ICONS[icon];
+            return (
+            <div className="actual-row" key={title}>
+              {Icon && <Icon size={24} color="var(--color-primary)" />}
               <div className="actual-body">
                 <div className="actual-title">{title}</div>
                 <div className="actual-sub">{sub}</div>
               </div>
               <CaretRight size={16} color="var(--color-light)" />
             </div>
-          ))}
+            );
+          })}
         </section>
       </div></FadeIn>
       <ScreenMenu open={menuOpen} onClose={() => setMenuOpen(false)} />

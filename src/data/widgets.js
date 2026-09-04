@@ -7,68 +7,115 @@
 // настраивать не станет, а механизм проверяется на новых карточках.
 export const widgetList = [
   {
-    id: 'meet',
-    name: 'Мои встречи',
-    title: 'Встречи на сегодня',
-    icon: 'CalendarDots',
+    id: 'mail',
+    name: 'Почта',
+    title: 'Входящая почта',
+    icon: 'Mail',
+    tone: 'info',
     user: true,
   },
   {
-    id: 'mail',
-    name: 'Почта',
-    title: 'Электронная почта',
-    icon: 'EnvelopeSimple',
+    id: 'meet',
+    name: 'Мои встречи',
+    title: 'Встречи на сегодня',
+    icon: 'Calendar',
+    tone: 'success',
     user: true,
+  },
+  {
+    id: 'links',
+    name: 'Полезные ссылки',
+    title: 'Полезные ссылки',
+    icon: 'Link',
+    tone: 'primary',
+    user: false,
   },
   {
     id: 'important',
     name: 'Важное и полезное',
-    title: 'Важное',
-    icon: 'WarningCircle',
+    title: 'Важное и полезное',
+    icon: 'Megaphone',
+    tone: 'primary',
     user: false,
   },
   {
     id: 'safety',
     name: 'Безопасность',
     title: 'Безопасность',
-    icon: 'ShieldCheck',
-    user: false,
-  },
-  {
-    id: 'links',
-    name: 'Полезные ссылки',
-    title: 'Полезные ссылки',
-    icon: 'LinkSimple',
+    icon: 'Shield',
+    tone: 'success',
     user: false,
   },
   {
     id: 'journal',
     name: 'Корпоративный журнал',
     title: 'Корпоративный журнал',
-    icon: 'BookOpen',
+    icon: 'Book',
+    tone: 'info',
     user: false,
   },
+];
+
+// Блок «Актуальное» на главной и виджет «Полезные ссылки» — один и тот же
+// список: в макете виджет собран ровно из этих строк. Держим в одном месте,
+// чтобы ссылки не разъезжались между двумя блоками одного экрана.
+export const usefulLinks = [
+  { icon: 'Lifebuoy', title: 'Заявка в Service Desk', sub: 'Обратная связь' },
+  { icon: 'Headset', title: 'Горячая линия ERG', sub: 'Сообщить о проблеме, задать вопрос' },
+  { icon: 'CheckFat', title: 'ДРП в 1 клик!', sub: 'Зарегистрируйте проблему онлайн' },
+  { icon: 'HandHeart', title: 'Жизненно важные правила', sub: 'Обязательно к ознакомлению' },
+  { icon: 'SuitcaseRolling', title: 'Заявка на командировку', sub: 'Подайте заявку на командировку' },
 ];
 
 // Данные виджетов. В прототипе они статичные — на проде это ответы
 // /widgets/meetings и /mail-bridge/mailbox/summary.
 export const widgetData = {
+  // Расписание дня целиком: виджет — таймлайн, а не список ближайших трёх,
+  // поэтому нужны и уже прошедшие встречи. Время начала и конца обязательны:
+  // по ним считается, на какой встрече человек должен быть прямо сейчас.
   meetings: [
-    { id: 'm1', title: 'Синк по релизу 3.1', from: '10:00', to: '11:00', now: true },
-    { id: 'm2', title: 'Комитет по безопасности', from: '13:00', to: '13:45' },
-    { id: 'm3', title: '1-on-1 с Динарой Т.', from: '16:30', to: '17:00' },
+    { id: 'm1', from: '09:00', to: '09:30', title: 'Weekly stand-up meeting' },
+    { id: 'm2', from: '11:00', to: '11:45', title: 'Daily mobile qollab' },
+    { id: 'm3', from: '14:30', to: '15:00', title: 'Client feedback session' },
+    { id: 'm4', from: '15:00', to: '16:00', title: 'Project kickoff for new app' },
+    { id: 'm5', from: '16:00', to: '17:00', title: 'Мини-тренинг «10 рецептов эффективных продаж»' },
+    { id: 'm6', from: '17:00', to: '18:00', title: 'Команда Q3 планирование' },
   ],
-  meetingsMore: 2,
   mail: {
-    unread: 17,
+    unread: 526,
     messages: [
-      { id: 'e1', from: 'Динара Т.', subject: 'Согласование бюджета Q4', time: '14:02', unread: true },
-      { id: 'e2', from: 'HR-портал', subject: 'Заявка на отпуск одобрена', time: '11:40', unread: true },
-      { id: 'e3', from: 'Нурлан Б.', subject: 'Правки по макетам', time: '09:18', unread: false },
+      {
+        id: 'e1',
+        from: 'Динара Тулегенова',
+        subject: 'Согласование бюджета Q4',
+        snippet: 'Коллеги, добрый день! Прошу посмотреть правки по статье…',
+        time: '15:25',
+        unread: true,
+      },
+      {
+        id: 'e2',
+        from: 'HR-портал ERG',
+        subject: 'Заявка на отпуск одобрена',
+        snippet: 'Ваша заявка с 22 по 29 сентября согласована руководителем',
+        time: '11:40',
+        unread: false,
+      },
+      {
+        id: 'e3',
+        from: 'Нурлан Бекетов',
+        subject: 'Правки по макетам мобильного приложения',
+        snippet: 'Отправил комментарии в Figma, посмотрите, пожалуйста, до…',
+        time: '09:18',
+        unread: false,
+      },
     ],
   },
   safetyDays: 214,
-  important: { text: 'Изменился номер контакт-центра', value: '7777' },
-  links: ['Заявка в Service Desk', 'Горячая линия ERG', 'Кадровые справки'],
-  journal: 'Выпуск №4 · сентябрь 2026',
+  important: [
+    { id: 'i1', title: 'Изменился номер контакт-центра', sub: 'Теперь 7777 — с любого корпоративного' },
+    { id: 'i2', title: 'Плановые работы в 1С', sub: '6 сентября, с 22:00 до 02:00' },
+    { id: 'i3', title: 'Набор в кадровый резерв', sub: 'Заявки принимаем до 30 сентября' },
+    { id: 'i4', title: 'Медосмотр по графику', sub: 'Проверьте свою дату в личном кабинете' },
+  ],
+  journal: { issue: 'Выпуск №4', date: 'сентябрь 2026', lead: 'Люди ERG: истории с производства' },
 };

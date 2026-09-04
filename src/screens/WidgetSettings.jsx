@@ -6,6 +6,7 @@ import { WIDGET_ICONS } from '../components/Widgets';
 import { widgetList, widgetData } from '../data/widgets';
 import { useScrolled } from '../utils/useScrolled';
 import Toast from '../components/Toast';
+import '../components/Widgets.css';
 import './Favorites.css';
 import './WidgetSettings.css';
 
@@ -41,13 +42,14 @@ export default function WidgetSettings() {
         </>
       );
     }
+    // У встреч превью — тот же таймлайн: прошедшая, идущая сейчас, будущая
     if (w.id === 'meet') {
       return (
-        <>
-          <span className="wset-line accent w70" />
-          <span className="wset-line w45" />
-          <span className="wset-line w70" />
-        </>
+        <div className="wset-tl">
+          <span className="wset-tl-row wset-tl-row--past" />
+          <span className="wset-tl-row wset-tl-row--now" />
+          <span className="wset-tl-row" />
+        </div>
       );
     }
     return (
@@ -76,12 +78,12 @@ export default function WidgetSettings() {
             const on = !isHidden(w.id);
             return (
               <div className="wset-card" key={w.id}>
-                <div className="wset-prev">
+                <div className={`wset-prev wg-tone--${w.tone}`}>
                   <div className="wset-prev-top">
-                    <span className="wset-prev-ico">{Icon && <Icon size={9} weight="fill" />}</span>
+                    <span className="wset-prev-ico">{Icon && <Icon />}</span>
                     <span className="wset-prev-name">{w.title}</span>
                   </div>
-                  {preview(w)}
+                  <div className="wset-prev-body">{preview(w)}</div>
                 </div>
                 <span className="wset-name">{w.name}</span>
                 {w.user ? (

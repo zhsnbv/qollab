@@ -15,25 +15,47 @@
   display: flex; flex-direction: column; gap: var(--space-2);
 }
 
-/* Уменьшенный вид самого виджета: добавляют то, что видят */
+/* Уменьшенный вид самого виджета: добавляют то, что видят. Повторяет форму
+   карточки с главной — крашеная шапка с глифом и белое тело со строками. */
 .wset-prev {
-  height: 74px; border-radius: 9px; padding: var(--space-2);
-  background: var(--page-bg); overflow: hidden;
-  display: flex; flex-direction: column; gap: 5px;
+  height: 78px; border-radius: 9px; overflow: hidden;
+  border: 1px solid var(--color-border); background: var(--color-white);
+  display: flex; flex-direction: column;
 }
-.wset-prev-top { display: flex; align-items: center; gap: 5px; }
+.wset-prev-top {
+  display: flex; align-items: center; gap: 5px; padding: 5px 6px;
+  background: var(--wg-tint); border-bottom: 1px solid var(--color-border);
+}
 .wset-prev-ico {
-  width: 14px; height: 14px; border-radius: 5px; flex: none;
-  background: var(--color-primary-bg); color: var(--color-primary);
+  width: 13px; height: 13px; flex: none; color: var(--wg-accent);
   display: flex; align-items: center; justify-content: center;
 }
+.wset-prev-ico svg { width: 13px; height: 13px; display: block; }
 .wset-prev-name {
   font-size: 8px; font-weight: 600; color: var(--color-heading);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.wset-prev-body {
+  flex: 1; min-height: 0; overflow: hidden;
+  padding: 6px; display: flex; flex-direction: column; gap: 5px;
+}
+
+/* Мини-таймлайн: рельсы теми же тремя состояниями, что и на главной */
+.wset-tl { margin: -6px; display: flex; flex-direction: column; height: calc(100% + 12px); }
+.wset-tl-row {
+  flex: 1; position: relative; border-left: 2px solid var(--color-light);
+}
+.wset-tl-row::after {
+  content: ''; position: absolute; left: 7px; top: 50%; margin-top: -2px;
+  width: 62%; height: 4px; border-radius: 2px;
+  background: var(--color-light); opacity: 0.5;
+}
+.wset-tl-row--past { border-left-color: var(--wg-success-soft); }
+.wset-tl-row--now {
+  border-left-color: var(--wg-success); background: var(--wg-success-bg);
+}
 .wset-prev-big { font-size: 15px; font-weight: 700; color: var(--color-heading); line-height: 1.1; }
 .wset-line { height: 5px; border-radius: var(--radius-pill); background: var(--color-light); opacity: 0.45; }
-.wset-line.accent { background: var(--color-primary); opacity: 0.8; }
 .wset-line.w70 { width: 70%; }
 .wset-line.w45 { width: 45%; }
 

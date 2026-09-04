@@ -5,6 +5,7 @@ import ChannelView from '../ChannelView';
 import BannerDetail from '../BannerDetail';
 import MiniApp from '../MiniApp';
 import ServicesSheet from '../ServicesSheet';
+import ChannelSettings from '../ChannelSettings';
 import { events } from '../../data/feed';
 
 export default {
