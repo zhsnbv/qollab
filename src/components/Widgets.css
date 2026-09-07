@@ -10,12 +10,17 @@
   padding-bottom: var(--space-4);
 }
 
-/* Лента выходит вровень с краями карточки: так видно, что она длиннее экрана */
+/* Лента выходит вровень с краями карточки: так видно, что она длиннее экрана.
+
+   Поля сверху и снизу — под тень карточек: overflow-x: auto делает контейнер
+   обрезающим и по вертикали тоже, и без запаса тень срезалась по краям ленты.
+   Отрицательные поля ровно на ту же величину, поэтому в раскладке ничего
+   не сдвигается: зазор до заголовка и до точек остаётся прежним. */
 .wgs-rail {
   display: flex; gap: var(--space-3);
   overflow-x: auto; scroll-snap-type: x mandatory;
-  margin: 0 calc(-1 * var(--space-4));
-  padding: 0 var(--space-4);
+  margin: -4px calc(-1 * var(--space-4)) -14px;
+  padding: 4px var(--space-4) 14px;
   scroll-padding-inline: var(--space-4);
   -webkit-overflow-scrolling: touch;
 }
