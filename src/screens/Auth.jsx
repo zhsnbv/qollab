@@ -12,6 +12,7 @@ import { APP_VERSION } from '../config';
 import './Auth.css';
 import SheetTop from '../components/SheetTop';
 import useSheetSwipe from '../utils/useSheetSwipe';
+import { useScrolled } from '../utils/useScrolled';
 
 // Авторизация (Figma node 24627-79594): онбординг → выбор рабочего
 // пространства → номер телефона → SMS-код, плюс отдельная ветка гостя.
@@ -92,6 +93,7 @@ function Turnstile({ done }) {
 
 export default function Auth() {
   const sheetSwipe = useSheetSwipe(() => setSheet(false));
+  const [scrolled, onScroll] = useScrolled();
   const { signIn } = useAuth();
   const [step, setStep] = useState(STEP.onboarding);
   const { company, companyId, setCompanyId, companies } = useCompany();
@@ -278,7 +280,7 @@ export default function Auth() {
     );
     const gap = <span className="auth-top-btn hdr-spacer" aria-hidden="true" />;
     return (
-      <header className="auth-top">
+      <header className={`auth-top ${scrolled ? 'hdr-shadow' : ''}`}>
         {closeIcon ? gap : btn}
         <h1 className="auth-top-title">{title}</h1>
         {closeIcon ? btn : gap}
@@ -348,7 +350,7 @@ export default function Auth() {
     return (
       <div className="auth">
         {top('Авторизация', () => setStep(STEP.onboarding))}
-        <div className="auth-scroll">
+        <div className="auth-scroll" onScroll={onScroll}>
           <div className="auth-lang-row"><LangSwitch lang={lang} onChange={setLang} /></div>
           <div className="auth-badge"><User size={32} weight="fill" /></div>
           <h2 className="auth-title">Вход по номеру телефона</h2>
@@ -411,7 +413,7 @@ export default function Auth() {
     return (
       <div className="auth">
         {top('Ошибка', retryAuth)}
-        <div className="auth-scroll">
+        <div className="auth-scroll" onScroll={onScroll}>
           <AuthErrorView error={authError} onRetry={retryAuth} onRestart={restartAuth} />
         </div>
       </div>
@@ -423,7 +425,7 @@ export default function Auth() {
     return (
       <div className="auth">
         {top('Авторизация', () => setStep(STEP.phone))}
-        <div className="auth-scroll">
+        <div className="auth-scroll" onScroll={onScroll}>
           <div className="auth-lang-row"><LangSwitch lang={lang} onChange={setLang} /></div>
           <div className="auth-badge"><ChatCircleDots size={32} weight="fill" /></div>
           <h2 className="auth-title">Введите код подтверждения</h2>
@@ -504,7 +506,7 @@ export default function Auth() {
   return (
     <div className="auth">
       {top('Регистрация гостя', () => { setGuestFlow(false); setStep(STEP.onboarding); }, true)}
-      <div className="auth-scroll">
+      <div className="auth-scroll" onScroll={onScroll}>
         {field('last', 'Фамилия', 'Ваша фамилия')}
         {field('first', 'Имя', 'Ваше имя', true)}
         {field('middle', 'Отчество', 'Ваше отчество')}

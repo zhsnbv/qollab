@@ -44,7 +44,7 @@ import ForwardSheet from '../components/ForwardSheet';
 import { PinnedList } from '../components/PinnedBar';
 import ErgizHistory from '../components/ErgizHistory';
 import Toast from '../components/Toast';
-import { MessageMenuDemo, ChatsSelecting } from './overlays';
+import { MessageMenuDemo, ChatsSelecting, AuthErrorScreen, LinkPreviewMessages } from './overlays';
 import { Routes, Route } from 'react-router-dom';
 import { Edit24Regular, Delete24Regular, Alert24Regular, AlertOff24Regular } from '@fluentui/react-icons';
 import { sosContacts } from '../data/profile';
@@ -107,6 +107,26 @@ export const SCREEN_GROUPS = [
       {
         id: 'auth', title: 'Вход', note: 'Онбординг → пространство → номер → код',
         route: '/auth', render: () => <Auth />,
+      },
+      {
+        id: 'auth-err-server', title: 'Ошибка входа',
+        note: 'Сервис недоступен: ни статусов, ни имён сервисов в тексте',
+        route: '/auth', render: () => <AuthErrorScreen scenario="server" />,
+      },
+      {
+        id: 'auth-err-details', title: 'Технические детали',
+        note: 'Свёрнуты по умолчанию, копируются одной кнопкой',
+        route: '/auth', render: () => <AuthErrorScreen scenario="leaky" open />,
+      },
+      {
+        id: 'auth-err-network', title: 'Нет сети',
+        note: 'Запрос не дошёл — свой текст и свой значок',
+        route: '/auth', render: () => <AuthErrorScreen scenario="network" />,
+      },
+      {
+        id: 'auth-err-rate', title: 'Слишком много попыток',
+        note: 'Время ожидания берём из Retry-After',
+        route: '/auth', render: () => <AuthErrorScreen scenario="rate" />,
       },
     ],
   },
@@ -179,6 +199,11 @@ export const SCREEN_GROUPS = [
       { id: 'dm', title: 'Личный чат', route: at('/chats/dm', { chat: dmChat }), render: () => <DMChat /> },
       { id: 'room', title: 'Групповой чат', route: '/chats/prodev', render: () => <ChatRoom /> },
       { id: 'dm-group', title: 'Группа из списка', route: at('/chats/dm', { chat: groupChat }), render: () => <DMChat /> },
+      {
+        id: 'link-preview', title: 'Карточки ссылок',
+        note: 'Приложение, приглашение и отозванное приглашение под текстом',
+        route: '/chats/prodev', render: () => <LinkPreviewMessages />,
+      },
       {
         id: 'dm-empty', title: 'Пустой чат', note: 'Переписки ещё нет: внизу плашка про шифрование',
         route: at('/chats/dm', { chat: emptyChat }), render: () => <DMChat />,

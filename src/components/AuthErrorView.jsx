@@ -33,8 +33,8 @@ function Row({ label, value }) {
 // Экран технической ошибки авторизации (этапы 4-5 плана).
 // Основной текст без HTTP-терминов и имён сервисов; всё техническое живёт
 // под явным раскрытием и копируется одной кнопкой уже очищенным от секретов.
-export default function AuthErrorView({ error, onRetry, onRestart }) {
-  const [open, setOpen] = useState(false);
+export default function AuthErrorView({ error, onRetry, onRestart, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen);
   const [copied, setCopied] = useState(false);
   const { title, text } = screenText(error);
   const Icon = ICON[error.kind] || Warning24Filled;
