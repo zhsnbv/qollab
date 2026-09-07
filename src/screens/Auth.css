@@ -278,3 +278,23 @@
 }
 .auth-sheet-domain { font-size: 13px; color: var(--color-weak); }
 .auth-sheet-check { color: var(--color-primary); flex-shrink: 0; }
+
+/* Выбор ответа «сервера» — только в прототипе: без него состояния ошибок
+   авторизации недостижимы вживую. В приложении этого блока нет. */
+.auth-mock {
+  margin-top: var(--space-6); padding-top: var(--space-4);
+  border-top: 1px dashed var(--color-border);
+}
+.auth-mock-cap {
+  display: block; margin-bottom: var(--space-2);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--color-light);
+}
+.auth-mock-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.auth-mock-chip {
+  padding: 5px 10px; border-radius: var(--radius-pill);
+  background: var(--color-background); color: var(--color-weak);
+  font-size: 12px; line-height: 16px;
+  transition: background 0.12s, color 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.auth-mock-chip.on { background: var(--color-primary-bg); color: var(--color-primary); font-weight: 600; }

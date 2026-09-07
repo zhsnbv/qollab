@@ -5,6 +5,10 @@ import { ChevronDown20Regular, Checkmark20Filled, Dismiss20Regular } from '@flue
 import { useCompany } from '../context/CompanyContext';
 import OnboardingArt from '../components/OnboardingArt';
 import { digits, normalizePhone, formatPhone, maskPhone } from '../utils/phone';
+import AuthErrorView from '../components/AuthErrorView';
+import { normalizeAuthError, isInline, INLINE_TEXT, KIND, STAGE } from '../utils/authError';
+import { authScenarios, scenarioById } from '../data/authScenarios';
+import { APP_VERSION } from '../config';
 import './Auth.css';
 import SheetTop from '../components/SheetTop';
 import useSheetSwipe from '../utils/useSheetSwipe';
@@ -19,6 +23,9 @@ const STEP = {
   phone: 'phone',
   otp: 'otp',
   guest: 'guest',
+  // Общий экран технической ошибки. Отдельный шаг, а не оверлей: с него есть
+  // только два выхода — вернуться на сохранённый шаг или начать заново.
+  error: 'error',
 };
 
 // Демо-правила, чтобы в прототипе были достижимы все нарисованные состояния:
@@ -101,7 +108,16 @@ export default function Auth() {
   const [codeError, setCodeError] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [left, setLeft] = useState(RESEND_SEC);
+  const [busy, setBusy] = useState(false);
   const otpRef = useRef(null);
+
+  // Нормализованная ошибка для общего экрана и шаг, на который возвращает
+  // «Попробовать снова». Шаг сохраняем отдельно: кнопка обязана вернуть туда,
+  // откуда ушли, а не на стартовый экран (принцип 5.4 плана).
+  const [authError, setAuthError] = useState(null);
+  const [savedStep, setSavedStep] = useState(STEP.otp);
+  // Какой ответ вернёт «сервер» — только для прототипа
+  const [scenario, setScenario] = useState('ok');
 
   const [guest, setGuest] = useState({ last: '', first: '', middle: '', birth: '', sex: 'm' });
   // Гость идёт тем же путём «номер → код», но в конце получает форму
@@ -163,18 +179,50 @@ export default function Auth() {
     goToOtp();
   };
 
-  const submitCode = (value) => {
-    if (value.length === CODE_LENGTH) {
-      if (guestFlow) setStep(STEP.guest);
-      else signIn();
-      return;
-    }
-    const n = attempts + 1;
-    setAttempts(n);
-    if (n >= MAX_ATTEMPTS) {
-      setCodeError('Превышен лимит попыток ввода кода. Запросите код повторно');
-    } else {
-      setCodeError('Код введен неверно');
+  // «Запрос» к api-proxy. Ответ приходит из выбранного сценария — форма ответа
+  // и разбор те же, что были бы у настоящего fetch.
+  const confirmCode = async (stage) => {
+    const raw = scenarioById(scenario).respond();
+    await new Promise((r) => setTimeout(r, 450));
+    return raw ? normalizeAuthError({ stage, ...raw }) : null;
+  };
+
+  const submitCode = async (value) => {
+    if (value.length !== CODE_LENGTH || busy) return;
+    setBusy(true);
+    try {
+      const err = await confirmCode(STAGE.confirmCode);
+      if (!err) {
+        if (guestFlow) setStep(STEP.guest);
+        else signIn();
+        return;
+      }
+      // Ожидаемые ошибки остаются на шаге ввода кода (решение 13.7): поле
+      // очищаем, фокус возвращаем, общий экран не открываем.
+      if (isInline(err)) {
+        setCode('');
+        setCodeError(INLINE_TEXT[err.kind]);
+        if (err.kind === KIND.rateLimit) setAttempts(MAX_ATTEMPTS);
+        otpRef.current?.focus();
+        return;
+      }
+      // Коды 5 и 7 — не сбой, а развилка «сотрудник или гость»: у них уже есть
+      // свой флоу, и общий экран ошибки тут был бы шагом назад (раздел 6).
+      if (err.kind === KIND.userNotFound || err.kind === KIND.accountConflict) {
+        setCode('');
+        setCodeError('');
+        setStep(STEP.phone);
+        setDialog({ kind: 'notfound' });
+        return;
+      }
+      // Всё остальное — включая незнакомый 400 — идёт на общий экран
+      setSavedStep(STEP.otp);
+      setAuthError(err);
+      setStep(STEP.error);
+    } finally {
+      // Единый путь сброса: ни один статус и ни одно тело не должны
+      // оставить экран в загрузке (цель 6 плана).
+      setBusy(false);
     }
   };
 
@@ -185,7 +233,30 @@ export default function Auth() {
     if (d.length === OTP_LEN) submitCode(d);
   };
 
+  // «Попробовать снова» ничего не запрашивает и новую SMS не шлёт — просто
+  // возвращает на сохранённый шаг (решение 13.8).
+  const retryAuth = () => {
+    setAuthError(null);
+    setCode('');
+    setCodeError('');
+    setStep(savedStep);
+  };
+
+  const restartAuth = () => {
+    setAuthError(null);
+    setCode('');
+    setCodeError('');
+    setAttempts(0);
+    setPhone('');
+    setPhoneError('');
+    setGuestFlow(false);
+    setStep(STEP.onboarding);
+  };
+
   const resend = () => {
+    // Кулдаун держится и после ошибки: просроченный код не повод обходить
+    // таймер повторной отправки (решение 13.4).
+    if (left > 0) return;
     if (attempts >= MAX_ATTEMPTS) {
       // Третий сценарий из макета: повторная отправка упирается в лимит SMS
       setDialog({ kind: 'sms' });
@@ -239,7 +310,7 @@ export default function Auth() {
           <a className="auth-policy" href="#policy" onClick={(e) => e.preventDefault()}>
             Политика конфиденциальности
           </a>
-          <div className="auth-version">App Version: v2.8.2</div>
+          <div className="auth-version">App Version: {APP_VERSION}</div>
           <div className="auth-onb-lang"><LangSwitch lang={lang} onChange={setLang} /></div>
         </div>
 
@@ -336,6 +407,17 @@ export default function Auth() {
     );
   }
 
+  if (step === STEP.error && authError) {
+    return (
+      <div className="auth">
+        {top('Ошибка', retryAuth)}
+        <div className="auth-scroll">
+          <AuthErrorView error={authError} onRetry={retryAuth} onRestart={restartAuth} />
+        </div>
+      </div>
+    );
+  }
+
   if (step === STEP.otp) {
     const cells = Array.from({ length: OTP_LEN }, (_, i) => code[i] || '');
     return (
@@ -371,11 +453,28 @@ export default function Auth() {
           </div>
           {codeError && <p className="auth-error auth-error--center">{codeError}</p>}
 
-          <button className="auth-btn auth-btn--ghost" disabled={left > 0 && !codeError} onClick={resend}>
-            {left > 0 && !codeError
+          <button className="auth-btn auth-btn--ghost" disabled={left > 0 || busy} onClick={resend}>
+            {left > 0
               ? `Запросить новый код можно через 00:${String(left).padStart(2, '0')}`
               : 'Запросить новый код'}
           </button>
+
+          {/* Только для прототипа: выбор ответа «сервера», иначе состояния
+              ошибок недостижимы вживую. В приложении этого блока нет. */}
+          <div className="auth-mock">
+            <span className="auth-mock-cap">Прототип: ответ сервера на код</span>
+            <div className="auth-mock-chips">
+              {authScenarios.map((sc) => (
+                <button
+                  key={sc.id}
+                  className={`auth-mock-chip${scenario === sc.id ? ' on' : ''}`}
+                  onClick={() => setScenario(sc.id)}
+                >
+                  {sc.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {dialog?.kind === 'sms' && (
