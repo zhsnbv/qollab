@@ -218,14 +218,12 @@ function Body({ id, now, onRow }) {
   );
 }
 
-// Счётчик в шапке: у почты — непрочитанные, у встреч — сколько ещё сегодня
-// предстоит.
-function headCount(id, now) {
+// Счётчик в шапке: у почты — непрочитанные, у встреч — сколько их сегодня
+// всего. Именно всего, а не оставшихся: вместе с подвалом «Ещё N встреч» это
+// сходится в понятную арифметику — видно столько-то, ещё столько-то, итого.
+function headCount(id) {
   if (id === 'mail') return widgetData.mail.unread;
-  if (id === 'meet') {
-    const mins = minsOf(now);
-    return widgetData.meetings.filter((m) => toMin(m.to) > mins).length || null;
-  }
+  if (id === 'meet') return widgetData.meetings.length || null;
   return null;
 }
 
@@ -245,7 +243,7 @@ function footLabel(id, now) {
 function Card({ w, now, onOpen }) {
   const Icon = WIDGET_ICONS[w.icon];
   const nav = NAV[w.id];
-  const count = headCount(w.id, now);
+  const count = headCount(w.id);
   const foot = footLabel(w.id, now);
   const openMsg = nav.open || nav.head;
 

@@ -37,10 +37,14 @@ export function WidgetsProvider({ children }) {
     // администратора встают на своё место сами, а не теряются.
     const known = prefs.order.filter((id) => byId[id]);
     const rest = DEFAULT_ORDER.filter((id) => !known.includes(id));
-    const visible = [...known, ...rest].filter((id) => !prefs.hidden.includes(id));
+    // order — полный порядок вместе со скрытыми: панель настройки переставляет
+    // видимые, но обязана вернуть скрытый виджет туда же, откуда его убрали.
+    const order = [...known, ...rest];
+    const visible = order.filter((id) => !prefs.hidden.includes(id));
 
     return {
       widgets: visible.map((id) => byId[id]),
+      order,
       isHidden: (id) => prefs.hidden.includes(id),
       // Постоянные не трогаем: у них в панели нет кнопки, но проверяем и здесь
       toggle: (id) => setPrefs((p) => {

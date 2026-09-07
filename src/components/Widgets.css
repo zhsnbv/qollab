@@ -35,11 +35,11 @@
   overflow: hidden;
 }
 
-/* Своего цвета у карточки нет. Акцент в приложении один, и достаётся он
-   только тому, что что-то значит: непрочитанному письму, идущей сейчас
-   встрече с полоской «сейчас» и действию в подвале. Всё остальное —
-   иконки, цифры, обложка — нейтральное, иначе лента превращается в светофор
-   и акцент перестаёт что-либо выделять. */
+/* Своего цвета у карточки нет: акцент в приложении один. Он достаётся тому,
+   что что-то значит (непрочитанное письмо, идущая сейчас встреча, действие
+   в подвале) и главному в витринах — иконкам ссылок и цифрам экрана
+   безопасности, ради которых карточку и открывают. Глифы шапок остаются
+   нейтральными: раскрась их — и лента снова станет светофором. */
 
 /* ── Шапка ────────────────────────────────────────────────────────────── */
 .wgs-cap {
@@ -197,7 +197,7 @@
 }
 .wg-row:last-child { border-bottom: 0; }
 .wg-row-ico {
-  flex: none; width: 24px; height: 24px; color: var(--color-text);
+  flex: none; width: 24px; height: 24px; color: var(--color-primary);
   display: flex; align-items: center; justify-content: center;
 }
 .wg-row-ico svg { width: 24px; height: 24px; display: block; }
@@ -222,7 +222,7 @@
 }
 .wg-big {
   font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: -0.03em;
-  color: var(--color-heading); font-variant-numeric: tabular-nums lining-nums;
+  color: var(--color-primary); font-variant-numeric: tabular-nums lining-nums;
 }
 .wg-safe-label { font-size: 13px; color: var(--color-weak); }
 .wg-safe-stats {
@@ -233,7 +233,7 @@
   flex: 1; min-width: 0; padding: var(--space-3) var(--space-4);
   display: flex; flex-direction: column; gap: 2px;
 }
-.wg-safe-ico { color: var(--color-weak); height: 20px; }
+.wg-safe-ico { color: var(--color-primary); height: 20px; }
 .wg-safe-ico svg { width: 20px; height: 20px; display: block; }
 .wg-safe-stat + .wg-safe-stat { border-left: 1px solid var(--color-border); }
 .wg-safe-num {
