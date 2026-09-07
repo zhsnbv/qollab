@@ -86,14 +86,20 @@ function meetState(m, mins) {
   return 'next';
 }
 
-// Встреч в дне больше, чем строк в карточке. Показываем окно вокруг текущей
-// встречи с одной прошедшей для контекста: список, приколоченный к началу дня,
-// к вечеру показывал бы одно прошлое, а нужная встреча пряталась бы.
+// Встреч в дне больше, чем строк в карточке. Окно всегда начинается с текущей
+// встречи, а прошедшими добирается только свободное место: прятать будущую
+// встречу ради прошедшей нельзя — тогда и счётчик в подвале врал бы о том,
+// сколько ещё впереди.
 export function meetWindow(list, mins, max = MEET_ROWS) {
   let i = list.findIndex((m) => toMin(m.to) > mins);
   if (i < 0) i = list.length;
-  const start = Math.max(0, Math.min(i - 1, list.length - max));
-  return { start, items: list.slice(start, start + max), rest: Math.max(0, list.length - start - max) };
+  const back = Math.max(0, max - (list.length - i));
+  const start = Math.max(0, i - back);
+  return {
+    start,
+    items: list.slice(start, start + max),
+    rest: Math.max(0, list.length - start - max),
+  };
 }
 
 // Строки таймлайна одной высоты. Полоска «сейчас» едет внутри строки
