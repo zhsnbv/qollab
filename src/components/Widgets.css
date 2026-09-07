@@ -1,6 +1,5 @@
-/* Лента виджетов — второй блок внутри карточки сервисов, поэтому своей
-   подложки у секции нет: её даёт .card, а отступ сверху — margin-bottom
-   предыдущего .block.
+/* Лента виджетов живёт в собственной .card под блоком сервисов, поэтому
+   поля и подложку даёт карточка, а лента только выходит вровень с её краями.
 
    Высота карточки одна на всех (341 = шапка 49 + тело 290 + канты): иначе
    при листании секция прыгала бы. Тело 290 делится ровно: 5 ссылок по 58,
@@ -30,6 +29,9 @@
   background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  /* Карточка виджета лежит на белой подложке секции — без тени кант остался бы
+     единственным, что их разделяет, и лента читалась бы плоской сеткой. */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 10px rgba(0, 0, 0, 0.03);
   overflow: hidden;
 }
 
@@ -177,7 +179,12 @@
   border-bottom: 1px solid var(--color-border);
 }
 .wg-row:last-child { border-bottom: 0; }
-.wg-row svg { flex: none; }
+.wg-row-ico {
+  flex: none; width: 24px; height: 24px; color: var(--wg-accent, var(--color-primary));
+  display: flex; align-items: center; justify-content: center;
+}
+.wg-row-ico svg { width: 24px; height: 24px; display: block; }
+.wg-row-chev { flex: none; width: 16px; height: 16px; color: var(--color-light); display: block; }
 .wg-row-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .wg-row-title {
   font-size: 14px; font-weight: 600; line-height: 17px; color: var(--color-text);
@@ -209,6 +216,8 @@
   flex: 1; min-width: 0; padding: var(--space-3) var(--space-4);
   display: flex; flex-direction: column; gap: 2px;
 }
+.wg-safe-ico { color: var(--wg-accent); height: 20px; }
+.wg-safe-ico svg { width: 20px; height: 20px; display: block; }
 .wg-safe-stat + .wg-safe-stat { border-left: 1px solid var(--color-border); }
 .wg-safe-num {
   font-size: 20px; font-weight: 700; line-height: 1.1; color: var(--color-heading);
@@ -218,22 +227,20 @@
 
 /* ── Корпоративный журнал (контент из веб-прототипа) ──────────────────── */
 .wg-mag {
-  height: 100%; display: flex; flex-direction: column; justify-content: center;
-  padding: var(--space-4); gap: 2px;
+  height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: var(--space-4); gap: 2px; text-align: center;
 }
-/* Обложки выпуска в прототипе нет — ставим узнаваемую заглушку в цвете
-   виджета, чтобы карточка не выглядела пустой до реальной картинки. */
+/* Обложка — картинка с прозрачным фоном и собственной тенью, поэтому ни
+   скруглений, ни подложки ей не нужно: файл ужат до двойного размера показа. */
 .wg-mag-cover {
-  width: 92px; height: 122px; margin-bottom: var(--space-3);
-  border-radius: 6px; overflow: hidden;
-  background: linear-gradient(155deg, var(--wg-accent), rgba(0, 0, 0, 0.65));
-  display: flex; align-items: flex-end; padding: var(--space-2);
+  display: block; height: 150px; width: auto; margin-bottom: var(--space-3);
 }
-.wg-mag-cover span {
-  color: #fff; font-size: 13px; font-weight: 800; letter-spacing: 0.1em;
+.wg-mag-name {
+  font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--color-heading);
 }
 .wg-mag-issue { font-size: 15px; font-weight: 600; color: var(--wg-accent); }
-.wg-mag-lead { font-size: 13px; line-height: 1.4; color: var(--color-weak); }
 
 /* Пустое состояние виджета — спокойное: карточка остаётся карточкой */
 .wg-msg {

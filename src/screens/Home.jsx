@@ -126,10 +126,10 @@ export default function Home() {
               </button>
             </div>
           </div>
+        </section>
 
-          {/* Виджеты — вторым блоком в той же карточке: это части одного
-              «моего» набора на главной, разносить их по двум подложкам
-              значило бы рвать блок пополам. Отступ даёт .block сверху. */}
+        {/* Виджеты — своей карточкой сразу под сервисами */}
+        <section className="card">
           <Widgets />
         </section>
 
@@ -184,7 +184,8 @@ export default function Home() {
             const Icon = LINK_ICONS[icon];
             return (
             <div className="actual-row" key={title}>
-              {Icon && <Icon size={24} color="var(--color-primary)" />}
+              {/* Иконки Fluent: размер задаётся стилями, пропа size у них нет */}
+              <span className="wg-row-ico">{Icon && <Icon />}</span>
               <div className="actual-body">
                 <div className="actual-title">{title}</div>
                 <div className="actual-sub">{sub}</div>

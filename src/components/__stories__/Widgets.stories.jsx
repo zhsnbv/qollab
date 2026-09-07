@@ -1,5 +1,6 @@
-import { CalendarLtr24Filled, ChevronRight20Filled } from '@fluentui/react-icons';
-import { CaretRight } from '@phosphor-icons/react';
+import {
+  CalendarLtr24Filled, ChevronRight20Filled, ChevronRight16Filled,
+} from '@fluentui/react-icons';
 import Widgets, { Timeline, meetWindow } from '../Widgets';
 import { widgetData } from '../../data/widgets';
 
@@ -12,10 +13,11 @@ export default {
     docs: {
       description: {
         component:
-          'Лента виджетов — второй блок в карточке сервисов. Карточка одной высоты на всех '
-          + '(341px), следующая подглядывает из-за края: на вебе виджеты стоят колонкой справа, '
-          + 'на телефоне такой колонки нет. Подложек у карточек нет — цветом различаются только '
-          + 'глифы в шапках.\n\n'
+          'Лента виджетов лежит в своей карточке под блоком сервисов. Карточка виджета одной '
+          + 'высоты со всеми (341px), следующая подглядывает из-за края: на вебе виджеты стоят '
+          + 'колонкой справа, на телефоне такой колонки нет. '
+          + 'Подложек у карточек виджетов нет — цветом различаются только глифы, и все они '
+          + 'из одного набора, Fluent filled.\n\n'
           + 'Взаимодействие разное и зависит от того, сколько у виджета адресов. У почты, встреч '
           + 'и ссылок свой список — тапается каждая строка, а шапка и подвал ведут в сам сервис. '
           + 'У экрана безопасности и журнала адрес один, поэтому и действие одно — кнопка внизу, '
@@ -57,7 +59,7 @@ function MeetCard({ at, note }) {
           </div>
           <button className="wgs-foot">
             <span>{rest ? `Ещё ${rest} встреч` : 'Перейти в календарь'}</span>
-            <CaretRight size={14} />
+            <ChevronRight16Filled />
           </button>
         </article>
       </div>

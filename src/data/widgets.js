@@ -50,11 +50,11 @@ export const widgetList = [
 // Тот самый список, что раньше жил в блоке «Актуальное» на главной. Блок
 // скрыт — виджет занял его место, поэтому строки переехали сюда целиком.
 export const usefulLinks = [
-  { icon: 'Lifebuoy', title: 'Заявка в Service Desk', sub: 'Обратная связь' },
+  { icon: 'Ticket', title: 'Заявка в Service Desk', sub: 'Обратная связь' },
   { icon: 'Headset', title: 'Горячая линия ERG', sub: 'Сообщить о проблеме, задать вопрос' },
-  { icon: 'CheckFat', title: 'ДРП в 1 клик!', sub: 'Зарегистрируйте проблему онлайн' },
-  { icon: 'HandHeart', title: 'Жизненно важные правила', sub: 'Обязательно к ознакомлению' },
-  { icon: 'SuitcaseRolling', title: 'Заявка на командировку', sub: 'Подайте заявку на командировку' },
+  { icon: 'Check', title: 'ДРП в 1 клик!', sub: 'Зарегистрируйте проблему онлайн' },
+  { icon: 'Pulse', title: 'Жизненно важные правила', sub: 'Обязательно к ознакомлению' },
+  { icon: 'Airplane', title: 'Заявка на командировку', sub: 'Подайте заявку на командировку' },
 ];
 
 // Данные виджетов. В прототипе они статичные — на проде это ответы
@@ -108,10 +108,11 @@ export const widgetData = {
     days: 214,
     daysLabel: 'дней отработано без травм',
     stats: [
-      { id: 's1', icon: 'Heartbeat', value: 0, label: 'Смертельные травмы' },
-      { id: 's2', icon: 'Bandaids', value: 2, label: 'Травмы с потерей дней' },
+      { id: 's1', icon: 'Heart', value: 0, label: 'Смертельные травмы' },
+      { id: 's2', icon: 'Medical', value: 2, label: 'Травмы с потерей дней' },
     ],
   },
   // Корпоративный журнал — по веб-прототипу qollabwebv2
-  journal: { name: 'ZAVOD', issue: 'Выпуск №7', lead: 'Люди ERG: истории с производства' },
+  // Обложка выпуска — та же картинка, что в веб-прототипе
+  journal: { name: 'ZAVOD', issue: 'Выпуск №7', cover: '/img/home/magazine.png' },
 };

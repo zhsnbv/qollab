@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Mail24Filled, CalendarLtr24Filled, Link24Filled,
-  ShieldCheckmark24Filled, BookOpen24Filled, ChevronRight20Filled,
+  ShieldCheckmark24Filled, BookOpen24Filled,
+  TicketDiagonal24Filled, Headset24Filled, CheckmarkCircle24Filled,
+  HeartPulse24Filled, Airplane24Filled,
+  Heart20Filled, BriefcaseMedical20Filled,
+  ChevronRight20Filled, ChevronRight16Filled,
 } from '@fluentui/react-icons';
-import {
-  Lifebuoy, Headset, CheckFat, HandHeart, SuitcaseRolling,
-  Heartbeat, Bandaids, CaretRight,
-} from '@phosphor-icons/react';
 import { useWidgets } from '../context/WidgetsContext';
 import Toast from './Toast';
 import { widgetData, usefulLinks } from '../data/widgets';
@@ -23,9 +23,17 @@ export const WIDGET_ICONS = {
   Book: BookOpen24Filled,
 };
 
-// Строки «Полезных ссылок» и плитки экрана безопасности — Phosphor.
+// Строки «Полезных ссылок» и плитки экрана безопасности. Иконки везде
+// одного набора — Fluent filled: пары из Phosphor рядом с фирменными
+// глифами шапок читались как два разных языка в одной карточке.
 export const LINK_ICONS = {
-  Lifebuoy, Headset, CheckFat, HandHeart, SuitcaseRolling, Heartbeat, Bandaids,
+  Ticket: TicketDiagonal24Filled,
+  Headset: Headset24Filled,
+  Check: CheckmarkCircle24Filled,
+  Pulse: HeartPulse24Filled,
+  Airplane: Airplane24Filled,
+  Heart: Heart20Filled,
+  Medical: BriefcaseMedical20Filled,
 };
 
 // Взаимодействие у карточек разное — по тому, сколько у виджета адресов.
@@ -153,12 +161,12 @@ function Body({ id, now, onRow }) {
       const Icon = LINK_ICONS[icon];
       return (
         <button className="wg-row" key={title} onClick={() => onRow(`Откроется «${title}»`)}>
-          {Icon && <Icon size={24} color="var(--color-primary)" />}
+          <span className="wg-row-ico">{Icon && <Icon />}</span>
           <span className="wg-row-t">
             <span className="wg-row-title">{title}</span>
             <span className="wg-row-sub">{sub}</span>
           </span>
-          <CaretRight size={16} color="var(--color-light)" />
+          <ChevronRight16Filled className="wg-row-chev" />
         </button>
       );
     });
@@ -178,7 +186,7 @@ function Body({ id, now, onRow }) {
             const Icon = LINK_ICONS[st.icon];
             return (
               <div className="wg-safe-stat" key={st.id}>
-                {Icon && <Icon size={18} weight="fill" color="var(--wg-accent)" />}
+                <span className="wg-safe-ico">{Icon && <Icon />}</span>
                 <span className="wg-safe-num">{st.value}</span>
                 <span className="wg-safe-cap">{st.label}</span>
               </div>
@@ -189,12 +197,12 @@ function Body({ id, now, onRow }) {
     );
   }
 
-  const { name, issue, lead } = widgetData.journal;
+  const { name, issue, cover } = widgetData.journal;
   return (
     <div className="wg-mag">
-      <div className="wg-mag-cover" aria-hidden="true"><span>{name}</span></div>
+      <img className="wg-mag-cover" src={cover} alt="" />
+      <div className="wg-mag-name">{name}</div>
       <div className="wg-mag-issue">{issue}</div>
-      <div className="wg-mag-lead">{lead}</div>
     </div>
   );
 }
@@ -249,7 +257,7 @@ function Card({ w, now, onOpen }) {
       {foot && (
         <button className="wgs-foot" onClick={() => onOpen(openMsg)}>
           <span>{foot}</span>
-          <CaretRight size={14} />
+          <ChevronRight16Filled />
         </button>
       )}
     </article>
