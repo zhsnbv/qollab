@@ -35,12 +35,11 @@
   overflow: hidden;
 }
 
-/* Цветом различаются только глифы — подложек у карточек нет */
-.wg-tone--blue { --wg-accent: var(--wg-blue); }
-.wg-tone--green { --wg-accent: var(--wg-green); }
-.wg-tone--primary { --wg-accent: var(--color-primary); }
-.wg-tone--cyan { --wg-accent: var(--wg-cyan); }
-.wg-tone--violet { --wg-accent: var(--wg-violet); }
+/* Своего цвета у карточки нет. Акцент в приложении один, и достаётся он
+   только тому, что что-то значит: непрочитанному письму, идущей сейчас
+   встрече с полоской «сейчас» и действию в подвале. Всё остальное —
+   иконки, цифры, обложка — нейтральное, иначе лента превращается в светофор
+   и акцент перестаёт что-либо выделять. */
 
 /* ── Шапка ────────────────────────────────────────────────────────────── */
 .wgs-cap {
@@ -54,7 +53,7 @@
 .wgs-cap--link { transition: opacity 0.12s; -webkit-tap-highlight-color: transparent; }
 .wgs-cap--link:active { opacity: 0.6; }
 .wgs-ico {
-  flex: none; width: 24px; height: 24px; color: var(--wg-accent);
+  flex: none; width: 24px; height: 24px; color: var(--color-text);
   display: flex; align-items: center; justify-content: center;
 }
 .wgs-ico svg { width: 24px; height: 24px; display: block; }
@@ -80,7 +79,7 @@
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 var(--space-4); text-align: left;
   border-top: 1px solid var(--color-border);
-  color: var(--wg-accent); font-size: 14px; font-weight: 500;
+  color: var(--color-primary); font-size: 14px; font-weight: 500;
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .wgs-foot:active { opacity: 0.6; }
@@ -130,8 +129,8 @@
 .wg-tl-row--past .wg-tl-time { color: var(--color-light); }
 .wg-tl-row--past .wg-tl-title { color: var(--color-weak); }
 
-.wg-tl-row--now { --rail: var(--wg-accent); }
-.wg-tl-row--now .wg-tl-time { color: var(--wg-accent); font-weight: 600; }
+.wg-tl-row--now { --rail: var(--color-primary); }
+.wg-tl-row--now .wg-tl-time { color: var(--color-primary); font-weight: 600; }
 .wg-tl-row--now .wg-tl-title { font-weight: 600; }
 
 /* Полоска «сейчас»: точка на рельсе, тающий пунктир и время на подложке
@@ -144,14 +143,14 @@
 }
 .wg-now::before {
   content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%;
-  background: var(--wg-accent);
+  background: var(--color-primary);
 }
 /* Пунктир — отдельным элементом, а не ::after: псевдоэлемент рисуется после
    всех детей, и плашка времени оказывалась бы слева от линии. */
 .wg-now-dash {
   flex: 1; height: 2px; margin: 0 6px;
   background: repeating-linear-gradient(
-    to right, var(--wg-accent) 0 7px, transparent 7px 12px
+    to right, var(--color-primary) 0 7px, transparent 7px 12px
   );
   /* Полная сила только в колонке времени: дальше пунктир идёт по названию
      встречи и должен читаться как направляющая, а не как зачёркивание. */
@@ -161,7 +160,7 @@
 /* Время стоит в собственной колонке справа — под неё строкам обрезано поле */
 .wg-now-time {
   flex: none; padding: 2px 7px; border-radius: var(--radius-pill);
-  background: var(--wg-accent); color: #fff;
+  background: var(--color-primary); color: #fff;
   font-size: 10px; font-weight: 700; line-height: 12px;
   font-variant-numeric: tabular-nums lining-nums;
 }
@@ -176,7 +175,7 @@
 .wg-mail-top { display: flex; align-items: center; gap: var(--space-2); }
 .wg-dot {
   flex: none; width: 8px; height: 8px; border-radius: 50%;
-  background: var(--wg-accent);
+  background: var(--color-primary);
 }
 .wg-mail-from {
   flex: 1; min-width: 0; font-size: 14px; font-weight: 600; line-height: 17px;
@@ -198,7 +197,7 @@
 }
 .wg-row:last-child { border-bottom: 0; }
 .wg-row-ico {
-  flex: none; width: 24px; height: 24px; color: var(--wg-accent, var(--color-primary));
+  flex: none; width: 24px; height: 24px; color: var(--color-text);
   display: flex; align-items: center; justify-content: center;
 }
 .wg-row-ico svg { width: 24px; height: 24px; display: block; }
@@ -223,7 +222,7 @@
 }
 .wg-big {
   font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: -0.03em;
-  color: var(--wg-accent); font-variant-numeric: tabular-nums lining-nums;
+  color: var(--color-heading); font-variant-numeric: tabular-nums lining-nums;
 }
 .wg-safe-label { font-size: 13px; color: var(--color-weak); }
 .wg-safe-stats {
@@ -234,7 +233,7 @@
   flex: 1; min-width: 0; padding: var(--space-3) var(--space-4);
   display: flex; flex-direction: column; gap: 2px;
 }
-.wg-safe-ico { color: var(--wg-accent); height: 20px; }
+.wg-safe-ico { color: var(--color-weak); height: 20px; }
 .wg-safe-ico svg { width: 20px; height: 20px; display: block; }
 .wg-safe-stat + .wg-safe-stat { border-left: 1px solid var(--color-border); }
 .wg-safe-num {
@@ -258,7 +257,7 @@
   font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
   color: var(--color-heading);
 }
-.wg-mag-issue { font-size: 15px; font-weight: 600; color: var(--wg-accent); }
+.wg-mag-issue { font-size: 15px; font-weight: 600; color: var(--color-primary); }
 
 /* Пустое состояние виджета — спокойное: карточка остаётся карточкой */
 .wg-msg {

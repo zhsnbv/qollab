@@ -189,7 +189,7 @@ export const ПравилаРазбора = {
               <div key={input} style={{ padding: '8px 0', borderBottom: '1px solid var(--color-border)' }}>
                 <div style={{ wordBreak: 'break-all', color: 'var(--color-heading)' }}>{input}</div>
                 <div style={{ color: 'var(--color-weak)' }}>{label}</div>
-                <div style={{ color: res ? 'var(--wg-green)' : 'var(--color-light)', fontWeight: 600 }}>
+                <div style={{ color: res ? 'var(--color-success)' : 'var(--color-light)', fontWeight: 600 }}>
                   {res ? `→ ${res.type}` : '→ карточки нет'}
                 </div>
               </div>

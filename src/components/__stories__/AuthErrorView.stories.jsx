@@ -104,9 +104,9 @@ export const РазборОтветов = {
       {ROWS.map(([label, input]) => {
         const e = normalizeAuthError({ stage: STAGE.confirmCode, ...input });
         const branch = isInline(e)
-          ? { text: `подсказка на шаге кода: «${INLINE_TEXT[e.kind]}»`, color: 'var(--wg-green)' }
+          ? { text: `подсказка на шаге кода: «${INLINE_TEXT[e.kind]}»`, color: 'var(--color-success)' }
           : e.kind === KIND.userNotFound || e.kind === KIND.accountConflict
-            ? { text: 'существующая развилка «сотрудник или гость»', color: 'var(--wg-blue)' }
+            ? { text: 'существующая развилка «сотрудник или гость»', color: 'var(--color-text)' }
             : { text: 'общий экран ошибки', color: 'var(--color-primary)' };
         return (
           <div key={label} style={{ padding: '9px 0', borderBottom: '1px solid var(--color-border)' }}>

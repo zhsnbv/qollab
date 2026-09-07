@@ -48,7 +48,7 @@ function MeetCard({ at, note }) {
   return (
     <div style={{ padding: 16 }}>
       <div className="wgs">
-        <article className="wgs-card wg-tone--green" style={{ width: '100%' }}>
+        <article className="wgs-card" style={{ width: '100%' }}>
           <button className="wgs-cap wgs-cap--link">
             <span className="wgs-ico"><CalendarLtr24Filled /></span>
             <span className="wgs-name">Встречи на сегодня</span>

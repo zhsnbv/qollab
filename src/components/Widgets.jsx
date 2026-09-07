@@ -259,7 +259,7 @@ function Card({ w, now, onOpen }) {
   );
 
   return (
-    <article className={`wgs-card wg-tone--${w.tone}`}>
+    <article className="wgs-card">
       {nav.head
         ? <button className="wgs-cap wgs-cap--link" onClick={() => onOpen(nav.head)}>{cap}</button>
         : <div className="wgs-cap">{cap}</div>}

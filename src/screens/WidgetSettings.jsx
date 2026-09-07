@@ -78,7 +78,7 @@ export default function WidgetSettings() {
             const on = !isHidden(w.id);
             return (
               <div className="wset-card" key={w.id}>
-                <div className={`wset-prev wg-tone--${w.tone}`}>
+                <div className="wset-prev">
                   <div className="wset-prev-top">
                     <span className="wset-prev-ico">{Icon && <Icon />}</span>
                     <span className="wset-prev-name">{w.title}</span>
