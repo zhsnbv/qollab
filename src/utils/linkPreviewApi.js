@@ -81,6 +81,7 @@ function inviteResult(invite) {
     kind: 'group_invite',
     title: invite.channel.name,
     subtitle: `${invite.channel.members} участников`,
+    note: invite.channel.about,
     logo: invite.channel.avatar,
     action: member ? 'Открыть' : 'Вступить',
   };

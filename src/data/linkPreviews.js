@@ -47,16 +47,29 @@ export const previewMiniApps = {
 // Приглашения. membership решает, что написано на кнопке: «Вступить» или
 // «Открыть». state=invalid — отозванное или несуществующее приглашение:
 // ни названия, ни аватарки не показываем.
+//
+// Описание канала показываем и тому, кто ещё не участник, — решение принято,
+// в проде это отдельный пункт privacy review (раздел 15.3 плана).
 export const previewInvites = {
   inv_7f3ac2: {
     state: 'active',
     membership: 'not_member',
-    channel: { name: 'Команда продукта', members: 128, avatar: '/img/chats/qollab-group.png' },
+    channel: {
+      name: 'Команда продукта',
+      members: 128,
+      about: 'Релизы, дизайн и планы мобильного qollab',
+      avatar: '/img/chats/qollab-group.png',
+    },
   },
   inv_bts91d: {
     state: 'active',
     membership: 'member',
-    channel: { name: 'BTS Digital', members: 860, avatar: '/img/posts/ch-bts-news.png' },
+    channel: {
+      name: 'BTS Digital',
+      members: 860,
+      about: 'Новости цифровой трансформации Группы',
+      avatar: '/img/posts/ch-bts-news.png',
+    },
   },
   inv_expired: { state: 'invalid' },
 };

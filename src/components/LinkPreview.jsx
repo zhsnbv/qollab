@@ -57,6 +57,14 @@ export default function LinkPreview({ link, onOpen }) {
             <span className="lp-sk lp-sk--kind" />
             <span className="lp-sk lp-sk--title" />
             <span className="lp-sk lp-sk--sub" />
+            {/* У приглашения две строки описания канала — ровно столько же
+                занимает готовая карточка, поэтому бабл не прыгает */}
+            {link.type === 'group_invite' && (
+              <>
+                <span className="lp-sk lp-sk--note" />
+                <span className="lp-sk lp-sk--note" />
+              </>
+            )}
           </span>
         </div>
         <span className="lp-sk lp-sk--cta" />
@@ -93,6 +101,7 @@ export default function LinkPreview({ link, onOpen }) {
           <span className="lp-kind">{label}</span>
           <span className="lp-title">{state.title}</span>
           {state.subtitle && <span className="lp-sub">{state.subtitle}</span>}
+          {state.note && <span className="lp-note">{state.note}</span>}
         </span>
       </span>
       <span className="lp-cta">{state.action}<ChevronRight16Filled /></span>
