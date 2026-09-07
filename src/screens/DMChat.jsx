@@ -8,6 +8,7 @@ import ErgizAvatar from '../components/ErgizAvatar';
 import ErgizHistory from '../components/ErgizHistory';
 import { ergizPrompts, ergizAnswers } from '../data/ergiz';
 import Message from '../components/Message';
+import { describeLink } from '../utils/linkPreviewApi';
 import MessageMenu from '../components/MessageMenu';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
@@ -417,6 +418,7 @@ export default function DMChat() {
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={chat.dismissed ? undefined : onLongPress}
                 onSwipeReply={chat.dismissed ? undefined : setReply}
+                onOpenLink={(url) => setToast(describeLink(url))}
               />
             ))}
             {chat.kind === 'bot' && !messages.some((m) => m.mine) && !typing && (

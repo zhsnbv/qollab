@@ -1,0 +1,77 @@
+/* Карточка внутренней ссылки внутри бабла сообщения.
+
+   Подложка белая, как у цитаты ответа: бабл своего сообщения оранжевый, чужого —
+   серый, и только белая плашка одинаково читается на обоих. Ширина фиксирована
+   по образцу медиа-бабла — так бабл не скачет между скелетоном и загруженной
+   карточкой (правило 5.1.4 плана). */
+.lp {
+  display: block; width: 248px; max-width: 100%;
+  margin-top: var(--space-2); padding: 10px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  text-align: left;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
+}
+button.lp:active { opacity: 0.6; }
+
+.lp-row { display: flex; align-items: flex-start; gap: var(--space-2); }
+
+.lp-ico {
+  flex: none; width: 40px; height: 40px; border-radius: 10px; overflow: hidden;
+  background: var(--img-placeholder); color: var(--color-weak);
+  display: flex; align-items: center; justify-content: center;
+}
+.lp-ico img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lp-ico svg { width: 22px; height: 22px; display: block; }
+
+.lp-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.lp-kind {
+  font-size: 11px; font-weight: 600; line-height: 14px; letter-spacing: 0.02em;
+  color: var(--color-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lp-title {
+  font-size: 13px; font-weight: 600; line-height: 17px; color: var(--color-heading);
+  /* Максимум две строки — и у названия, и у описания (правило 5.4) */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.lp-sub {
+  font-size: 12px; line-height: 16px; color: var(--color-weak);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lp-cta {
+  display: flex; align-items: center; justify-content: flex-end; gap: 2px;
+  margin-top: var(--space-2); padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  font-size: 13px; font-weight: 600; color: var(--color-primary);
+}
+.lp-cta svg { width: 16px; height: 16px; display: block; }
+
+/* Недействительное приглашение: действия нет, тон приглушённый */
+.lp--invalid .lp-kind { color: var(--color-weak); }
+.lp--invalid .lp-ico { color: var(--color-light); }
+
+/* Скелетон повторяет финальные габариты: 40-пиксельная иконка, три строки
+   текста и полоса действия — бабл не прыгает после загрузки. */
+.lp-sk {
+  display: block; border-radius: 4px;
+  background: linear-gradient(90deg, var(--sk-a) 25%, var(--sk-b) 37%, var(--sk-a) 63%);
+  background-size: 400% 100%;
+  animation: lp-shimmer 1.2s ease-in-out infinite;
+}
+.lp--skeleton .lp-ico { border-radius: 10px; }
+.lp-sk--kind { width: 74px; height: 10px; margin: 2px 0; }
+.lp-sk--title { width: 100%; height: 12px; margin: 3px 0 4px; }
+.lp-sk--sub { width: 62%; height: 11px; }
+.lp-sk--cta {
+  width: 84px; height: 13px; margin: 15px 0 1px auto;
+}
+@keyframes lp-shimmer { from { background-position: 100% 50%; } to { background-position: 0 50%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-sk { animation: none; }
+}

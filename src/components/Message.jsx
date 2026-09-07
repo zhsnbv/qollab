@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Play, Stop, FileText, Check, Checks, Clock } from '@phosphor-icons/react';
 import { ArrowReply20Regular } from '@fluentui/react-icons';
 import MessageReactions from './MessageReactions';
+import LinkPreview from './LinkPreview';
+import { extractFirstInternalLink } from '../utils/internalLink';
 
 // Псевдослучайная волна для войса (стабильная между рендерами)
 const WAVE = [4, 12, 16, 6, 20, 4, 24, 12, 17, 16, 8, 7, 20, 6, 24, 5, 17, 4, 10, 14, 6, 18, 9];
@@ -62,9 +64,41 @@ function VoiceBubble({ duration, mine, time, status }) {
 }
 
 // Подсветка @упоминаний вида «@Имя Ф.» оранжевым.
-function renderText(text) {
+function renderMentions(text, keyBase) {
   const parts = text.split(/(@[А-ЯЁ][а-яё]+\s[А-ЯЁ]\.)/g);
-  return parts.map((p, i) => (/^@[А-ЯЁ]/.test(p) ? <span className="msg-mention" key={i}>{p}</span> : p));
+  return parts.map((p, i) => (
+    /^@[А-ЯЁ]/.test(p)
+      ? <span className="msg-mention" key={`${keyBase}-m${i}`}>{p}</span>
+      : <span key={`${keyBase}-t${i}`}>{p}</span>
+  ));
+}
+
+const LINK_SPLIT = /((?:https?|qollab):\/\/[^\s<>«»"']+)/gi;
+const LINK_TEST = /^(?:https?|qollab):\/\//i;
+// Хвостовая пунктуация принадлежит предложению, а не адресу
+const TRAILING = /[.,;:!?)»"'\]]+$/;
+
+// Текст сообщения: ссылки остаются ссылками и тапаются, даже когда под
+// сообщением уже нарисована карточка — по плану обычная ссылка это fallback,
+// и тап по ней должен приводить ровно туда же, куда тап по карточке.
+function renderText(text, onLink) {
+  return String(text || '').split(LINK_SPLIT).map((part, i) => {
+    if (!LINK_TEST.test(part)) return renderMentions(part, i);
+    const trail = (part.match(TRAILING) || [''])[0];
+    const url = trail ? part.slice(0, -trail.length) : part;
+    return (
+      <span key={`l${i}`}>
+        <a
+          className="msg-link"
+          href={url}
+          onClick={(e) => { e.preventDefault(); if (onLink) onLink(url); }}
+        >
+          {url}
+        </a>
+        {trail}
+      </span>
+    );
+  });
 }
 
 // Галочки прочтения — аналог WhatsApp: часы (отправляется) → одна серая
@@ -186,11 +220,15 @@ function useSwipeReply(onReply, msg) {
 
 export default function Message({
   msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor,
-  reactions, onToggleReaction, onLongPress, onSwipeReply, withAvatarSlot = true,
+  reactions, onToggleReaction, onLongPress, onSwipeReply, onOpenLink,
+  withAvatarSlot = true,
 }) {
   const showAuthor = firstOfGroup && !mine && authorLabel;
   const press = useLongPress(onLongPress, msg);
   const swipe = useSwipeReply(onSwipeReply, msg);
+  // Разбор ссылки — на текст сообщения, а не на каждый рендер: при прокрутке
+  // истории строки перемонтируются, и без memo парсер работал бы вхолостую.
+  const preview = useMemo(() => extractFirstInternalLink(msg.text), [msg.text]);
   return (
     <div
       className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''} ${swipe.snap ? 'msg--snap' : ''}`}
@@ -211,7 +249,7 @@ export default function Message({
               <img src={msg.img} alt="" loading="lazy" />
               {msg.kind === 'video' && <span className="msg-video-play"><Play size={22} weight="fill" color="#fff" /></span>}
             </div>
-            {msg.text && <div className="msg-text">{renderText(msg.text)}</div>}
+            {msg.text && <div className="msg-text">{renderText(msg.text, onOpenLink)}</div>}
             <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} />
           </div>
         ) : msg.kind === 'voice' ? (
@@ -241,10 +279,19 @@ export default function Message({
               </div>
             )}
             {msg.kind === 'link' ? (
-              <a className="msg-link" href={msg.text} onClick={(e) => e.preventDefault()}>{msg.text}</a>
+              <a
+                className="msg-link"
+                href={msg.text}
+                onClick={(e) => { e.preventDefault(); if (onOpenLink) onOpenLink(msg.text); }}
+              >
+                {msg.text}
+              </a>
             ) : (
-              <div className="msg-text">{renderText(msg.text)}</div>
+              <div className="msg-text">{renderText(msg.text, onOpenLink)}</div>
             )}
+            {/* Карточка — отдельным блоком под текстом, а не внутри строки:
+                внутри текстового потока она не может держать ширину и отступы */}
+            {preview && <LinkPreview link={preview} onOpen={(l) => onOpenLink && onOpenLink(l.url)} />}
             <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} />
           </div>
         )}

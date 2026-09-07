@@ -5,6 +5,7 @@ import { dayLabel } from '../utils/chatDate';
 import { useKeyboardInset } from '../utils/useKeyboardInset';
 import { ConnectingSkeleton } from '../components/ChatState';
 import Message from '../components/Message';
+import { describeLink } from '../utils/linkPreviewApi';
 import MessageMenu from '../components/MessageMenu';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
@@ -37,6 +38,15 @@ const script = [
   { author: nurlan, typing: 1000, gap: 400, day: 'Вчера', kind: 'photo', img: '/img/posts/events/e4.jpg', text: 'Скинул фото с демо для стейкхолдеров 👇' },
   { author: nurlan, typing: 800, gap: 600, day: 'Вчера', kind: 'link', text: 'https://figma.com/design/qollab/PR-482' },
   { author: arman, typing: 1300, gap: 500, day: 'Вчера', text: 'Кстати релиз сдвинули на пятницу, успеем прогнать тесты?' },
+  // Внутренние ссылки Qollab — под текстом появляется карточка
+  {
+    author: madina, typing: 1200, gap: 500, day: 'Вчера',
+    text: 'Правки жду на почте: https://link.qollab.kz/apps?command=apps&id=mail-2&to_url=%2Finbox',
+  },
+  {
+    author: dinara, typing: 1300, gap: 500, day: 'Вчера',
+    text: 'И залетайте в группу продукта https://link.qollab.kz/?command=invite&token=inv_7f3ac2 там вся переписка по релизу',
+  },
   {
     author: dinara, typing: 1500, gap: 400,
     quote: { author: nurlan.short, text: 'https://figma.com/design/qollab/PR-482', color: nurlan.color },
@@ -331,6 +341,7 @@ export default function ChatRoom() {
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={onLongPress}
                 onSwipeReply={setReply}
+                onOpenLink={(url) => setToast(describeLink(url))}
                 />
                 ))}
               </section>
