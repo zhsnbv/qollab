@@ -2,27 +2,16 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Mail24Filled, CalendarLtr24Filled, Link24Filled,
-  Megaphone24Filled, ShieldCheckmark24Filled, BookOpen24Filled,
-  ChevronRight20Filled,
+  ShieldCheckmark24Filled, BookOpen24Filled, ChevronRight20Filled,
 } from '@fluentui/react-icons';
 import {
-  Lifebuoy, Headset, CheckFat, HandHeart, SuitcaseRolling, CaretRight,
+  Lifebuoy, Headset, CheckFat, HandHeart, SuitcaseRolling,
+  Heartbeat, Bandaids, CaretRight,
 } from '@phosphor-icons/react';
 import { useWidgets } from '../context/WidgetsContext';
 import Toast from './Toast';
 import { widgetData, usefulLinks } from '../data/widgets';
 import './Widgets.css';
-
-// Куда ведёт тап по карточке. По ТЗ кликабельна вся карточка целиком,
-// а не отдельная кнопка внутри неё.
-const OPENS = {
-  meet: 'Откроется экран «Мои встречи»',
-  mail: 'Откроется почта',
-  important: 'Откроется объявление',
-  safety: 'Откроется экран безопасности',
-  links: 'Откроется список ссылок',
-  journal: 'Откроется свежий выпуск журнала',
-};
 
 // Глифы шапок — Fluent filled, как в макете. У встреч в макете лежит тот же
 // конверт, что и у почты (осталось от копипасты карточки) — ставим календарь.
@@ -30,21 +19,47 @@ export const WIDGET_ICONS = {
   Mail: Mail24Filled,
   Calendar: CalendarLtr24Filled,
   Link: Link24Filled,
-  Megaphone: Megaphone24Filled,
   Shield: ShieldCheckmark24Filled,
   Book: BookOpen24Filled,
 };
 
-// Строки «Полезных ссылок» — Phosphor, те же иконки, что в «Актуальном».
-export const LINK_ICONS = { Lifebuoy, Headset, CheckFat, HandHeart, SuitcaseRolling };
+// Строки «Полезных ссылок» и плитки экрана безопасности — Phosphor.
+export const LINK_ICONS = {
+  Lifebuoy, Headset, CheckFat, HandHeart, SuitcaseRolling, Heartbeat, Bandaids,
+};
 
-const ROW_H = 42;
+// Взаимодействие у карточек разное — по тому, сколько у виджета адресов.
+// Где внутри свой список ссылок (почта, встречи, полезные ссылки), тапается
+// каждая строка, а шапка и подвал ведут в сам сервис. Где адрес один
+// (безопасность, журнал), действие тоже одно — кнопка внизу.
+const NAV = {
+  mail: { head: 'Откроется почта', foot: 'Перейти в почту' },
+  meet: { head: 'Откроется календарь встреч', foot: 'Перейти в календарь' },
+  links: { head: null, foot: null },
+  safety: { head: null, foot: 'Открыть', open: 'Откроется экран безопасности' },
+  journal: { head: null, foot: 'Открыть', open: 'Откроется свежий выпуск журнала' },
+};
+
+// Высота строк зафиксирована: карточки в ленте одной высоты, и от этих чисел
+// зависит, сколько строк влезает и на сколько отъезжает полоска «сейчас».
+const ROW_H = 41;
+const MEET_ROWS = 6;
 
 const toMin = (t) => {
   const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
 };
-const pad = (n) => String(n).padStart(2, '0');
+const minsOf = (d) => d.getHours() * 60 + d.getMinutes();
+
+// «Ещё 1 встреча / 2 встречи / 5 встреч»
+const plural = (n, one, few, many) => {
+  const t = n % 100;
+  if (t > 10 && t < 20) return many;
+  const u = n % 10;
+  if (u === 1) return one;
+  if (u >= 2 && u <= 4) return few;
+  return many;
+};
 
 // Часы тикают сами: полоска «сейчас» должна ехать, пока экран открыт,
 // иначе таймлайн врёт уже через несколько минут.
@@ -57,82 +72,79 @@ function useClock(ms = 30000) {
   return now;
 }
 
-// Строки таймлайна одной высоты — как в макете. Полоска «сейчас» едет внутри
-// строки пропорционально времени: слот строки тянется от её начала до начала
-// следующей, поэтому маркер всегда стоит ровно у той встречи, на которой надо
-// быть, а в перерыве — в промежутке между ними.
-function nowMark(list, mins) {
-  const starts = list.map((m) => toMin(m.from));
-  const end = toMin(list[list.length - 1].to);
-  // Вне дня полоски нет: прижатая к краю, она только мешала бы — состояние
-  // и так читается по рельсам (всё серое или всё зелёное).
-  if (mins < starts[0] || mins >= end) return null;
-  let i = 0;
-  while (i + 1 < starts.length && starts[i + 1] <= mins) i += 1;
-  const a = starts[i];
-  const b = i + 1 < starts.length ? starts[i + 1] : end;
-  // Плашку держим внутри тела: у самых краёв её срезал бы кант карточки.
-  const full = list.length * ROW_H;
-  const top = Math.max(9, Math.min(full - 9, (i + (mins - a) / (b - a)) * ROW_H));
-  // Плашка со временем стоит на колонке времени. Если она пришлась на время
-  // строки — само время прячем: две цифры друг на друге читать невозможно.
-  // 18 = половина плашки (8) + половина строки времени (9) + зазор: ближе
-  // этого они уже наезжают друг на друга.
-  const over = list.findIndex((m, k) => Math.abs(top - (k * ROW_H + ROW_H / 2)) < 18);
-  return { top, over };
-}
-
 function meetState(m, mins) {
   if (mins >= toMin(m.to)) return 'past';
   if (mins >= toMin(m.from)) return 'now';
   return 'next';
 }
 
-export function Timeline({ list, now }) {
-  const mins = now.getHours() * 60 + now.getMinutes();
-  const mark = nowMark(list, mins);
+// Встреч в дне больше, чем строк в карточке. Показываем окно вокруг текущей
+// встречи с одной прошедшей для контекста: список, приколоченный к началу дня,
+// к вечеру показывал бы одно прошлое, а нужная встреча пряталась бы.
+export function meetWindow(list, mins, max = MEET_ROWS) {
+  let i = list.findIndex((m) => toMin(m.to) > mins);
+  if (i < 0) i = list.length;
+  const start = Math.max(0, Math.min(i - 1, list.length - max));
+  return { start, items: list.slice(start, start + max), rest: Math.max(0, list.length - start - max) };
+}
+
+// Строки таймлайна одной высоты. Полоска «сейчас» едет внутри строки
+// пропорционально времени: слот строки тянется от её начала до начала
+// следующей, поэтому маркер всегда стоит ровно у той встречи, на которой надо
+// быть, а в перерыве — в промежутке между ними. Вне дня полоски нет.
+export function nowTop(list, mins) {
+  const starts = list.map((m) => toMin(m.from));
+  const end = toMin(list[list.length - 1].to);
+  if (mins < starts[0] || mins >= end) return null;
+  let i = 0;
+  while (i + 1 < starts.length && starts[i + 1] <= mins) i += 1;
+  const a = starts[i];
+  const b = i + 1 < starts.length ? starts[i + 1] : end;
+  return (i + (mins - a) / (b - a)) * ROW_H;
+}
+
+export function Timeline({ list, now, onRow }) {
+  const mins = minsOf(now);
+  const top = nowTop(list, mins);
   return (
     <div className="wg-tl" style={{ height: list.length * ROW_H }}>
-      {list.map((m, i) => (
-        <div
-          className={`wg-tl-row wg-tl-row--${meetState(m, mins)} ${mark && mark.over === i ? 'wg-tl-row--masked' : ''}`}
+      {list.map((m) => (
+        <button
+          className={`wg-tl-row wg-tl-row--${meetState(m, mins)}`}
           key={m.id}
+          onClick={() => onRow(`Откроется встреча «${m.title}»`)}
         >
           <span className="wg-tl-time">{m.from}</span>
           <span className="wg-tl-title">{m.title}</span>
-        </div>
+        </button>
       ))}
-      {mark && (
-        <div className="wg-now" style={{ top: mark.top }} aria-hidden="true">
-          <span className="wg-now-chip">{pad(now.getHours())}:{pad(now.getMinutes())}</span>
-        </div>
-      )}
+      {top != null && <span className="wg-now" style={{ top }} aria-hidden="true" />}
     </div>
   );
 }
 
 // Тело каждого виджета своё: виджет тем и полезен, что показывает суть сервиса,
-// а не одинаковую плашку со счётчиком. Состав — по пп. 1.1 и 2.1 ТЗ.
-function Body({ id, now }) {
+// а не одинаковую плашку со счётчиком.
+function Body({ id, now, onRow }) {
   if (id === 'meet') {
     const list = widgetData.meetings;
     if (!list.length) return <div className="wg-msg"><b>На сегодня встреч нет</b></div>;
-    return <Timeline list={list} now={now} />;
+    return <Timeline list={meetWindow(list, minsOf(now)).items} now={now} onRow={onRow} />;
   }
 
   if (id === 'mail') {
     const { messages } = widgetData.mail;
     if (!messages.length) return <div className="wg-msg"><b>Новых писем нет</b></div>;
     return messages.map((m) => (
-      <div className="wg-mail" key={m.id}>
-        <div className="wg-mail-top">
+      <button className="wg-mail" key={m.id} onClick={() => onRow(`Откроется письмо «${m.subject}»`)}>
+        <span className="wg-mail-top">
           {m.unread && <span className="wg-dot" />}
           <span className="wg-mail-from">{m.from}</span>
           <span className="wg-mail-time">{m.time}</span>
-        </div>
-        <div className="wg-mail-sub">{m.subject}</div>
-        <div className="wg-mail-snip">{m.snippet}</div>
-      </div>
+        </span>
+        <span className="wg-mail-sub">{m.subject}</span>
+        <span className="wg-mail-snip">{m.snippet}</span>
+      </button>
     ));
   }
 
@@ -140,64 +152,113 @@ function Body({ id, now }) {
     return usefulLinks.map(({ icon, title, sub }) => {
       const Icon = LINK_ICONS[icon];
       return (
-        <div className="wg-row" key={title}>
+        <button className="wg-row" key={title} onClick={() => onRow(`Откроется «${title}»`)}>
           {Icon && <Icon size={24} color="var(--color-primary)" />}
           <span className="wg-row-t">
             <span className="wg-row-title">{title}</span>
             <span className="wg-row-sub">{sub}</span>
           </span>
           <CaretRight size={16} color="var(--color-light)" />
-        </div>
+        </button>
       );
     });
   }
 
-  if (id === 'important') {
-    return widgetData.important.map((n) => (
-      <div className="wg-row" key={n.id}>
-        <span className="wg-row-t">
-          <span className="wg-row-title">{n.title}</span>
-          <span className="wg-row-sub">{n.sub}</span>
-        </span>
-        <CaretRight size={16} color="var(--color-light)" />
-      </div>
-    ));
-  }
-
   if (id === 'safety') {
+    const s = widgetData.safety;
     return (
-      <div className="wg-stat">
-        <div className="wg-big">{widgetData.safetyDays}</div>
-        <div className="wg-sub">дней без травм</div>
-        <div className="wg-foot">Включая подрядные организации</div>
+      <div className="wg-safe">
+        <div className="wg-safe-note">{s.note}</div>
+        <div className="wg-safe-days">
+          <span className="wg-big">{s.days}</span>
+          <span className="wg-safe-label">{s.daysLabel}</span>
+        </div>
+        <div className="wg-safe-stats">
+          {s.stats.map((st) => {
+            const Icon = LINK_ICONS[st.icon];
+            return (
+              <div className="wg-safe-stat" key={st.id}>
+                {Icon && <Icon size={18} weight="fill" color="var(--wg-accent)" />}
+                <span className="wg-safe-num">{st.value}</span>
+                <span className="wg-safe-cap">{st.label}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
 
-  const { issue, date, lead } = widgetData.journal;
+  const { name, issue, lead } = widgetData.journal;
   return (
-    <div className="wg-stat">
-      <div className="wg-big wg-big--sm">{issue}</div>
-      <div className="wg-sub">{date}</div>
-      <div className="wg-foot">{lead}</div>
+    <div className="wg-mag">
+      <div className="wg-mag-cover" aria-hidden="true"><span>{name}</span></div>
+      <div className="wg-mag-issue">{issue}</div>
+      <div className="wg-mag-lead">{lead}</div>
     </div>
   );
 }
 
 // Счётчик в шапке: у почты — непрочитанные, у встреч — сколько ещё сегодня
-// предстоит. Там, где считать нечего, макет показывает шеврон.
+// предстоит.
 function headCount(id, now) {
   if (id === 'mail') return widgetData.mail.unread;
   if (id === 'meet') {
-    const mins = now.getHours() * 60 + now.getMinutes();
+    const mins = minsOf(now);
     return widgetData.meetings.filter((m) => toMin(m.to) > mins).length || null;
   }
   return null;
 }
 
-// Лента виджетов после блока сервисов. На вебе виджеты стоят колонкой справа,
-// на телефоне такой колонки нет — отсюда горизонтальная лента с подглядыванием
-// следующей карточки.
+// Подвал у встреч не просто ведёт в сервис, а честно говорит, сколько встреч
+// не поместилось: карточка одной высоты со всеми, растить её нельзя.
+function footLabel(id, now) {
+  const nav = NAV[id];
+  if (id !== 'meet') return nav.foot;
+  const { rest } = meetWindow(widgetData.meetings, minsOf(now));
+  if (!rest) return nav.foot;
+  return `Ещё ${rest} ${plural(rest, 'встреча', 'встречи', 'встреч')}`;
+}
+
+function Card({ w, now, onOpen }) {
+  const Icon = WIDGET_ICONS[w.icon];
+  const nav = NAV[w.id];
+  const count = headCount(w.id, now);
+  const foot = footLabel(w.id, now);
+  const openMsg = nav.open || nav.head;
+
+  const cap = (
+    <>
+      <span className="wgs-ico">{Icon && <Icon />}</span>
+      <span className="wgs-name">{w.title}</span>
+      {count != null && <span className="wgs-count">{count}</span>}
+      {nav.head && <ChevronRight20Filled className="wgs-chev" />}
+    </>
+  );
+
+  return (
+    <article className={`wgs-card wg-tone--${w.tone}`}>
+      {nav.head
+        ? <button className="wgs-cap wgs-cap--link" onClick={() => onOpen(nav.head)}>{cap}</button>
+        : <div className="wgs-cap">{cap}</div>}
+
+      <div className="wgs-body">
+        <Body id={w.id} now={now} onRow={onOpen} />
+      </div>
+
+      {foot && (
+        <button className="wgs-foot" onClick={() => onOpen(openMsg)}>
+          <span>{foot}</span>
+          <CaretRight size={14} />
+        </button>
+      )}
+    </article>
+  );
+}
+
+// Лента виджетов внутри карточки сервисов. На вебе виджеты стоят колонкой
+// справа, на телефоне такой колонки нет — отсюда горизонтальная лента с
+// подглядыванием следующей карточки.
 export default function Widgets() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -223,10 +284,6 @@ export default function Widgets() {
 
   const openSettings = () => navigate('/widgets/settings', { state: { background: location } });
 
-  // Экранов назначения в прототипе ещё нет — честно говорим, что откроется,
-  // вместо карточки, которая молча не реагирует на тап.
-  const open = (id) => setToast(OPENS[id] || 'Откроется сервис');
-
   return (
     <section className="wgs">
       <div className="wgs-head">
@@ -235,28 +292,9 @@ export default function Widgets() {
       </div>
 
       <div className="wgs-rail no-scrollbar" onScroll={onScroll}>
-        {widgets.map((w) => {
-          const Icon = WIDGET_ICONS[w.icon];
-          const count = headCount(w.id, now);
-          return (
-            <button
-              className={`wgs-card wg-tone--${w.tone}`}
-              key={w.id}
-              onClick={() => open(w.id)}
-            >
-              <div className="wgs-cap">
-                <span className="wgs-ico">{Icon && <Icon />}</span>
-                <span className="wgs-name">{w.title}</span>
-                {count != null
-                  ? <span className="wgs-count">{count}</span>
-                  : <ChevronRight20Filled className="wgs-chev" />}
-              </div>
-              <div className={`wgs-body ${w.id === 'links' ? 'wgs-body--fade' : ''}`}>
-                <Body id={w.id} now={now} />
-              </div>
-            </button>
-          );
-        })}
+        {widgets.map((w) => (
+          <Card key={w.id} w={w} now={now} onOpen={setToast} />
+        ))}
       </div>
 
       <Toast text={toast} onDone={() => setToast('')} />

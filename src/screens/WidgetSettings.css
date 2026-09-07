@@ -24,7 +24,7 @@
 }
 .wset-prev-top {
   display: flex; align-items: center; gap: 5px; padding: 5px 6px;
-  background: var(--wg-tint); border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 .wset-prev-ico {
   width: 13px; height: 13px; flex: none; color: var(--wg-accent);
@@ -50,10 +50,8 @@
   width: 62%; height: 4px; border-radius: 2px;
   background: var(--color-light); opacity: 0.5;
 }
-.wset-tl-row--past { border-left-color: var(--wg-success-soft); }
-.wset-tl-row--now {
-  border-left-color: var(--wg-success); background: var(--wg-success-bg);
-}
+.wset-tl-row--past { border-left-color: var(--color-border); }
+.wset-tl-row--now { border-left-color: var(--wg-accent); }
 .wset-prev-big { font-size: 15px; font-weight: 700; color: var(--color-heading); line-height: 1.1; }
 .wset-line { height: 5px; border-radius: var(--radius-pill); background: var(--color-light); opacity: 0.45; }
 .wset-line.w70 { width: 70%; }

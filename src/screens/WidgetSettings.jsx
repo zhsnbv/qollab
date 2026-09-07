@@ -37,7 +37,7 @@ export default function WidgetSettings() {
     if (w.id === 'safety') {
       return (
         <>
-          <div className="wset-prev-big">{widgetData.safetyDays}</div>
+          <div className="wset-prev-big">{widgetData.safety.days}</div>
           <span className="wset-line w45" />
         </>
       );
@@ -70,7 +70,7 @@ export default function WidgetSettings() {
       </header>
 
       <div className="fav-scroll" onScroll={onScroll}>
-        <p className="wset-note">Добавленные виджеты появятся на главной, под блоком сервисов</p>
+        <p className="wset-note">Добавленные виджеты появятся на главной, в блоке сервисов</p>
 
         <div className="wset-grid">
           {widgetList.map((w) => {

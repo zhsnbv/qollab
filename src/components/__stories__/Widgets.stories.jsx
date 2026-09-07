@@ -1,5 +1,6 @@
 import { CalendarLtr24Filled, ChevronRight20Filled } from '@fluentui/react-icons';
-import Widgets, { Timeline } from '../Widgets';
+import { CaretRight } from '@phosphor-icons/react';
+import Widgets, { Timeline, meetWindow } from '../Widgets';
 import { widgetData } from '../../data/widgets';
 
 export default {
@@ -11,19 +12,21 @@ export default {
     docs: {
       description: {
         component:
-          'Лента виджетов после блока сервисов — по макету Figma. Карточка одной высоты на всех '
-          + '(303px), следующая подглядывает из-за края на 24px: на вебе виджеты стоят колонкой '
-          + 'справа, на телефоне такой колонки нет. У каждой карточки крашеная шапка со своим '
-          + 'глифом и счётчиком, тело — своё: почта показывает письма, встречи — таймлайн дня, '
-          + 'ссылки и объявления — строки со стрелкой. Тап по карточке целиком открывает сервис '
-          + '(по ТЗ отдельной кнопки внутри нет).',
+          'Лента виджетов — второй блок в карточке сервисов. Карточка одной высоты на всех '
+          + '(341px), следующая подглядывает из-за края: на вебе виджеты стоят колонкой справа, '
+          + 'на телефоне такой колонки нет. Подложек у карточек нет — цветом различаются только '
+          + 'глифы в шапках.\n\n'
+          + 'Взаимодействие разное и зависит от того, сколько у виджета адресов. У почты, встреч '
+          + 'и ссылок свой список — тапается каждая строка, а шапка и подвал ведут в сам сервис. '
+          + 'У экрана безопасности и журнала адрес один, поэтому и действие одно — кнопка внизу, '
+          + 'а шапка не кликается и шеврона у неё нет.',
       },
     },
   },
 };
 
 export const Лента = {
-  render: () => <div style={{ paddingTop: 16 }}><Widgets /></div>,
+  render: () => <div style={{ padding: 16 }}><Widgets /></div>,
 };
 
 // Карточка встреч отдельно: у таймлайна четыре состояния, и в живой ленте
@@ -33,6 +36,7 @@ function MeetCard({ at, note }) {
   const now = new Date();
   now.setHours(h, m, 0, 0);
   const mins = h * 60 + m;
+  const { items, rest } = meetWindow(widgetData.meetings, mins);
   const left = widgetData.meetings.filter((x) => {
     const [eh, em] = x.to.split(':').map(Number);
     return eh * 60 + em > mins;
@@ -41,18 +45,21 @@ function MeetCard({ at, note }) {
   return (
     <div style={{ padding: 16 }}>
       <div className="wgs">
-        <div className="wgs-card wg-tone--success" style={{ width: '100%' }}>
-          <div className="wgs-cap">
+        <article className="wgs-card wg-tone--green" style={{ width: '100%' }}>
+          <button className="wgs-cap wgs-cap--link">
             <span className="wgs-ico"><CalendarLtr24Filled /></span>
             <span className="wgs-name">Встречи на сегодня</span>
-            {left > 0
-              ? <span className="wgs-count">{left}</span>
-              : <ChevronRight20Filled className="wgs-chev" />}
-          </div>
+            {left > 0 && <span className="wgs-count">{left}</span>}
+            <ChevronRight20Filled className="wgs-chev" />
+          </button>
           <div className="wgs-body">
-            <Timeline list={widgetData.meetings} now={now} />
+            <Timeline list={items} now={now} onRow={() => {}} />
           </div>
-        </div>
+          <button className="wgs-foot">
+            <span>{rest ? `Ещё ${rest} встреч` : 'Перейти в календарь'}</span>
+            <CaretRight size={14} />
+          </button>
+        </article>
       </div>
       <p style={{ marginTop: 12, fontSize: 13, color: 'var(--color-weak)' }}>{note}</p>
     </div>
@@ -64,7 +71,7 @@ export const ТаймлайнВстречаИдёт = {
   render: () => (
     <MeetCard
       at="15:20"
-      note="Полоска стоит внутри идущей встречи, её рельса сплошная, время строки прячется под плашкой."
+      note="Идущая встреча набрана жирным, её рельса и время — акцентные, полоска «сейчас» стоит внутри строки."
     />
   ),
 };
@@ -73,8 +80,8 @@ export const ТаймлайнПерерыв = {
   name: 'Таймлайн — перерыв',
   render: () => (
     <MeetCard
-      at="12:30"
-      note="Идущей встречи нет: полоска стоит в промежутке, ни одна строка не подсвечена."
+      at="13:30"
+      note="Идущей встречи нет: полоска стоит в промежутке, ни одна строка не выделена."
     />
   ),
 };
@@ -94,7 +101,7 @@ export const ТаймлайнДеньЗакончился = {
   render: () => (
     <MeetCard
       at="21:15"
-      note="Все встречи прошли: рельсы приглушённо зелёные, полоски нет, счётчик в шапке сменился шевроном."
+      note="Все встречи прошли: строки приглушены, полоски нет, счётчик из шапки убран."
     />
   ),
 };

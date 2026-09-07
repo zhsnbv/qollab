@@ -1,52 +1,56 @@
-/* Лента виджетов на главной. Живёт не в .card, а сама по себе: карточки
-   виджетов и есть карточки, класть их внутрь ещё одной — двойная подложка.
+/* Лента виджетов — второй блок внутри карточки сервисов, поэтому своей
+   подложки у секции нет: её даёт .card, а отступ сверху — margin-bottom
+   предыдущего .block.
 
-   Геометрия из макета: карточка 346 при ширине экрана 402 и полях 16 —
-   следующая подглядывает на 24px. Высота одна на всех (303 = шапка 49 +
-   тело 252 + канты): иначе при листании секция прыгала бы по высоте. */
-/* Сверху 12 к 20, которые даёт карточка сервисов, — ровно 32 между секциями,
-   как в макете; снизу 20 от заголовка до ленты. */
-.wgs { --wgs-h: 303px; margin-top: var(--space-3); margin-bottom: var(--space-2); }
+   Высота карточки одна на всех (341 = шапка 49 + тело 290 + канты): иначе
+   при листании секция прыгала бы. Тело 290 делится ровно: 5 ссылок по 58,
+   6 встреч по 41 плюс подвал 44, 3 письма по 82 плюс подвал. */
+.wgs { --wgs-h: 341px; }
 .wgs-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 var(--space-4) var(--space-5);
+  padding-bottom: var(--space-4);
 }
 
+/* Лента выходит вровень с краями карточки: так видно, что она длиннее экрана */
 .wgs-rail {
-  display: flex; gap: var(--space-4);
+  display: flex; gap: var(--space-3);
   overflow-x: auto; scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--space-4);
+  margin: 0 calc(-1 * var(--space-4));
   padding: 0 var(--space-4);
+  scroll-padding-inline: var(--space-4);
   -webkit-overflow-scrolling: touch;
 }
 
 .wgs-card {
-  /* 100% здесь — ширина содержимого ленты (экран минус поля), так что
-     карточка сама подстраивается под любой экран, а зазор до края держится. */
-  flex: none; width: calc(100% - 24px); height: var(--wgs-h);
+  /* 100% здесь — ширина содержимого ленты (карточка минус поля), так что
+     виджет сам подстраивается под экран, а зазор до края держится. */
+  flex: none; width: calc(100% - 28px); height: var(--wgs-h);
   scroll-snap-align: start;
   display: flex; flex-direction: column; align-items: stretch;
   background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  overflow: hidden; text-align: left;
-  transition: opacity 0.12s, transform 0.12s;
-  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
 }
-.wgs-card:active { opacity: 0.85; transform: scale(0.99); }
 
-/* Тон карточки: заливка шапки и цвет глифа. Один набор переменных на
-   карточку — тело подхватывает их же (точка непрочитанного, рельсы). */
-.wg-tone--info { --wg-tint: var(--wg-info-bg); --wg-accent: var(--wg-info); }
-.wg-tone--success { --wg-tint: var(--wg-success-bg); --wg-accent: var(--wg-success); }
-.wg-tone--primary { --wg-tint: var(--color-primary-bg); --wg-accent: var(--color-primary); }
+/* Цветом различаются только глифы — подложек у карточек нет */
+.wg-tone--blue { --wg-accent: var(--wg-blue); }
+.wg-tone--green { --wg-accent: var(--wg-green); }
+.wg-tone--primary { --wg-accent: var(--color-primary); }
+.wg-tone--cyan { --wg-accent: var(--wg-cyan); }
+.wg-tone--violet { --wg-accent: var(--wg-violet); }
 
+/* ── Шапка ────────────────────────────────────────────────────────────── */
 .wgs-cap {
-  flex: none; display: flex; align-items: center; gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: var(--wg-tint);
+  flex: none; width: 100%; height: 49px;
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 0 var(--space-4); text-align: left;
   border-bottom: 1px solid var(--color-border);
 }
+/* Шапка кликабельна только там, где у виджета есть свой экран: у «Полезных
+   ссылок» и витрин открывать нечего — все адреса внутри. */
+.wgs-cap--link { transition: opacity 0.12s; -webkit-tap-highlight-color: transparent; }
+.wgs-cap--link:active { opacity: 0.6; }
 .wgs-ico {
   flex: none; width: 24px; height: 24px; color: var(--wg-accent);
   display: flex; align-items: center; justify-content: center;
@@ -59,21 +63,28 @@
 }
 .wgs-count {
   flex: none; font-size: 14px; color: var(--color-weak);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
-.wgs-chev { flex: none; width: 20px; height: 20px; color: var(--color-weak); display: block; }
+.wgs-chev {
+  flex: none; width: 20px; height: 20px; margin-left: -4px;
+  color: var(--color-light); display: block;
+}
 
 .wgs-body { flex: 1; min-height: 0; overflow: hidden; position: relative; }
-/* Строк больше, чем влезает: нижняя растворяется, чтобы обрыв читался как
-   «есть продолжение», а не как ошибка вёрстки. */
-.wgs-body--fade::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 40px;
-  background: linear-gradient(to bottom, transparent, var(--color-white));
-  pointer-events: none;
+
+/* ── Подвал: ведёт в сервис и говорит, сколько не поместилось ──────────── */
+.wgs-foot {
+  flex: none; width: 100%; height: 44px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--space-4); text-align: left;
+  border-top: 1px solid var(--color-border);
+  color: var(--wg-accent); font-size: 14px; font-weight: 500;
+  transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
+.wgs-foot:active { opacity: 0.6; }
 
 .wgs-dots {
-  display: flex; gap: 3px; justify-content: center; padding-top: var(--space-5);
+  display: flex; gap: 3px; justify-content: center; padding-top: var(--space-4);
 }
 .wgs-dot {
   width: 3px; height: 3px; border-radius: 1px;
@@ -81,72 +92,64 @@
 }
 .wgs-dot.on { width: 13px; background: var(--color-primary); }
 
+/* ── Общее для строк-ссылок ───────────────────────────────────────────── */
+.wg-mail, .wg-row, .wg-tl-row {
+  width: 100%; text-align: left;
+  transition: background 0.12s; -webkit-tap-highlight-color: transparent;
+}
+.wg-mail:active, .wg-row:active, .wg-tl-row:active { background: var(--page-bg); }
+
 /* ── Встречи: таймлайн дня ────────────────────────────────────────────── */
-/* Строки одной высоты, слева — рельса состояния: прошедшие приглушённо
-   зелёные, идущая сейчас — сплошная, будущие серые. Поверх едет полоска
-   «сейчас»: по ней сразу видно, на какой встрече надо быть. */
+/* Слева рельса состояния: прошедшие блёклые, идущая сейчас — акцентная,
+   будущие серые. Поверх едет полоска «сейчас». Ни подложек, ни плашек:
+   строка показывает только время начала и название, как в виджетах
+   планировщиков — конец встречи виден по началу следующей. */
 .wg-tl { position: relative; }
 .wg-tl-row {
-  height: 42px; display: flex; align-items: center; gap: var(--space-5);
-  padding: 0 18px;
-  border-left: 3px solid var(--wg-rail);
-  font-size: 13px; font-weight: 500; line-height: 1.4;
+  height: 41px; display: flex; align-items: center; gap: var(--space-4);
+  padding: 0 15px;
+  border-left: 3px solid var(--rail);
+  font-size: 13px; line-height: 1.4;
+  --rail: var(--color-light);
 }
-.wg-tl-row { --wg-rail: var(--color-light); }
-.wg-tl-row--past { --wg-rail: var(--wg-success-soft); }
-.wg-tl-row--now { --wg-rail: var(--wg-success); background: var(--wg-success-bg); }
-
 .wg-tl-time {
-  flex: none; color: var(--msg-time);
+  flex: none; width: 36px; color: var(--msg-time);
   font-variant-numeric: tabular-nums lining-nums;
 }
-.wg-tl-row--past .wg-tl-time { color: var(--wg-success-soft); }
-.wg-tl-row--now .wg-tl-time { color: var(--wg-success); }
-/* Время строки, на которую пришлась плашка «сейчас» */
-.wg-tl-row--masked .wg-tl-time { visibility: hidden; }
 .wg-tl-title {
   flex: 1; min-width: 0; color: var(--color-heading);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
+.wg-tl-row--past { --rail: var(--color-border); }
+.wg-tl-row--past .wg-tl-time { color: var(--color-light); }
+.wg-tl-row--past .wg-tl-title { color: var(--color-weak); }
+
+.wg-tl-row--now { --rail: var(--wg-accent); }
+.wg-tl-row--now .wg-tl-time { color: var(--wg-accent); font-weight: 600; }
+.wg-tl-row--now .wg-tl-title { font-weight: 600; }
+
+/* Полоска «сейчас»: точка на рельсе и тающий пунктир. Пунктир, а не сплошная —
+   сплошная проходит по названию встречи и читается как зачёркивание. */
 .wg-now {
-  position: absolute; left: 0; right: 0; height: 0; padding-left: 18px;
-  display: flex; align-items: center; pointer-events: none;
-  transition: top 0.6s ease;
-}
-/* Засечка на рельсе — не кружок: кружок пришлось бы сдвигать за левый край
-   карточки, и обрезка съедала бы половину. */
-.wg-now::before {
-  content: ''; position: absolute; left: 0; top: -8px;
-  width: 3px; height: 16px; border-radius: 2px;
-  background: var(--color-primary);
-}
-/* Хвост короткий и тает: во всю ширину он проходил бы по заголовку встречи
-   и читался как зачёркивание. */
-.wg-now::after {
-  content: ''; flex: 1; height: 2px; margin: 0 var(--space-4) 0 6px;
-  /* Пунктир, а не сплошная: сплошная проходит по заголовку встречи и
-     читается как зачёркивание, пунктир — как направляющая «вы здесь». */
+  position: absolute; left: 0; right: var(--space-4); height: 2px; margin-top: -1px;
   background: repeating-linear-gradient(
-    to right, var(--color-primary) 0 7px, transparent 7px 12px
+    to right, var(--wg-accent) 0 7px, transparent 7px 12px
   );
-  -webkit-mask-image: linear-gradient(to right, #000 0 35%, transparent 92%);
-  mask-image: linear-gradient(to right, #000 0 35%, transparent 92%);
+  -webkit-mask-image: linear-gradient(to right, #000 0 40%, transparent 92%);
+  mask-image: linear-gradient(to right, #000 0 40%, transparent 92%);
+  transition: top 0.6s ease; pointer-events: none;
 }
-/* Плашка встаёт ровно на колонку времени и перекрывает время своей строки:
-   иначе две цифры наезжают друг на друга. */
-.wg-now-chip {
-  flex: none; min-width: 44px; text-align: center;
-  padding: 2px 5px; border-radius: 6px;
-  background: var(--color-primary); color: #fff;
-  font-size: 10px; font-weight: 700; line-height: 12px;
-  font-variant-numeric: tabular-nums lining-nums;
+.wg-now::before {
+  content: ''; position: absolute; left: 0; top: -3px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--wg-accent);
 }
 
 /* ── Почта ────────────────────────────────────────────────────────────── */
 .wg-mail {
-  display: flex; flex-direction: column; gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
+  height: 82px; display: flex; flex-direction: column; justify-content: center;
+  gap: var(--space-1); padding: 0 var(--space-4);
   border-bottom: 1px solid var(--color-border);
 }
 .wg-mail:last-child { border-bottom: 0; }
@@ -162,42 +165,75 @@
 }
 .wg-mail-time { flex: none; font-size: 12px; line-height: 17px; color: var(--color-weak); }
 .wg-mail-sub, .wg-mail-snip {
-  font-size: 14px; line-height: 17px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wg-mail-sub { color: var(--color-text); }
-.wg-mail-snip { color: var(--color-weak); }
+.wg-mail-sub { font-size: 14px; line-height: 17px; color: var(--color-text); }
+.wg-mail-snip { font-size: 13px; line-height: 16px; color: var(--color-weak); }
 
-/* ── Строки со ссылками и объявлениями ────────────────────────────────── */
+/* ── Полезные ссылки ──────────────────────────────────────────────────── */
 .wg-row {
-  display: flex; align-items: center; gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
+  height: 58px; display: flex; align-items: center; gap: var(--space-3);
+  padding: 0 var(--space-4);
   border-bottom: 1px solid var(--color-border);
 }
 .wg-row:last-child { border-bottom: 0; }
 .wg-row svg { flex: none; }
-.wg-row-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.wg-row-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .wg-row-title {
   font-size: 14px; font-weight: 600; line-height: 17px; color: var(--color-text);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .wg-row-sub {
-  font-size: 14px; line-height: 17px; color: var(--color-weak);
+  font-size: 13px; line-height: 16px; color: var(--color-weak);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* ── Витрины с одной цифрой ───────────────────────────────────────────── */
-.wg-stat {
-  height: 100%; display: flex; flex-direction: column; justify-content: center;
-  padding: var(--space-4);
+/* ── Экран безопасности (контент из веб-прототипа) ────────────────────── */
+.wg-safe { height: 100%; display: flex; flex-direction: column; padding: var(--space-4) var(--space-4) 0; }
+.wg-safe-note { font-size: 12px; line-height: 1.3; color: var(--color-weak); }
+.wg-safe-days {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: var(--space-1);
+  text-align: center;
 }
 .wg-big {
-  font-size: 44px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;
-  color: var(--color-heading); font-variant-numeric: tabular-nums lining-nums;
+  font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: -0.03em;
+  color: var(--wg-accent); font-variant-numeric: tabular-nums lining-nums;
 }
-.wg-big--sm { font-size: 28px; }
-.wg-sub { margin-top: var(--space-1); font-size: 14px; color: var(--color-text); }
-.wg-foot { margin-top: var(--space-3); font-size: 13px; line-height: 1.4; color: var(--color-weak); }
+.wg-safe-label { font-size: 13px; color: var(--color-weak); }
+.wg-safe-stats {
+  flex: none; display: flex; margin: 0 calc(-1 * var(--space-4));
+  border-top: 1px solid var(--color-border);
+}
+.wg-safe-stat {
+  flex: 1; min-width: 0; padding: var(--space-3) var(--space-4);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.wg-safe-stat + .wg-safe-stat { border-left: 1px solid var(--color-border); }
+.wg-safe-num {
+  font-size: 20px; font-weight: 700; line-height: 1.1; color: var(--color-heading);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.wg-safe-cap { font-size: 12px; line-height: 1.3; color: var(--color-weak); }
+
+/* ── Корпоративный журнал (контент из веб-прототипа) ──────────────────── */
+.wg-mag {
+  height: 100%; display: flex; flex-direction: column; justify-content: center;
+  padding: var(--space-4); gap: 2px;
+}
+/* Обложки выпуска в прототипе нет — ставим узнаваемую заглушку в цвете
+   виджета, чтобы карточка не выглядела пустой до реальной картинки. */
+.wg-mag-cover {
+  width: 92px; height: 122px; margin-bottom: var(--space-3);
+  border-radius: 6px; overflow: hidden;
+  background: linear-gradient(155deg, var(--wg-accent), rgba(0, 0, 0, 0.65));
+  display: flex; align-items: flex-end; padding: var(--space-2);
+}
+.wg-mag-cover span {
+  color: #fff; font-size: 13px; font-weight: 800; letter-spacing: 0.1em;
+}
+.wg-mag-issue { font-size: 15px; font-weight: 600; color: var(--wg-accent); }
+.wg-mag-lead { font-size: 13px; line-height: 1.4; color: var(--color-weak); }
 
 /* Пустое состояние виджета — спокойное: карточка остаётся карточкой */
 .wg-msg {
