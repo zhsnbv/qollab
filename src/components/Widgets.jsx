@@ -44,7 +44,8 @@ const NAV = {
   mail: { head: 'Откроется почта', foot: 'Перейти в почту' },
   meet: { head: 'Откроется календарь встреч', foot: 'Перейти в календарь' },
   links: { head: null, foot: null },
-  safety: { head: null, foot: 'Открыть', open: 'Откроется экран безопасности' },
+  // У экрана безопасности адреса нет вовсе: это витрина цифр, открывать нечего
+  safety: { head: null, foot: null },
   journal: { head: null, foot: 'Открыть', open: 'Откроется свежий выпуск журнала' },
 };
 
@@ -58,6 +59,7 @@ const toMin = (t) => {
   return h * 60 + m;
 };
 const minsOf = (d) => d.getHours() * 60 + d.getMinutes();
+const pad = (n) => String(n).padStart(2, '0');
 
 // «Ещё 1 встреча / 2 встречи / 5 встреч»
 const plural = (n, one, few, many) => {
@@ -95,11 +97,7 @@ export function meetWindow(list, mins, max = MEET_ROWS) {
   if (i < 0) i = list.length;
   const back = Math.max(0, max - (list.length - i));
   const start = Math.max(0, i - back);
-  return {
-    start,
-    items: list.slice(start, start + max),
-    rest: Math.max(0, list.length - start - max),
-  };
+  return { start, items: list.slice(start, start + max) };
 }
 
 // Строки таймлайна одной высоты. Полоска «сейчас» едет внутри строки
@@ -121,7 +119,9 @@ export function Timeline({ list, now, onRow }) {
   const mins = minsOf(now);
   const top = nowTop(list, mins);
   return (
-    <div className="wg-tl" style={{ height: list.length * ROW_H }}>
+    // Пока полоска видна, строкам режем правое поле под плашку времени:
+    // так она встаёт в собственную колонку и не наезжает на названия встреч.
+    <div className={`wg-tl ${top != null ? 'wg-tl--now' : ''}`} style={{ height: list.length * ROW_H }}>
       {list.map((m) => (
         <button
           className={`wg-tl-row wg-tl-row--${meetState(m, mins)}`}
@@ -132,7 +132,12 @@ export function Timeline({ list, now, onRow }) {
           <span className="wg-tl-title">{m.title}</span>
         </button>
       ))}
-      {top != null && <span className="wg-now" style={{ top }} aria-hidden="true" />}
+      {top != null && (
+        <span className="wg-now" style={{ top }} aria-hidden="true">
+          <span className="wg-now-dash" />
+          <span className="wg-now-time">{pad(now.getHours())}:{pad(now.getMinutes())}</span>
+        </span>
+      )}
     </div>
   );
 }
@@ -225,13 +230,16 @@ function headCount(id, now) {
 }
 
 // Подвал у встреч не просто ведёт в сервис, а честно говорит, сколько встреч
-// не поместилось: карточка одной высоты со всеми, растить её нельзя.
+// в дне не поместилось — и тех, что впереди, и тех, что уже прошли. Карточка
+// одной высоты со всеми, растить её нельзя, поэтому счётчик тут единственный
+// способ показать, что день длиннее шести строк.
 function footLabel(id, now) {
   const nav = NAV[id];
   if (id !== 'meet') return nav.foot;
-  const { rest } = meetWindow(widgetData.meetings, minsOf(now));
-  if (!rest) return nav.foot;
-  return `Ещё ${rest} ${plural(rest, 'встреча', 'встречи', 'встреч')}`;
+  const list = widgetData.meetings;
+  const hidden = list.length - meetWindow(list, minsOf(now)).items.length;
+  if (!hidden) return nav.foot;
+  return `Ещё ${hidden} ${plural(hidden, 'встреча', 'встречи', 'встреч')}`;
 }
 
 function Card({ w, now, onOpen }) {

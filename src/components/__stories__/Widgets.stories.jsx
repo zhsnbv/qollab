@@ -38,7 +38,8 @@ function MeetCard({ at, note }) {
   const now = new Date();
   now.setHours(h, m, 0, 0);
   const mins = h * 60 + m;
-  const { items, rest } = meetWindow(widgetData.meetings, mins);
+  const { items } = meetWindow(widgetData.meetings, mins);
+  const hidden = widgetData.meetings.length - items.length;
   const left = widgetData.meetings.filter((x) => {
     const [eh, em] = x.to.split(':').map(Number);
     return eh * 60 + em > mins;
@@ -58,7 +59,7 @@ function MeetCard({ at, note }) {
             <Timeline list={items} now={now} onRow={() => {}} />
           </div>
           <button className="wgs-foot">
-            <span>{rest ? `Ещё ${rest} встреч` : 'Перейти в календарь'}</span>
+            <span>{hidden ? `Ещё ${hidden} встреч` : 'Перейти в календарь'}</span>
             <ChevronRight16Filled />
           </button>
         </article>
@@ -73,7 +74,7 @@ export const ТаймлайнВстречаИдёт = {
   render: () => (
     <MeetCard
       at="15:20"
-      note="Идущая встреча набрана жирным, её рельса и время — акцентные, полоска «сейчас» стоит внутри строки."
+      note="Идущая встреча набрана жирным, её рельса и время — акцентные. На полоске «сейчас» стоит текущее время: у него своя колонка справа, поэтому оно не наезжает на названия."
     />
   ),
 };
@@ -83,7 +84,7 @@ export const ТаймлайнПерерыв = {
   render: () => (
     <MeetCard
       at="13:30"
-      note="Идущей встречи нет: полоска стоит в промежутке, ни одна строка не выделена."
+      note="Идущей встречи нет: полоска с текущим временем стоит в промежутке, ни одна строка не выделена."
     />
   ),
 };

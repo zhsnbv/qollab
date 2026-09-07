@@ -114,6 +114,9 @@
   font-size: 13px; line-height: 1.4;
   --rail: var(--color-light);
 }
+/* Пока полоска «сейчас» на экране, правое поле строк отдано под плашку
+   времени: иначе она вставала бы поверх названия встречи. */
+.wg-tl--now .wg-tl-row { padding-right: 56px; }
 .wg-tl-time {
   flex: none; width: 36px; color: var(--msg-time);
   font-variant-numeric: tabular-nums lining-nums;
@@ -131,23 +134,36 @@
 .wg-tl-row--now .wg-tl-time { color: var(--wg-accent); font-weight: 600; }
 .wg-tl-row--now .wg-tl-title { font-weight: 600; }
 
-/* Полоска «сейчас»: точка на рельсе и тающий пунктир. Пунктир, а не сплошная —
-   сплошная проходит по названию встречи и читается как зачёркивание. */
+/* Полоска «сейчас»: точка на рельсе, тающий пунктир и время на подложке
+   у правого края. Пунктир, а не сплошная линия — сплошная проходит по
+   названию встречи и читается как зачёркивание. */
 .wg-now {
-  position: absolute; left: 0; right: var(--space-4); height: 2px; margin-top: -1px;
-  background: repeating-linear-gradient(
-    to right, var(--wg-accent) 0 7px, transparent 7px 12px
-  );
-  /* Пунктир держит полную силу только в колонке времени и тает уже к началу
-     названия: иначе на середине идущей встречи он читается как зачёркивание. */
-  -webkit-mask-image: linear-gradient(to right, #000 0 20%, transparent 62%);
-  mask-image: linear-gradient(to right, #000 0 20%, transparent 62%);
+  position: absolute; left: 0; right: 8px; height: 0;
+  display: flex; align-items: center;
   transition: top 0.6s ease; pointer-events: none;
 }
 .wg-now::before {
-  content: ''; position: absolute; left: 0; top: -3px;
-  width: 8px; height: 8px; border-radius: 50%;
+  content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%;
   background: var(--wg-accent);
+}
+/* Пунктир — отдельным элементом, а не ::after: псевдоэлемент рисуется после
+   всех детей, и плашка времени оказывалась бы слева от линии. */
+.wg-now-dash {
+  flex: 1; height: 2px; margin: 0 6px;
+  background: repeating-linear-gradient(
+    to right, var(--wg-accent) 0 7px, transparent 7px 12px
+  );
+  /* Полная сила только в колонке времени: дальше пунктир идёт по названию
+     встречи и должен читаться как направляющая, а не как зачёркивание. */
+  -webkit-mask-image: linear-gradient(to right, #000 0 14%, rgba(0, 0, 0, 0.24) 42%);
+  mask-image: linear-gradient(to right, #000 0 14%, rgba(0, 0, 0, 0.24) 42%);
+}
+/* Время стоит в собственной колонке справа — под неё строкам обрезано поле */
+.wg-now-time {
+  flex: none; padding: 2px 7px; border-radius: var(--radius-pill);
+  background: var(--wg-accent); color: #fff;
+  font-size: 10px; font-weight: 700; line-height: 12px;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 /* ── Почта ────────────────────────────────────────────────────────────── */
