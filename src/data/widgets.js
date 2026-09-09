@@ -13,18 +13,18 @@ export const widgetList = [
     user: true,
   },
   {
-    id: 'meet',
-    name: 'Мои встречи',
-    title: 'Встречи на сегодня',
-    icon: 'Calendar',
-    user: true,
-  },
-  {
     id: 'tasks',
     name: 'Мои задачи',
     title: 'Мои задачи',
     description: 'Согласование и подписание',
     icon: 'Tasks',
+    user: true,
+  },
+  {
+    id: 'meet',
+    name: 'Мои встречи',
+    title: 'Встречи на сегодня',
+    icon: 'Calendar',
     user: true,
   },
   {
