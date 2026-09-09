@@ -84,7 +84,7 @@ export default function WidgetSettings() {
 
       <div className="fav-scroll" onScroll={onScroll}>
         <p className="wset-note">
-          Виджеты появятся на главной в этом порядке. Перетащите за ручку справа, чтобы его поменять.
+          Выберите, какие виджеты показывать на главной. Чтобы изменить порядок, перетащите виджет за значок справа. Изменения сохраняются автоматически.
         </p>
 
         <div className="fav-section-row">
@@ -113,7 +113,7 @@ export default function WidgetSettings() {
                   </span>
                 )}
                 {glyph(w)}
-                {text(w, w.user ? w.title : 'Всегда на главной')}
+                {text(w, w.user ? (w.description || w.title) : 'Всегда на главной')}
                 <span
                   className="fav-handle"
                   onPointerDown={onPointerDown(i)}
@@ -137,7 +137,7 @@ export default function WidgetSettings() {
                     <PlusCircle size={20} weight="fill" />
                   </button>
                   {glyph(w)}
-                  {text(w, w.title)}
+                  {text(w, w.description || w.title)}
                 </div>
               ))}
             </div>

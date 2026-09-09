@@ -177,24 +177,6 @@ html[data-theme="dark"] .quick-ico--danger {
   color: #ff8a80;
 }
 
-/* ── Мои задачи: 2 карточки + одна во всю ширину ─────────────────────────── */
-.task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-.task-card {
-  grid-column: span 1;
-  background: var(--color-white); border: 1px solid var(--color-border); border-radius: var(--radius-sm);
-  padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); text-align: left;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02), 0 2px 2px rgba(0,0,0,0.02);
-  transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
-}
-.task-card.wide { grid-column: span 2; }
-.task-card:active { opacity: 0.75; transform: scale(0.99); }
-.task-top { display: flex; align-items: center; gap: var(--space-2); }
-.task-title { flex: 1; min-width: 0; font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--color-text); }
-/* Ноль задач в макете приглушён — это плейсхолдер, а не полноценное значение */
-.task-value { font-size: 16px; font-weight: 600; line-height: 24px; color: var(--color-disabled); }
-.task-source { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 20px; color: var(--color-text); }
-.task-source svg { color: var(--color-primary); flex-shrink: 0; }
-
 /* ── SOS-контакты ────────────────────────────────────────────────────────── */
 .sos-list { display: flex; flex-direction: column; }
 /* Строка нажимается целиком: три точки в углу — мишень 16px там, где вся

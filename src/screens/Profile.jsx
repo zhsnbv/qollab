@@ -17,7 +17,6 @@ import { emptyStatus, statusById } from '../data/statuses';
 import {
   CaretRight, Info, ArrowsClockwise, Plus, SquaresFour,
   IdentificationCard, QrCode, AddressBook, Hash,
-  UserFocus, Headset,
 } from '@phosphor-icons/react';
 import {
   ContactCard24Filled, QrCode24Filled, PersonNote24Filled, NumberSymbol24Filled,
@@ -25,7 +24,7 @@ import {
 } from '@fluentui/react-icons';
 import { useSkeleton, ProfileSkeleton, FadeIn } from '../components/Skeleton';
 import {
-  me, quickActions, balance, myTasks, sosContacts as initialSos,
+  me, quickActions, balance, sosContacts as initialSos,
   corpData, structure, indicators, interests, certificates,
 } from '../data/profile';
 import './PersonProfile.css';
@@ -38,7 +37,6 @@ const QUICK_ICONS = {
   AddressBook: PersonNote24Filled,
   Hash: NumberSymbol24Filled,
 };
-const TASK_ICONS = { UserFocus, Headset };
 
 // Плитка со значением: эмодзи или картинка + число + подпись
 function StatCard({ value, label, emoji, img }) {
@@ -147,33 +145,6 @@ export default function Profile() {
           </div>
           <div className="stat-grid">
             {balance.map((b) => <StatCard key={b.id} {...b} />)}
-          </div>
-        </section>
-
-        {/* Мои задачи */}
-        <section className="pcard">
-          <div className="pcard-head">
-            <h3>Мои задачи</h3>
-            {/* Блок такой же приватный, как баланс, — и подпись у него та же.
-                «Этот блок» из прежней формулировки было лишним: подпись стоит
-                внутри блока, и рядом с «Обновить» она перестала помещаться. */}
-            <span className="pcard-note">Виден только вам</span>
-            <button className="refresh-btn"><ArrowsClockwise size={12} />Обновить</button>
-          </div>
-          <div className="task-grid">
-            {myTasks.map((t) => {
-              const Icon = TASK_ICONS[t.icon];
-              return (
-                <button className={`task-card ${t.wide ? 'wide' : ''}`} key={t.id}>
-                  <span className="task-top">
-                    <span className="task-title">{t.title}</span>
-                    <CaretRight size={12} color="var(--color-light)" />
-                  </span>
-                  <span className="task-value">{t.value}</span>
-                  <span className="task-source">{Icon && <Icon size={16} />}{t.source}</span>
-                </button>
-              );
-            })}
           </div>
         </section>
 

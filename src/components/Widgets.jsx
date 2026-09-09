@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Mail24Filled, CalendarLtr24Filled, Link24Filled,
-  ShieldCheckmark24Filled, BookOpen24Filled,
+  ShieldCheckmark24Filled, BookOpen24Filled, ClipboardTask24Filled,
   TicketDiagonal24Filled, Headset24Filled, CheckmarkCircle24Filled,
   HeartPulse24Filled, Airplane24Filled,
   Heart20Filled, BriefcaseMedical20Filled,
@@ -21,6 +21,7 @@ export const WIDGET_ICONS = {
   Link: Link24Filled,
   Shield: ShieldCheckmark24Filled,
   Book: BookOpen24Filled,
+  Tasks: ClipboardTask24Filled,
 };
 
 // Строки «Полезных ссылок» и плитки экрана безопасности. Иконки везде
@@ -43,6 +44,7 @@ export const LINK_ICONS = {
 const NAV = {
   mail: { head: 'Откроется почта', foot: 'Перейти в почту' },
   meet: { head: 'Откроется календарь встреч', foot: 'Перейти в календарь' },
+  tasks: { head: 'Откроются мои задачи', foot: 'Все задачи' },
   links: { head: null, foot: null },
   // У экрана безопасности адреса нет вовсе: это витрина цифр, открывать нечего
   safety: { head: null, foot: null },
@@ -165,6 +167,28 @@ function Body({ id, now, onRow }) {
         <span className="wg-mail-snip">{m.snippet}</span>
       </button>
     ));
+  }
+
+  if (id === 'tasks') {
+    return (
+      <>
+        <div className="wg-tasks-note">Задачи видны только вам</div>
+        {widgetData.tasks.map((task) => {
+          const Icon = LINK_ICONS[task.icon];
+          return (
+            <button className="wg-row wg-task-row" key={task.id} onClick={() => onRow(`Откроются задачи «${task.title}» в ${task.source}`)}>
+              <span className="wg-row-ico"><Icon /></span>
+              <span className="wg-row-t">
+                <span className="wg-row-title">{task.title}</span>
+                <span className="wg-row-sub">{task.source}</span>
+              </span>
+              <span className={`wg-task-count ${task.value ? 'wg-task-count--active' : ''}`}>{task.value}</span>
+              <ChevronRight16Filled className="wg-row-chev" />
+            </button>
+          );
+        })}
+      </>
+    );
   }
 
   if (id === 'links') {

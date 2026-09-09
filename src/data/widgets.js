@@ -20,6 +20,14 @@ export const widgetList = [
     user: true,
   },
   {
+    id: 'tasks',
+    name: 'Мои задачи',
+    title: 'Мои задачи',
+    description: 'Согласование и подписание',
+    icon: 'Tasks',
+    user: true,
+  },
+  {
     id: 'links',
     name: 'Полезные ссылки',
     title: 'Полезные ссылки',
@@ -55,6 +63,11 @@ export const usefulLinks = [
 // Данные виджетов. В прототипе они статичные — на проде это ответы
 // /widgets/meetings и /mail-bridge/mailbox/summary.
 export const widgetData = {
+  tasks: [
+    { id: 't1', title: 'На согласовании', value: 0, source: 'ЕСЭД', icon: 'Check' },
+    { id: 't2', title: 'На подписании', value: 0, source: 'ЕСЭД', icon: 'Check' },
+    { id: 't3', title: 'На подписании', value: 0, source: 'SMAX', icon: 'Headset' },
+  ],
   // Расписание дня целиком: виджет — таймлайн, а не список ближайших трёх,
   // поэтому нужны и уже прошедшие встречи. Встреч заведомо больше, чем влезает
   // в карточку: остаток уходит в подвал «Ещё N встреч».

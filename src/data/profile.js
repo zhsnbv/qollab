@@ -26,13 +26,6 @@ export const balance = [
   { id: 'meal', value: '12 540 ₸', label: 'Кошелек питания', emoji: '🍕' },
 ];
 
-// Две узкие карточки и одна во всю ширину — как в макете
-export const myTasks = [
-  { id: 't1', title: 'На согласовании', value: 0, source: 'ЕСЭД', icon: 'UserFocus' },
-  { id: 't2', title: 'На подписании', value: 0, source: 'ЕСЭД', icon: 'UserFocus' },
-  { id: 't3', title: 'На подписании', value: 0, source: 'SMAX', icon: 'Headset', wide: true },
-];
-
 // Рабочие сервисы живут в боковом меню профиля: их до дюжины, в ленте экрана
 // такой список занимал бы больше места, чем все остальные блоки вместе.
 export const workServices = [
