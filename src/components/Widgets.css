@@ -272,12 +272,8 @@
 .wg-msg b { font-size: 14px; font-weight: 600; color: var(--color-heading); }
 .wg-msg p { margin: 0; font-size: 13px; line-height: 1.4; color: var(--color-weak); }
 
-/* Задачи: три строки и приватность внутри общего размера виджета. */
-.wg-tasks-note {
-  height: 42px; display: flex; align-items: center; padding: 0 var(--space-4);
-  font-size: 12px; color: var(--color-weak);
-}
-.wg-task-row { height: 68px; }
+/* Три раздела задач поровну занимают тело карточки. */
+.wg-task-row { height: 82px; }
 .wg-task-count {
   flex: none; font-size: 20px; font-weight: 600; color: var(--color-weak);
   font-variant-numeric: tabular-nums lining-nums;

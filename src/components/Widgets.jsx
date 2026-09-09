@@ -172,7 +172,6 @@ function Body({ id, now, onRow }) {
   if (id === 'tasks') {
     return (
       <>
-        <div className="wg-tasks-note">Задачи видны только вам</div>
         {widgetData.tasks.map((task) => {
           const Icon = LINK_ICONS[task.icon];
           return (
