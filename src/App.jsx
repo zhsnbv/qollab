@@ -33,6 +33,7 @@ import ProfileQr from './screens/ProfileQr';
 import IdCard from './screens/IdCard';
 import Auth from './screens/Auth';
 import AllScreens from './screens/AllScreens';
+import WidgetFigma from './screens/WidgetFigma';
 import Splash from './components/Splash';
 import BottomNav from './components/BottomNav';
 import { FavoritesProvider } from './context/FavoritesContext';
@@ -173,10 +174,11 @@ export default function App() {
   // общего роутера: у каждой её карточки свой MemoryRouter, а вложенных
   // роутеров react-router не допускает.
   const gallery = window.location.pathname === '/all';
+  const widgetFigma = window.location.pathname === '/widgets-figma';
 
   return (
     <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><WidgetsProvider>
-      {gallery ? <AllScreens /> : (
+      {gallery ? <AllScreens /> : widgetFigma ? <WidgetFigma /> : (
         <BrowserRouter>
           <Device exiting={exiting} splashDone={splashDone} />
         </BrowserRouter>

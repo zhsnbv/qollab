@@ -264,7 +264,7 @@ function footLabel(id, now) {
   return `Ещё ${hidden} ${plural(hidden, 'встреча', 'встречи', 'встреч')}`;
 }
 
-function Card({ w, now, onOpen }) {
+export function WidgetCard({ w, now, onOpen = () => {} }) {
   const Icon = WIDGET_ICONS[w.icon];
   const nav = NAV[w.id];
   const count = headCount(w.id);
@@ -337,7 +337,7 @@ export default function Widgets() {
 
       <div className="wgs-rail no-scrollbar" onScroll={onScroll}>
         {widgets.map((w) => (
-          <Card key={w.id} w={w} now={now} onOpen={setToast} />
+          <WidgetCard key={w.id} w={w} now={now} onOpen={setToast} />
         ))}
       </div>
 

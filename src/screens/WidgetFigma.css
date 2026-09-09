@@ -1,0 +1,35 @@
+html.widget-figma-page,
+html.widget-figma-page body {
+  position: static;
+  width: auto;
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+}
+
+html.widget-figma-page body {
+  display: block;
+  padding: 0;
+  background: var(--page-bg);
+}
+
+html.widget-figma-page #root { height: auto; }
+
+.widget-figma {
+  width: max-content;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+  background: var(--page-bg);
+}
+
+.widget-figma-item {
+  width: 342px;
+}
+
+.widget-figma-item .wgs-card {
+  width: 342px;
+  height: 341px;
+}
