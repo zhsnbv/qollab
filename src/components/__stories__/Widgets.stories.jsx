@@ -1,6 +1,4 @@
-import {
-  CalendarLtr24Filled, ChevronRight20Filled, ChevronRight16Filled,
-} from '@fluentui/react-icons';
+import { ChevronRight16Filled } from '@fluentui/react-icons';
 import Widgets, { Timeline, meetWindow } from '../Widgets';
 import { widgetData } from '../../data/widgets';
 
@@ -19,9 +17,9 @@ export default {
           + 'Подложек у карточек виджетов нет — цветом различаются только глифы, и все они '
           + 'из одного набора, Fluent filled.\n\n'
           + 'Взаимодействие разное и зависит от того, сколько у виджета адресов. У почты, встреч '
-          + 'и ссылок свой список — тапается каждая строка, а шапка и подвал ведут в сам сервис. '
+          + 'и ссылок свой список — тапается каждая строка, а подвал ведёт в сам сервис. '
           + 'У экрана безопасности и журнала адрес один, поэтому и действие одно — кнопка внизу, '
-          + 'а шапка не кликается и шеврона у неё нет.',
+          + 'а шапки всех карточек служат только заголовками.',
       },
     },
   },
@@ -49,12 +47,10 @@ function MeetCard({ at, note }) {
     <div style={{ padding: 16 }}>
       <div className="wgs">
         <article className="wgs-card" style={{ width: '100%' }}>
-          <button className="wgs-cap wgs-cap--link">
-            <span className="wgs-ico"><CalendarLtr24Filled /></span>
+          <div className="wgs-cap">
             <span className="wgs-name">Встречи на сегодня</span>
             {left > 0 && <span className="wgs-count">{left}</span>}
-            <ChevronRight20Filled className="wgs-chev" />
-          </button>
+          </div>
           <div className="wgs-body">
             <Timeline list={items} now={now} onRow={() => {}} />
           </div>

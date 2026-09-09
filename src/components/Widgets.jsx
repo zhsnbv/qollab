@@ -7,7 +7,7 @@ import {
   DocumentSignature24Filled,
   HeartPulse24Filled, Airplane24Filled,
   Heart20Filled, BriefcaseMedical20Filled,
-  ChevronRight20Filled, ChevronRight16Filled,
+  ChevronRight16Filled,
 } from '@fluentui/react-icons';
 import { Headset, UserFocus } from '@phosphor-icons/react';
 import { useWidgets } from '../context/WidgetsContext';
@@ -54,13 +54,13 @@ const TASK_SOURCE_ICONS = {
 // каждая строка, а шапка и подвал ведут в сам сервис. Где адрес один
 // (безопасность, журнал), действие тоже одно — кнопка внизу.
 const NAV = {
-  mail: { head: 'Откроется почта', foot: 'Перейти в почту' },
-  meet: { head: 'Откроется календарь встреч', foot: 'Перейти в календарь' },
-  tasks: { head: 'Откроются мои задачи', foot: 'Все задачи' },
-  links: { head: null, foot: null },
+  mail: { foot: 'Перейти в почту', open: 'Откроется почта' },
+  meet: { foot: 'Перейти в календарь', open: 'Откроется календарь встреч' },
+  tasks: { foot: 'Все задачи', open: 'Откроются мои задачи' },
+  links: { foot: null },
   // У экрана безопасности адреса нет вовсе: это витрина цифр, открывать нечего
-  safety: { head: null, foot: null },
-  journal: { head: null, foot: 'Открыть', open: 'Откроется свежий выпуск журнала' },
+  safety: { foot: null },
+  journal: { foot: 'Открыть', open: 'Откроется свежий выпуск журнала' },
 };
 
 // Высота строк зафиксирована: карточки в ленте одной высоты, и от этих чисел
@@ -277,33 +277,23 @@ function footLabel(id, now) {
 }
 
 export function WidgetCard({ w, now, onOpen = () => {} }) {
-  const Icon = WIDGET_ICONS[w.icon];
   const nav = NAV[w.id];
   const count = headCount(w.id);
   const foot = footLabel(w.id, now);
-  const openMsg = nav.open || nav.head;
-
-  const cap = (
-    <>
-      <span className="wgs-ico">{Icon && <Icon />}</span>
-      <span className="wgs-name">{w.title}</span>
-      {count != null && <span className="wgs-count">{count}</span>}
-      {nav.head && <ChevronRight20Filled className="wgs-chev" />}
-    </>
-  );
 
   return (
     <article className="wgs-card">
-      {nav.head
-        ? <button className="wgs-cap wgs-cap--link" onClick={() => onOpen(nav.head)}>{cap}</button>
-        : <div className="wgs-cap">{cap}</div>}
+      <div className="wgs-cap">
+        <span className="wgs-name">{w.title}</span>
+        {count != null && <span className="wgs-count">{count}</span>}
+      </div>
 
       <div className="wgs-body">
         <Body id={w.id} now={now} onRow={onOpen} />
       </div>
 
       {foot && (
-        <button className="wgs-foot" onClick={() => onOpen(openMsg)}>
+        <button className="wgs-foot" onClick={() => onOpen(nav.open)}>
           <span>{foot}</span>
           <ChevronRight16Filled />
         </button>
