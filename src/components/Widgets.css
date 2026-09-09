@@ -274,6 +274,8 @@
 
 /* Три раздела задач поровну занимают тело карточки. */
 .wg-task-row { height: 82px; }
+.wg-task-source { display: flex; align-items: center; gap: 5px; }
+.wg-task-source svg { flex: none; width: 16px; height: 16px; color: var(--color-primary); }
 .wg-task-count {
   flex: none; font-size: 20px; font-weight: 600; color: var(--color-weak);
   font-variant-numeric: tabular-nums lining-nums;

@@ -4,10 +4,12 @@ import {
   Mail24Filled, CalendarLtr24Filled, Link24Filled,
   ShieldCheckmark24Filled, BookOpen24Filled, ClipboardTask24Filled,
   TicketDiagonal24Filled, Headset24Filled, CheckmarkCircle24Filled,
+  DocumentSignature24Filled,
   HeartPulse24Filled, Airplane24Filled,
   Heart20Filled, BriefcaseMedical20Filled,
   ChevronRight20Filled, ChevronRight16Filled,
 } from '@fluentui/react-icons';
+import { Headset, UserFocus } from '@phosphor-icons/react';
 import { useWidgets } from '../context/WidgetsContext';
 import Toast from './Toast';
 import { widgetData, usefulLinks } from '../data/widgets';
@@ -35,6 +37,16 @@ export const LINK_ICONS = {
   Airplane: Airplane24Filled,
   Heart: Heart20Filled,
   Medical: BriefcaseMedical20Filled,
+};
+
+const TASK_ACTION_ICONS = {
+  Approval: CheckmarkCircle24Filled,
+  Signing: DocumentSignature24Filled,
+};
+
+const TASK_SOURCE_ICONS = {
+  Esed: UserFocus,
+  Smax: Headset,
 };
 
 // Взаимодействие у карточек разное — по тому, сколько у виджета адресов.
@@ -173,13 +185,14 @@ function Body({ id, now, onRow }) {
     return (
       <>
         {widgetData.tasks.map((task) => {
-          const Icon = LINK_ICONS[task.icon];
+          const ActionIcon = TASK_ACTION_ICONS[task.actionIcon];
+          const SourceIcon = TASK_SOURCE_ICONS[task.sourceIcon];
           return (
             <button className="wg-row wg-task-row" key={task.id} onClick={() => onRow(`Откроются задачи «${task.title}» в ${task.source}`)}>
-              <span className="wg-row-ico"><Icon /></span>
+              <span className="wg-row-ico"><ActionIcon /></span>
               <span className="wg-row-t">
                 <span className="wg-row-title">{task.title}</span>
-                <span className="wg-row-sub">{task.source}</span>
+                <span className="wg-row-sub wg-task-source"><SourceIcon />{task.source}</span>
               </span>
               <span className={`wg-task-count ${task.value ? 'wg-task-count--active' : ''}`}>{task.value}</span>
               <ChevronRight16Filled className="wg-row-chev" />

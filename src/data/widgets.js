@@ -64,9 +64,18 @@ export const usefulLinks = [
 // /widgets/meetings и /mail-bridge/mailbox/summary.
 export const widgetData = {
   tasks: [
-    { id: 't1', title: 'На согласовании', value: 0, source: 'ЕСЭД', icon: 'Check' },
-    { id: 't2', title: 'На подписании', value: 0, source: 'ЕСЭД', icon: 'Check' },
-    { id: 't3', title: 'На подписании', value: 0, source: 'SMAX', icon: 'Headset' },
+    {
+      id: 't1', title: 'На согласовании', value: 0, source: 'ЕСЭД',
+      actionIcon: 'Approval', sourceIcon: 'Esed',
+    },
+    {
+      id: 't2', title: 'На подписании', value: 0, source: 'ЕСЭД',
+      actionIcon: 'Signing', sourceIcon: 'Esed',
+    },
+    {
+      id: 't3', title: 'На подписании', value: 0, source: 'SMAX',
+      actionIcon: 'Signing', sourceIcon: 'Smax',
+    },
   ],
   // Расписание дня целиком: виджет — таймлайн, а не список ближайших трёх,
   // поэтому нужны и уже прошедшие встречи. Встреч заведомо больше, чем влезает
