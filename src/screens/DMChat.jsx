@@ -387,7 +387,7 @@ export default function DMChat() {
           </>
         )}
         {!chat.kind && !chat.dismissed && (
-          <button className="cr-walkie" aria-label="Позвонить"><Call24Filled /></button>
+          <button className="cr-walkie cr-walkie--primary" aria-label="Позвонить"><Call24Filled /></button>
         )}
       </header>
 

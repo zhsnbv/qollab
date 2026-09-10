@@ -58,6 +58,10 @@ html.kb .cr-body { padding-bottom: 56px; }
 }
 .cr-walkie:active { opacity: 0.6; }
 .cr-walkie svg { width: 20px; height: 20px; }
+.cr-walkie--primary {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
 
 /* Тело */
 .cr-body {
