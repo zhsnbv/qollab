@@ -1,0 +1,11 @@
+import {mkdir,copyFile,writeFile,readFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import {WAVE_PALETTES,WAVE_DARK_PALETTES,WAVE_STATES,WAVE_TIMING} from '../src/calls/waves/config.js';
+const dest='public/handoff/call-waves';await mkdir(dest,{recursive:true});
+for(const name of ['CallWave.jsx','CallWave.css','config.js','wave-grain.svg'])await copyFile(`src/calls/waves/${name}`,`${dest}/${name}`);
+await copyFile('docs/call-waves-handoff.md',`${dest}/README.md`);
+await copyFile('public/img/calls/icons/imgImage.png',`${dest}/avatar.png`);
+const spec={version:2,viewport:{width:402,height:820},palettes:WAVE_PALETTES,darkPalettes:WAVE_DARK_PALETTES,states:WAVE_STATES,timingMs:WAVE_TIMING,geometry:{a:{width:'100%',height:471,x:-56,bottom:-205},b:{width:'100%',height:471,x:104,bottom:-269},blurSigma:41.4,mask:{transparentThrough:.38,opaqueFrom:.65}},driftA:[{t:0,x:-18,y:12,rotation:-9},{t:.45,x:62,y:-66,rotation:13},{t:.75,x:12,y:-20,rotation:3},{t:1,x:-18,y:12,rotation:-9}],driftB:[{t:0,x:22,y:-10,rotation:8},{t:.5,x:-82,y:-78,rotation:-16},{t:.8,x:-22,y:8,rotation:-3},{t:1,x:22,y:-10,rotation:8}],pulse:{origin:[.5,.85],easing:[.45,0,.35,1],frames:[{t:0,scale:[.94,.88],opacity:.82},{t:.48,scale:[1.12,1.3],opacity:1},{t:1,scale:[.94,.88],opacity:.82}]},reconnection:{windowMs:15000,driftMs:13000,pulseMs:7000},quality:['auto','full','lite','static']};
+await writeFile(`${dest}/motion-spec.json`,JSON.stringify(spec,null,2)+'\n');
+const template=await readFile('scripts/call-waves-demo.html','utf8');await writeFile(`${dest}/demo.html`,template.replace('__CONFIG__',JSON.stringify({palettes:WAVE_PALETTES,darkPalettes:WAVE_DARK_PALETTES,states:WAVE_STATES})));
+execFileSync('zip',['-qr','-FS','../qollab-call-waves.zip','.'],{cwd:dest});console.log('Created public/handoff/qollab-call-waves.zip');

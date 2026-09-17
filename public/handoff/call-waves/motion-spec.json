@@ -1,0 +1,195 @@
+{
+  "version": 2,
+  "viewport": {
+    "width": 402,
+    "height": 820
+  },
+  "palettes": {
+    "warm": [
+      "#faf4e9",
+      "#fbefe8"
+    ],
+    "active": [
+      "#e3fff7",
+      "#d3feda"
+    ],
+    "quiet": [
+      "#f2f2f2",
+      "#ebeff6"
+    ],
+    "declined": [
+      "#ffece3",
+      "#fed3d3"
+    ],
+    "reconnecting": [
+      "#e7eeff",
+      "#ded8fa"
+    ]
+  },
+  "darkPalettes": {
+    "warm": [
+      "#57402f",
+      "#613829"
+    ],
+    "active": [
+      "#214c43",
+      "#3b542f"
+    ],
+    "quiet": [
+      "#343536",
+      "#313b48"
+    ],
+    "declined": [
+      "#593830",
+      "#643239"
+    ],
+    "reconnecting": [
+      "#303f62",
+      "#4a3b60"
+    ]
+  },
+  "states": {
+    "connecting": "warm",
+    "ringing": "warm",
+    "incoming": "warm",
+    "active": "active",
+    "reconnecting": "reconnecting",
+    "busy": "quiet",
+    "unanswered": "quiet",
+    "unavailable": "quiet",
+    "ended": "quiet",
+    "canceled": "quiet",
+    "elsewhere": "quiet",
+    "declined": "declined",
+    "failed": "declined"
+  },
+  "timingMs": {
+    "driftA": 9000,
+    "driftB": 11000,
+    "pulseA": 4800,
+    "pulseB": 6200,
+    "pulseBOffset": -1800,
+    "light": 8000,
+    "palette": 1400
+  },
+  "geometry": {
+    "a": {
+      "width": "100%",
+      "height": 471,
+      "x": -56,
+      "bottom": -205
+    },
+    "b": {
+      "width": "100%",
+      "height": 471,
+      "x": 104,
+      "bottom": -269
+    },
+    "blurSigma": 41.4,
+    "mask": {
+      "transparentThrough": 0.38,
+      "opaqueFrom": 0.65
+    }
+  },
+  "driftA": [
+    {
+      "t": 0,
+      "x": -18,
+      "y": 12,
+      "rotation": -9
+    },
+    {
+      "t": 0.45,
+      "x": 62,
+      "y": -66,
+      "rotation": 13
+    },
+    {
+      "t": 0.75,
+      "x": 12,
+      "y": -20,
+      "rotation": 3
+    },
+    {
+      "t": 1,
+      "x": -18,
+      "y": 12,
+      "rotation": -9
+    }
+  ],
+  "driftB": [
+    {
+      "t": 0,
+      "x": 22,
+      "y": -10,
+      "rotation": 8
+    },
+    {
+      "t": 0.5,
+      "x": -82,
+      "y": -78,
+      "rotation": -16
+    },
+    {
+      "t": 0.8,
+      "x": -22,
+      "y": 8,
+      "rotation": -3
+    },
+    {
+      "t": 1,
+      "x": 22,
+      "y": -10,
+      "rotation": 8
+    }
+  ],
+  "pulse": {
+    "origin": [
+      0.5,
+      0.85
+    ],
+    "easing": [
+      0.45,
+      0,
+      0.35,
+      1
+    ],
+    "frames": [
+      {
+        "t": 0,
+        "scale": [
+          0.94,
+          0.88
+        ],
+        "opacity": 0.82
+      },
+      {
+        "t": 0.48,
+        "scale": [
+          1.12,
+          1.3
+        ],
+        "opacity": 1
+      },
+      {
+        "t": 1,
+        "scale": [
+          0.94,
+          0.88
+        ],
+        "opacity": 0.82
+      }
+    ]
+  },
+  "reconnection": {
+    "windowMs": 15000,
+    "driftMs": 13000,
+    "pulseMs": 7000
+  },
+  "quality": [
+    "auto",
+    "full",
+    "lite",
+    "static"
+  ]
+}

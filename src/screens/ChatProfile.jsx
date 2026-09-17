@@ -1,3 +1,4 @@
+import { useCalls } from '../calls/Calls';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Play, FileText, LinkSimple } from '@phosphor-icons/react';
@@ -40,6 +41,7 @@ function Avatar({ item, size }) {
 export default function ChatProfile() {
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
+  const calls=useCalls();
   const location = useLocation();
   // sharedOnly — экран открыт как список вложений из объединённого профиля:
   // шапка и реквизиты там уже показаны, поэтому оставляем только вкладки.
@@ -95,7 +97,7 @@ export default function ChatProfile() {
 
           <div className="cp-actions">
             {(isGroup ? ACTIONS_GROUP : ACTIONS_USER).map(({ id: aid, label, ico }) => (
-              <button className="cp-action" key={aid}>
+              <button className="cp-action" key={aid} onClick={aid==='call'?()=>calls?.start({name:p.name,person:p,chatId:p.id||id||p.name}):undefined}>
                 <span className="cp-action-ico">
                   <img src={`/img/chat-profile/${ico}.svg`} alt="" width="20" height="20" />
                 </span>

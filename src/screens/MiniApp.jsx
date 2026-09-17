@@ -112,8 +112,7 @@ function MiniAppStub({ name }) {
       <span className="ma-stub-ico"><SquaresFour size={32} weight="fill" /></span>
       <h2 className="ma-stub-title">{name}</h2>
       <p className="ma-stub-text">
-        Мини-приложение откроется здесь. Раздел ещё готовится — в прототипе
-        показываем только вход в него.
+        Раздел скоро появится. Здесь можно будет открыть мини-приложение.
       </p>
     </div>
   );

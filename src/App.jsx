@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './screens/Home';
+import CallsLab, { CallsProvider } from './calls/Calls';
+import {getPerson} from './data/person';
+import {DeviceHost} from './components/Portal';
 import Chats from './screens/Chats';
 import ChatRoom from './screens/ChatRoom';
 import Posts from './screens/Posts';
@@ -64,7 +67,7 @@ const SPLASH_EXIT_MS = 747;
 // Пока не вошли — вместо приложения показываем флоу авторизации целиком.
 function Shell() {
   const { authed } = useAuth();
-  return authed ? <AppRoutes /> : <Auth />;
+  return authed || window.location.pathname === '/calls' ? <AppRoutes /> : <Auth />;
 }
 
 // Роуты оверлеев вынесены отдельно: их рендерим дважды — текущий экран и,
@@ -72,6 +75,7 @@ function Shell() {
 function OverlayRoutes({ location }) {
   return (
     <Routes location={location}>
+        <Route path="/calls" element={<CallsLab />} />
         <Route path="/chats/prodev" element={<ChatRoom />} />
         <Route path="/chats/dm" element={<DMChat />} />
         <Route path="/article" element={<ArticleView />} />
@@ -174,17 +178,24 @@ export default function App() {
   // общего роутера: у каждой её карточки свой MemoryRouter, а вложенных
   // роутеров react-router не допускает.
   const gallery = window.location.pathname === '/all';
+  const callFlow = window.location.pathname === '/calls/one-to-one';
   const widgetFigma = window.location.pathname === '/widgets-figma';
 
   return (
     <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><WidgetsProvider>
-      {gallery ? <AllScreens /> : widgetFigma ? <WidgetFigma /> : (
+      {gallery ? <AllScreens /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
         <BrowserRouter>
-          <Device exiting={exiting} splashDone={splashDone} />
+          <CallsProvider><Device exiting={exiting} splashDone={splashDone} /></CallsProvider>
         </BrowserRouter>
       )}
     </WidgetsProvider></ChannelsProvider></FavoritesProvider></AuthProvider></CompanyProvider>
   );
+}
+
+function PersonalCallFlow(){
+ const [host,setHost]=useState(null),person=getPerson('ayazhan');
+ const [entry]=useState(()=>({pathname:'/chats/dm',state:{chat:{profileId:person.id,title:person.name,avatar:person.avatar,initials:person.initials,online:true,preview:'Привет! Давай созвонимся, обсудим макеты.',time:'10:16'}}}));
+ return <div className="device" ref={setHost}>{host&&<DeviceHost.Provider value={host}><MemoryRouter initialEntries={[entry]}><CallsProvider mediaMode="scenario"><div className="app-reveal app-reveal--in"><AppRoutes/></div></CallsProvider></MemoryRouter></DeviceHost.Provider>}</div>;
 }
 
 function Device({ exiting, splashDone }) {

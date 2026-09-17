@@ -111,7 +111,7 @@ function StatusTicks({ status }) {
   return <Checks size={15} color="var(--color-weak)" />; // delivered — дефолт
 }
 
-function TimeRow({ time, mine, status, variant = 'overlay' }) {
+export function TimeRow({ time, mine, status, variant = 'overlay' }) {
   return (
     <span className={`msg-time-row msg-time-row--${variant}`}>
       <span className="msg-time">{time}</span>

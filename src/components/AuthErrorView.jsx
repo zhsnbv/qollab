@@ -17,7 +17,7 @@ const ICON = {
 function platform() {
   const ua = navigator.userAgent || '';
   const os = /iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Mac/.test(ua) ? 'macOS' : /Windows/.test(ua) ? 'Windows' : 'Web';
-  return `${os} · веб-прототип`;
+  return `${os} · Web`;
 }
 
 function Row({ label, value }) {

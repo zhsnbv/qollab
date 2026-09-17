@@ -61,43 +61,16 @@ html.gallery #root { height: auto; }
 .gal-group-count { font-size: 14px; font-weight: 500; color: var(--color-weak); }
 .gal-group-hint { margin-top: var(--space-1); font-size: 14px; color: var(--color-weak); max-width: 62ch; }
 
-.gal-grid {
-  margin-top: var(--space-5);
-  display: grid;
-  /* Ширина колонки — ширина уменьшенной рамки: карточки не растягиваются,
-     иначе подписи разъезжаются, а рамки остаются на месте. */
-  grid-template-columns: repeat(auto-fill, minmax(232px, max-content));
-  gap: var(--space-6) var(--space-5);
-  justify-content: start;
-}
-
-.gal-cell { display: flex; flex-direction: column; gap: var(--space-3); width: 232px; }
-/* Рамку уменьшаем трансформом, а не процентами: внутри всё считает пиксели
-   от 402×874, и настоящий экран должен остаться настоящим. */
-.gal-frame {
-  width: 232px; height: 504px;
-  border-radius: 22px;
-  /* clip, а не hidden: внутри рамки лежит экран 402×874, и с hidden она
-     становится скролл-контейнером — колесо и палец уходили в неё, а страница
-     стояла на месте. clip обрезает так же, но контейнером не становится. */
-  overflow: hidden;
-  overflow: clip;
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  box-shadow: 0 1px 1px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.06);
-  /* Витрину смотрят, а не листают в ней списки: рамка не ловит ни касания,
-     ни колесо — жест целиком достаётся странице. */
-  pointer-events: none;
-}
-.gal-device {
-  width: 402px; height: 874px;
-  max-width: none; margin: 0;
-  transform: scale(0.5774); /* 232 / 402 */
-  transform-origin: top left;
-  /* Внутри витрины высоту задаём сами: --vvh считает видимую область окна,
-     а рамок в окне много. */
-  height: 874px;
-}
+.gal-grid {margin-top:var(--space-5);display:grid;grid-template-columns:repeat(auto-fill,402px);gap:24px 20px;justify-content:start}
+.gal-cell{position:relative;isolation:isolate;z-index:0;display:flex;flex-direction:column;gap:12px;width:402px}
+.gal-frame{position:relative;isolation:isolate}
+.gal-call-settings{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.gal-call-settings a{text-decoration:none}
+.gal-call-settings [aria-pressed=true]{background:var(--color-primary-bg);border-color:var(--color-primary-border);color:var(--color-primary)}
+.gal-frame{width:402px;height:820px;overflow:clip;background:var(--color-white);outline:1px solid var(--color-border);box-shadow:0 8px 24px #0000000f;pointer-events:none}
+html.gallery .device.gal-device{width:402px!important;min-width:402px!important;max-width:402px!important;height:820px!important;min-height:820px!important;max-height:820px!important;transform:none!important;margin:0;border-radius:0;--vvh:820px;--vvtop:0px;flex-shrink:0}
+.gal-device .call-screen,.gal-device .call-puck-enter{animation:none}
+.gal-device .call-dots i,.gal-device .call-voice i,.gal-device .call-puck-badge{animation-play-state:paused}
 /* Витрина живёт вне .device приложения, поэтому подпираем переменные, на
    которые опираются экраны: иначе безопасные зоны схлопываются в ноль
    только визуально, а таб-бар уезжает за край рамки. */
@@ -116,14 +89,7 @@ html.gallery #root { height: auto; }
 }
 .gal-note { font-size: 13px; line-height: 1.35; color: var(--color-weak); }
 
-@media (max-width: 560px) {
-  .gal-top, .gal-group { padding-left: var(--space-4); padding-right: var(--space-4); }
-  .gal-grid { grid-template-columns: repeat(auto-fill, minmax(160px, max-content)); gap: var(--space-5) var(--space-4); }
-  .gal-cell { width: 160px; }
-  .gal-frame { width: 160px; height: 348px; border-radius: 16px; }
-  .gal-device { transform: scale(0.398); }
-}
-
+@media(max-width:560px){.gal-top,.gal-group{padding-left:16px;padding-right:16px}.gal-grid{grid-template-columns:402px}}
 /* Переключатели темы и пространства: те же атрибуты на <html>, что в
    приложении, поэтому перекрашиваются разом все рамки. */
 .gal-switches { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); }

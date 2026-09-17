@@ -1,3 +1,4 @@
+import { useCalls } from '../calls/Calls';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, CaretRight, FileText, LinkSimple, Play } from '@phosphor-icons/react';
@@ -37,6 +38,7 @@ const TABS = [
 
 export default function PersonProfile() {
   const navigate = useNavigate();
+  const calls = useCalls();
   const location = useLocation();
   const [scrolled, onScroll] = useScrolled();
   const { id, employee, background, online, bot } = location.state || {};
@@ -93,7 +95,7 @@ export default function PersonProfile() {
   const actions = [
     { id: 'write', label: 'Написать', Icon: Chat24Filled, onClick: write },
     ...(bot ? [] : [
-      { id: 'call', label: 'Звонок', Icon: Call24Filled, onClick: () => setToast(`Звоним: ${p.name}`) },
+      { id: 'call', label: 'Звонок', Icon: Call24Filled, onClick: () => calls?.start({name:p.name,person:p,chatId:p.id}) },
       { id: 'thanks', label: 'Рахмет', Icon: Heart24Filled, onClick: () => setToast('Рахмет отправлен') },
     ]),
     { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },

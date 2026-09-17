@@ -1,3 +1,4 @@
+import { CALLS_GROUP } from './calls';
 import Home from '../screens/Home';
 import Posts from '../screens/Posts';
 import Services from '../screens/Services';
@@ -98,6 +99,7 @@ const groupChat = {
 const at = (pathname, state) => ({ pathname, state });
 
 export const SCREEN_GROUPS = [
+  CALLS_GROUP,
   {
     id: 'entry',
     title: 'Вход',

@@ -463,8 +463,8 @@ export default function Auth() {
 
           {/* Только для прототипа: выбор ответа «сервера», иначе состояния
               ошибок недостижимы вживую. В приложении этого блока нет. */}
-          <div className="auth-mock">
-            <span className="auth-mock-cap">Прототип: ответ сервера на код</span>
+          {new URLSearchParams(window.location.search).has('review') && <div className="auth-mock">
+            <span className="auth-mock-cap">Сценарии входа</span>
             <div className="auth-mock-chips">
               {authScenarios.map((sc) => (
                 <button
@@ -476,7 +476,7 @@ export default function Auth() {
                 </button>
               ))}
             </div>
-          </div>
+          </div>}
         </div>
 
         {dialog?.kind === 'sms' && (

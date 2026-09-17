@@ -1,3 +1,6 @@
+import { chatKey, mergeChatEvents } from '../calls/model';
+import { useCalls, CallHistory } from '../calls/Calls';
+import CallIcon from '../calls/CallIcon';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Plus, Microphone, PaperPlaneRight } from '@phosphor-icons/react';
@@ -16,7 +19,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import AttachSheet from '../components/AttachSheet';
 import ComposeInput from '../components/ComposeInput';
-import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular, Call24Filled,
+import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular,
   ChatAdd24Filled, TextBulletListLtr24Filled,
 } from '@fluentui/react-icons';
 import './ChatRoom.css';
@@ -163,6 +166,7 @@ function AuthorAvatar({ chat, author }) {
 }
 
 export default function DMChat() {
+  const calls = useCalls();
   const navigate = useNavigate();
   const { state } = useLocation();
   const chat = state?.chat;
@@ -205,7 +209,7 @@ export default function DMChat() {
   const [toast, setToast] = useState('');
   const [attachOpen, setAttachOpen] = useState(false);
   const [history, setHistory] = useState(false);
-  const [phase, setPhase] = useState('connecting'); // connecting | empty | chat
+  const [phase, setPhase] = useState(()=>calls?.showcase?(isEmptyChat(chat)?'empty':'chat'):'connecting'); // connecting | empty | chat
   const [messages, setMessages] = useState(() => (chat && !isEmptyChat(chat) ? buildHistory(chat) : []));
   const [typing, setTyping] = useState(false);
   const [input, setInput] = useState('');
@@ -218,7 +222,7 @@ export default function DMChat() {
   }, [chat, navigate]);
 
   useEffect(() => {
-    if (!chat) return;
+    if (!chat || calls?.showcase) return;
     const t = setTimeout(() => setPhase(isEmptyChat(chat) ? 'empty' : 'chat'), 900);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -231,6 +235,7 @@ export default function DMChat() {
 
   useEffect(() => () => timersRef.current.forEach(clearTimeout), []);
 
+  useEffect(() => { const el=scrollRef.current; if(el)el.scrollTop=el.scrollHeight; }, [calls?.history.length]);
   useKeyboardInset(scrollRef);
 
   if (!chat) return null;
@@ -317,7 +322,7 @@ export default function DMChat() {
     const quote = reply
       ? { author: reply.mine ? 'Вы' : (reply.author || chat.title), text: reply.text || 'Вложение' }
       : undefined;
-    setMessages((m) => [...m, { id, mine: true, text, time: now(), status: 'sent', quote }]);
+    setMessages((m) => [...m, { id, mine: true, text, time: now(), createdAt:Date.now(), status: 'sent', quote }]);
     setReply(null);
     setInput('');
     setPhase('chat');
@@ -331,7 +336,7 @@ export default function DMChat() {
       const r = replyFor(chat, text);
       setMessages((m) => {
         const withRead = chat.kind === 'group' ? m : m.map((msg) => (msg.mine ? { ...msg, status: 'read' } : msg));
-        return [...withRead, { id: ++uidRef.current, mine: false, author: r.author, text: r.text, time: now() }];
+        return [...withRead, { id: ++uidRef.current, mine: false, author: r.author, text: r.text, time: now(), createdAt:Date.now() }];
       });
     }, delay));
   };
@@ -351,12 +356,13 @@ export default function DMChat() {
   };
 
   // Группировка: имя — на первом сообщении серии одного автора, аватар и
-  // «хвостик» бабла — на последнем. Имя показываем только в групповых чатах
+  // «хвостик» бабла — на первом. Имя показываем только в групповых чатах
   // (в личных — один собеседник, подписывать его в каждом сообщении незачем).
-  const items = messages.map((msg, i) => {
-    const prev = messages[i - 1];
-    const next = messages[i + 1];
-    const sameAuthor = (a, b) => a.mine === b.mine && a.author === b.author;
+  const timeline = mergeChatEvents(messages,calls?.history||[],chatKey(chat));
+  const items = timeline.map((msg, i) => {
+    const prev = timeline[i - 1];
+    const next = timeline[i + 1];
+    const sameAuthor = (a, b) => Boolean(a.mine) === Boolean(b.mine) && (chat.kind==='group'?a.author===b.author:true);
     const firstOfGroup = !prev || !sameAuthor(prev, msg);
     const lastOfGroup = !next || !sameAuthor(next, msg);
     return { ...msg, firstOfGroup, lastOfGroup };
@@ -387,7 +393,7 @@ export default function DMChat() {
           </>
         )}
         {!chat.kind && !chat.dismissed && (
-          <button className="cr-walkie cr-walkie--primary" aria-label="Позвонить"><Call24Filled /></button>
+          <button className="cr-walkie cr-walkie--primary" aria-label="Позвонить" onClick={() => calls?.start({ name: chat.title, chatId: chatKey(chat), person: { name: chat.title, avatar: chat.avatar, initials: chat.initials || chat.title.slice(0, 2) } })}><CallIcon name="phone" size={20}/></button>
         )}
       </header>
 
@@ -399,11 +405,11 @@ export default function DMChat() {
 
       <div className="cr-body" ref={scrollRef}>
         {phase === 'connecting' && <ConnectingSkeleton />}
-        {phase === 'empty' && <EmptyState />}
-        {phase === 'chat' && (
+        {phase === 'empty' && !calls?.history.some(c=>c.chatId===chatKey(chat)) && <EmptyState />}
+        {phase !== 'connecting' && items.length > 0 && (
           <div className="cr-messages">
             <div className="cr-day">{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}</div>
-            {items.map((msg) => (
+            {items.map((msg) => msg.call ? <CallHistory key={msg.id} chatId={chatKey(chat)} events={[{...msg.call,groupStart:msg.firstOfGroup,groupSingle:msg.firstOfGroup&&msg.lastOfGroup}]}/> : (
               <Message
                 key={msg.id}
                 msg={{ ...msg, pinned: pinnedIds.includes(msg.id) }}

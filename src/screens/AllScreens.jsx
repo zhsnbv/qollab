@@ -1,3 +1,4 @@
+import { CallsProvider } from '../calls/Calls';
 import { useEffect, useRef, useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { DeviceHost } from '../components/Portal';
@@ -7,7 +8,7 @@ import './AllScreens.css';
 
 // Одна карточка витрины: настоящая рамка «телефона» со своим роутером.
 // Экран внутри не знает, что он в витрине, — это тот же код, что на проде.
-function Cell({ item }) {
+function Cell({ item, animateWaves }) {
   const boxRef = useRef(null);
   const [host, setHost] = useState(null);
   const [live, setLive] = useState(false);
@@ -29,12 +30,12 @@ function Cell({ item }) {
   const entry = typeof route === 'string' ? route : route || '/';
 
   return (
-    <figure className="gal-cell" ref={boxRef}>
+    <figure className="gal-cell" ref={boxRef} data-case={item.id}>
       <div className="gal-frame">
         <div className="device gal-device" ref={setHost}>
           {live && host && (
             <DeviceHost.Provider value={host}>
-              <MemoryRouter initialEntries={[entry]}>{render()}</MemoryRouter>
+              <MemoryRouter initialEntries={[entry]}><CallsProvider showcase fixture={item.fixture} animateWaves={animateWaves}>{render()}</CallsProvider></MemoryRouter>
             </DeviceHost.Provider>
           )}
         </div>
@@ -61,7 +62,8 @@ const THEMES = [
 ];
 
 export default function AllScreens() {
-  const [group, setGroup] = useState('all');
+  const [group, setGroup] = useState(()=>new URLSearchParams(window.location.search).get('group')||'all');
+  const [animateWaves,setAnimateWaves]=useState(false);
   const [theme, setTheme] = useState('light');
   const [company, setCompany] = useState('erg');
 
@@ -83,7 +85,7 @@ export default function AllScreens() {
       <header className="gal-top">
         <div className="gal-head">
           <h1>Все экраны</h1>
-          <p>{SCREEN_COUNT} состояний приложения. Каждая рамка — живой экран, а не картинка.</p>
+          <p>{SCREEN_COUNT} состояний приложения. Все экраны — 402×820.</p>
         </div>
         <div className="gal-switches">
           <div className="gal-seg">
@@ -137,8 +139,9 @@ export default function AllScreens() {
             <span className="gal-group-count">{g.items.length}</span>
           </h2>
           {g.hint && <p className="gal-group-hint">{g.hint}</p>}
+          {g.id==='calls'&&<div className="gal-call-settings" aria-label="Настройки экранов звонков"><a className="gal-chip active" href="/calls/one-to-one" target="_blank" rel="noreferrer">Пройти сценарий звонка 1 на 1</a><button className="gal-chip" aria-pressed={animateWaves} onClick={()=>setAnimateWaves(v=>!v)}>Волны: {animateWaves?'движение':'пауза'}</button><a className="gal-chip" href="/handoff/qollab-call-waves.zip" download>Скачать волны для разработки</a><a className="gal-chip" href="/handoff/call-waves/demo.html" target="_blank" rel="noreferrer">Анимация и состояния</a></div>}
           <div className="gal-grid">
-            {g.items.map((item) => <Cell key={item.id} item={item} />)}
+            {g.items.map((item) => <Cell key={item.id} item={item} animateWaves={animateWaves} />)}
           </div>
         </section>
       ))}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+ <rect width="1280" height="800" fill="#f8f9fb"/>
+ <g font-family="Arial,sans-serif" fill="#252637">
+  <text x="76" y="92" font-size="28" font-weight="700">qollab</text><text x="1105" y="92" font-size="22" fill="#808291">01 / 06</text>
+  <text x="76" y="240" font-size="66" font-weight="700">Ближе к команде</text>
+  <text x="80" y="296" font-size="28" fill="#747786">План релиза · сентябрь 2026</text>
+  <rect x="76" y="374" width="352" height="268" rx="24" fill="#eeedf6"/>
+  <rect x="464" y="374" width="352" height="268" rx="24" fill="#eeedf6"/>
+  <rect x="852" y="374" width="352" height="268" rx="24" fill="#eeedf6"/>
+  <g font-size="22" fill="#77748d"><text x="104" y="424">01</text><text x="492" y="424">02</text><text x="880" y="424">03</text></g>
+  <g font-size="32" font-weight="700"><text x="104" y="494">Звонки</text><text x="492" y="494">Переписка</text><text x="880" y="494">Профили</text></g>
+  <g font-size="24" fill="#6b6c7d"><text x="104" y="548">Аудио и видео</text><text x="104" y="586">Демонстрация экрана</text><text x="492" y="548">Всё в одном месте</text><text x="492" y="586">Быстрые ответы</text><text x="880" y="548">Люди рядом</text><text x="880" y="586">Прямой контакт</text></g>
+  <path d="M76 713H1204" stroke="#dddfe8"/>
+  <text x="76" y="752" font-size="21" fill="#8c8e9b">Продуктовая команда</text>
+ </g>
+</svg>
