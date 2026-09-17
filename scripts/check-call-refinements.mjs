@@ -65,12 +65,12 @@ try{
  await click('Написать в чат');await page.waitForSelector('.call-bubble');assert.equal(await page.$('.call-failure-dialog'),null);
  await page.type('[contenteditable="true"]','Перезвоню позже');await click('Отправить');await pause(120);
  assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.call-event').compareDocumentPosition(document.querySelector('.msg--mine'))&Node.DOCUMENT_POSITION_FOLLOWING)));
- assert.equal(await page.$eval('.call-bubble',e=>getComputedStyle(e).borderTopRightRadius),'2px');
- assert.equal(await page.$eval('.msg--mine .msg-bubble',e=>getComputedStyle(e).borderBottomRightRadius),'12px');
+ assert.equal(await page.$eval('.call-bubble',e=>getComputedStyle(e).borderTopRightRadius),'12px');
+ assert.equal(await page.$eval('.msg--mine .msg-bubble',e=>getComputedStyle(e).borderBottomRightRadius),'2px');
  await page.goto('http://127.0.0.1:5173/calls?review=1');await page.waitForSelector('.call-preview-tools');await click('Исходящий');await pause(450);await click('Завершить');await pause(2500);assert.equal(await page.$('.call-failure-dialog'),null);
  await click('Разговор');await pause(450);await click('Сценарии звонка');await pause(250);await click('Собеседник показывает экран');await page.waitForSelector('.call-shared-view');await click('Развернуть демонстрацию');assert.ok(await page.$('.call-shared-view.is-expanded'));await click('Уменьшить демонстрацию');assert.equal(await page.$('.call-shared-view.is-expanded'),null);await click('Завершить');await pause(2500);
  // Existing ordinary messages use the same singleton/group rule.
  await page.evaluate(()=>{const el=document.createElement('div');el.id='bubble-rule';el.innerHTML='<div class="msg msg--their msg--first msg--last"><div class="msg-bubble">one</div></div><div class="msg msg--mine msg--last"><div class="msg-bubble">last</div></div>';document.body.append(el)});
- assert.deepEqual(await page.$$eval('#bubble-rule .msg-bubble',els=>els.map(e=>[getComputedStyle(e).borderBottomLeftRadius,getComputedStyle(e).borderBottomRightRadius])),[['2px','12px'],['12px','12px']]);
+ assert.deepEqual(await page.$$eval('#bubble-rule .msg-bubble',els=>els.map(e=>[getComputedStyle(e).borderBottomLeftRadius,getComputedStyle(e).borderBottomRightRadius])),[['2px','12px'],['12px','2px']]);
  assert.deepEqual(errors,[]);console.log('PASS: dark/light calls, dark waves, gallery layer isolation, contextual settings, chips, compact signal, terminal copy, pill buttons, grouped/single bubbles, failure dialog after exit, cancellation without dialog.');
 }finally{await browser.close();}

@@ -23,7 +23,7 @@ export function callFailure(call) {
 export function groupCallHistory(history,chatId) {
  const events=[...history].filter(c=>!chatId||c.chatId===chatId).reverse();
  const same=(a,b)=>a&&b&&a.direction===b.direction&&a.chatId===b.chatId&&new Date(a.createdAt||0).toDateString()===new Date(b.createdAt||0).toDateString();
- return events.map((call,i)=>({...call,groupStart:!same(events[i-1],call),groupSingle:!same(events[i-1],call)&&!same(call,events[i+1])}));
+ return events.map((call,i)=>({...call,groupStart:!same(events[i-1],call),groupEnd:!same(call,events[i+1]),groupSingle:!same(events[i-1],call)&&!same(call,events[i+1])}));
 }
 export function mergeChatEvents(messages,history,chatId) {
  const calls=[...history].filter(c=>c.chatId===chatId).reverse().map((call,i)=>({id:`call-${call.id}`,call,mine:call.direction==='outgoing',createdAt:call.finishedAt||call.createdAt||i+1}));

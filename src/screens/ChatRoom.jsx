@@ -287,7 +287,7 @@ export default function ChatRoom() {
     const sameAuthor = (a, b) => (a.mine ? b.mine : !b.mine && a.author?.short === b.author?.short);
     const dayStart = !prev || (prev.day || 'Сегодня') !== (msg.day || 'Сегодня');
     const firstOfGroup = !prev || !sameAuthor(prev, msg) || dayStart;
-    const lastOfGroup = !next || !sameAuthor(next, msg);
+    const lastOfGroup = !next || !sameAuthor(next, msg) || (next.day || 'Сегодня') !== (msg.day || 'Сегодня');
     return { ...msg, firstOfGroup, lastOfGroup, dayStart };
   });
 

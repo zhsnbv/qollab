@@ -63,10 +63,8 @@
 .call-status-chip{padding:6px 10px;border:1px solid var(--color-light);border-radius:var(--radius-pill);background:transparent;color:var(--color-text);font-size:12px;line-height:18px}
 .call-status-chip>svg,.call-status-chip>.call-icon,.call-signal{flex-shrink:0}
 .call-caption{margin-top:12px}
-.call-event-group-start:not(.call-event-single).incoming .call-bubble{border-top-left-radius:2px}
-.call-event-group-start:not(.call-event-single).outgoing .call-bubble{border-top-right-radius:2px}
-.call-event-single.incoming .call-bubble{border-bottom-left-radius:2px}
-.call-event-single.outgoing .call-bubble{border-bottom-right-radius:2px}
+.call-event-group-end.incoming .call-bubble{border-bottom-left-radius:2px}
+.call-event-group-end.outgoing .call-bubble{border-bottom-right-radius:2px}
 .call-event+.call-event:not(.incoming+.incoming):not(.outgoing+.outgoing){margin-top:8px}
 .call-bubble:active{opacity:.65}
 .call-control,.call-answer,.call-notice button,.call-share-strip button,.call-scenarios button,.call-preview-tools>button{border-radius:var(--radius-pill)}

@@ -356,7 +356,7 @@ export default function DMChat() {
   };
 
   // Группировка: имя — на первом сообщении серии одного автора, аватар и
-  // «хвостик» бабла — на первом. Имя показываем только в групповых чатах
+  // «хвостик» бабла — на последнем. Имя показываем только в групповых чатах
   // (в личных — один собеседник, подписывать его в каждом сообщении незачем).
   const timeline = mergeChatEvents(messages,calls?.history||[],chatKey(chat));
   const items = timeline.map((msg, i) => {
@@ -409,7 +409,7 @@ export default function DMChat() {
         {phase !== 'connecting' && items.length > 0 && (
           <div className="cr-messages">
             <div className="cr-day">{dayLabel(isEmptyChat(chat) ? undefined : chat.time)}</div>
-            {items.map((msg) => msg.call ? <CallHistory key={msg.id} chatId={chatKey(chat)} events={[{...msg.call,groupStart:msg.firstOfGroup,groupSingle:msg.firstOfGroup&&msg.lastOfGroup}]}/> : (
+            {items.map((msg) => msg.call ? <CallHistory key={msg.id} chatId={chatKey(chat)} events={[{...msg.call,groupStart:msg.firstOfGroup,groupEnd:msg.lastOfGroup,groupSingle:msg.firstOfGroup&&msg.lastOfGroup}]}/> : (
               <Message
                 key={msg.id}
                 msg={{ ...msg, pinned: pinnedIds.includes(msg.id) }}

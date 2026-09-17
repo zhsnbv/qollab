@@ -13,12 +13,12 @@ test('failure dialogs explain unsuccessful outgoing calls, never intentional can
  assert.equal(callFailure(makeCall({status:'declined',direction:'incoming'})),null);
  assert.notEqual(callFailure(makeCall({status:'failed'})).title,callFailure(makeCall({status:'failed',connectedAt:1})).title);
 });
-test('only the first bubble in a consecutive run has a corner, including a singleton',()=>{
+test('only the last bubble in a consecutive run has a corner, including a singleton',()=>{
  const event=(id,direction,chatId='a')=>({id,direction,chatId});
  const chronological=[event('a','incoming'),event('b','incoming'),event('c','incoming'),event('d','outgoing'),event('e','incoming'),event('f','outgoing'),event('g','outgoing')];
- assert.deepEqual(groupCallHistory([...chronological].reverse(),'a').filter(c=>c.groupStart).map(c=>c.id),['a','d','e','f']);
- assert.equal(groupCallHistory([event('single','outgoing')],'a')[0].groupStart,true);
- assert.equal(groupCallHistory([event('b','incoming'),event('a','incoming','b')])[1].groupStart,true);
+ assert.deepEqual(groupCallHistory([...chronological].reverse(),'a').filter(c=>c.groupEnd).map(c=>c.id),['c','d','e','g']);
+ assert.equal(groupCallHistory([event('single','outgoing')],'a')[0].groupEnd,true);
+ assert.equal(groupCallHistory([event('b','incoming'),event('a','incoming','b')])[1].groupEnd,true);
 });
 test('all terminal states release media and ignore late answers',()=>{
  const active=makeCall({status:'active',video:true,sharing:true});
