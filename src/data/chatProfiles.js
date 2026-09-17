@@ -75,6 +75,7 @@ export const userProfiles = {
     phone: '+7 (700) 000-45-08',
     groups, media, files, links,
   },
+  'arman-call': {id:'arman-call', name:'Арман Асхатов', initials:'АА', avatar:'/img/calls/icons/imgImage.png', status:'в сети', role:'Product Designer', groups, media, files, links},
   arman: {
     id: 'arman',
     name: 'Арман Ахметов',

@@ -1,0 +1,17 @@
+.call-share-sketch .sketch-collapse{width:40px;height:40px;border-radius:50%;background:var(--color-background);display:grid;place-items:center}
+.share-study-content{position:absolute;inset:64px 8px 146px;display:flex;flex-direction:column;gap:12px}
+.share-study-title{display:flex;align-items:center;gap:8px;padding:4px 8px;color:var(--color-weak);font-size:12px;flex-shrink:0}
+.share-study-title span{flex:1}
+.share-study-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--color-background);border:1px solid var(--color-border);border-radius:16px;overflow:hidden;padding:8px}
+.share-study-stage>img{width:100%;height:100%;object-fit:contain}
+.share-study-participants{display:flex;gap:8px;flex-shrink:0;height:112px}
+.share-study-person{position:relative;flex:1;min-width:0;border-radius:12px;overflow:hidden;background:var(--color-background);border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;gap:12px}
+.share-study-person>img:not(.share-study-avatar):not(.call-icon){width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.share-study-person>span{position:absolute;bottom:8px;left:8px;font-size:12px;color:#fff;background:#0008;padding:3px 8px;border-radius:20px}
+.share-study-person.camera-off>span{color:var(--color-text);background:transparent}
+.share-study-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.share-study-self{display:flex;align-items:center;flex-direction:column;gap:16px;text-align:center;padding:24px;color:var(--color-text)}
+.share-study-self>svg{color:var(--color-primary)}.share-study-self strong{font-size:16px}.share-study-self p{color:var(--color-weak);font-size:13px;line-height:20px}.share-study-self .calls-primary{font-size:13px;min-height:40px}
+.share-study-controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.share-study-phone{height:100%;aspect-ratio:9/19;max-width:100%;background:var(--color-white);border:1px solid var(--color-border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;color:var(--color-text);font-size:10px}
+.share-phone-time{font-size:9px;text-align:center}.share-study-phone>strong{font-size:14px}.share-study-phone small{font-size:8px;color:var(--color-weak);display:block}.share-phone-task{display:flex;gap:6px;padding:10px 0;border-bottom:1px solid var(--color-border);line-height:14px}.share-phone-task>span{color:var(--color-primary)}.share-phone-tabs{margin-top:auto;color:var(--color-primary);font-size:8px;text-align:center}

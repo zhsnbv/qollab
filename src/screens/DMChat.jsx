@@ -393,7 +393,8 @@ export default function DMChat() {
           </>
         )}
         {!chat.kind && !chat.dismissed && (
-          <button className="cr-walkie cr-walkie--primary" aria-label="Позвонить" onClick={() => calls?.start({ name: chat.title, chatId: chatKey(chat), person: { name: chat.title, avatar: chat.avatar, initials: chat.initials || chat.title.slice(0, 2) } })}><CallIcon name="phone" size={20}/></button>
+          <><button className="cr-walkie cr-walkie--primary" aria-label="Видеозвонок" onClick={() => calls?.start({ video:true, name:chat.title, chatId:chatKey(chat), person:{name:chat.title,avatar:chat.avatar,initials:chat.initials||chat.title.slice(0,2)} })}><CallIcon name="videoOn" size={20} tinted/></button>
+          <button className="cr-walkie cr-walkie--primary" aria-label="Позвонить" onClick={() => calls?.start({ name: chat.title, chatId: chatKey(chat), person: { name: chat.title, avatar: chat.avatar, initials: chat.initials || chat.title.slice(0, 2) } })}><CallIcon name="phone" size={20}/></button></>
         )}
       </header>
 

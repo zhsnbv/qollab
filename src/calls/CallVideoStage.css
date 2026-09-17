@@ -1,0 +1,44 @@
+/* Figma 25589:139865 / 140023 / 140128. Frame 402 × 820. */
+.call-screen-video .call-header{align-items:center;gap:0}
+.call-video-heading{flex:1;min-width:0;text-align:center;padding:0 8px}
+.call-video-heading h1{font-size:15px;line-height:18px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+.call-video-heading>div{display:flex;justify-content:center;align-items:center;gap:8px;font-size:12px;line-height:15px;color:var(--color-weak);font-variant-numeric:tabular-nums}
+.call-video-heading .call-voice{transform:scale(.6);width:11px;height:15px}
+.call-header-spacer{width:40px;flex-shrink:0}
+.call-screen-video .call-dock{padding:16px 16px 40px;backdrop-filter:none}
+.call-video-stage{position:absolute;top:64px;bottom:146px;left:7px;right:8px;overflow:hidden;border-radius:16px;border:1px solid var(--color-border);background:color-mix(in srgb,var(--color-white) 85%,transparent);isolation:isolate}
+.call-video-stage>video{width:100%;height:100%;display:block;object-fit:cover;background:#242629}
+.call-video-stage.is-reconnecting>video{filter:brightness(.45)}
+.call-video-quality{position:absolute;top:11px;left:8px;right:8px;display:flex;justify-content:center;z-index:1}
+.call-video-quality .call-quality{position:static;font-size:12px;max-width:100%}
+.has-remote-video .call-quality-label{padding:4px 12px;border-radius:40px;background:#0008;color:#f0f0f0}
+.has-remote-video .call-status-chip{color:#fff;border-color:#ffffff80;text-shadow:0 1px 3px #000}
+.call-video-remote-off{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;padding-bottom:70px}
+.call-video-remote-off .call-hero{position:static;transform:none;width:calc(100% - 40px);gap:16px}
+.call-video-remote-off>.call-status-chip{margin-top:16px;max-width:calc(100% - 32px);font-size:12px}
+.call-self-tile{position:absolute;right:11px;bottom:11px;width:117px;height:163px;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px #00000018;background:var(--color-background);border:1px solid color-mix(in srgb,var(--color-border),transparent 40%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--color-text)}
+.call-self-tile>video,.call-self-image{width:100%;height:100%;object-fit:cover;display:block}
+.call-self-tile .is-mirrored{transform:scaleX(-1)}
+.call-self-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.call-self-tile strong{font-size:14px;line-height:20px;font-weight:600}
+.call-self-tile.camera-off>.call-icon{filter:brightness(0);opacity:.45}
+.call-self-label{position:absolute;bottom:8px;left:8px;font-size:11px;color:white;text-shadow:0 1px 4px #000;background:#0006;padding:2px 6px;border-radius:12px}
+.call-camera-flip{position:absolute;top:8px;right:8px;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;background:#0008;color:#fff}
+.call-camera-flip .call-icon{filter:brightness(0) invert(1)}
+.call-camera-flip:active{opacity:.6}.call-camera-flip:disabled{opacity:.35}
+.call-camera-switching{position:absolute;inset:0;display:grid;place-items:center;background:#0009;color:#fff;font-size:11px}
+.call-video-reconnect{position:absolute;top:45%;left:16px;right:16px;display:flex;justify-content:center;z-index:2;text-align:center}
+.call-video-remote-muted{position:absolute;top:48px;left:8px;right:8px;display:flex;justify-content:center}
+.call-screen-video .call-feedback-stack{bottom:154px;right:144px;left:16px;z-index:4}
+.call-screen-video .call-feedback-stack .call-notice{padding:10px;font-size:12px;flex-wrap:wrap;gap:4px}
+.call-screen-video .call-feedback-stack .call-notice button{padding:4px 8px}
+.call-screen-video .call-control[aria-pressed=true] .call-icon{filter:brightness(0) invert(1)}
+[data-theme=dark] .call-self-tile.camera-off>.call-icon{filter:brightness(0) invert(1)}
+[data-theme=dark] .call-screen-video .call-control[aria-pressed=true] .call-icon{filter:brightness(0)}
+@media(max-height:620px){.device:not(.gal-device) .call-video-stage{bottom:118px}.device:not(.gal-device) .call-screen-video .call-dock{padding-bottom:16px}.device:not(.gal-device) .call-self-tile{width:90px;height:126px}.device:not(.gal-device) .call-video-remote-off .call-hero>.call-avatar{width:80px;height:80px}.device:not(.gal-device) .call-video-remote-off{padding-bottom:0}.device:not(.gal-device) .call-video-remote-off .call-status{display:none}}
+
+.call-rear-preview{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--color-background);color:var(--color-weak);font-size:11px}
+.call-rear-preview+.call-self-label{display:none}
+.gal-device .call-screen-video .call-dock{padding:16px 16px 40px}
+.call-self-tile.camera-off{background:var(--call-preview-bg);color:var(--call-preview-text);border-color:#ffffff40}
+.call-self-tile.camera-off>.call-icon{filter:brightness(0) invert(1);opacity:.5}

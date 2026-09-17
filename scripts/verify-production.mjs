@@ -9,9 +9,11 @@ for(const path of assetPaths){
  const digest=buffer=>createHash('sha256').update(buffer).digest('hex');
  assert.equal(digest(Buffer.from(await remote.arrayBuffer())),digest(await readFile('dist'+path)),`Asset differs: ${path}`);
 }
-for(const path of ['/calls/one-to-one','/all?group=calls','/chats','/storybook/','/handoff/call-waves/demo.html','/img/calls/shared-release-plan.svg','/handoff/qollab-call-waves.zip']){
+for(const path of ['/calls/one-to-one','/all?group=calls','/chats','/storybook/','/handoff/call-waves/demo.html','/img/calls/shared-release-plan.svg','/handoff/qollab-call-waves.zip','/media/calls/colleague.mp4','/img/calls/icons/video-on.svg','/img/calls/icons/camera-rotate.svg','/img/calls/self-camera.png']){
  const response=await fetch(base+path);assert.equal(response.status,200,path);
  const type=response.headers.get('content-type');
+ if(path.endsWith('.mp4'))assert.match(type,/video\/mp4/);
+ if(path.endsWith('.png'))assert.match(type,/image\/png/);
  if(path.endsWith('.zip'))assert.match(type,/zip|octet-stream/);
  if(path.endsWith('.svg'))assert.match(type,/svg/);
  if(path.startsWith('/all')){const html=await response.text();for(const asset of assetPaths)assert.ok(html.includes(asset));}

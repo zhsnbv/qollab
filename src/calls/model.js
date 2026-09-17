@@ -5,13 +5,13 @@ export const people = [
 export const labels = { connecting: 'Подключение', ringing: 'Вызов', incoming: 'Входящий звонок', active: 'Идёт звонок', reconnecting: 'Восстанавливаем соединение', busy: 'Линия занята', declined: 'Вызов отклонён', unanswered: 'Нет ответа', unavailable:'Абонент недоступен', failed: 'Не удалось подключиться', ended: 'Звонок завершён', canceled:'Вызов отменён', elsewhere:'Ответили на другом устройстве' };
 export const terminal = ['busy','declined','unanswered','failed','ended','canceled','elsewhere','unavailable'];
 export const duration = n => `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`;
-export function makeCall({video=false,status='connecting',name,chatId,person:provided,...rest}={}) {
+export function makeCall({video=false,status='connecting',name,chatId,person:provided,remoteVideo=false,facingMode='user',...rest}={}) {
   const person=provided||people.find(p=>p.name===name)||(name?{name,initials:name.split(' ').slice(0,2).map(s=>s[0]).join('')}:people[0]);
-  return {createdAt:Date.now(),...rest,person,id:crypto.randomUUID(),kind:'personal',name:name||person.name,chatId:chatId||person.id||name||'arman',status,video,muted:false,seconds:0,minimized:false,route:'Динамик',sharing:false,direction:rest.direction||(status==='incoming'?'incoming':'outgoing'),media:video?'video':'audio'};
+  return {createdAt:Date.now(),...rest,person,id:crypto.randomUUID(),kind:'personal',name:name||person.name,chatId:chatId||person.id||name||'arman',status,video,remoteVideo,facingMode,muted:false,seconds:0,minimized:false,route:'Динамик',sharing:false,direction:rest.direction||(status==='incoming'?'incoming':'outgoing'),media:video?'video':'audio'};
 }
 export function transition(call,status) {
   if(!call||terminal.includes(call.status))return call;
-  return {...call,status,...(status==='reconnecting'?{reconnectDeadline:call.reconnectDeadline||Date.now()+15000}:status==='active'?{reconnectDeadline:null}:{}),...(terminal.includes(status)?{sharing:false,remoteSharing:false,video:false,minimized:false}:{}),...(status==='active'&&!call.connectedAt?{connectedAt:Date.now()}:{} )};
+  return {...call,status,...(status==='reconnecting'?{reconnectDeadline:call.reconnectDeadline||Date.now()+15000}:status==='active'?{reconnectDeadline:null}:{}),...(terminal.includes(status)?{sharing:false,remoteSharing:false,video:false,remoteVideo:false,minimized:false}:{}),...(status==='active'&&!call.connectedAt?{connectedAt:Date.now()}:{} )};
 }
 
 export const chatKey = chat => chat.profileId || chat.id || chat.title || chat.name;

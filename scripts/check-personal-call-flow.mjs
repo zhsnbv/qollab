@@ -15,7 +15,7 @@ try{
  assert.equal(await page.$eval('.call-identity h1',e=>e.textContent),colleagueName);
  await click('Микрофон');assert.equal(await page.$eval('[aria-label="Микрофон"]',e=>e.getAttribute('aria-pressed')),'true');await click('Микрофон');
  await click('Динамик');await click('Телефон');assert.ok(await page.$('.call-control[aria-label="Телефон"]'));
- await click('Видео');await click('Включить камеру');assert.equal(await page.$eval('[aria-label="Видео"]',e=>e.getAttribute('aria-pressed')),'true');assert.ok(await page.$('.call-gallery-camera'));await click('Видео');assert.equal(await page.$('.call-gallery-camera'),null);
+ await click('Видео');await click('Включить камеру');assert.equal(await page.$eval('[aria-label="Видео"]',e=>e.getAttribute('aria-pressed')),'true');assert.ok(await page.$('.call-self-tile.camera-on'));await click('Видео');assert.ok(await page.$('.call-self-tile.camera-off'));
  await click('Еще');await click('Показать экран');await click('Продолжить');assert.ok(await page.$('.call-share-notice'));await click('Остановить');assert.equal(await page.$('.call-share-notice'),null);
  await click('Свернуть звонок');await page.waitForSelector('.call-puck');await pause(400);await page.focus('.call-puck');await page.keyboard.press('Enter');await page.waitForSelector('.call-screen[data-status="active"]');await pause(450);
  await click('Завершить');await page.waitForSelector('.call-screen[data-status="ended"]');await page.waitForFunction(()=>!document.querySelector('.call-screen'));

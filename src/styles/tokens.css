@@ -14,6 +14,9 @@
   --color-light: #cccccc;
   --color-success: #00b578;
   --color-danger: #f04438;
+  /* Camera-off tile is a media surface in both themes (Figma video calls). */
+  --call-preview-bg: #3d3d3b;
+  --call-preview-text: #ffffff;
   /* Текст выключенного элемента (строки мини-аппов). Токеном, а не хардкодом:
      rgba(0,0,0,.25) в тёмной теме сливается с фоном в ноль. */
   --color-disabled: rgba(0, 0, 0, 0.25);

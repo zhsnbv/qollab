@@ -193,7 +193,7 @@ export default function App() {
 }
 
 function PersonalCallFlow(){
- const [host,setHost]=useState(null),person=getPerson('ayazhan');
+ const [host,setHost]=useState(null),person=getPerson('arman-call');
  const [entry]=useState(()=>({pathname:'/chats/dm',state:{chat:{profileId:person.id,title:person.name,avatar:person.avatar,initials:person.initials,online:true,preview:'Привет! Давай созвонимся, обсудим макеты.',time:'10:16'}}}));
  return <div className="device" ref={setHost}>{host&&<DeviceHost.Provider value={host}><MemoryRouter initialEntries={[entry]}><CallsProvider mediaMode="scenario"><div className="app-reveal app-reveal--in"><AppRoutes/></div></CallsProvider></MemoryRouter></DeviceHost.Provider>}</div>;
 }

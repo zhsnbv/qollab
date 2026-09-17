@@ -477,3 +477,5 @@ html.kb .cr-compose { bottom: 54px; }
   transition: opacity 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .cr-prompt:active { opacity: 0.6; }
+
+.cr-headline .cr-subtitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

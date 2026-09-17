@@ -6,7 +6,7 @@ const browser=await puppeteer.launch({executablePath:'/Applications/Google Chrom
 try{
  const page=await browser.newPage();await page.setViewport({width:1320,height:1100,deviceScaleFactor:1});const errors=[];page.on('pageerror',e=>errors.push(e.message));const pause=ms=>new Promise(r=>setTimeout(r,ms));
  await page.goto('http://127.0.0.1:5173/all?group=calls');await page.waitForSelector('.gal-cell .call-screen');
- assert.equal(await page.$$eval('.gal-cell',e=>e.length),49);
+ assert.equal(await page.$$eval('.gal-cell',e=>e.length),64);
  assert.ok(await page.$$eval('.gal-device',els=>els.every(e=>e.clientWidth===402&&e.clientHeight===820&&e.getBoundingClientRect().width===402)));
  const capture=async id=>{await page.$eval(`[data-case="${id}"]`,e=>e.scrollIntoView({block:'center'}));await pause(1150);const el=await page.$(`[data-case="${id}"] .gal-device`);await el.screenshot({path:`/tmp/qollab-call-handoff/${id}.png`});};
  for(const id of ['call-incoming','call-incoming-locked','call-reconnecting','call-busy','call-mic-denied','call-bubbles','call-wave-lite'])await capture(id);
@@ -26,5 +26,5 @@ try{
  await page.evaluate(()=>sessionStorage.setItem('qollab-authed','1'));await page.goto('http://127.0.0.1:5173/chats');await page.waitForSelector('.chat-row');await page.evaluate(()=>[...document.querySelectorAll('.chat-row')].find(e=>e.textContent.includes('Аяжан')).click());await pause(1000);
  await page.evaluate(()=>document.querySelector('.cr-headline').click());await pause(600);
  await browser.defaultBrowserContext().overridePermissions('http://127.0.0.1:5173',[]);await click('Звонок');await pause(400);assert.ok(await page.$('.call-sheet'));assert.match(await page.$eval('.call-sheet',e=>e.textContent),/Нужен доступ к микрофону/);await click('Открыть настройки');assert.match(await page.$eval('.call-sheet',e=>e.textContent),/настройки Qollab/);await click('Не сейчас');await browser.defaultBrowserContext().overridePermissions('http://127.0.0.1:5173',['microphone']);await click('Звонок');await page.waitForSelector('.call-screen');await pause(3900);await click('Завершить');await pause(2450);await click('Написать');await pause(1100);assert.ok(await page.$('.call-bubble'));
- assert.deepEqual(errors,[]);console.log('PASS: 49 call cases, all frames 402x820, isolated frozen state, disabled dock, scoped sheets, bubble alignment/outcomes, lite waves, refresh recovery, profile call permission preflight');
+ assert.deepEqual(errors,[]);console.log('PASS: 64 call cases, all frames 402x820, isolated frozen state, disabled dock, scoped sheets, bubble alignment/outcomes, lite waves, refresh recovery, profile call permission preflight');
 }finally{await browser.close();}

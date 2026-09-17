@@ -11,6 +11,7 @@ import { pushScrim, popScrim } from '../utils/scrim';
 import CallPuck from './CallPuck';
 import Icon from './CallIcon';
 import CallSharedScreen from './CallSharedScreen';
+import CallVideoStage, {VideoCallHeading} from './CallVideoStage';
 import {TimeRow} from '../components/Message';
 import { people,labels,terminal,duration,makeCall,transition,restoreCall,callOutcome,callFailure,groupCallHistory } from './model';
 import './Calls.css';
@@ -56,7 +57,7 @@ function CallFailureDialog({call,onClose,onMessage}) {
  return <Portal><div className="call-failure-dialog" ref={ref}><ConfirmDialog {...failure} confirmLabel="Написать в чат" cancelLabel="Понятно" onConfirm={onMessage} onCancel={onClose}/></div></Portal>;
 }
 function StreamVideo({stream}){const ref=useRef(null);useEffect(()=>{if(ref.current)ref.current.srcObject=stream;},[stream]);return <video ref={ref} autoPlay muted playsInline/>;}
-export function CallsProvider({children,showcase=false,fixture={},animateWaves=true,permissionAdapter,remoteScreen,mediaMode='device'}) {
+export function CallsProvider({children,showcase=false,fixture={},animateWaves=true,permissionAdapter,remoteScreen,remoteCamera,mediaMode='device'}) {
   const liveKey=mediaMode==='scenario'?'qollab-flow-live-call':'qollab-live-call',historyKey=mediaMode==='scenario'?'qollab-flow-call-history':'qollab-personal-calls';
   const [scenarioMicReady,setScenarioMicReady]=useState(()=>mediaMode==='scenario'&&sessionStorage.getItem('qollab-flow-mic')==='1');
   const host=useContext(DeviceHost),navigate=useNavigate();
@@ -67,7 +68,8 @@ export function CallsProvider({children,showcase=false,fixture={},animateWaves=t
   const [settingsHelp,setSettingsHelp]=useState(fixture.settingsHelp||false),[cameraDenied,setCameraDenied]=useState(fixture.cameraDenied||false);
   const [failureCall,setFailureCall]=useState(fixture.failureCall||null);
   const current=useRef(call);current.current=call;
-  const permissionRequest=useRef(0);
+  const permissionRequest=useRef(0),cameraRequest=useRef(0),cameraBusy=useRef(false);
+  const [flipping,setFlipping]=useState(false);
   const puckPosition=useRef(null);
   const [motion,setMotion]=useState('enter');
   const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -75,10 +77,10 @@ export function CallsProvider({children,showcase=false,fixture={},animateWaves=t
   const media=useRef({camera:null,screen:null,microphone:null}),archived=useRef(new Set(history.map(c=>c.id)));
   const review=!showcase&&new URLSearchParams(window.location.search).has('review');
   const patch=change=>setCall(c=>c&&!terminal.includes(c.status)?{...c,...change}:c);
-  const stop=type=>{media.current[type]?.getTracks().forEach(t=>t.stop());media.current[type]=null;if(type==='camera')setCamera(null);else if(type==='screen')setScreen(null);};
+  const stop=type=>{if(type==='camera')cameraRequest.current++;media.current[type]?.getTracks().forEach(t=>t.stop());media.current[type]=null;if(type==='camera')setCamera(null);else if(type==='screen')setScreen(null);};
   const archive=c=>{if(!c||!terminal.includes(c.status)||archived.current.has(c.id))return;archived.current.add(c.id);setHistory(h=>[{...c,finishedAt:Date.now(),time:new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'})},...h].slice(0,100));};
   const finish=(status)=>{archive(transition(current.current,status||(current.current?.connectedAt?'ended':current.current?.status==='incoming'?'declined':'canceled')));stop('camera');stop('screen');stop('microphone');setSheet(null);setIssue('');setCall(c=>transition(c,status||(c?.connectedAt?'ended':c?.status==='incoming'?'declined':'canceled')));};
-  const begin=(options={})=>{if(options.kind==='group')return; if(current.current&&!terminal.includes(current.current.status)){if(current.current.chatId===options.chatId&&options.chatId){setMotion('enter');patch({minimized:false});return;}setPending(options);return;}setFailureCall(null);puckPosition.current=null;setMotion('enter');setIssue('');setSheet(options.video&&options.status!=='incoming'?'camera':null);setCall(makeCall(options));};
+  const begin=(options={})=>{if(options.kind==='group')return; if(current.current&&!terminal.includes(current.current.status)){if(current.current.chatId===options.chatId&&options.chatId){setMotion('enter');patch({minimized:false});return;}setPending(options);return;}setFailureCall(null);puckPosition.current=null;setMotion('enter');setIssue('');setSheet(options.video&&options.status!=='incoming'?'camera':null);setCameraDenied(false);setFlipping(false);cameraBusy.current=false;setCall({...makeCall(options),video:false,remoteVideo:!!options.video});};
   const start=async(options={})=>{
     if(showcase)return;
     if(current.current&&!terminal.includes(current.current.status)){begin(options);return;}
@@ -165,17 +167,29 @@ export function CallsProvider({children,showcase=false,fixture={},animateWaves=t
     return()=>clearTimeout(timer);
   },[callId,callStatus,call?.restored,showcase]);
   const requestMedia=async type=>{
-    if(mediaMode==='scenario'){patch(type==='camera'?{video:true,media:'video'}:{sharing:true});setSheet(null);setIssue('');return;}
-    const id=current.current?.id;setBusyMedia(true);
+    if(mediaMode==='scenario'||showcase){patch(type==='camera'?{video:true,media:'video',remoteVideo:current.current.media==='video'?current.current.remoteVideo:true}:{sharing:true});setSheet(null);setIssue('');return;}
+    const id=current.current?.id,request=type==='camera'?++cameraRequest.current:null;setBusyMedia(true);
     try {
       if(type==='screen'&&!navigator.mediaDevices?.getDisplayMedia)throw new Error('unsupported');
-      const stream=type==='camera'?await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false}):await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});
-      if(current.current?.id!==id||terminal.includes(current.current.status)){stream.getTracks().forEach(t=>t.stop());return;}
-      media.current[type]=stream;(type==='camera'?setCamera:setScreen)(stream);
+      const stream=type==='camera'?await navigator.mediaDevices.getUserMedia({video:{facingMode:current.current?.facingMode||'user'},audio:false}):await navigator.mediaDevices.getDisplayMedia({video:true,audio:false});
+      if(current.current?.id!==id||terminal.includes(current.current.status)||(type==='camera'&&request!==cameraRequest.current)){stream.getTracks().forEach(t=>t.stop());return;}
+      media.current[type]?.getTracks().forEach(t=>t.stop());media.current[type]=stream;(type==='camera'?setCamera:setScreen)(stream);
       patch(type==='camera'?{video:true,media:'video'}:{sharing:true});setSheet(null);setIssue('');
-      stream.getVideoTracks()[0].onended=()=>{if(current.current?.id!==id)return;stop(type);patch(type==='camera'?{video:false}:{sharing:false});};
-    } catch(e){if(e.name!=='AbortError'){if(type==='camera'&&['NotAllowedError','SecurityError'].includes(e.name)){setCameraDenied(true);setSheet('camera');}else{setIssue(type==='camera'?'camera-denied':e.message==='unsupported'?'share-unsupported':'share-denied');setSheet(null);}}}
+      stream.getVideoTracks()[0].onended=()=>{if(current.current?.id!==id||media.current[type]!==stream)return;stop(type);patch(type==='camera'?{video:false}:{sharing:false});};
+    } catch(e){if(current.current?.id!==id||terminal.includes(current.current.status)||(type==='camera'&&request!==cameraRequest.current))return;if(e.name!=='AbortError'){if(type==='camera'&&['NotAllowedError','SecurityError'].includes(e.name)){setCameraDenied(true);setSheet('camera');}else{setIssue(type==='camera'?'camera-denied':e.message==='unsupported'?'share-unsupported':'share-denied');setSheet(null);}}}
     finally{setBusyMedia(false);}
+  };
+  const flipCamera=async()=>{
+    if(cameraBusy.current||!current.current?.video)return;
+    const id=current.current.id,previous=current.current.facingMode||'user',next=previous==='user'?'environment':'user';
+    if(mediaMode==='scenario'||showcase){patch({facingMode:next});return;}
+    cameraBusy.current=true;setFlipping(true);setIssue('');
+    stop('camera');const request=++cameraRequest.current;
+    const valid=()=>current.current?.id===id&&!terminal.includes(current.current.status)&&cameraRequest.current===request;
+    const attach=stream=>{if(!valid()){stream.getTracks().forEach(t=>t.stop());return false;}media.current.camera=stream;setCamera(stream);stream.getVideoTracks()[0].onended=()=>{if(media.current.camera!==stream)return;stop('camera');patch({video:false});setIssue('camera-denied');};return true;};
+    try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:next}},audio:false});if(attach(stream))patch({facingMode:next});}
+    catch{if(valid()){try{const restored=await navigator.mediaDevices.getUserMedia({video:{facingMode:previous},audio:false});if(attach(restored))setIssue('camera-switch');}catch{if(valid()){patch({video:false});setIssue('camera-denied');}}}}
+    finally{cameraBusy.current=false;setFlipping(false);}
   };
   useEffect(()=>{if(showcase)return;const background=(host||document).querySelector('.app-reveal');if(background)background.inert=hasCall&&!minimized;return()=>{if(background)background.inert=false;};},[hasCall,minimized,showcase,host]);
   const scenario=id=>{
@@ -187,29 +201,32 @@ export function CallsProvider({children,showcase=false,fixture={},animateWaves=t
     if(id==='mic-denied'){patch({muted:true,micDenied:true});setIssue(id);return;}
     if(id==='camera-denied'){stop('camera');patch({video:false});setIssue(id);return;}
     if(id==='interruption'){stop('camera');stop('screen');patch({muted:true,video:false,sharing:false});}
+    if(id==='remote-camera'){patch({media:'video',remoteVideo:!current.current.remoteVideo});return;}
     if(id==='remote-muted'){patch({remoteMuted:true});return;}
     if(id==='remote-share'){patch({remoteSharing:true,remoteShareImage:'/img/calls/shared-release-plan.svg'});return;}
     if(id==='bluetooth'){patch({route:'Телефон'});setIssue(id);return;}
     setIssue(id);
   };
   const context={call,history,start,finish,patch,showcase};
-  const answerPending=()=>{const next=pending;finish();setPending(null);setMotion('enter');setCall({...makeCall({...next,status:next.status==='incoming'?'active':'connecting',...(next.status==='incoming'?{connectedAt:Date.now(),direction:'incoming'}:{})}),video:false});if(next.video)setSheet('camera');};
+  const answerPending=()=>{const next=pending;finish();setPending(null);setMotion('enter');setCall({...makeCall({...next,status:next.status==='incoming'?'active':'connecting',...(next.status==='incoming'?{connectedAt:Date.now(),direction:'incoming'}:{})}),video:false,remoteVideo:!!next.video});if(next.video)setSheet('camera');};
   const declinePending=()=>{if(pending.status==='incoming')archive(transition(makeCall(pending),'declined'));setPending(null);};
   const c=call,ended=c&&terminal.includes(c.status);
-  const cameraActive=Boolean(camera)||(mediaMode==='scenario'&&c?.video);
-  const notices={'mic-denied':'Нет доступа к микрофону. Вы можете слушать собеседника.','camera-denied':'Камера недоступна. Аудиозвонок продолжается. Разрешите доступ в настройках приложения.','share-denied':'Демонстрация не началась. Попробуйте снова и выберите экран.','share-unsupported':'На этом устройстве демонстрация экрана недоступна. Звонок продолжается.','network':'Слабое соединение. Выключите видео, чтобы улучшить звук.','interruption':'Звонок прерван системой. Микрофон и камера выключены. Включите их, когда будете готовы.','bluetooth':'Наушники отключены. Звук переключён на телефон.'};
+  const cameraActive=Boolean(camera)||((mediaMode==='scenario'||showcase)&&c?.video);
+  const videoLayout=c&&c.media==='video'&&['active','reconnecting'].includes(c.status)&&!c.remoteSharing;
+  const notices={'camera-switch':'Эта камера недоступна. Продолжаем с прежней камерой.','mic-denied':'Нет доступа к микрофону. Вы можете слушать собеседника.','camera-denied':'Камера недоступна. Аудиозвонок продолжается. Разрешите доступ в настройках приложения.','share-denied':'Демонстрация не началась. Попробуйте снова и выберите экран.','share-unsupported':'На этом устройстве демонстрация экрана недоступна. Звонок продолжается.','network':'Слабое соединение. Выключите видео, чтобы улучшить звук.','interruption':'Звонок прерван системой. Микрофон и камера выключены. Включите их, когда будете готовы.','bluetooth':'Наушники отключены. Звук переключён на телефон.'};
+  const hero=c&&(<div className="call-hero"><Avatar person={c.person}/><div className="call-identity"><h1>{ended?labels[c.status]:c.name}</h1>{(!ended||c.connectedAt)&&<div className="call-status" role="status">{c.status==='active'&&!c.remoteMuted&&<span className="call-voice" aria-hidden="true"><i/><i/><i/><i/></span>}{['connecting','ringing','reconnecting'].includes(c.status)&&<span className="call-dots" aria-hidden="true"><i/><i/><i/></span>}<span>{ended?duration(c.seconds):c.status==='active'?duration(c.seconds):c.status==='incoming'?(c.media==='video'?'Входящий видеозвонок':'Входящий аудиозвонок'):labels[c.status]}</span></div>}{c.remoteMuted&&!ended&&<div className="call-caption"><span className="call-status-chip"><MicrophoneSlash size={16}/><span>Микрофон собеседника выключен</span></span></div>}</div></div>);
   return <Context.Provider value={context}>{children}
-    {c&&<Portal>{c.minimized&&!ended?<CallPuck positionRef={puckPosition} call={c} onOpen={expand} icon={<Icon name="badge" size={13.333}/>}/>:<section key={c.id} className={`call-screen ${motion==='close'||motion==='minimize'?'call-screen-exit':''} ${c.status==='incoming'?'call-screen-incoming':''} ${c.locked?'call-screen-locked':''} ${c.remoteSharing&&!ended?'call-screen-remote-share':''}`} role="dialog" aria-label={`Звонок: ${c.name}`} data-status={c.status} inert={pending?.status==='incoming'?true:undefined} aria-hidden={pending?.status==='incoming'?true:undefined}>
+    {c&&<Portal>{c.minimized&&!ended?<CallPuck positionRef={puckPosition} call={c} onOpen={expand} icon={<Icon name="badge" size={13.333}/>}/>:<section key={c.id} className={`call-screen ${motion==='close'||motion==='minimize'?'call-screen-exit':''} ${c.status==='incoming'?'call-screen-incoming':''} ${c.locked?'call-screen-locked':''} ${c.remoteSharing&&!ended?'call-screen-remote-share':''} ${videoLayout?'call-screen-video':''}`} role="dialog" aria-label={`Звонок: ${c.name}`} data-status={c.status} inert={pending?.status==='incoming'?true:undefined} aria-hidden={pending?.status==='incoming'?true:undefined}>
       {c.locked&&<div className="call-lock-label">qollab · входящий звонок</div>}
       <CallWave status={c.status} quality={fixture.waveQuality||'auto'} paused={showcase&&!animateWaves}/>
-      <header className="call-header"><button aria-label={ended?'Закрыть звонок':'Свернуть звонок'} onClick={ended?close:minimize}><Icon name="down"/></button>{review&&<button className="call-review-open" aria-label="Сценарии звонка" onClick={()=>setSheet('scenarios')}><Icon name="more" size={20}/></button>}</header>
-      <div className="call-hero"><Avatar person={c.person}/><div className="call-identity"><h1>{ended?labels[c.status]:c.name}</h1>{(!ended||c.connectedAt)&&<div className="call-status" role="status">{c.status==='active'&&!c.remoteMuted&&<span className="call-voice" aria-hidden="true"><i/><i/><i/><i/></span>}{['connecting','ringing','reconnecting'].includes(c.status)&&<span className="call-dots" aria-hidden="true"><i/><i/><i/></span>}<span>{ended?duration(c.seconds):c.status==='active'?duration(c.seconds):c.status==='incoming'?(c.media==='video'?'Входящий видеозвонок':'Входящий аудиозвонок'):labels[c.status]}</span></div>}{c.remoteMuted&&!ended&&<div className="call-caption"><span className="call-status-chip"><MicrophoneSlash size={16}/><span>Микрофон собеседника выключен</span></span></div>}{c.video&&c.status==='active'&&<div className="call-caption"><span className="call-status-chip"><Icon name="video" size={16}/><span>Камера собеседника выключена</span></span></div>}</div></div>
-      {['active','reconnecting'].includes(c.status)&&<CallQuality level={c.status==='reconnecting'?'poor':c.quality||'good'} side={c.qualitySide||'local'}/>}
+      <header className="call-header"><button aria-label={ended?'Закрыть звонок':'Свернуть звонок'} onClick={ended?close:minimize}><Icon name="down"/></button>{videoLayout&&<VideoCallHeading call={c}/>} {videoLayout&&!review&&<span className="call-header-spacer"/>}{review&&<button className="call-review-open" aria-label="Сценарии звонка" onClick={()=>setSheet('scenarios')}><Icon name="more" size={20}/></button>}</header>
+      {videoLayout?<CallVideoStage call={c} localStream={camera} remoteStream={remoteCamera} localActive={cameraActive} onFlip={flipCamera} flipping={flipping} quality={<CallQuality level={c.status==='reconnecting'?'poor':c.quality||'good'} side={c.qualitySide||'local'}/>} hero={hero} paused={Boolean(pending?.status==='incoming')}/>:hero}
+      {!videoLayout&&['active','reconnecting'].includes(c.status)&&<CallQuality level={c.status==='reconnecting'?'poor':c.quality||'good'} side={c.qualitySide||'local'}/>}
       {c.remoteSharing&&!ended&&<CallSharedScreen call={c} stream={remoteScreen}/> }
-      {(showcase||mediaMode==='scenario')&&c.video&&c.status==='active'&&<div className="call-gallery-camera"><VideoCamera size={24}/><span>Вы</span></div>}
-      {camera&&!ended&&<div className="call-camera-preview"><StreamVideo stream={camera}/><span>Вы</span></div>}
+      {!videoLayout&&(showcase||mediaMode==='scenario')&&c.video&&c.status==='active'&&<div className="call-gallery-camera"><VideoCamera size={24}/><span>Вы</span></div>}
+      {!videoLayout&&camera&&!ended&&<div className="call-camera-preview"><StreamVideo stream={camera}/><span>Вы</span></div>}
       {!ended&&(c.sharing||screen||issue)&&<div className="call-feedback-stack">{(c.sharing||screen)&&<div className="call-notice call-share-notice" role="status"><MonitorArrowUp size={20}/><p>Вы показываете экран</p><button onClick={()=>{stop('screen');patch({sharing:false});}}>Остановить</button></div>}{issue&&<div className="call-notice" role="status"><p>{notices[issue]}</p><button onClick={()=>setIssue('')}>Понятно</button></div>}</div>}
-      {c.status==='incoming'?<footer className="call-incoming"><div className="call-incoming-actions"><button className="call-answer call-answer-decline" onClick={()=>finish('declined')}><span><Icon name="end" size={28}/></span><b>Отклонить</b></button><button className="call-answer call-answer-accept" onClick={()=>{patch({video:false});setCall(x=>transition(x,'active'));if(c.media==='video')setSheet('camera');}}><span>{c.media==='video'?<VideoCamera size={28} weight="fill"/>:<Icon name="phone" size={28}/>}</span><b>Принять</b></button></div></footer>:<footer className={`call-dock ${ended?'call-dock-disabled':''}`}><fieldset disabled={ended}><Control icon={<Icon name="speaker"/>} label={c.route} onClick={()=>setSheet('route')}/><Control icon={cameraActive?<VideoCamera size={24} weight="fill"/>:<Icon name="video"/>} label="Видео" pressed={cameraActive} onClick={()=>cameraActive?(stop('camera'),patch({video:false})):setSheet('camera')}/><Control icon={c.muted?<MicrophoneSlash size={24} weight="fill"/>:<Icon name="mic"/>} label="Микрофон" pressed={c.muted} onClick={()=>c.micDenied?setIssue('mic-denied'):patch({muted:!c.muted})}/><Control icon={<Icon name="more" size={20}/>} label="Еще" onClick={()=>setSheet('more')}/><Control icon={<Icon name="end"/>} label="Завершить" onClick={()=>finish()}/></fieldset></footer>}
+      {c.status==='incoming'?<footer className="call-incoming"><div className="call-incoming-actions"><button className="call-answer call-answer-decline" onClick={()=>finish('declined')}><span><Icon name="end" size={28}/></span><b>Отклонить</b></button><button className="call-answer call-answer-accept" onClick={()=>{patch({video:false,remoteVideo:c.media==='video'});setCall(x=>transition(x,'active'));if(c.media==='video')setSheet('camera');}}><span>{c.media==='video'?<VideoCamera size={28} weight="fill"/>:<Icon name="phone" size={28}/>}</span><b>Принять</b></button></div></footer>:<footer className={`call-dock ${ended?'call-dock-disabled':''}`}><fieldset disabled={ended}><Control icon={<Icon name="speaker"/>} label={c.route} onClick={()=>setSheet('route')}/><Control icon={cameraActive?<Icon name="videoOn" size={24}/>:<Icon name="video"/>} label="Видео" disabled={busyMedia||flipping} pressed={cameraActive} onClick={()=>cameraActive?(stop('camera'),patch({video:false})):setSheet('camera')}/><Control icon={c.muted?<MicrophoneSlash size={24} weight="fill"/>:<Icon name="mic"/>} label="Микрофон" pressed={c.muted} onClick={()=>c.micDenied?setIssue('mic-denied'):patch({muted:!c.muted})}/><Control icon={<Icon name="more" size={20}/>} label="Еще" onClick={()=>setSheet('more')}/><Control icon={<Icon name="end"/>} label="Завершить" onClick={()=>finish()}/></fieldset></footer>}
     </section>}</Portal>}
     {micRequest&&sheet==='mic'&&<PermissionSheet title="Нужен доступ к микрофону" icon={<Icon name="mic" size={32} tinted/>} onClose={dismissMic} busy={busyMedia} onPrimary={micDenied&&!settingsHelp?openSettings:allowMicrophone} primaryLabel={busyMedia?'Подключаем микрофон…':settingsHelp?'Проверить доступ':micDenied?'Открыть настройки':'Разрешить доступ'}><p>{settingsHelp?'Откройте настройки Qollab на устройстве и разрешите доступ к микрофону. Затем вернитесь к звонку.':micDenied?'Доступ к микрофону выключен. Разрешите его в настройках, чтобы собеседник мог вас слышать.':'Микрофон нужен, чтобы собеседник слышал вас во время звонка.'}</p></PermissionSheet>}
     {c&&sheet==='route'&&<Sheet title="Источник звука" onClose={()=>setSheet(null)}>{['Телефон','Динамик'].map(r=><Row key={r} icon={r==='Динамик'?<Icon name="speaker" size={20} tinted/>:<Icon name="phone" size={20} tinted/>} selected={c.route===r} onClick={()=>{patch({route:r});setSheet(null);}}>{r}</Row>)}</Sheet>}
@@ -218,7 +235,7 @@ export function CallsProvider({children,showcase=false,fixture={},animateWaves=t
     {c&&sheet==='share'&&<PermissionSheet title="Демонстрация экрана" icon={<MonitorArrowUp size={32}/>} onClose={()=>setSheet(null)} busy={busyMedia} onPrimary={()=>requestMedia('screen')} primaryLabel={busyMedia?'Подключаем экран…':'Продолжить'}><p>Собеседник увидит ваш экран. На следующем шаге подтвердите демонстрацию в системном окне. Уведомления тоже могут быть видны.</p></PermissionSheet>}
     {pending?.status==='incoming'&&<SecondIncoming pending={pending} current={c} onDecline={declinePending} onAnswer={answerPending} paused={showcase&&!animateWaves}/>}
     {pending&&pending.status!=='incoming'&&<Sheet title="Вы уже в звонке" onClose={()=>setPending(null)}><div className="call-sheet-body"><p>Чтобы позвонить {pending.name||people[0].name}, завершите текущий разговор.</p><button className="calls-primary" onClick={answerPending}>Завершить и позвонить</button><button className="calls-secondary" onClick={()=>setPending(null)}>Продолжить текущий</button></div></Sheet>}
-    {c&&sheet==='scenarios'&&<Sheet title="Проверка состояний · 1 на 1" onClose={()=>setSheet(null)}><div className="call-scenarios">{Object.entries(labels).filter(([id])=>id!=='canceled').map(([id,label])=><button key={id} disabled={ended} onClick={()=>scenario(id)}>{label}</button>)}{[['second','Второй входящий'],['network','Слабая сеть у вас'],['remote-network','Слабая сеть у собеседника'],['mic-denied','Нет доступа к микрофону'],['camera-denied','Нет доступа к камере'],['interruption','Системное прерывание'],['remote-muted','Собеседник выключил микрофон'],['remote-share','Собеседник показывает экран'],['bluetooth','Наушники отключились']].map(([id,label])=><button key={id} disabled={ended} onClick={()=>scenario(id)}>{label}</button>)}</div></Sheet>}
+    {c&&sheet==='scenarios'&&<Sheet title="Проверка состояний · 1 на 1" onClose={()=>setSheet(null)}><div className="call-scenarios">{Object.entries(labels).filter(([id])=>id!=='canceled').map(([id,label])=><button key={id} disabled={ended} onClick={()=>scenario(id)}>{label}</button>)}{[['remote-camera','Камера собеседника · вкл / выкл'],['second','Второй входящий'],['network','Слабая сеть у вас'],['remote-network','Слабая сеть у собеседника'],['mic-denied','Нет доступа к микрофону'],['camera-denied','Нет доступа к камере'],['interruption','Системное прерывание'],['remote-muted','Собеседник выключил микрофон'],['remote-share','Собеседник показывает экран'],['bluetooth','Наушники отключились']].map(([id,label])=><button key={id} disabled={ended} onClick={()=>scenario(id)}>{label}</button>)}</div></Sheet>}
     {failureCall&&<CallFailureDialog call={failureCall} onClose={()=>setFailureCall(null)} onMessage={()=>writeToPerson(failureCall)}/>}
   </Context.Provider>;
 }

@@ -1,3 +1,4 @@
+import CallShareSketch from '../calls/CallShareSketch';
 import DMChat from '../screens/DMChat';
 import {makeCall,people} from '../calls/model';
 const person=people[0];
@@ -15,6 +16,18 @@ export const CALLS_GROUP={id:'calls',title:'Звонки 1 на 1',hint:'Каж�
  entry('muted','Ваш микрофон выключен','active',{muted:true}),
  entry('remote-muted','Микрофон собеседника выключен','active',{remoteMuted:true}),
  entry('video','Видео · камера собеседника выключена','active',{video:true,media:'video'}),
+ entry('video-both','Видео · обе камеры включены','active',{video:true,remoteVideo:true,media:'video'}),
+ entry('video-remote','Видео · ваша камера выключена','active',{video:false,remoteVideo:true,media:'video'}),
+ entry('video-off','Видео · обе камеры выключены','active',{video:false,remoteVideo:false,media:'video'}),
+ entry('video-rear','Видео · задняя камера','active',{video:true,remoteVideo:true,media:'video',facingMode:'environment'}, {}, 'В сценарии — состояние задней камеры; на устройстве — её реальный поток.'),
+ entry('video-reconnecting','Видео · восстановление соединения','reconnecting',{video:true,remoteVideo:true,media:'video'}),
+ entry('video-poor','Видео · нестабильное соединение','active',{video:true,remoteVideo:true,media:'video',quality:'poor',qualitySide:'remote'}),
+ entry('video-remote-muted','Видео · микрофон собеседника выключен','active',{video:true,remoteVideo:true,media:'video',remoteMuted:true}),
+ entry('video-camera-error','Видео · своя камера недоступна','active',{video:false,remoteVideo:true,media:'video'}, {issue:'camera-denied'}),
+ entry('video-switch-error','Видео · не удалось сменить камеру','active',{video:true,remoteVideo:true,media:'video'}, {issue:'camera-switch'}),
+ entry('video-connecting','Видеозвонок · подключение','connecting',{video:false,remoteVideo:true,media:'video'}),
+ entry('video-ringing','Видеозвонок · вызов','ringing',{video:false,remoteVideo:true,media:'video'}),
+ entry('video-mini','Видео · свёрнутый звонок','active',{video:true,remoteVideo:true,media:'video',minimized:true}),
  entry('quality-local','Нестабильное соединение · у вас','active',{quality:'poor',qualitySide:'local'}),
  entry('quality-remote','Нестабильное соединение · у собеседника','active',{quality:'poor',qualitySide:'remote'}),
  entry('reconnecting','Восстанавливаем соединение','reconnecting',{reconnectDeadline:15000},{},'Окно восстановления 15 секунд; ID и время разговора сохраняются.'),
@@ -41,6 +54,7 @@ export const CALLS_GROUP={id:'calls',title:'Звонки 1 на 1',hint:'Каж�
  entry('second','Второй входящий','active',{}, {pending:{name:'Аяжан С.',status:'incoming'}}),
  entry('bubbles','Входящие и исходящие · история в чате',null,{}, {history}),
  entry('bubble-single','Одиночный звонок · острый угол',null,{}, {history:[event('single','outgoing','ended',48)]}),
- entry('wave-lite','Волны · облегчённый режим','active',{}, {waveQuality:'lite'},'Без runtime blur, зерна и светового слоя.'),
+ ...[['phone','Экран телефона · камера выключена'],['desktop','Экран компьютера · обе камеры включены'],['self','Своя демонстрация · обе камеры включены']].map(([variant,label])=>({id:`call-share-sketch-${variant}`,title:`Эскиз · ${label}`,note:'Вариант компоновки для обсуждения. Экран — главное содержимое, участники — в отдельном ряду снизу. Не включён в основной сценарий.',render:()=> <CallShareSketch variant={variant}/>})),
+ entry('wave-lite' ,'Волны · облегчённый режим','active',{}, {waveQuality:'lite'},'Без runtime blur, зерна и светового слоя.'),
  entry('wave-static','Волны · статичный режим','active',{}, {waveQuality:'static'},'Для энергосбережения и reduced motion.'),
 ]};

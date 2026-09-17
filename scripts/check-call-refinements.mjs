@@ -9,7 +9,7 @@ try{
  const click=async text=>page.evaluate(text=>{const root=document.querySelector('.gal')?document:document.querySelector('.call-sheet')||document.querySelector('.call-failure-dialog')||document;const el=[...root.querySelectorAll('button')].find(e=>e.textContent.trim()===text||e.getAttribute('aria-label')===text);assertButton(el,text);el.click();function assertButton(el,text){if(!el)throw Error('Missing '+text)}},text);
  await page.setViewport({width:1320,height:1100,deviceScaleFactor:1});
  await page.goto('http://127.0.0.1:5173/all?group=calls');await page.waitForSelector('.call-screen');
- assert.equal(await page.$$eval('.gal-cell',e=>e.length),49);
+ assert.equal(await page.$$eval('.gal-cell',e=>e.length),64);
  assert.equal(await page.$('.gal-top .gal-call-settings'),null);assert.ok(await page.$('.gal-group .gal-call-settings'));
  const reveal=async id=>{await page.$eval(`[data-case="${id}"]`,e=>e.scrollIntoView({block:'center'}));await page.waitForFunction(id=>document.querySelector(`[data-case="${id}"] .gal-device`).childElementCount>0,{},id);await pause(1100);};
  await click('Тёмная');await pause(1500);
@@ -39,7 +39,7 @@ try{
    const probe=document.createElement('span');el.append(probe);probe.style.color='var(--color-primary)';const primary=getComputedStyle(probe).color;probe.style.color='var(--color-weak)';const weak=getComputedStyle(probe).color;probe.remove();
    const icons=[...el.querySelectorAll('.call-bubble-phone .call-icon,.cr-walkie .call-icon')];
    const ticks=[...el.querySelectorAll('.call-bubble .msg-time-row svg')];
-   return icons.length===7&&icons.every(i=>getComputedStyle(i).backgroundColor===primary)&&ticks.length===2&&getComputedStyle(ticks[0]).fill===primary&&getComputedStyle(ticks[1]).fill===weak;
+   return icons.length===8&&icons.every(i=>getComputedStyle(i).backgroundColor===primary)&&ticks.length===2&&getComputedStyle(ticks[0]).fill===primary&&getComputedStyle(ticks[1]).fill===weak;
   }));
   await (await page.$('[data-case="call-bubbles"] .gal-device')).screenshot({path:`${dir}/bubbles-${company}-${theme}.png`});
  }
