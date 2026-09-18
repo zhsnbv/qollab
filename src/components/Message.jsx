@@ -78,6 +78,16 @@ const LINK_TEST = /^(?:https?|qollab):\/\//i;
 // Хвостовая пунктуация принадлежит предложению, а не адресу
 const TRAILING = /[.,;:!?)»"'\]]+$/;
 
+// Ссылки в сообщении показываем единообразно: без схемы и обрезанные по одной
+// длине. Внутренние адреса Qollab длинные и состоят из служебных параметров —
+// целиком они разъезжались на три строки и выглядели мусором. Сам адрес не
+// меняется: он остаётся в href, в тексте сообщения и в копировании.
+const LINK_LABEL_MAX = 33;
+function linkLabel(url) {
+  const bare = url.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+  return bare.length > LINK_LABEL_MAX ? `${bare.slice(0, LINK_LABEL_MAX)}…` : bare;
+}
+
 // Текст сообщения: ссылки остаются ссылками и тапаются, даже когда под
 // сообщением уже нарисована карточка — по плану обычная ссылка это fallback,
 // и тап по ней должен приводить ровно туда же, куда тап по карточке.
@@ -93,7 +103,7 @@ function renderText(text, onLink) {
           href={url}
           onClick={(e) => { e.preventDefault(); if (onLink) onLink(url); }}
         >
-          {url}
+          {linkLabel(url)}
         </a>
         {trail}
       </span>

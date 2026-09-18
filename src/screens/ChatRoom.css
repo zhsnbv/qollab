@@ -209,7 +209,14 @@ html.kb .cr-body { padding-bottom: 56px; }
 .msg--mine.msg--last .msg-document { border-bottom-right-radius: 2px; }
 
 .msg-mention { color: var(--color-primary); font-weight: 600; }
-.msg-link { color: var(--color-primary); text-decoration: underline; word-break: break-all; }
+/* Ссылка не рвётся посреди адреса: подпись уже укорочена до одной длины,
+   а разрыв «link.q / ollab.kz» превращал её в мусор. Не влезла целиком —
+   обрезаем многоточием, а не переносим по буквам. */
+.msg-link {
+  color: var(--color-primary); text-decoration: underline;
+  display: inline-block; max-width: 100%; vertical-align: bottom;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
 /* Ответ-цитата внутри бабла: белая плашка с цветной полосой слева
    (цвет — автора, на кого отвечают) */
