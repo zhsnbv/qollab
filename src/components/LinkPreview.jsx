@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronRight16Filled, AppsList24Filled, PeopleTeam24Filled } from '@fluentui/react-icons';
+import {
+  ChevronRight16Filled, AppsList24Filled, PeopleTeam24Filled, LinkOff24Filled,
+} from '@fluentui/react-icons';
 import { peekPreview, resolvePreview } from '../utils/linkPreviewApi';
 import { linkKey } from '../utils/internalLink';
 import './LinkPreview.css';
@@ -75,18 +77,18 @@ export default function LinkPreview({ link, onOpen }) {
   const Fallback = FALLBACK_ICON[link.type];
   const a11y = [label, state.title, state.subtitle, state.action].filter(Boolean).join('. ');
 
-  // Недействительное приглашение: ни названия группы, ни аватарки, ни действия
+  // Мёртвое приглашение. Формфактор другой намеренно: одна строка вместо
+  // полной карточки — нажимать нечего, и занимать столько же места, сколько
+  // настоящее приглашение, ей незачем. Глиф — перечёркнутая ссылка, а не
+  // группа: группу мы всё равно не называем и обещать её не должны.
   if (state.invalid) {
     return (
-      <div className="lp lp--invalid" aria-label={a11y}>
-        <div className="lp-row">
-          <span className="lp-ico"><Fallback /></span>
-          <span className="lp-body">
-            <span className="lp-kind">{label}</span>
-            <span className="lp-title">{state.title}</span>
-            <span className="lp-sub">Спросите новую ссылку у того, кто её прислал</span>
-          </span>
-        </div>
+      <div className="lp lp--dead" aria-label={`${state.title}. ${state.hint}`}>
+        <span className="lp-ico"><LinkOff24Filled /></span>
+        <span className="lp-body">
+          <span className="lp-title">{state.title}</span>
+          <span className="lp-sub">{state.hint}</span>
+        </span>
       </div>
     );
   }

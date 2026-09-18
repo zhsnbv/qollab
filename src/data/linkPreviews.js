@@ -71,5 +71,10 @@ export const previewInvites = {
       avatar: '/img/posts/ch-bts-news.png',
     },
   },
-  inv_expired: { state: 'invalid' },
+  // Три способа умереть у приглашения. В MVP бэкенд различает только active
+  // и invalid, но DTO обязан уметь expired/revoked (раздел 7.2 плана) —
+  // тексты под них уже готовы.
+  inv_expired: { state: 'expired' },
+  inv_revoked: { state: 'revoked' },
+  inv_broken: { state: 'invalid' },
 };

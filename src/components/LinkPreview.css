@@ -61,9 +61,23 @@ button.lp:active { opacity: 0.6; }
 }
 .lp-cta svg { width: 16px; height: 16px; display: block; }
 
-/* Недействительное приглашение: действия нет, тон приглушённый */
-.lp--invalid .lp-kind { color: var(--color-weak); }
-.lp--invalid .lp-ico { color: var(--color-light); }
+/* Мёртвая ссылка. Формфактор компактнее живой карточки: одна строка, без
+   шапки типа и без полосы действия — нажимать нечего.
+
+   Тон нейтральный: красный фон и восклицательный знак читались бы как поломка
+   приложения, хотя сломалась не программа, а ссылка. Отсюда же и отсутствие
+   слова «ошибка» в тексте — человеку важно, что делать дальше. */
+.lp--dead {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 12px;
+}
+.lp--dead .lp-ico {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--color-background); color: var(--color-light);
+}
+.lp--dead .lp-ico svg { width: 18px; height: 18px; }
+.lp--dead .lp-title { font-weight: 600; color: var(--color-text); }
+.lp--dead .lp-sub { margin-top: 1px; -webkit-line-clamp: 3; }
 
 /* Скелетон повторяет финальные габариты: 40-пиксельная иконка, три строки
    текста и полоса действия — бабл не прыгает после загрузки. */

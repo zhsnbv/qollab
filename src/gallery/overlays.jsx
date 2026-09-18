@@ -97,6 +97,7 @@ const LINK_MSGS = [
   { id: 'l1', time: '12:24', text: 'Правки жду на почте: https://link.qollab.kz/apps?command=apps&id=mail-2&to_url=%2Finbox' },
   { id: 'l2', time: '12:25', text: 'И залетайте в группу продукта https://link.qollab.kz/?command=invite&token=inv_7f3ac2' },
   { id: 'l3', time: '12:26', text: 'Старая ссылка уже не работает: https://link.qollab.kz/?command=invite&token=inv_expired' },
+  { id: 'l4', time: '12:27', text: 'И эту закрыли: https://link.qollab.kz/?command=invite&token=inv_revoked' },
 ];
 
 export function LinkPreviewMessages() {

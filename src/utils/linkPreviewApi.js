@@ -67,12 +67,36 @@ function miniAppResult(link, app, cacheKind) {
   };
 }
 
+// Протухшая ссылка — это не сбой приложения, а состояние объекта: приглашение
+// закрыли или у него вышел срок. Поэтому тут нет ни слова «ошибка», ни кода
+// ответа — говорим, что случилось со ссылкой и что делать дальше. Сырое тело
+// ответа сюда не попадает и попасть не должно: пользователю оно не адресовано.
+export const DEAD_INVITE = {
+  expired: {
+    title: 'Срок действия ссылки истёк',
+    hint: 'Попросите у отправителя новую — эта больше не открывается.',
+  },
+  revoked: {
+    title: 'Приглашение отозвали',
+    hint: 'Ссылку закрыли в группе. Попросите новую у отправителя.',
+  },
+  // MVP-состояние: бэкенд ещё не различает, отозвали ссылку или вышел срок
+  invalid: {
+    title: 'Ссылка больше не работает',
+    hint: 'Приглашение отозвали или у него истёк срок. Попросите новую у отправителя.',
+  },
+};
+export const deadInvite = (state) => DEAD_INVITE[state] || DEAD_INVITE.invalid;
+
 function inviteResult(invite) {
   if (!invite) return { status: 'unavailable', reason: 'not_found' };
   if (invite.state !== 'active') {
-    // Недействительное приглашение показываем карточкой, но без названия и
-    // аватарки: по плану оно не должно раскрывать, что за группа.
-    return { status: 'ready', cache: 'network', kind: 'group_invite', invalid: true, title: 'Приглашение недействительно' };
+    // Показываем карточкой, но без названия группы и аватарки: по плану
+    // мёртвое приглашение не должно раскрывать, что за группа.
+    return {
+      status: 'ready', cache: 'network', kind: 'group_invite', invalid: true,
+      ...deadInvite(invite.state),
+    };
   }
   const member = invite.membership === 'member';
   return {
@@ -144,7 +168,9 @@ export function describeLink(url) {
     return `Откроется «${app.names.ru}»${link.toUrl ? ` на ${link.toUrl}` : ''}`;
   }
   const invite = previewInvites[link.token];
-  if (!invite || invite.state !== 'active') return 'Приглашение недействительно';
+  // Те же слова, что на карточке: тап по ссылке и тап по карточке обязаны
+  // сказать одно и то же, и ни один из них — не кодом ответа.
+  if (!invite || invite.state !== 'active') return deadInvite(invite?.state).title;
   return invite.membership === 'member'
     ? `Откроется группа «${invite.channel.name}»`
     : `Вступление в группу «${invite.channel.name}»`;
