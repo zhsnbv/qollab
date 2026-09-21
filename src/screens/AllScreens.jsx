@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { DeviceHost } from '../components/Portal';
 import { SCREEN_GROUPS, SCREEN_COUNT } from '../gallery/registry';
 import { companies } from '../data/companies';
+import { LANGS, getLang, setLang } from '../i18n/runtime';
 import './AllScreens.css';
 
 // Одна карточка витрины: настоящая рамка «телефона» со своим роутером.
@@ -61,11 +62,21 @@ const THEMES = [
   { id: 'dark', label: 'Тёмная' },
 ];
 
+// Все переключатели витрины живут в адресе: смена языка перезагружает
+// страницу (часть текстов вычисляется один раз при импорте данных), и без
+// этого сбрасывались бы и тема, и пространство, и выбранная группа.
+const query = () => new URLSearchParams(window.location.search);
+const param = (name, allowed, fallback) => {
+  const v = query().get(name);
+  return allowed.includes(v) ? v : fallback;
+};
+
 export default function AllScreens() {
-  const [group, setGroup] = useState(()=>new URLSearchParams(window.location.search).get('group')||'all');
+  const [group, setGroup] = useState(() => query().get('group') || 'all');
   const [animateWaves,setAnimateWaves]=useState(false);
-  const [theme, setTheme] = useState('light');
-  const [company, setCompany] = useState('erg');
+  const [theme, setTheme] = useState(() => param('theme', ['light', 'dark'], 'light'));
+  const [company, setCompany] = useState(() => param('company', companies.map((c) => c.id), 'erg'));
+  const lang = getLang();
 
   // Возвращаем документу прокрутку: в приложении она заблокирована на уровне
   // страницы, чтобы «резинка» на iPhone не уносила бары.
@@ -78,6 +89,18 @@ export default function AllScreens() {
   // в приложении: все полсотни рамок перекрашиваются разом, без перезагрузки.
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
   useEffect(() => { document.documentElement.dataset.company = company; }, [company]);
+
+  // Адрес переписываем без записи в историю: «назад» должен уводить с витрины,
+  // а не отматывать переключения темы.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const set = (k, v, def) => (v === def ? url.searchParams.delete(k) : url.searchParams.set(k, v));
+    set('group', group, 'all');
+    set('theme', theme, 'light');
+    set('company', company, 'erg');
+    set('lang', lang, null);
+    window.history.replaceState(null, '', url);
+  }, [group, theme, company, lang]);
   const groups = group === 'all' ? SCREEN_GROUPS : SCREEN_GROUPS.filter((g) => g.id === group);
 
   return (
@@ -96,6 +119,19 @@ export default function AllScreens() {
                 onClick={() => setTheme(t.id)}
               >
                 {t.label}
+              </button>
+            ))}
+          </div>
+          <div className="gal-seg">
+            {LANGS.map((l) => (
+              <button
+                key={l.id}
+                className={`gal-seg-btn ${lang === l.id ? 'active' : ''}`}
+                title={l.title}
+                lang={l.id}
+                onClick={() => setLang(l.id)}
+              >
+                {l.label}
               </button>
             ))}
           </div>

@@ -12,6 +12,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import { languages } from '../data/settings';
 import { getThemeMode, setThemeMode } from '../utils/theme';
+import { getLang, setLang } from '../i18n/runtime';
 import { useAuth } from '../context/AuthContext';
 import { settingsGroups } from '../data/profile';
 import './Settings.css';
@@ -38,7 +39,7 @@ export default function Settings() {
   const [themeMode, setMode] = useState(getThemeMode);
   const [themeSheet, setThemeSheet] = useState(false);
   const [langSheet, setLangSheet] = useState(false);
-  const [lang, setLang] = useState('ru');
+  const lang = getLang();
   const [confirm, setConfirm] = useState(null);
   const [toast, setToast] = useState('');
 
@@ -133,11 +134,9 @@ export default function Settings() {
           onClose={() => setLangSheet(false)}
           onPick={(id) => {
             setLangSheet(false);
-            // Казахской локализации в прототипе нет, поэтому и значение
-            // не подменяем: строка, показывающая язык, которого нет,
-            // врёт сильнее, чем честный тост.
-            if (id === 'ru') { setLang(id); return; }
-            setToast('Казахская локализация появится позже');
+            // Смена языка перезагружает приложение: часть текстов вычисляется
+            // один раз при импорте данных, и перерисовкой их не догнать.
+            setLang(id);
           }}
         />
       )}
