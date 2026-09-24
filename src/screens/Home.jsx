@@ -14,7 +14,7 @@ import { LINK_ICONS } from '../components/Widgets';
 import { banners } from '../data/banners';
 import { useFavorites } from '../context/FavoritesContext';
 import { unreadTotal } from '../data/notifications';
-import { MagnifyingGlass, BellSimple, CaretRight } from '@phosphor-icons/react';
+import { MagnifyingGlass, CaretRight } from '@phosphor-icons/react';
 import './Home.css';
 
 // Ассеты экспортированы из Figma в public/img/home (см. README).
@@ -41,7 +41,13 @@ export default function Home() {
         aria-label={`Уведомления${unreadTotal ? `, непрочитанных: ${unreadTotal}` : ''}`}
         onClick={() => navigate('/notifications', { state: { background: location } })}
       >
-        <BellSimple size={20} weight="fill" />
+        <img
+          src={`/img/notifications/bell-${unreadTotal > 0 ? 'active' : 'empty'}.svg`}
+          width={20}
+          height={20}
+          alt=""
+          aria-hidden="true"
+        />
         {unreadTotal > 0 && <span className="topbar-badge">{unreadTotal}</span>}
       </button>
       <button className="topbar-btn" aria-label="Меню" onClick={() => setMenuOpen(true)}><DotsIcon /></button>

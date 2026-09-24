@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Qollab · Колокольчик уведомлений</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f6f6f6;color:#333;font:16px/1.5 system-ui,sans-serif}main{max-width:920px;margin:auto;padding:48px 24px}h1{font-size:30px;line-height:1.2;margin:8px 0 16px}h2{font-size:19px;margin:0 0 16px}.eyebrow{color:#999;font-size:13px;letter-spacing:.08em}p{color:#777}.states{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:32px 0}.card,section{background:white;border:1px solid #eee;border-radius:20px;padding:24px}.card{text-align:center}.large{height:140px;display:grid;place-items:center}.large svg{width:100px;height:100px}.actual{display:flex;align-items:center;justify-content:center;gap:10px;color:#999;font-size:13px;margin:20px 0}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}button{font:inherit;border:1px solid #ddd;border-radius:10px;padding:10px 14px;background:white;color:#333;cursor:pointer}button:hover{border-color:#ef7f1a}section{margin-top:20px}pre{font-size:12px;line-height:1.6;overflow:auto;max-height:360px;padding:16px;background:#f6f6f6;border-radius:12px}code{font-family:ui-monospace,monospace}dl{display:grid;grid-template-columns:150px 1fr;gap:10px;font-size:14px}dt{color:#999}dd{margin:0}.status{color:#777;font-size:13px}a{color:#bd5b07}@media(max-width:560px){main{padding:28px 16px}.states{grid-template-columns:1fr}dl{grid-template-columns:1fr}dd{margin-bottom:10px}}
+</style></head><body><main>
+<div class="eyebrow">QOLLAB / MOTION HANDOFF</div><h1>Колокольчик уведомлений</h1><p>Готовые SVG без зависимостей. Двигается только иконка; язычок — вместе с корпусом.</p>
+<div class="states">
+<article class="card"><h2>Есть уведомления</h2><div class="large" id="active-preview"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-32 -32 320 320" role="img" aria-label="Есть уведомления"><style>
+.bell { fill: #999999; transform-origin: 128px 40px; animation: bell-swing 2.6s infinite, bell-tint 2.6s ease-in-out infinite; }
+@keyframes bell-swing {
+  0%, 8% { transform: rotate(0deg); animation-timing-function: cubic-bezier(.4,0,.2,1); }
+  18% { transform: rotate(16deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  32% { transform: rotate(-12deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  45% { transform: rotate(8deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  57% { transform: rotate(-4deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  68% { transform: rotate(1.5deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  78%, 100% { transform: rotate(0deg); }
+}
+@keyframes bell-tint { 0%, 100% { fill: #999999; } 32%, 45% { fill: #f8c89d; } 80% { fill: #999999; } }
+@media (prefers-reduced-motion: reduce) { .bell { animation: none; } }
+</style><g class="bell"><path d="M221.81,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H208a16,16,0,0,0,13.8-24.06Z"/><path d="M168,224a8,8,0,0,1-8,8H96a8,8,0,1,1,0-16h64A8,8,0,0,1,168,224Z"/></g></svg></div><div class="actual"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-32 -32 320 320" role="img" aria-label="Есть уведомления"><style>
+.bell { fill: #999999; transform-origin: 128px 40px; animation: bell-swing 2.6s infinite, bell-tint 2.6s ease-in-out infinite; }
+@keyframes bell-swing {
+  0%, 8% { transform: rotate(0deg); animation-timing-function: cubic-bezier(.4,0,.2,1); }
+  18% { transform: rotate(16deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  32% { transform: rotate(-12deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  45% { transform: rotate(8deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  57% { transform: rotate(-4deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  68% { transform: rotate(1.5deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  78%, 100% { transform: rotate(0deg); }
+}
+@keyframes bell-tint { 0%, 100% { fill: #999999; } 32%, 45% { fill: #f8c89d; } 80% { fill: #999999; } }
+@media (prefers-reduced-motion: reduce) { .bell { animation: none; } }
+</style><g class="bell"><path d="M221.81,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H208a16,16,0,0,0,13.8-24.06Z"/><path d="M168,224a8,8,0,0,1-8,8H96a8,8,0,1,1,0-16h64A8,8,0,0,1,168,224Z"/></g></svg><span>20 × 20 px</span></div><button data-download="active">Скачать анимированный SVG</button></article>
+<article class="card"><h2>0 уведомлений</h2><div class="large" id="empty-preview"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-32 -32 320 320" role="img" aria-label="Нет уведомлений"><g fill="#999999"><path d="M221.81,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H208a16,16,0,0,0,13.8-24.06Z"/><path d="M168,224a8,8,0,0,1-8,8H96a8,8,0,1,1,0-16h64A8,8,0,0,1,168,224Z"/></g></svg></div><div class="actual"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-32 -32 320 320" role="img" aria-label="Нет уведомлений"><g fill="#999999"><path d="M221.81,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H208a16,16,0,0,0,13.8-24.06Z"/><path d="M168,224a8,8,0,0,1-8,8H96a8,8,0,1,1,0-16h64A8,8,0,0,1,168,224Z"/></g></svg><span>20 × 20 px</span></div><button data-download="empty">Скачать статичный SVG</button></article></div>
+<section><h2>Параметры</h2><dl><dt>Цикл</dt><dd>2,6 с, бесконечно. Покачивание с затуханием и короткой паузой.</dd><dt>Углы</dt><dd>0° → 16° → −12° → 8° → −4° → 1,5° → 0°</dd><dt>Easing</dt><dd>cubic-bezier(.4, 0, .2, 1) на старте; cubic-bezier(.37, 0, .2, 1) далее.</dd><dt>Цвет</dt><dd>#999999 → #f8c89d → #999999</dd><dt>Размер</dt><dd>20 × 20 px; viewBox="-32 -32 320 320" — запас для наклонов без обрезки.</dd><dt>Доступность</dt><dd>При prefers-reduced-motion: reduce иконка статична. Название и количество уведомлений задаются кнопке.</dd></dl></section>
+<section><h2>Подключение</h2><p>При unreadCount &gt; 0 используйте bell-active.svg, иначе bell-empty.svg. Счётчик и фон кнопки не анимируются.</p><pre><code>&lt;button aria-label="Уведомления, непрочитанных: 3"&gt;
+  &lt;img src="bell-active.svg" width="20" height="20" alt="" /&gt;
+&lt;/button&gt;</code></pre><p>Сохраните оба SVG рядом с вашей страницей и укажите путь в src. Анимация уже внутри SVG — JavaScript для неё не нужен.</p><div class="actions"><button id="download-html">Скачать этот HTML</button></div></section>
+<section><h2>SVG: есть уведомления</h2><button data-copy="active">Копировать SVG</button><pre><code>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;-32 -32 320 320&quot; role=&quot;img&quot; aria-label=&quot;Есть уведомления&quot;&gt;&lt;style&gt;
+.bell { fill: #999999; transform-origin: 128px 40px; animation: bell-swing 2.6s infinite, bell-tint 2.6s ease-in-out infinite; }
+@keyframes bell-swing {
+  0%, 8% { transform: rotate(0deg); animation-timing-function: cubic-bezier(.4,0,.2,1); }
+  18% { transform: rotate(16deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  32% { transform: rotate(-12deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  45% { transform: rotate(8deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  57% { transform: rotate(-4deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  68% { transform: rotate(1.5deg); animation-timing-function: cubic-bezier(.37,0,.2,1); }
+  78%, 100% { transform: rotate(0deg); }
+}
+@keyframes bell-tint { 0%, 100% { fill: #999999; } 32%, 45% { fill: #f8c89d; } 80% { fill: #999999; } }
+@media (prefers-reduced-motion: reduce) { .bell { animation: none; } }
+&lt;/style&gt;&lt;g class=&quot;bell&quot;&gt;&lt;path d=&quot;M221.81,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H208a16,16,0,0,0,13.8-24.06Z&quot;/&gt;&lt;path d=&quot;M168,224a8,8,0,0,1-8,8H96a8,8,0,1,1,0-16h64A8,8,0,0,1,168,224Z&quot;/&gt;&lt;/g&gt;&lt;/svg&gt;</code></pre></section>
+<section><h2>SVG: 0 уведомлений</h2><button data-copy="empty">Копировать SVG</button><pre><code>&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;20&quot; height=&quot;20&quot; viewBox=&quot;-32 -32 320 320&quot; role=&quot;img&quot; aria-label=&quot;Нет уведомлений&quot;&gt;&lt;g fill=&quot;#999999&quot;&gt;&lt;path d=&quot;M221.81,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H208a16,16,0,0,0,13.8-24.06Z&quot;/&gt;&lt;path d=&quot;M168,224a8,8,0,0,1-8,8H96a8,8,0,1,1,0-16h64A8,8,0,0,1,168,224Z&quot;/&gt;&lt;/g&gt;&lt;/svg&gt;</code></pre></section><p class="status" role="status" id="status"></p>
+</main><script>
+const svgSource=kind=>document.querySelector('#'+kind+'-preview').innerHTML.trim();
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+document.querySelectorAll('[data-download]').forEach(button=>button.onclick=()=>download('bell-'+button.dataset.download+'.svg',svgSource(button.dataset.download),'image/svg+xml'));
+document.querySelectorAll('[data-copy]').forEach(button=>button.onclick=async()=>{try{await navigator.clipboard.writeText(svgSource(button.dataset.copy));document.querySelector('#status').textContent='SVG скопирован';}catch{document.querySelector('#status').textContent='Скопируйте SVG из блока кода или скачайте файл.'}});
+document.querySelector('#download-html').onclick=()=>download('qollab-bell-handoff.html','<!doctype html>\n'+document.documentElement.outerHTML,'text/html');
+</script></body></html>
