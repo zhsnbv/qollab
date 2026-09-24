@@ -9,7 +9,7 @@ import './ActionSheet.css';
 // Контекстное меню экрана — листом снизу, а не выпадающим меню: на телефоне
 // до нижней части экрана дотянуться проще, и это тот же паттерн, что у
 // остальных шитов прототипа.
-export default function ActionSheet({ title, items, onClose, onPick, selected, iconsLeft }) {
+export default function ActionSheet({ title, items, onClose, onPick, selected, iconsLeft, confirming }) {
   const swipe = useSheetSwipe(onClose);
   // Режим выбора: иконка уходит влево, справа у активного пункта — галочка.
   // iconsLeft — та же раскладка, но без галочек (список вложений).
@@ -30,7 +30,9 @@ export default function ActionSheet({ title, items, onClose, onPick, selected, i
         <div className="asheet-list">
           {items.map(({ id, label, sub, Icon, danger }) => (
             <button
-              className={`asheet-item ${danger ? 'danger' : ''} ${leading ? 'select' : ''}`}
+              className={`asheet-item ${danger ? 'danger' : ''} ${leading ? 'select' : ''} ${confirming === id ? 'confirming' : ''}`}
+              aria-pressed={isSelect ? selected === id : undefined}
+              disabled={!!confirming}
               key={id}
               onClick={() => onPick(id)}
             >

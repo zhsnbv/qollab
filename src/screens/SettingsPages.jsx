@@ -46,7 +46,11 @@ export function NotificationSettings() {
 // Разрешения устройства. Прототип держит своё состояние: настоящие выдаёт
 // система, и подменять её диалоги приложение не должно.
 export function Permissions() {
-  const [on, setOn] = useState(() => Object.fromEntries(permissions.map((p) => [p.id, p.on])));
+  const [on, setOn] = useState(() => {
+    const initial = Object.fromEntries(permissions.map((p) => [p.id, p.on]));
+    try { initial.push = localStorage.getItem('qollab-push-permission') !== 'denied'; } catch { /* use demo defaults */ }
+    return initial;
+  });
   return (
     <SettingsPage title="Настройки разрешений">
       <div className="sp-list">
@@ -58,7 +62,12 @@ export function Permissions() {
               <span className="sp-label">{p.label}</span>
               <Switch
                 checked={on[p.id]}
-                onChange={(v) => setOn((o) => ({ ...o, [p.id]: v }))}
+                onChange={(v) => {
+                  setOn((o) => ({ ...o, [p.id]: v }));
+                  if (p.id === 'push') {
+                    try { localStorage.setItem('qollab-push-permission', v ? 'granted' : 'denied'); } catch { /* demo only */ }
+                  }
+                }}
                 label={p.label}
               />
             </label>

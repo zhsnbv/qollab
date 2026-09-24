@@ -1,0 +1,14 @@
+.nh-board { width: 3274px; padding: 48px; background: var(--page-bg); color: var(--color-text); }
+.nh-board > header { margin-bottom: 40px; }
+.nh-board > header h1 { font-size: 36px; line-height: 1.25; color: var(--color-heading); margin: 12px 0; }
+.nh-board header p { font-size: 18px; line-height: 1.5; }
+.nh-eyebrow { color: var(--color-primary); font-weight: 700; letter-spacing: 2px; }
+.nh-grid { display: grid; grid-template-columns: repeat(7, 402px); gap: 48px 60px; }
+.nh-cell { width: 402px; isolation: isolate; }
+.nh-cell figcaption { height: 128px; }
+.nh-cell figcaption h2 { font-size: 19px; line-height: 1.35; margin-bottom: 10px; }
+.nh-cell figcaption p { font-size: 15px; line-height: 1.45; color: var(--color-weak); }
+html.gallery .device.nh-screen { width: 402px!important; height: 820px!important; position: relative; overflow: hidden; box-shadow: none; border: 0; pointer-events: none; }
+.nh-screen *, .nh-screen *::before, .nh-screen *::after { animation: none!important; transition: none!important; }
+.nh-screen .fade-in { opacity: 1; transform: none; }
+.nh-board footer { margin-top: 40px; font-size: 17px; line-height: 1.5; max-width: 1800px; }

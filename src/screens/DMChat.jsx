@@ -1,3 +1,4 @@
+import { notificationKey } from '../utils/chatNotifications';
 import { chatKey, mergeChatEvents } from '../calls/model';
 import { useCalls, CallHistory } from '../calls/Calls';
 import CallIcon from '../calls/CallIcon';
@@ -180,6 +181,8 @@ export default function DMChat() {
       // не содержит, а собирать её здесь значило бы держать данные в экране.
       id: chat?.kind === 'bot' ? 'ergiz' : chat?.profileId,
       kind: 'user',
+      notificationKey: notificationKey(chat || {}),
+      notificationInitialMode: chat?.muted ? 'off' : 'on',
       employee: chat?.profileId ? undefined : {
         id: chat?.title,
         name: chat?.title,

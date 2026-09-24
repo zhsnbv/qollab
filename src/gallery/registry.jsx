@@ -1,3 +1,4 @@
+import { NOTIFICATION_MODES } from '../data/chatNotificationModes';
 import { CALLS_GROUP } from './calls';
 import Home from '../screens/Home';
 import Posts from '../screens/Posts';
@@ -47,7 +48,7 @@ import ErgizHistory from '../components/ErgizHistory';
 import Toast from '../components/Toast';
 import { MessageMenuDemo, ChatsSelecting, AuthErrorScreen, LinkPreviewMessages } from './overlays';
 import { Routes, Route } from 'react-router-dom';
-import { Edit24Regular, Delete24Regular, Alert24Regular, AlertOff24Regular } from '@fluentui/react-icons';
+import { Edit24Regular, Delete24Regular } from '@fluentui/react-icons';
 import { sosContacts } from '../data/profile';
 import { employees } from '../data/employees';
 import { events } from '../data/feed';
@@ -279,16 +280,12 @@ export const SCREEN_GROUPS = [
       },
       { id: 'group-profile', title: 'Профиль группы', route: at('/group', { id: 'prodev' }), render: () => <GroupProfile /> },
       sheet({
-        id: 'mute', title: 'Звук чата', note: 'Три режима вместо переключателя',
+        id: 'mute', title: 'Уведомления чата', note: 'Выбранный режим отмечен галочкой',
         route: at('/group', { id: 'prodev' }),
         render: over(GroupProfile, () => (
           <ActionSheet
-            title="Звук"
-            items={[
-              { id: 'on', label: 'Включён', Icon: Alert24Regular },
-              { id: 'hour', label: 'Отключить на час', Icon: AlertOff24Regular },
-              { id: 'off', label: 'Отключить', Icon: AlertOff24Regular },
-            ]}
+            title="Уведомления группы"
+            items={NOTIFICATION_MODES}
             selected="on" onClose={noop} onPick={noop}
           />
         )),

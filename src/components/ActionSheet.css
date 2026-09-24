@@ -39,3 +39,8 @@
 /* Пояснение под названием пункта: что увидят коллеги */
 .asheet-label { display: flex; flex-direction: column; gap: 2px; }
 .asheet-sub { font-size: 13px; font-weight: 400; color: var(--color-weak); line-height: 1.35; }
+
+.asheet-item.confirming { background: var(--color-background); transition: background 0.28s ease; }
+.asheet-item.confirming .asheet-check { animation: asheet-confirm 0.28s ease-out; }
+@keyframes asheet-confirm { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .asheet-item.confirming .asheet-check { animation: none; } }

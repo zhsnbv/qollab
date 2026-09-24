@@ -1,9 +1,9 @@
+import ChatNotificationControl from '../components/ChatNotificationControl';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, CaretRight, FileText, LinkSimple, Play } from '@phosphor-icons/react';
 import {
   WalkieTalkie24Filled, Search24Filled, SignOut24Filled,
-  Alert24Filled, AlertOff24Filled, Mention24Filled,
   People16Regular, Image16Regular, Document16Regular, Link16Regular,
 } from '@fluentui/react-icons';
 import { groupProfiles, userProfiles } from '../data/chatProfiles';
@@ -13,7 +13,6 @@ import ProfileHero from '../components/ProfileHero';
 import ProfileTabs from '../components/ProfileTabs';
 import ScreenMenu from '../components/ScreenMenu';
 import ConfirmDialog from '../components/ConfirmDialog';
-import ActionSheet from '../components/ActionSheet';
 import Toast from '../components/Toast';
 import { PROFILE_V2 } from '../config';
 import './Profile.css';
@@ -30,19 +29,6 @@ const TABS = [
   { id: 'links', label: 'Ссылки', Icon: Link16Regular, count: (g) => g.links.length },
 ];
 
-// У группы звук не переключатель, а три режима — выбираем листом снизу
-const SOUND_MODES = [
-  { id: 'on', label: 'Включить звук', Icon: Alert24Filled },
-  { id: 'mentions', label: 'Только упоминания', Icon: Mention24Filled },
-  { id: 'off', label: 'Выключить звук', Icon: AlertOff24Filled, danger: true },
-];
-const SOUND_ICON = { on: Alert24Filled, mentions: Mention24Filled, off: AlertOff24Filled };
-const SOUND_TOAST = {
-  on: 'Уведомления включены',
-  mentions: 'Уведомления только при упоминании',
-  off: 'Уведомления отключены',
-};
-
 function MemberAvatar({ item }) {
   if (item.avatar || item.img) {
     return <span className="pp-group-ava"><img src={item.avatar || item.img} alt="" /></span>;
@@ -54,17 +40,16 @@ function MemberAvatar({ item }) {
   );
 }
 
-export default function GroupProfile() {
+export default function GroupProfile({ notificationPreview } = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, onScroll] = useScrolled();
   const { id, background } = location.state || {};
-  const g = groupProfiles[id] || groupProfiles.prodev;
+  const sourceGroup = groupProfiles[id] || groupProfiles.prodev;
+  const g = notificationPreview ? { ...sourceGroup, description: 'https://example.com/invite/demo' } : sourceGroup;
 
   const [closing, setClosing] = useState(false);
   const [screenMenu, setScreenMenu] = useState(false);
-  const [sound, setSound] = useState('on');
-  const [soundOpen, setSoundOpen] = useState(false);
   const [tab, setTab] = useState('members');
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [toast, setToast] = useState('');
@@ -81,15 +66,7 @@ export default function GroupProfile() {
     state: { id: memberId, kind: 'user', background: location },
   });
 
-  const pickSound = (mode) => {
-    setSound(mode);
-    setSoundOpen(false);
-    setToast(SOUND_TOAST[mode]);
-  };
-
   const actions = [
-    // Подпись постоянная, режим читается по иконке: колокольчик, @ или зачёркнутый
-    { id: 'sound', label: 'Звук', Icon: SOUND_ICON[sound], onClick: () => setSoundOpen(true) },
     { id: 'walkie', label: 'Рация', Icon: WalkieTalkie24Filled, onClick: () => setToast('Рация включена') },
     { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },
     { id: 'leave', label: 'Покинуть', Icon: SignOut24Filled, danger: true, onClick: () => setConfirmLeave(true) },
@@ -117,6 +94,7 @@ export default function GroupProfile() {
             presence={g.privacy === 'private' ? 'Приватная группа' : 'Открытая группа'}
           >
             <div className="pp-actions">
+              <ChatNotificationControl previewState={notificationPreview} chatKey={location.state?.notificationKey || id || 'prodev'} group initialMode={location.state?.notificationInitialMode || 'off'} />
               {actions.map(({ id: aid, label, Icon, onClick, danger }) => (
                 <button className="quick-item" key={aid} onClick={onClick}>
                   <span className={`quick-ico ${danger ? 'quick-ico--danger' : ''}`}><Icon /></span>
@@ -230,14 +208,6 @@ export default function GroupProfile() {
           danger
           onConfirm={() => { setConfirmLeave(false); setToast('Вы покинули группу'); }}
           onCancel={() => setConfirmLeave(false)}
-        />
-      )}
-      {soundOpen && (
-        <ActionSheet
-          title="Уведомления группы"
-          items={SOUND_MODES}
-          onClose={() => setSoundOpen(false)}
-          onPick={pickSound}
         />
       )}
       <ScreenMenu open={screenMenu} onClose={() => setScreenMenu(false)} />

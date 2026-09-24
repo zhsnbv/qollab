@@ -1,0 +1,14 @@
+.notification-control { min-width: 0; }
+.notification-control .quick-label { font-size: 11px; }
+.notification-error {
+  position: absolute; z-index: 65; left: 16px; right: 16px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border-radius: 16px;
+  background: var(--color-white); color: var(--color-text);
+  border: 1px solid var(--color-border); box-shadow: 0 4px 24px #0003;
+  font-size: 14px; line-height: 1.4;
+}
+.notification-error span { flex: 1; }
+.notification-error button { color: var(--color-primary); font-weight: 600; min-height: 36px; }
+.notification-error button:last-child { font-size: 22px; }

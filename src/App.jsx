@@ -1,3 +1,4 @@
+import NotificationHandoff from './screens/NotificationHandoff';
 import { useEffect, useState } from 'react';
 import { BrowserRouter, MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './screens/Home';
@@ -157,6 +158,7 @@ export default function App() {
   // Режим оформления уже применён инлайн-скриптом; здесь только подписка на
   // системную тему — она нужна, пока выбран режим «автоматически».
   useEffect(() => {
+    if (window.location.pathname === '/handoff/notifications') return;
     applyTheme(getThemeMode());
     return watchSystemTheme(getThemeMode);
   }, []);
@@ -178,12 +180,13 @@ export default function App() {
   // общего роутера: у каждой её карточки свой MemoryRouter, а вложенных
   // роутеров react-router не допускает.
   const gallery = window.location.pathname === '/all';
+  const notificationHandoff = window.location.pathname === '/handoff/notifications';
   const callFlow = window.location.pathname === '/calls/one-to-one';
   const widgetFigma = window.location.pathname === '/widgets-figma';
 
   return (
     <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><WidgetsProvider>
-      {gallery ? <AllScreens /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
+      {notificationHandoff ? <NotificationHandoff /> : gallery ? <AllScreens /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
         <BrowserRouter>
           <CallsProvider><Device exiting={exiting} splashDone={splashDone} /></CallsProvider>
         </BrowserRouter>

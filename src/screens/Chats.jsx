@@ -1,10 +1,11 @@
+import { notificationKey, notificationMode, useChatNotificationModes } from '../utils/chatNotifications';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
 import TopBar from '../components/TopBar';
 import {
   MagnifyingGlass, Plus, BellSimple, BookmarkSimple,
-  VideoCamera, Camera, FileText, SpeakerSimpleSlash, Checks, PencilSimple, Check,
+  VideoCamera, Camera, FileText, BellSlash, At, Checks, PencilSimple, Check,
 } from '@phosphor-icons/react';
 import { Checkmark20Filled } from '@fluentui/react-icons';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -114,7 +115,9 @@ function Avatar({ chat }) {
   );
 }
 
-export default function Chats() {
+export default function Chats({ notificationPreview } = {}) {
+  const savedNotificationModes = useChatNotificationModes();
+  const notificationModes = notificationPreview || savedNotificationModes;
   const loading = useSkeleton();
   const navigate = useNavigate();
   const location = useLocation();
@@ -195,7 +198,7 @@ export default function Chats() {
     if (chat.to) { navigate(chat.to, { state: { background: location } }); return; }
     // contentIcon/icon — React-компоненты, history.pushState не умеет их клонировать
     const { contentIcon, icon, ...serializable } = chat;
-    navigate('/chats/dm', { state: { chat: serializable, background: location } });
+    navigate('/chats/dm', { state: { chat: { ...serializable, notificationKey: notificationKey(chat) }, background: location } });
   };
 
   // В режиме выбора шапка пустеет: остаётся одна кнопка на месте «плюса» —
@@ -264,7 +267,11 @@ export default function Chats() {
             <div className="chat-body">
               <div className="chat-line1">
                 <span className="chat-title">{chat.title}</span>
-                {chat.muted && <SpeakerSimpleSlash size={14} weight="fill" color="var(--color-weak)" />}
+                {notificationMode(chat, notificationModes) !== 'on' && (
+                  <span className="chat-notification-mode" role="img" aria-label={notificationMode(chat, notificationModes) === 'mentions' ? 'Только упоминания' : 'Уведомления отключены'}>
+                    {notificationMode(chat, notificationModes) === 'mentions' ? <At size={14} weight="bold" /> : <BellSlash size={14} weight="fill" />}
+                  </span>
+                )}
                 <span className="chat-time">{chat.time}</span>
               </div>
               <div className="chat-line2">

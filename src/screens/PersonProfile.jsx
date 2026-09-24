@@ -1,10 +1,10 @@
+import ChatNotificationControl from '../components/ChatNotificationControl';
 import { useCalls } from '../calls/Calls';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, CaretRight, FileText, LinkSimple, Play } from '@phosphor-icons/react';
 import {
   Chat24Filled, Call24Filled, Heart24Filled, Search24Filled,
-  Alert24Filled, AlertOff24Filled,
   PersonInfo16Regular, Image16Regular, Document16Regular, Link16Regular, People16Regular,
   Image24Filled, Document24Filled, Link24Filled, People24Filled,
 } from '@fluentui/react-icons';
@@ -36,13 +36,14 @@ const TABS = [
   { id: 'groups', label: 'Общие группы', Icon: People16Regular, count: (p) => p.groups.length },
 ];
 
-export default function PersonProfile() {
+export default function PersonProfile({ notificationPreview } = {}) {
   const navigate = useNavigate();
   const calls = useCalls();
   const location = useLocation();
   const [scrolled, onScroll] = useScrolled();
   const { id, employee, background, online, bot } = location.state || {};
-  const p = getPerson(id, employee);
+  const sourcePerson = getPerson(id, employee);
+  const p = notificationPreview ? { ...sourcePerson, phone: '+7 (000) 000-00-00', email: 'user@example.com', tabNumber: '00000000' } : sourcePerson;
   // «в сети» — не строка из данных, а текущее состояние: оно приходит оттуда,
   // откуда профиль открыли. Без этого шапка чата и профиль расходились.
   // У ассистента присутствия нет вовсе — вместо него то же, что в шапке чата.
@@ -55,7 +56,6 @@ export default function PersonProfile() {
 
   const [closing, setClosing] = useState(false);
   const [screenMenu, setScreenMenu] = useState(false);
-  const [muted, setMuted] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [tab, setTab] = useState(bot ? 'files' : 'info');
   const [toast, setToast] = useState('');
@@ -83,11 +83,6 @@ export default function PersonProfile() {
     },
   });
 
-  const toggleMute = () => {
-    setMuted((m) => !m);
-    setToast(muted ? 'Уведомления включены' : 'Уведомления отключены');
-  };
-
   // «Ещё» больше нет: поиск и звук вынесены в ряд, а «поделиться ссылкой»
   // живёт в «трёх точках» шапки.
   // Ассистенту не звонят и не говорят «рахмет» — это не человек. Остаются
@@ -99,7 +94,6 @@ export default function PersonProfile() {
       { id: 'thanks', label: 'Рахмет', Icon: Heart24Filled, onClick: () => setToast('Рахмет отправлен') },
     ]),
     { id: 'search', label: 'Поиск', Icon: Search24Filled, onClick: () => setToast('Поиск по переписке') },
-    { id: 'mute', label: 'Звук', Icon: muted ? AlertOff24Filled : Alert24Filled, onClick: toggleMute },
   ];
 
   // Профиль уволенного — тот же шаблон, но урезанный: действий над человеком,
@@ -171,6 +165,7 @@ export default function PersonProfile() {
                   <span className="quick-label">{label}</span>
                 </button>
               ))}
+            <ChatNotificationControl previewState={notificationPreview} chatKey={location.state?.notificationKey || p.id || p.name} initialMode={location.state?.notificationInitialMode || 'on'} />
             </div>
           </ProfileHero>
 
