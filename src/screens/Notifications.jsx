@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useNotificationBack } from '../utils/useNotificationBack';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, GearSix } from '@phosphor-icons/react';
 import { notificationGroups } from '../data/notifications';
 import './Notifications.css';
+import NotificationIcon from '../components/NotificationIcon';
 import { useScrolled } from '../utils/useScrolled';
 
 // Список групп уведомлений (Figma node 24351:90018). Открывается по колокольчику
@@ -11,12 +12,10 @@ export default function Notifications() {
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const location = useLocation();
-  const [closing, setClosing] = useState(false);
+  const [closing, close] = useNotificationBack('/');
+  const language = new URLSearchParams(window.location.search).get('lang') || 'ru';
 
-  const close = () => {
-    setClosing(true);
-    setTimeout(() => navigate(-1), 260);
-  };
+
 
   return (
     <div className={`notifs ${closing ? 'closing' : ''}`}>
@@ -36,15 +35,14 @@ export default function Notifications() {
         <div className="nt-card">
           {notificationGroups.map((g) => (
             <button className="nt-row" key={g.id} onClick={() => navigate(`/notifications/${g.id}`, { state: { background: location } })}>
-              {/* Кольцо, а не заливка: в макете у групп именно «бублик» своего цвета */}
-              <span className="nt-ring" style={{ borderColor: g.tone }} />
+              <NotificationIcon group={g} />
               <span className="nt-texts">
                 <span className="nt-row-head">
-                  <span className="nt-name">{g.name}</span>
+                  <span className="nt-name">{g.names[language] || g.name}</span>
                   <span className="nt-when">{g.when}</span>
                 </span>
                 <span className="nt-row-last">
-                  <span className="nt-last">{g.last}</span>
+                  <span className="nt-last">{g.lastService && <strong>{g.lastService}: </strong>}{g.last}</span>
                   {g.unread > 0 && <span className="nt-dot" />}
                 </span>
               </span>

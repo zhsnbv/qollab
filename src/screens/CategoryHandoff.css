@@ -1,0 +1,15 @@
+.category-board { padding: 40px; background: #eef0f3; min-height: 100vh; width: max-content; color: #222; }
+.category-board > header { margin-bottom: 32px; }
+.category-board > header h1 { font-size: 28px; margin-bottom: 10px; }
+.category-frames > section > h2, .category-icons > h2 { font-size: 17px; margin-bottom: 18px; }
+.category-board > header p, .category-icons > p { margin: 10px 0; font-size: 14px; }
+.category-board a { color: #b55300; text-decoration: underline; }
+.category-frames { display: flex; gap: 32px; align-items: flex-start; }
+.category-board .category-frame, .device.category-prototype { width: 402px; height: 820px; min-height: 820px; max-height: 820px; border: 0; border-radius: 0; box-shadow: none; position: relative; overflow: hidden; margin: 0; flex-shrink: 0; }
+.device.category-prototype { margin: 24px auto; }
+.category-icons { width: 310px; padding: 24px; background: white; border-radius: 16px; }
+.category-icons > div { display: flex; align-items: center; gap: 12px; margin-top: 19px; font-size: 14px; }
+.category-icons small { display: block; color: #667; margin-top: 4px; font-size: 11px; }
+@media(max-width: 450px) { .device.category-prototype { margin: 0 auto; width: 100%; } }
+
+.category-layer { position: absolute; inset: 0; }

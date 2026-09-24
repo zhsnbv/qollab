@@ -90,3 +90,8 @@
 @media (prefers-reduced-motion: reduce) {
   .notifs, .notifs.closing { animation: none; }
 }
+
+/* Long localized category names wrap without hiding their meaning. */
+.nt-name { white-space: normal; overflow: visible; line-height: 1.3; }
+.nt-last strong { font-weight: 600; color: var(--color-text); }
+.nt-row { gap: 12px; }

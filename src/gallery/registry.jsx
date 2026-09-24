@@ -153,7 +153,7 @@ export const SCREEN_GROUPS = [
       { id: 'notifications', title: 'Уведомления', note: 'По колокольчику в шапке', route: '/notifications', render: () => <Notifications /> },
       {
         id: 'notif-group', title: 'Группа уведомлений', note: 'Дни — липкие пилюли, как в чате',
-        route: '/notifications/esed', render: routed('/notifications/:groupId', NotificationGroup),
+        route: '/notifications/employee-services', render: routed('/notifications/:groupId', NotificationGroup),
       },
       {
         id: 'set-notif', title: 'Настройка уведомлений', note: 'Шестерёнка в шапке уведомлений',
