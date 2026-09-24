@@ -47,8 +47,11 @@ html.kb .cr-body { padding-bottom: 56px; }
 .cr-avatar--bot { border: none; overflow: visible; }
 .cr-title-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .cr-title { font-size: 15px; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cr-subtitle { font-size: 12px; font-weight: 500; color: var(--color-weak); line-height: 1.5; }
+.cr-subtitle { font-size: 12px; font-weight: 500; color: var(--color-weak); line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .cr-subtitle.accent { color: var(--color-primary); }
+.cr-subtitle--switch { animation: cr-status-in 0.16s ease-out both; }
+@keyframes cr-status-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .cr-subtitle--switch { animation: none; } }
 /* Серый глиф в сером кружке — тот же паттерн, что у кнопок в шапках */
 .cr-walkie {
   width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--color-background);
@@ -289,6 +292,8 @@ html.kb .cr-body { padding-bottom: 56px; }
 .voice-time { font-size: 12px; font-weight: 500; color: var(--color-weak); flex-shrink: 0; }
 
 /* Индикатор «печатает…» */
+.msg--typing { animation: msg-in 0.2s ease-out both; }
+.msg--typing .msg-avatar-slot { width: 40px; height: 40px; }
 .msg-bubble--typing { display: inline-flex; align-items: center; gap: 4px; padding: 13px 14px; }
 .msg-bubble--typing span {
   width: 6px; height: 6px; border-radius: 50%; background: var(--color-light);
@@ -300,6 +305,7 @@ html.kb .cr-body { padding-bottom: 56px; }
   0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
   30% { opacity: 1; transform: translateY(-3px); }
 }
+@media (prefers-reduced-motion: reduce) { .msg--typing, .msg-bubble--typing span { animation: none; } }
 
 /* Панель ввода — «жидкое стекло» (Figma node 24627-79673): плавает поверх
    переписки, а не отрезает её полосой. Поэтому absolute, а не поток: контент

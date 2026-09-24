@@ -20,6 +20,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import AttachSheet from '../components/AttachSheet';
 import ComposeInput from '../components/ComposeInput';
+import { typingSubtitle } from '../utils/typingIndicator';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular,
   ChatAdd24Filled, TextBulletListLtr24Filled,
 } from '@fluentui/react-icons';
@@ -166,7 +167,7 @@ function AuthorAvatar({ chat, author }) {
   );
 }
 
-export default function DMChat() {
+export default function DMChat({ typingPreview } = {}) {
   const calls = useCalls();
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -212,8 +213,8 @@ export default function DMChat() {
   const [toast, setToast] = useState('');
   const [attachOpen, setAttachOpen] = useState(false);
   const [history, setHistory] = useState(false);
-  const [phase, setPhase] = useState(()=>calls?.showcase?(isEmptyChat(chat)?'empty':'chat'):'connecting'); // connecting | empty | chat
-  const [messages, setMessages] = useState(() => (chat && !isEmptyChat(chat) ? buildHistory(chat) : []));
+  const [phase, setPhase] = useState(()=>typingPreview ? 'chat' : calls?.showcase?(isEmptyChat(chat)?'empty':'chat'):'connecting'); // connecting | empty | chat
+  const [messages, setMessages] = useState(() => typingPreview?.messages || (chat && !isEmptyChat(chat) ? buildHistory(chat) : []));
   const [typing, setTyping] = useState(false);
   const [input, setInput] = useState('');
   const scrollRef = useRef(null);
@@ -225,7 +226,7 @@ export default function DMChat() {
   }, [chat, navigate]);
 
   useEffect(() => {
-    if (!chat || calls?.showcase) return;
+    if (!chat || calls?.showcase || typingPreview) return;
     const t = setTimeout(() => setPhase(isEmptyChat(chat) ? 'empty' : 'chat'), 900);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -371,7 +372,10 @@ export default function DMChat() {
     return { ...msg, firstOfGroup, lastOfGroup };
   });
 
-  const subtitle = phase === 'connecting' ? 'Подключение…' : (typing ? 'печатает…' : subtitleFor(chat));
+  const previewPeople = typingPreview?.people || [];
+  const activeTyping = !chat.dismissed && chat.kind !== 'bot' && (typingPreview ? previewPeople.length > 0 : typing);
+  const typingPeople = typingPreview ? previewPeople : activeTyping ? [chat.kind === 'group' ? ((chat.sender || '').replace(':', '') || groupNames[0]) : chat.title] : [];
+  const subtitle = phase === 'connecting' ? 'Подключение…' : (typingSubtitle(typingPeople, chat.kind === 'group') || subtitleFor(chat));
 
   return (
     <div className={`chatroom ${closing ? 'closing' : ''}`}>
@@ -382,7 +386,7 @@ export default function DMChat() {
           <span className={`cr-avatar ${chat.kind === 'bot' ? 'cr-avatar--bot' : ''}`}><ChatAvatarImg chat={chat} size={40} /></span>
           <span className="cr-title-wrap">
             <span className="cr-title">{chat.title}</span>
-            <span className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</span>
+            <span key={subtitle} className={`cr-subtitle cr-subtitle--switch ${phase === 'connecting' || activeTyping ? 'accent' : ''}`}>{subtitle}</span>
           </span>
         </button>
         {chat.kind === 'bot' && (
@@ -447,8 +451,8 @@ export default function DMChat() {
             {notice.map((n) => (
               <div className="msg-status-chip" key={n.id}>{n.text}</div>
             ))}
-            {typing && (
-              <div className="msg msg--their msg--last">
+            {activeTyping && !chat.kind && !chat.dismissed && (
+              <div className="msg msg--their msg--last msg--typing">
                 <span className="msg-avatar-slot"><AuthorAvatar chat={chat} author={chat.title} /></span>
                 <div className="msg-col">
                   <div className="msg-bubble msg-bubble--typing"><span /><span /><span /></div>

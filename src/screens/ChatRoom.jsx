@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Plus, Microphone, PaperPlaneRight } from '@phosphor-icons/react';
 import { dayLabel } from '../utils/chatDate';
@@ -13,6 +13,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import AttachSheet from '../components/AttachSheet';
 import ComposeInput from '../components/ComposeInput';
+import { typingSubtitle } from '../utils/typingIndicator';
 import { ArrowReply20Regular, Edit20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import './ChatRoom.css';
 import { PROFILE_V2 } from '../config';
@@ -87,7 +88,7 @@ function AuthorAvatar({ author, onOpen }) {
   );
 }
 
-export default function ChatRoom() {
+export default function ChatRoom({ typingPreview } = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   // Профили открываем поверх чата: он остаётся под ними смонтированным
@@ -173,8 +174,8 @@ export default function ChatRoom() {
   };
 
   const [closing, setClosing] = useState(false);
-  const [phase, setPhase] = useState('connecting'); // connecting | chat
-  const [messages, setMessages] = useState([]);
+  const [phase, setPhase] = useState(typingPreview ? 'chat' : 'connecting'); // connecting | chat
+  const [messages, setMessages] = useState(() => typingPreview ? [{ id: 'preview-1', author: {short:'Участник А',initials:'УА',tint:'green',color:'#52c41a'}, kind: 'text', day: 'Сегодня', text: 'Тестовое сообщение в группе.', time: '11:24' }] : []);
   const [typing, setTyping] = useState(null);
   const [input, setInput] = useState('');
   const startedRef = useRef(false);
@@ -182,18 +183,19 @@ export default function ChatRoom() {
   const timersRef = useRef([]);
 
   useEffect(() => {
+    if (typingPreview) return;
     const t = setTimeout(() => setPhase('chat'), 900);
     return () => clearTimeout(t);
-  }, []);
+  }, [typingPreview]);
 
   // История отыгрывает сама один раз, как только чат подключился —
   // без ожидания первого сообщения от пользователя.
   useEffect(() => {
-    if (phase !== 'chat' || startedRef.current) return;
+    if (typingPreview || phase !== 'chat' || startedRef.current) return;
     startedRef.current = true;
     runScript();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase]);
+  }, [phase, typingPreview]);
 
   useKeyboardInset(scrollRef);
 
@@ -262,8 +264,9 @@ export default function ChatRoom() {
       setMessages((m) => m.map((msg) => (msg.id === id ? { ...msg, status: 'delivered' } : msg)));
     }, 600));
     const author = pick(participants);
+    const coAuthor = pick(participants.filter((person) => person !== author));
     const delay = 900 + Math.random() * 700;
-    timersRef.current.push(setTimeout(() => setTyping(author), 400));
+    timersRef.current.push(setTimeout(() => setTyping([author, coAuthor]), 400));
     timersRef.current.push(setTimeout(() => {
       setTyping(null);
       setMessages((m) => [...m, { id: ++uid, author, kind: 'text', text: pick(replies), time: now() }]);
@@ -272,9 +275,10 @@ export default function ChatRoom() {
 
   const onKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
 
+  const activeTypists = typingPreview?.people || (typing ? (Array.isArray(typing) ? typing : [typing]) : []);
   const subtitle = phase === 'connecting'
     ? 'Подключение…'
-    : (typing ? `${typing.short} печатает…` : '73 участника');
+    : (typingSubtitle(activeTypists, true) || '73 участника');
 
   const pinnedMessages = messages.filter((m) => pinnedIds.includes(m.id));
   const lastPinned = pinnedMessages[pinnedMessages.length - 1];
@@ -305,10 +309,10 @@ export default function ChatRoom() {
       <header className="cr-header">
         <button className="cr-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <button className="cr-headline" onClick={() => openProfile('prodev', 'group')} aria-label="Профиль группы">
-          <span className="cr-avatar"><img src="/img/chats/bts-pr.png" alt="" /></span>
+          <span className="cr-avatar">{typingPreview ? <span className="cr-avatar-initials tint-orange">Г</span> : <img src="/img/chats/bts-pr.png" alt="" />}</span>
           <span className="cr-title-wrap">
-            <span className="cr-title">PR01DEV + ROBOTS</span>
-            <span className={`cr-subtitle ${phase === 'connecting' || typing ? 'accent' : ''}`}>{subtitle}</span>
+            <span className="cr-title">{typingPreview ? 'Групповой чат' : 'PR01DEV + ROBOTS'}</span>
+            <span key={subtitle} className={`cr-subtitle cr-subtitle--switch ${phase === 'connecting' || activeTypists.length ? 'accent' : ''}`}>{subtitle}</span>
           </span>
         </button>
         <button className="cr-walkie" aria-label="Рация"><img src="/img/chats/walkie.svg" alt="" width="20" height="20" /></button>
@@ -349,14 +353,6 @@ export default function ChatRoom() {
             {notice.map((n) => (
               <div className="msg-status-chip" key={n.id}>{n.text}</div>
             ))}
-            {typing && (
-              <div className="msg msg--their msg--last">
-                <span className="msg-avatar-slot"><AuthorAvatar author={typing} /></span>
-                <div className="msg-col">
-                  <div className="msg-bubble msg-bubble--typing"><span /><span /><span /></div>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>

@@ -1,0 +1,14 @@
+.th-board { width: 2360px; padding: 48px; background: var(--page-bg); color: var(--color-text); }
+.th-board > header { margin-bottom: 40px; }
+.th-board > header h1 { font-size: 36px; line-height: 1.25; color: var(--color-heading); margin: 12px 0; }
+.th-board header p { font-size: 18px; line-height: 1.5; }
+.th-eyebrow { color: var(--color-primary); font-weight: 700; letter-spacing: 2px; }
+.th-grid { display: grid; grid-template-columns: repeat(5, 402px); gap: 48px 60px; }
+.th-cell { width: 402px; isolation: isolate; }
+.th-cell figcaption { height: 128px; }
+.th-cell figcaption h2 { font-size: 19px; line-height: 1.35; margin-bottom: 10px; }
+.th-cell figcaption p { font-size: 15px; line-height: 1.45; color: var(--color-weak); }
+html.gallery .device.th-screen { width: 402px!important; height: 820px!important; position: relative; overflow: hidden; box-shadow: none; border: 0; pointer-events: none; }
+.th-screen .chatroom { animation: none; }
+.th-screen .cr-subtitle--switch, .th-screen .msg--typing, .th-screen .msg-bubble--typing span { animation: none; }
+.th-board footer { margin-top: 40px; font-size: 17px; line-height: 1.5; max-width: 1800px; }
