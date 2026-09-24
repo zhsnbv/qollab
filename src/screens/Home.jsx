@@ -43,8 +43,8 @@ export default function Home() {
       >
         <img
           src={`/img/notifications/bell-${unreadTotal > 0 ? 'active' : 'empty'}.svg`}
-          width={20}
-          height={20}
+          width={25}
+          height={25}
           alt=""
           aria-hidden="true"
         />
