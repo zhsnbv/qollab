@@ -4,7 +4,7 @@ const icons = {
   'Почта 2.0': 'mail', 'Информация': 'information', 'IT заявки': 'it-tickets',
   'Расчетный листок 3.0': 'payslip', 'ERG Bus': 'erg-bus', 'ЕСЭД': 'esed',
   'Электронная очередь': 'queue', 'МТОРО': 'mtoro', 'ERG CU': 'erg-cu',
-  'Корпоративные скидки': 'discounts', 'ERG Partners': 'partners', 'Qollab': 'qollab',
+  'Корпоративные скидки': 'discounts', 'ERG Partners': 'partners', 'Qollab': 'qollab-brand',
 };
 export default function NotificationMiniAppIcon({ service, size = 32 }) {
   const source = icons[service] ? `/img/notification-miniapps/${icons[service]}.png` : allServices.find(s => s.name === service)?.img || '/img/notification-miniapps/fallback.png';
