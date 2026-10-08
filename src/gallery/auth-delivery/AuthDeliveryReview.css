@@ -1,0 +1,74 @@
+html.auth-delivery-review, html.auth-delivery-review body { position: static; min-height: 100%; height: auto; }
+html.auth-delivery-review { overflow: auto; }
+html.auth-delivery-review body { overflow: visible; background: #f7f7f8; }
+html.auth-delivery-review #root { height: auto; }
+.ad-review { max-width: 1120px; margin: 0 auto; padding: 40px 48px 48px; color: var(--color-text); }
+.ad-review-header { padding-bottom: 32px; border-bottom: 1px solid #e6e6e8; }
+.ad-review-brand { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; }
+.ad-review-brand img { border-radius: 9px; }
+.ad-review-brand i { padding: 0 6px; color: #c2c2c7; font-style: normal; }
+.ad-review-tag { margin-left: auto; border: 1px solid #e9d0ba; background: #fff3e8; border-radius: 999px; padding: 6px 12px; font-size: 12px; color: #9e4c0e; }
+.ad-review-header h1 { font-size: 32px; line-height: 1.2; letter-spacing: -.8px; font-weight: 650; margin-top: 24px; color: var(--color-heading); }
+.ad-review-header > p { margin-top: 10px; color: #77777c; font-size: 14px; line-height: 1.6; }
+.ad-review-layout { display: grid; grid-template-columns: minmax(280px, 360px) 402px; justify-content: space-between; gap: 48px; padding-top: 32px; }
+.ad-review-panel { padding-top: 30px; }
+.ad-review-panel h2 { font-size: 18px; font-weight: 600; color: var(--color-heading); }
+.ad-review-panel > p { font-size: 13px; color: #77777c; line-height: 1.6; margin-top: 8px; }
+.ad-scenarios { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.ad-scenario { min-height: 74px; padding: 14px; display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 1px solid #e6e6e8; border-radius: 12px; background: #fff; color: var(--color-text); transition: border-color .15s, background .15s; }
+.ad-scenario.is-selected { border-color: var(--color-primary); background: #fff8f2; }
+.ad-scenario-number { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #f5f5f5; font-size: 12px; color: #999; }
+.ad-scenario.is-selected .ad-scenario-number { background: var(--color-primary-bg); color: var(--color-primary); }
+.ad-scenario > span:nth-child(2) { flex: 1; }
+.ad-scenario strong { display: block; font-size: 14px; font-weight: 600; line-height: 1.4; }
+.ad-scenario small { display: block; margin-top: 4px; font-size: 12px; color: #999; }
+.ad-scenario > svg { color: #bbb; }
+.ad-scenario.is-selected > svg { color: var(--color-primary); }
+.ad-review-notes { margin-top: 32px; padding-top: 24px; border-top: 1px solid #e6e6e8; }
+.ad-review-notes h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+.ad-review-notes p { font-size: 13px; line-height: 1.65; color: #77777c; margin-top: 12px; }
+.ad-review-notes b { color: #555; font-weight: 600; }
+.ad-review-footnote { margin-top: 28px; padding: 14px; background: #eeeef0; border-radius: 10px; font-size: 12px; line-height: 1.6; color: #77777c; }
+.ad-review-dot { display: inline-block; width: 6px; height: 6px; margin-right: 7px; border-radius: 50%; background: var(--color-primary); }
+.ad-review-source { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; font-size: 12px; color: #77777c; }
+.ad-preview-caption { display: flex; justify-content: space-between; margin-bottom: 12px; color: #999; font-size: 12px; }
+.ad-phone { width: 402px; height: 820px; position: relative; overflow: hidden; isolation: isolate; background: var(--color-white); border-radius: 20px; box-shadow: 0 0 0 1px #e6e6e8, 0 12px 36px #00000006; }
+.ad-preview-note { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; color: #999; font-size: 11px; margin-top: 14px; line-height: 1.5; }
+.ad-preview-note > span { color: #ccc; }
+/* Existing Auth styles own spacing, typography and OTP geometry. Only allow
+   long localized button text to wrap; no new layout inside the product screen. */
+.ad-code-screen .auth-btn { height: auto; min-height: 51px; padding: 10px 16px; line-height: 1.4; }
+.ad-code-screen[data-channel="qollab"] .auth-btn:not(:disabled) { color: #000; }
+.ad-code-screen button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.ad-code-screen .otp:focus-within .otp-cell.active { box-shadow: 0 0 0 1px var(--color-primary); }
+.ad-code-screen .auth-dialog-body > svg { margin-bottom: 12px; }
+.ad-review-panel button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.ad-board { width: 1884px; padding: 48px; background: #f7f7f8; }
+.ad-board-header { margin-bottom: 36px; }
+.ad-board-header h1 { font-size: 30px; margin: 12px 0; }
+.ad-board-header p { font-size: 15px; line-height: 1.6; color: #777; }
+.ad-board-header a { display: inline-block; margin-top: 12px; font-size: 14px; color: var(--color-primary); }
+.ad-board-grid { display: grid; grid-template-columns: repeat(4, 402px); gap: 40px 60px; }
+.ad-board-grid figure { width: 402px; }
+.ad-board-grid figcaption { height: 76px; font-size: 14px; line-height: 1.6; }
+.ad-board-grid figcaption p { margin-top: 4px; color: #777; }
+.ad-board-screen { position: relative; isolation: isolate; width: 402px; height: 820px; overflow: hidden; background: #fff; }
+.ad-board-screen *, .ad-board-screen *::before, .ad-board-screen *::after { animation: none !important; transition: none !important; }
+@media (max-width: 900px) {
+  .ad-review { padding: 28px 24px; }
+  .ad-review-layout { gap: 28px; grid-template-columns: minmax(240px, 1fr) 402px; }
+}
+@media (max-width: 740px) {
+  .ad-review { padding: 24px 16px; }
+  .ad-review-layout { display: flex; flex-direction: column; align-items: center; gap: 24px; padding-top: 24px; }
+  .ad-review-panel { width: min(402px, 100%); padding-top: 0; }
+  .ad-review-header h1 { font-size: 28px; }
+  .ad-review-notes, .ad-review-footnote, .ad-review-source { display: none; }
+  .ad-scenarios { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .ad-scenario { min-height: 76px; padding: 10px; gap: 8px; }
+  .ad-scenario-number, .ad-scenario > svg { display: none; }
+  .ad-scenario strong { font-size: 12px; }
+  .ad-preview { width: min(402px, 100%); }
+  .ad-phone { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .ad-review * { animation: none !important; transition: none !important; } }
