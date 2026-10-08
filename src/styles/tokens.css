@@ -276,7 +276,7 @@ input, textarea, select, [contenteditable] { caret-color: var(--color-primary); 
    Включается по системной настройке: инлайн-скрипт в index.html
    ставит data-theme="dark" на <html>.
    ============================================================ */
-html[data-theme="dark"] {
+html[data-theme="dark"], .ru-board-frame[data-theme="dark"] {
   --color-white: #2b2a27;          /* поверхности: карточки, бары */
   --color-heading: rgba(255, 250, 242, 0.92);
   --color-weak: #a5a096;

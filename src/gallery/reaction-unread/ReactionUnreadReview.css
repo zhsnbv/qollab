@@ -1,0 +1,95 @@
+html.reaction-unread-review, html.reaction-unread-review body { position: static; height: auto; min-height: 100%; }
+html.reaction-unread-review { overflow: auto; }
+html.reaction-unread-review body { display: block; overflow: visible; padding: 0; background: var(--page-bg); }
+html.reaction-unread-review #root { height: auto; }
+.ru-review { max-width: 1120px; margin: 0 auto; padding: 32px 48px 40px; color: var(--color-text); }
+.ru-review-header { padding-bottom: 24px; border-bottom: 1px solid var(--color-border); }
+.ru-brand { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; }
+.ru-brand img { border-radius: 9px; }
+.ru-brand i { font-style: normal; color: var(--color-light); padding: 0 6px; }
+.ru-review-tag { margin-left: auto; color: var(--color-primary); background: var(--color-primary-bg); border: 1px solid var(--color-primary-border); padding: 6px 12px; border-radius: var(--radius-pill); font-size: 12px; }
+.ru-review-header h1 { margin-top: 20px; font-size: 32px; font-weight: 650; line-height: 1.2; letter-spacing: -.8px; color: var(--color-heading); }
+.ru-review-header > p { margin-top: 10px; font-size: 14px; line-height: 1.6; color: var(--color-weak); }
+.ru-layout { display: grid; grid-template-columns: minmax(280px, 380px) 402px; justify-content: space-between; gap: 48px; margin-top: 28px; }
+.ru-panel { padding-top: 6px; }
+.ru-section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ru-section-heading h2 { font-size: 18px; font-weight: 600; }
+.ru-reset { font-size: 12px; color: var(--color-weak); padding: 8px; }
+.ru-scenarios { display: flex; flex-direction: column; gap: 8px; }
+.ru-scenario { display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; min-height: 76px; padding: 14px; border: 1px solid var(--color-border); background: var(--color-white); border-radius: 12px; color: var(--color-text); }
+.ru-scenario.is-selected { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary-bg) 55%, var(--color-white)); }
+.ru-number { width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 8px; background: var(--color-background); color: var(--color-weak); font-size: 12px; }
+.ru-scenario.is-selected .ru-number { background: var(--color-primary-bg); color: var(--color-primary); }
+.ru-scenario > span:nth-child(2) { flex: 1; }
+.ru-scenario strong { display: block; font-size: 14px; line-height: 1.4; font-weight: 600; }
+.ru-scenario small { display: block; font-size: 12px; line-height: 1.5; margin-top: 4px; color: var(--color-weak); }
+.ru-scenario > svg { color: var(--color-weak); flex-shrink: 0; }
+.ru-scenario.is-selected > svg { color: var(--color-primary); }
+.ru-description { margin-top: 18px; font-size: 13px; line-height: 1.7; color: var(--color-weak); }
+.ru-event { margin-top: 16px; padding: 12px; background: var(--color-background); border-radius: 10px; font-size: 12px; line-height: 1.6; }
+.ru-design-notes { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border); }
+.ru-design-notes h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+.ru-design-notes p { display: flex; align-items: center; gap: 10px; font-size: 12px; line-height: 1.7; color: var(--color-weak); margin-top: 8px; }
+.ru-design-notes svg { flex-shrink: 0; }
+.ru-demo-note { margin-top: 24px; font-size: 12px; line-height: 1.7; color: var(--color-weak); }
+.ru-source { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; margin-top: 16px; color: var(--color-weak); }
+.ru-preview-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 12px; color: var(--color-weak); }
+.ru-theme { display: flex; padding: 3px; background: var(--color-background); border-radius: var(--radius-pill); }
+.ru-theme button { padding: 7px 12px; font-size: 12px; border-radius: var(--radius-pill); color: var(--color-weak); }
+.ru-theme button[aria-pressed="true"] { background: var(--color-white); color: var(--color-text); box-shadow: 0 1px 3px #00000010; }
+html.reaction-unread-review .device.ru-phone { width: 402px; max-width: 402px; height: 820px; transform: none; margin: 0; border-radius: 20px; background: var(--color-white); box-shadow: 0 0 0 1px var(--color-border), 0 12px 36px #00000008; }
+.ru-preview-caption { margin-top: 14px; font-size: 11px; line-height: 1.6; text-align: center; color: var(--color-weak); }
+.ru-chat-row { width: 100%; text-align: left; min-height: 76px; }
+.ru-chat-row:focus-visible { outline-offset: -3px; }
+.ru-chat-row:disabled { cursor: default; }
+.ru-row-signals { display: inline-flex; align-items: center; flex-shrink: 0; gap: 6px; }
+.ru-indicator {
+  width: 20px; min-width: 20px; padding: 0;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+html[data-theme="dark"] .ru-indicator, .ru-board-frame[data-theme="dark"] .ru-indicator {
+  background: color-mix(in srgb, var(--color-primary) 24%, var(--color-white));
+}
+.ru-indicator svg { display: block; flex-shrink: 0; }
+.ru-nav-preview { position: absolute; inset: 0; pointer-events: none; }
+.ru-add-reactions { display: flex; gap: 8px; margin-top: 16px; }
+.ru-add-reactions button { width: 48px; height: 44px; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 12px; font-size: 22px; }
+.ru-web-demo { margin-top: 16px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-white); overflow: hidden; }
+.ru-web-title { display: flex; align-items: center; gap: 8px; padding: 12px; border-bottom: 1px solid var(--color-border); color: var(--color-weak); }
+.ru-web-title h3 { font-size: 12px; font-weight: 500; flex: 1; }
+.ru-web-title > span { font-size: 10px; }
+.ru-web-chat { display: flex; align-items: center; gap: 8px; padding: 16px 12px; }
+.ru-web-chat > img { width: 36px; height: 36px; border-radius: 50%; }
+.ru-web-chat > span:nth-child(2) { flex: 1; min-width: 0; }
+.ru-web-chat strong { display: block; font-size: 12px; font-weight: 500; }
+.ru-web-chat small { display: block; margin-top: 4px; font-size: 11px; color: var(--color-weak); }
+.ru-web-open { display: flex; align-items: center; justify-content: center; gap: 8px; width: calc(100% - 24px); margin: 0 12px 12px; padding: 12px; font-size: 12px; border-radius: var(--radius-pill); background: var(--color-primary-bg); color: var(--color-primary); }
+.ru-web-open:disabled { color: var(--color-weak); background: var(--color-background); cursor: default; }
+.ru-push-state { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--color-border); padding: 12px; color: var(--color-weak); font-size: 11px; }
+.ru-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-primary); }
+.ru-push-state.is-read .ru-status-dot { background: var(--color-success); }
+.ru-conversation { animation: none; }
+.ru-message-list { display: flex; flex-direction: column; gap: 12px; padding: 16px 12px 80px; }
+.ru-day { align-self: center; color: var(--color-weak); background: var(--color-background); border-radius: var(--radius-pill); padding: 4px 12px; font-size: 11px; margin-bottom: 8px; }
+.ru-composer { position: absolute; bottom: 24px; left: 16px; right: 16px; display: flex; align-items: center; gap: 12px; border-radius: var(--radius-pill); padding: 12px 16px; background: var(--color-background); color: var(--color-weak); font-size: 14px; }
+.ru-composer-note { margin-left: auto; font-size: 10px; }
+.ru-review button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+@media (max-width: 900px) { .ru-review { padding: 28px 24px; } .ru-layout { gap: 24px; grid-template-columns: minmax(240px, 1fr) 402px; } }
+@media (max-width: 740px) { .ru-review { padding: 24px 16px; } .ru-layout { display: flex; flex-direction: column; align-items: center; } .ru-panel { width: min(402px, 100%); } .ru-preview { max-width: 100%; } .ru-review-header h1 { font-size: 28px; } .ru-scenarios { display: grid; grid-template-columns: 1fr 1fr; } .ru-scenario { padding: 10px; min-height: 90px; } .ru-number, .ru-scenario > svg { display: none; } .ru-design-notes, .ru-source { display: none; } }
+@media (max-width: 433px) { html.reaction-unread-review .device.ru-phone { width: calc(100vw - 32px); } }
+@media (prefers-reduced-motion: reduce) { .ru-review *, .ru-review *::before, .ru-review *::after { animation: none !important; transition: none !important; } }
+.ru-board { width: 2804px; padding: 48px; color: var(--color-text); background: var(--page-bg); }
+.ru-board-brand { font-size: 15px; font-weight: 600; color: var(--color-primary); letter-spacing: 1px; }
+.ru-board > header h1 { margin: 12px 0; font-size: 36px; color: var(--color-heading); }
+.ru-board > header p { font-size: 16px; line-height: 1.6; color: var(--color-weak); }
+.ru-board-section { margin-top: 36px; }
+.ru-board-section > h2 { font-size: 24px; margin-bottom: 24px; }
+.ru-board-grid { display: grid; grid-template-columns: repeat(6, 402px); gap: 48px; }
+.ru-board-cell { width: 402px; }
+.ru-board-cell figcaption { min-height: 88px; }
+.ru-board-cell h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+.ru-board-cell figcaption p { font-size: 13px; line-height: 1.5; color: var(--color-weak); }
+.ru-board-frame { width: 402px; height: 820px; position: relative; isolation: isolate; color: var(--color-text); }
+html.reaction-unread-review .ru-board .device.ru-phone { width: 402px; min-width: 402px; max-width: 402px; height: 820px; min-height: 820px; max-height: 820px; border-radius: 0; box-shadow: none; }
+.ru-board-frame *, .ru-board-frame *::before, .ru-board-frame *::after { animation: none !important; transition: none !important; }
