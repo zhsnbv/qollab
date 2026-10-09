@@ -1,3 +1,4 @@
+import ReactionPickerReview from './gallery/reaction-picker/ReactionPickerReview';
 import CategoryHandoff from './screens/CategoryHandoff';
 import AuthDeliveryReview from './gallery/auth-delivery/AuthDeliveryReview';
 import ReactionUnreadReview from './gallery/reaction-unread/ReactionUnreadReview';
@@ -188,6 +189,7 @@ export default function App() {
   const gallery = window.location.pathname === '/all';
   const categoryHandoff = window.location.pathname === '/handoff/categories';
   const authDeliveryReview = window.location.pathname === '/handoff/auth-delivery';
+  const reactionPickerReview = window.location.pathname === '/handoff/reaction-picker';
   const reactionUnreadReview = window.location.pathname === '/handoff/reaction-unread';
   const notificationHandoff = window.location.pathname === '/handoff/notifications';
   const typingHandoff = window.location.pathname === '/handoff/typing';
@@ -195,7 +197,7 @@ export default function App() {
   const widgetFigma = window.location.pathname === '/widgets-figma';
 
   return (
-    reactionUnreadReview ? <ReactionUnreadReview /> : authDeliveryReview ? <AuthDeliveryReview /> : <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><WidgetsProvider>
+    reactionPickerReview ? <ReactionPickerReview /> : reactionUnreadReview ? <ReactionUnreadReview /> : authDeliveryReview ? <AuthDeliveryReview /> : <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><WidgetsProvider>
       {categoryHandoff ? <CategoryHandoff /> : typingHandoff ? <TypingHandoff /> : notificationHandoff ? <NotificationHandoff /> : gallery ? <AllScreens /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
         <BrowserRouter>
           <CallsProvider><Device exiting={exiting} splashDone={splashDone} /></CallsProvider>
