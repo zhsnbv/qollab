@@ -43,7 +43,8 @@
 .pm-publications .pm-reader-lead { color: var(--color-weak); }
 .pm-publications .pw-card-full-text, .pm-publications .pw-card-full-text .ql-editor, .pm-publications .pw-card-full-text .pw-project-body p { color: var(--color-text); }
 .pm-publications .pm-open-discussion { background: var(--color-primary-bg); color: var(--color-primary); }
-.pm-publications .pm-comment-actions > button:first-child { color: var(--color-primary); }
+.pm-publications .pm-comment-reply { color: var(--color-primary); }
+.pm-publications .pm-replies-toggle { color: var(--color-weak); }
 
 /* Main reader keeps the app's header, action bar and original sheet shell. */
 .app-publication-reader .ar-act > svg,

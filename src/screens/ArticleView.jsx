@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft24Regular, MoreVertical20Filled, Bookmark20Filled, Bookmark20Regular, Comment20Regular, Eye20Regular, Share20Regular } from '@fluentui/react-icons';
+import { ChevronLeft24Regular, MoreVertical20Filled, Bookmark20Filled, Bookmark20Regular, Comment20Regular, Eye20Regular, Share20Regular } from '@fluentui/react-icons';
 import { MobileArticleContent } from '../gallery/publications-mobile/MobilePublicationParts';
 import { LikeButton } from '../gallery/publications-web/PostViews';
 import { usePublications } from '../components/publications/usePublications';
@@ -25,7 +25,7 @@ export default function ArticleView() {
   const postActions = post ? actions(post) : null;
   return <section className={`article pm-publications pw-app app-publication-reader ${closing ? 'closing' : ''}`} aria-label="Статья">
     <header className={`ar-header ${scrolled ? 'hdr-shadow' : ''}`}>
-      <button className="ar-back" aria-label={location.state?.background?.pathname.startsWith('/channel/') ? 'Назад в канал' : location.state?.background?.pathname === '/search' ? 'Назад к поиску' : 'Назад к публикациям'} onClick={close}><ArrowLeft24Regular /></button>
+      <button className="ar-back" aria-label={location.state?.background?.pathname.startsWith('/channel/') ? 'Назад в канал' : location.state?.background?.pathname === '/search' ? 'Назад к поиску' : 'Назад к публикациям'} onClick={close}><ChevronLeft24Regular /></button>
       <span className="ar-header-gap" aria-hidden="true" />
       {post && <><button className={`ar-header-save ${saved.bookmarks?.[post.id] ? 'active' : ''}`} aria-label={saved.bookmarks?.[post.id] ? 'Убрать из сохранённого' : 'Сохранить публикацию'} aria-pressed={!!saved.bookmarks?.[post.id]} onClick={() => change('bookmarks', post.id, current => !current)}>{saved.bookmarks?.[post.id] ? <Bookmark20Filled /> : <Bookmark20Regular />}</button><button className="ar-back" aria-label="Действия со статьёй" onClick={() => setSheet({ type: 'menu', post })}><MoreVertical20Filled /></button></>}
     </header>

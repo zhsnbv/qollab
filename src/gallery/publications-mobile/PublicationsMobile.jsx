@@ -2,7 +2,7 @@ import { MobileCard, ChannelStrip, PublicationActions as Actions } from './Mobil
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
-import { ArrowLeft24Regular, MoreVertical20Filled, Search24Regular, Settings20Filled, ChevronRight20Regular, Comment24Regular, Share24Regular, Bookmark20Regular, Bookmark20Filled, Link20Regular, Alert20Filled, AlertOff20Regular, Checkmark20Regular, Add20Regular, Dismiss20Regular } from '@fluentui/react-icons';
+import { ArrowLeft24Regular, ChevronLeft24Regular, MoreVertical20Filled, Search24Regular, Settings20Filled, ChevronRight20Regular, Comment24Regular, Share24Regular, Bookmark20Regular, Bookmark20Filled, Link20Regular, Alert20Filled, AlertOff20Regular, Checkmark20Regular, Add20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import TopBar from '../../components/TopBar';
 import TabLayout from '../../components/TabLayout';
 import BottomNav from '../../components/BottomNav';
@@ -116,7 +116,7 @@ function MobileExperience() {
       </section>}
 
       {article && <section className="pm-reader-screen pm-screen" aria-label="Статья">
-        <header className="pm-nav"><button aria-label={location.state?.from?.startsWith('/channel') ? 'Назад в канал' : 'Назад к публикациям'} onClick={back}><ArrowLeft24Regular /></button><span>{article.channel}</span><button aria-label="Действия со статьёй" onClick={() => setSheet({ type: 'menu', postId: article.id })}><MoreVertical20Filled /></button></header>
+        <header className="pm-nav"><button aria-label={location.state?.from?.startsWith('/channel') ? 'Назад в канал' : 'Назад к публикациям'} onClick={back}><ChevronLeft24Regular /></button><span>{article.channel}</span><button aria-label="Действия со статьёй" onClick={() => setSheet({ type: 'menu', postId: article.id })}><MoreVertical20Filled /></button></header>
         <div ref={reader} className="pm-reader-scroll"><article className="pm-reader" style={rubricStyle(article)}><PublicationIdentity post={article} onChannel={() => openChannel(channels.find(channel => channel.id === publicationChannelId(article, own)))} /><h1>{titleOf(article)}</h1><PublicationDetails post={article} />{article.lead && <p className="pm-reader-lead">{article.lead}</p>}<PublicationMedia post={article} /><PublicationBody post={article} id={`pm-reader-${article.id}`} /><FileList files={article.files} /><button className="pm-open-discussion" onClick={() => setSheet({ type: 'comments', postId: article.id })}><Comment24Regular /><span>{article.commentCount ? `Обсудить статью · ${article.commentCount}` : 'Начать обсуждение'}</span><ChevronRight20Regular /></button></article></div>
         <Actions post={article} {...forPost(article)} fixed />
       </section>}
