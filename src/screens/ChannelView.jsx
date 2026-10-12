@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CaretLeft, ShareNetwork } from '@phosphor-icons/react';
 import { PostCard } from '../components/Feed';
@@ -6,6 +6,7 @@ import { useChannels } from '../context/ChannelsContext';
 import { usePublications } from '../components/publications/usePublications';
 import './ChannelView.css';
 import { useScrolled } from '../utils/useScrolled';
+import ScrollToTop from '../components/ScrollToTop';
 
 // Аватарки подписчиков в строке «N подписчиков» — просто цветные кружки,
 // отдельных изображений под них в макете нет.
@@ -22,6 +23,7 @@ export default function ChannelView() {
   const channel = channels.find(c => c.id === channelId);
   const subscribed = channel?.subscribed;
   const [closing, setClosing] = useState(false);
+  const scrollRef = useRef(null);
 
   const close = () => {
     setClosing(true);
@@ -51,7 +53,7 @@ export default function ChannelView() {
         <span className="cv-back hdr-spacer" aria-hidden="true" />
       </header>
 
-      <div className="cv-scroll" onScroll={onScroll}>
+      <div ref={scrollRef} className="cv-scroll" onScroll={onScroll}>
         <div className="cv-cover"><img src={channel.cover} alt="" /></div>
 
         <div className="cv-head">
@@ -86,6 +88,7 @@ export default function ChannelView() {
 
         <div className="cv-bottom-spacer" />
       </div>
+      <ScrollToTop scrollRef={scrollRef} tabBar />
     </div>
   );
 }

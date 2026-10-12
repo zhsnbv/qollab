@@ -99,7 +99,7 @@ export default function Posts() {
   }
 
   return (
-    <TabLayout topbar={<TopBar title="Лента" actions={actions} />} onRefresh={refresh}>
+    <TabLayout topbar={<TopBar title="Лента" actions={actions} />} onRefresh={refresh} showScrollToTop={tab === 'posts'}>
       <FadeIn><div className={`posts ${tab === 'posts' ? 'posts--publications' : ''}`}>
         <div className="posts-tabs-wrap">
           <FeedTabs tab={tab} onChange={setTab} withChannels />

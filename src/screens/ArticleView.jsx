@@ -5,6 +5,7 @@ import { MobileArticleContent } from '../gallery/publications-mobile/MobilePubli
 import { LikeButton } from '../gallery/publications-web/PostViews';
 import { usePublications } from '../components/publications/usePublications';
 import { useScrolled } from '../utils/useScrolled';
+import ScrollToTop from '../components/ScrollToTop';
 import './ArticleView.css';
 import '../components/publications/Publications.css';
 
@@ -15,6 +16,7 @@ export default function ArticleView() {
   const post = resolve(requestedId || location.state?.post || posts[0]);
   const [closing, setClosing] = useState(false), [scrolled, onScroll] = useScrolled();
   const timer = useRef(null);
+  const scrollRef = useRef(null);
   useEffect(() => () => clearTimeout(timer.current), []);
   const close = () => {
     if (closing) return;
@@ -30,8 +32,9 @@ export default function ArticleView() {
       {post && <><button className={`ar-header-save ${saved.bookmarks?.[post.id] ? 'active' : ''}`} aria-label={saved.bookmarks?.[post.id] ? 'Убрать из сохранённого' : 'Сохранить публикацию'} aria-pressed={!!saved.bookmarks?.[post.id]} onClick={() => change('bookmarks', post.id, current => !current)}>{saved.bookmarks?.[post.id] ? <Bookmark20Filled /> : <Bookmark20Regular />}</button><button className="ar-back" aria-label="Действия со статьёй" onClick={() => setSheet({ type: 'menu', post })}><MoreVertical20Filled /></button></>}
     </header>
     {post ? <>
-      <div className="ar-body pm-reader-scroll" onScroll={onScroll}><MobileArticleContent post={post} onChannel={openChannel} onComments={postActions.onComments} /></div>
+      <div ref={scrollRef} className="ar-body pm-reader-scroll" onScroll={onScroll}><MobileArticleContent post={post} onChannel={openChannel} onComments={postActions.onComments} /></div>
       <div className="ar-actions" aria-label="Действия с публикацией">
+        <ScrollToTop scrollRef={scrollRef} aboveBar />
         <LikeButton className="ar-act" liked={post.liked} count={post.likes + Number(!!post.liked)} onClick={postActions.onLike} />
         <button className="ar-act" aria-label={`Комментарии: ${post.commentCount}`} onClick={postActions.onComments}><Comment20Regular />{post.comments ? post.commentCount : '—'}</button>
         <span className="ar-actions-gap" />

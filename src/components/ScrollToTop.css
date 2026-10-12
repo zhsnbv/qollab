@@ -1,0 +1,33 @@
+.scroll-to-top {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-3);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-white) 94%, transparent);
+  color: var(--color-text);
+  box-shadow: 0 3px 14px rgb(0 0 0 / .1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(14px) scale(.9);
+  transition: opacity .22s ease, transform .28s cubic-bezier(.22, 1, .36, 1), visibility .22s, background .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.scroll-to-top.is-visible { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); }
+.scroll-to-top > svg { width: 20px; height: 20px; flex-shrink: 0; }
+.scroll-to-top--above-bar { bottom: calc(100% + var(--space-3)); }
+.scroll-to-top--tabbar { bottom: calc(81px + max(25px, env(safe-area-inset-bottom))); }
+.scroll-to-top:active { transform: scale(.92); }
+.scroll-to-top:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+@media (hover: hover) { .scroll-to-top:hover { background: var(--color-background); } }
+@media (prefers-reduced-motion: reduce) { .scroll-to-top { transition: none; transform: none; } }

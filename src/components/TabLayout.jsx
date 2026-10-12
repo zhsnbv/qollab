@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import ScrollToTop from './ScrollToTop';
 import './TabLayout.css';
 
 const MAX_PULL = 92;  // докуда контент вообще уезжает вниз
@@ -9,7 +10,7 @@ const HOLD = 54;      // высота полосы, пока идёт обнов
 // контента под ним. Таб-бар живёт в App и лежит поверх — он плавающий, поэтому
 // .scroll-area просто получает нижний отступ, чтобы контент из-под него выходил.
 // При скролле у топбара плавно проявляется мягкая тень.
-export default function TabLayout({ topbar, children, onRefresh }) {
+export default function TabLayout({ topbar, children, onRefresh, showScrollToTop = false }) {
   const [scrolled, setScrolled] = useState(false);
   const [pull, setPull] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -121,6 +122,7 @@ export default function TabLayout({ topbar, children, onRefresh }) {
         >
           {children}
         </div>
+        {showScrollToTop && <ScrollToTop scrollRef={areaRef} tabBar />}
       </div>
     </>
   );
