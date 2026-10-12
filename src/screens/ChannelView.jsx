@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CaretLeft, ShareNetwork } from '@phosphor-icons/react';
 import { PostCard } from '../components/Feed';
-import { channelList } from '../data/channels';
-import { basePosts } from '../data/feed';
+import { useChannels } from '../context/ChannelsContext';
+import { usePublications } from '../components/publications/usePublications';
 import './ChannelView.css';
 import { useScrolled } from '../utils/useScrolled';
 
@@ -17,8 +17,10 @@ export default function ChannelView() {
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const { channelId } = useParams();
-  const channel = channelList.find((c) => c.id === channelId);
-  const [subscribed, setSubscribed] = useState(channel?.subscribed ?? false);
+  const { channels, toggle } = useChannels();
+  const { posts } = usePublications();
+  const channel = channels.find(c => c.id === channelId);
+  const subscribed = channel?.subscribed;
   const [closing, setClosing] = useState(false);
 
   const close = () => {
@@ -39,10 +41,7 @@ export default function ChannelView() {
     );
   }
 
-  // В прототипе у постов нет привязки к каналу по id — показываем публикации
-  // с совпадающим названием канала, иначе всю базовую ленту.
-  const posts = basePosts.filter((p) => p.channel === channel.name);
-  const list = posts.length ? posts : basePosts;
+  const list = posts.filter(post => post.channelId === channelId);
 
   return (
     <div className={`chanview ${closing ? 'closing' : ''}`}>
@@ -73,15 +72,16 @@ export default function ChannelView() {
         <div className="cv-actions">
           <button
             className={`cv-sub ${subscribed ? 'is-on' : ''}`}
-            onClick={() => setSubscribed((v) => !v)}
+            disabled={channel.required} onClick={() => toggle(channelId)}
           >
-            {subscribed ? 'Отписаться от канала' : 'Подписаться на канал'}
+            {channel.required ? 'Вы подписаны' : subscribed ? 'Отписаться от канала' : 'Подписаться на канал'}
           </button>
           <button className="cv-share" aria-label="Поделиться каналом"><ShareNetwork size={20} /></button>
         </div>
 
-        <div className="cv-posts">
-          {list.map((p, i) => <PostCard key={i} p={p} />)}
+        <div className="cv-posts cv-posts--publications">
+          {list.map(p => <PostCard key={p.id} p={p} />)}
+          {!list.length && <p className="cv-empty">Публикаций пока нет.</p>}
         </div>
 
         <div className="cv-bottom-spacer" />

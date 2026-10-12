@@ -1,0 +1,402 @@
+
+  <header class="topbar">
+    <div class="header-left">
+      <button class="burger-button" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="portalSidebar">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="brand"><img src="/portal-v2/assets/header-logo.svg" alt="Qollab"></div>
+    </div>
+    <label class="searchbox">
+      <img src="/portal-v2/assets/header-search.svg" alt="">
+      <input type="search" placeholder="Поиск" aria-label="Поиск">
+    </label>
+    <div class="user-actions">
+      <button class="header-chat notification" id="headerChatTrigger" type="button" aria-label="Чаты" aria-controls="headerChatPopover" aria-expanded="false">
+        <img src="/portal-v2/assets/v2-chat.svg" alt=""><span>3</span>
+      </button>
+      <button class="notification" aria-label="Уведомления">
+        <img src="/portal-v2/assets/alert.svg" alt=""><span>21</span>
+      </button>
+      <button class="profile" aria-label="Профиль пользователя">
+        <img class="profile-avatar" src="/portal-v2/assets/avatar.png" alt=""><img class="profile-chevron" src="/portal-v2/assets/chevron_down_filled.svg" alt="">
+      </button>
+    </div>
+  </header>
+
+  <aside class="header-chat-popover" id="headerChatPopover" aria-label="Чаты" aria-hidden="true">
+    <div class="header-chat-list-view" id="headerChatListView">
+      <div class="chat-list-default">
+        <header class="header-chat-popover-head">
+          <h2 id="headerChatListTitle">Чаты</h2>
+          <div class="header-chat-popover-actions">
+            <button class="header-chat-popover-action primary" id="headerCreateGroup" type="button" aria-label="Новый чат"><img src="/portal-v2/assets/chat-list-plus.svg" alt=""></button>
+            <button class="header-chat-popover-action" id="headerCreateMessage" type="button" aria-label="Выбрать чаты"><img src="/portal-v2/assets/chat-list-edit.svg" alt=""></button>
+            <button class="header-chat-popover-action" id="headerChatExpand" type="button" aria-label="Открыть чаты на весь экран"><img src="/portal-v2/assets/chat-overlay-expand.svg" alt=""></button>
+            <button class="header-chat-popover-action" id="headerChatClose" type="button" aria-label="Закрыть чаты"><img src="/portal-v2/assets/chat-overlay-close.svg" alt=""></button>
+          </div>
+        </header>
+        <label class="header-chat-popover-search">
+          <img src="/portal-v2/assets/chat-new-search.svg" alt="">
+          <input id="headerChatSearch" type="search" placeholder="Поиск" aria-label="Поиск чатов">
+        </label>
+        <div class="header-chat-popover-list" id="headerChatContactList"></div>
+        <div class="chat-selection-actions" id="headerChatSelectionActions" hidden>
+          <button type="button" data-chat-mark-read>Прочитать все</button>
+          <button type="button" data-chat-delete-selected disabled>Удалить</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-chat-conversation-view" id="headerChatConversationView" aria-hidden="true">
+      <header class="header-chat-conversation-head">
+        <button class="header-chat-conversation-action" id="headerChatBack" type="button" aria-label="Назад к списку чатов"><img src="/portal-v2/assets/chat-new-back.svg" alt=""></button>
+        <img class="header-chat-conversation-avatar" id="headerChatConversationAvatar" src="/portal-v2/assets/chat-internal-robots.png" alt="">
+        <div class="header-chat-conversation-copy"><strong id="headerChatConversationTitle">PR01DEV + ROBOTS</strong><span id="headerChatConversationStatus">73 участника</span></div>
+        <button class="header-chat-conversation-action chat-bot-control" id="headerChatBotNew" type="button" aria-label="Новый диалог с ERGiz" hidden>＋</button>
+        <button class="header-chat-conversation-action chat-bot-control" id="headerChatBotHistory" type="button" aria-label="История диалогов ERGiz" hidden>☰</button>
+        <button class="header-chat-conversation-action" id="headerChatVoice" type="button" aria-label="Рация"><img src="/portal-v2/assets/chat-internal-walkie.svg" alt=""></button>
+      </header>
+      <div class="header-chat-conversation-messages" id="headerChatConversationMessages"></div>
+      <div class="chat-compose-context" id="headerChatComposeContext" hidden></div>
+      <form class="header-chat-conversation-composer" id="headerChatConversationComposer">
+        <button class="header-chat-composer-action" id="headerChatAttachment" type="button" aria-label="Добавить вложение"><img src="/portal-v2/assets/chat-control-add.svg" alt=""></button>
+        <div class="chat-attachment-menu" id="headerChatAttachmentMenu" hidden>
+          <button type="button" data-attachment-kind="photo">Фото</button>
+          <button type="button" data-attachment-kind="document">Документ</button>
+          <button type="button" data-attachment-kind="poll">Опрос</button>
+        </div>
+        <input id="headerChatConversationInput" type="text" placeholder="Сообщение..." aria-label="Сообщение" autocomplete="off">
+        <button class="header-chat-composer-action chat-submit-action" type="submit" aria-label="Отправить сообщение"><img src="/portal-v2/assets/chat-control-mic.svg" alt=""></button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="portal-layout">
+    <aside class="sidebar" id="portalSidebar" aria-label="Основное меню">
+      <a class="rail-brand" href="#" data-page="home" aria-label="Qollab — главная">
+        <img src="/portal-v2/assets/header-logo.svg" alt="Qollab">
+      </a>
+      <nav class="primary-nav">
+        <a class="nav-row active" href="#" data-page="home"><span class="rail-icon"><img src="/portal-v2/assets/v2-home.svg" alt=""></span><span>Главная</span></a>
+        <a class="nav-row services-trigger" id="servicesTrigger" href="#servicesDrawer" aria-controls="servicesDrawer" aria-expanded="false"><span class="rail-icon"><img src="/portal-v2/assets/v2-services.svg" alt=""></span><span>Сервисы</span></a>
+        <a class="nav-row widgets-trigger" id="widgetsTrigger" href="#widgetsDrawer" aria-controls="widgetsDrawer" aria-expanded="false"><span class="rail-icon"><img src="/portal-v2/assets/nav-widgets.svg" alt=""></span><span>Виджеты</span></a>
+        <a class="nav-row" href="#"><span class="rail-icon"><img src="/portal-v2/assets/nav-leadership.svg" alt=""></span><span>Рук-во</span></a>
+        <a class="nav-row" href="#"><span class="rail-icon"><img src="/portal-v2/assets/v2-org.svg" alt=""></span><span>Структура</span></a>
+        <a class="nav-row" href="#chats-page" data-page="chats"><span class="rail-icon nav-icon-wrap"><img src="/portal-v2/assets/v2-chat.svg" alt=""><b>3</b></span><span>Чаты</span></a>
+      </nav>
+
+      <div class="rail-shortcuts" id="servicesMenuRail" aria-label="Сервисы в меню">
+        <a class="rail-shortcut" href="#"><span class="rail-service-icon rail-service-it"><img src="/portal-v2/assets/v2-service-it.png" alt=""></span><b>IT услуги</b></a>
+        <a class="rail-shortcut" href="#"><span class="rail-service-icon rail-service-task"><img src="/portal-v2/assets/v2-service-task.png" alt=""></span><b>Мои<br>задачи</b></a>
+        <a class="rail-shortcut" href="#"><span class="rail-service-icon rail-service-calendar"><img src="/portal-v2/assets/v2-service-calendar.png" alt=""></span><b>Календарь<br>обучения</b></a>
+        <a class="rail-shortcut" href="#"><span class="rail-service-icon rail-service-mtoro"><img src="/portal-v2/assets/v2-service-mtoro.png" alt=""></span><b>МТОРО</b></a>
+      </div>
+
+      <div class="rail-account">
+        <a class="rail-shortcut rail-ergiz" href="#"><span><img src="/portal-v2/assets/v2-ergiz.png" alt=""></span><b>ERGiz</b></a>
+        <button class="rail-settings" id="portalSettingsTrigger" type="button" aria-controls="portalSettingsPopover" aria-expanded="false"><span><img src="/portal-v2/assets/v2-settings.svg" alt=""></span><b>Настройка</b></button>
+      </div>
+
+      <section class="nav-section">
+        <h2>Избранное</h2>
+        <div id="favoritesList"></div>
+      </section>
+
+      <section class="nav-section">
+        <h2>Ergiz</h2>
+        <a class="service-row" href="#"><span class="service-logo"><img src="/portal-v2/assets/service-ergiz.png" alt=""></span><span>ERGiz</span></a>
+      </section>
+
+      <section class="nav-section corporate-services">
+        <h2>Корпоративные сервисы</h2>
+        <div id="serviceList"></div>
+      </section>
+    </aside>
+
+    <main class="feed">
+      <div class="feed-tabs" role="tablist" aria-label="Разделы ленты">
+        <button class="feed-tab active" data-tab="publications" role="tab" aria-selected="true"><img src="/portal-v2/assets/tab-news.svg" alt="">Публикации</button>
+        <button class="feed-tab" data-tab="channels" role="tab" aria-selected="false"><img src="/portal-v2/assets/tab-channels.svg" alt="">Каналы</button>
+        <button class="feed-tab" data-tab="events" role="tab" aria-selected="false"><img src="/portal-v2/assets/tab-events.svg" alt="">Мероприятия</button>
+      </div>
+
+      <section class="stories" data-tab-content="publications" aria-label="Каналы">
+        <button class="circle-arrow prev" aria-label="Предыдущие каналы"><img src="/portal-v2/assets/chevron-right.svg" alt=""></button>
+        <div class="story-track" id="storyTrack"></div>
+        <button class="circle-arrow next" aria-label="Следующие каналы"><img src="/portal-v2/assets/chevron-right.svg" alt=""></button>
+      </section>
+
+      <section class="post-list" id="postList" data-tab-content="publications" aria-label="Публикации"></section>
+      <section class="channels-grid" id="channelsGrid" data-tab-content="channels" aria-label="Каналы" hidden></section>
+      <section class="events-grid" id="eventsGrid" data-tab-content="events" aria-label="Мероприятия" hidden></section>
+    </main>
+
+    <main class="widgets-page" id="widgetsPage" hidden>
+      <section class="widgets-manager" aria-labelledby="widgetsPageTitle">
+        <header class="widgets-manager-head">
+          <h1 id="widgetsPageTitle">Виджеты</h1>
+          <p>Добавленные виджеты появятся в блоке справа на главной странице.</p>
+        </header>
+        <div class="widgets-manager-grid" id="widgetsManagerGrid"></div>
+      </section>
+    </main>
+
+    <main class="chats-page" id="chatsPage" hidden>
+      <section class="chats-shell" id="chatsShell" aria-label="Чаты">
+        <aside class="chat-sidebar" aria-label="Список чатов">
+          <div class="chat-list-default">
+            <header class="chat-sidebar-head">
+              <button class="chat-title-menu" type="button" aria-label="Меню чатов"><img src="/portal-v2/assets/chat-figma-menu.svg" alt=""></button>
+              <h1 id="chatListTitle">Чаты</h1>
+              <div>
+                <button class="chat-circle-button" id="chatCreateMessage" type="button" aria-label="Выбрать чаты"><img src="/portal-v2/assets/chat-figma-edit.svg" alt=""></button>
+                <button class="chat-circle-button orange" id="chatCreateGroup" type="button" aria-label="Новый чат"><img src="/portal-v2/assets/chat-figma-plus.svg" alt=""></button>
+              </div>
+            </header>
+            <label class="chat-search"><img src="/portal-v2/assets/chat-figma-search.svg" alt=""><input id="chatSearch" type="search" placeholder="Поиск" aria-label="Поиск чатов"></label>
+            <div class="chat-contact-list" id="chatContactList"></div>
+            <div class="chat-selection-actions" id="chatSelectionActions" hidden>
+              <button type="button" data-chat-mark-read>Прочитать все</button>
+              <button type="button" data-chat-delete-selected disabled>Удалить</button>
+            </div>
+          </div>
+        </aside>
+
+        <section class="chat-conversation" aria-label="Переписка">
+          <div class="chat-placeholder" aria-live="polite">
+            <div class="chat-placeholder-art" aria-hidden="true">
+              <span class="side person"><img src="/portal-v2/assets/chat-empty-person.svg" alt=""></span>
+              <span class="center"><img src="/portal-v2/assets/chat-empty-chat.svg" alt=""></span>
+              <span class="side emoji"><img src="/portal-v2/assets/chat-empty-emoji.svg" alt=""></span>
+            </div>
+            <p>Выберите, кому хотели бы написать</p>
+          </div>
+          <header class="chat-conversation-head">
+            <button class="chat-back" id="chatBack" type="button" aria-label="Назад к контактам"><img src="/portal-v2/assets/chat-new-back.svg" alt=""></button>
+            <img class="chat-head-avatar" id="chatHeadAvatar" src="" alt="">
+            <div class="chat-head-copy"><strong id="chatHeadTitle"></strong><span id="chatHeadStatus"></span></div>
+            <button class="chat-more chat-bot-control" id="chatBotNew" type="button" aria-label="Новый диалог с ERGiz" hidden>＋</button>
+            <button class="chat-more chat-bot-control" id="chatBotHistory" type="button" aria-label="История диалогов ERGiz" hidden>☰</button>
+            <button class="chat-more" id="chatMore" type="button" aria-label="Меню чата">•••</button>
+          </header>
+          <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+          <div class="chat-compose-context" id="chatComposeContext" hidden></div>
+          <form class="chat-composer" id="chatComposer">
+            <button class="chat-compose-action" id="chatAttachment" type="button" aria-label="Добавить вложение"><img src="/portal-v2/assets/chat-control-add.svg" alt=""></button>
+            <div class="chat-attachment-menu" id="chatAttachmentMenu" hidden>
+              <button type="button" data-attachment-kind="photo">Фото</button>
+              <button type="button" data-attachment-kind="document">Документ</button>
+              <button type="button" data-attachment-kind="poll">Опрос</button>
+            </div>
+            <input id="chatMessageInput" type="text" placeholder="Сообщение..." autocomplete="off" aria-label="Новое сообщение">
+            <button class="chat-compose-action chat-submit-action" type="submit" aria-label="Отправить сообщение"><img src="/portal-v2/assets/chat-control-mic.svg" alt=""></button>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <main class="publication-page" id="publicationPage" hidden></main>
+
+    <aside class="widgets-column" id="widgets" aria-label="Виджеты">
+      <div class="widget-list" id="widgetList">
+        <article class="widget-card" draggable="true" data-widget-id="important">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Важное и полезное</h2></div>
+          <div class="important-banner">
+            <div><span>Внимание!</span><strong>Изменение номера контакт центра</strong></div>
+            <img src="/portal-v2/assets/widgets-figma/banner-headset.png" alt="Гарнитура контакт-центра">
+          </div>
+          <div class="carousel-control"><button type="button" aria-label="Предыдущий баннер"><img src="/portal-v2/assets/widgets-figma/chevron-left.svg" alt=""></button><span><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span><button type="button" aria-label="Следующий баннер"><img src="/portal-v2/assets/widgets-figma/chevron-right.svg" alt=""></button></div>
+        </article>
+
+        <article class="widget-card mission-card" draggable="true" data-widget-id="mission">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Миссия и Ценности Компании</h2></div>
+          <img class="mission-art" src="/portal-v2/assets/widgets-figma/mission-mark.png" alt="Иллюстрация миссии">
+          <p>Быть лучшими в том, что мы делаем. Развиваться вместе с миром, оставаясь верными своим ценностям. Бережно раскрывая потенциал Земли и человечества, обеспечивать процветание тех, кто на нас полагается</p>
+        </article>
+
+        <article class="widget-card" draggable="true" data-widget-id="mail">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Входящая почта</h2><span class="widget-count">526</span></div>
+          <div class="mail-list">
+            <div class="mail-row unread"><div class="mail-heading"><b>Динара Тулегенова</b><time>15:25</time></div><span>Согласование бюджета Q4</span><small>Коллеги, добрый день! Прошу посмотреть правки по статье…</small></div>
+            <div class="mail-row unread"><div class="mail-heading"><b>AdminNotify@erg.kz</b><time>11:40</time></div><span>Уведомление об истечении пароля</span><small>Смените пароль до 12 сентября, иначе доступ будет ограничен</small></div>
+            <div class="mail-row"><div class="mail-heading"><b>Нурлан Бекетов</b><time>09:18</time></div><span>Обновление регламента по ПБ</span><small>Отправил комментарии, посмотрите, пожалуйста, до пятницы</small></div>
+          </div>
+          <button class="widget-footer" type="button"><span>Перейти в почту</span><img src="/portal-v2/assets/widgets-figma/arrow-orange.svg" alt=""></button>
+        </article>
+
+        <article class="widget-card tasks-card" draggable="true" data-widget-id="tasks">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Мои задачи</h2></div>
+          <div class="task-list">
+            <a class="task-row" href="#"><img src="/portal-v2/assets/widgets-figma/task-approve.svg" alt=""><div><b>На согласовании</b><span><img src="/portal-v2/assets/widgets-figma/task-esed.svg" alt="">ЕСЭД</span></div><strong>0</strong><img src="/portal-v2/assets/widgets-figma/task-arrow.svg" alt=""></a>
+            <a class="task-row" href="#"><img src="/portal-v2/assets/widgets-figma/task-doc.svg" alt=""><div><b>На подписании</b><span><img src="/portal-v2/assets/widgets-figma/task-esed.svg" alt="">ЕСЭД</span></div><strong>0</strong><img src="/portal-v2/assets/widgets-figma/task-arrow.svg" alt=""></a>
+            <a class="task-row" href="#"><img src="/portal-v2/assets/widgets-figma/task-doc.svg" alt=""><div><b>На подписании</b><span><img src="/portal-v2/assets/widgets-figma/task-smax.svg" alt="">SMAX</span></div><strong>0</strong><img src="/portal-v2/assets/widgets-figma/task-arrow.svg" alt=""></a>
+          </div>
+          <button class="widget-footer" type="button"><span>Все задачи</span><img src="/portal-v2/assets/widgets-figma/task-footer.svg" alt=""></button>
+        </article>
+
+        <article class="widget-card meetings-card" draggable="true" data-widget-id="meetings">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Встречи на сегодня</h2><span class="widget-count">10</span></div>
+          <div class="meeting-timeline">
+            <div class="meeting-row past"><time>13:00</time><span>Обход по охране труда</span></div>
+            <div class="meeting-row past"><time>14:30</time><span>Обратная связь по макетам</span></div>
+            <div class="meeting-row active"><time>15:00</time><span>Запуск проекта нового приложения</span></div>
+            <div class="meeting-row"><time>16:00</time><span>Мини-тренинг «10 рецептов эффективных продаж»</span></div>
+            <div class="meeting-row"><time>17:00</time><span>Планирование Q3 с командой</span></div>
+            <div class="meeting-row"><time>18:00</time><span>Ретро спринта</span></div>
+            <div class="meeting-now"><i></i><span></span><b>15:20</b></div>
+          </div>
+          <button class="widget-footer" type="button"><span>Еще 4 встречи</span><img src="/portal-v2/assets/widgets-figma/arrow-orange.svg" alt=""></button>
+        </article>
+
+        <article class="widget-card" draggable="true" data-widget-id="links">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Полезные ссылки</h2></div>
+          <div class="useful-list" id="usefulList"></div>
+        </article>
+
+        <article class="widget-card promo-widget" draggable="true" data-widget-id="policy">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Политика безопасности</h2></div>
+          <div class="promo-content"><b>Политика и Принципы Евразийской Группы в области ОТ и ПБ</b><img src="/portal-v2/assets/widgets-figma/policy.png" alt="Политика безопасности"></div>
+          <button class="widget-footer" type="button"><span>Открыть</span><img src="/portal-v2/assets/widgets-figma/arrow-orange.svg" alt=""></button>
+        </article>
+
+        <article class="widget-card promo-widget" draggable="true" data-widget-id="magazine">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Корпоративный журнал</h2></div>
+          <div class="promo-content magazine-content"><div><b>ZAVOD</b><em>Выпуск №7</em></div><img src="/portal-v2/assets/widgets-figma/magazine.png" alt="Журнал ZAVOD"></div>
+          <button class="widget-footer" type="button"><span>Открыть</span><img src="/portal-v2/assets/widgets-figma/arrow-orange.svg" alt=""></button>
+        </article>
+
+        <article class="widget-card safety-widget" draggable="true" data-widget-id="safety">
+          <div class="widget-title"><img src="/portal-v2/assets/widgets-figma/drag.svg" alt="Перетащить"><h2>Экран безопасности</h2></div>
+          <p class="safety-caption">В т.ч. и подрядные организации</p>
+          <div class="safety-total"><strong>214</strong><span>дней отработано без травм</span></div>
+          <div class="safety-stats"><div><img src="/portal-v2/assets/widgets-figma/safety-heart.svg" alt=""><b>0</b><small>Смертельные травмы</small></div><div><img src="/portal-v2/assets/widgets-figma/safety-case.svg" alt=""><b>2</b><small>Травмы с потерей дней</small></div></div>
+        </article>
+      </div>
+    </aside>
+  </div>
+
+  <section class="portal-settings-popover" id="portalSettingsPopover" role="dialog" aria-modal="false" aria-labelledby="portalSettingsTitle" aria-hidden="true">
+    <h2 id="portalSettingsTitle">Настройки</h2>
+    <div class="portal-settings-row">
+      <strong>Тема оформления</strong>
+      <div class="portal-theme-switch" role="group" aria-label="Тема оформления">
+        <button class="portal-theme-option active" type="button" data-theme-choice="light" aria-label="Светлая тема" aria-pressed="true"><img src="/portal-v2/assets/settings-theme-sun.svg" alt=""></button>
+        <button class="portal-theme-option" type="button" data-theme-choice="dark" aria-label="Тёмная тема" aria-pressed="false"><img src="/portal-v2/assets/settings-theme-moon.svg" alt=""></button>
+      </div>
+    </div>
+    <div class="portal-settings-divider" aria-hidden="true"></div>
+    <div class="portal-language-group">
+      <strong>Язык интерфейса</strong>
+      <div class="portal-language-switch" role="group" aria-label="Язык интерфейса">
+        <button type="button" data-language-choice="kk" aria-pressed="false">Қазақ тілі</button>
+        <button class="active" type="button" data-language-choice="ru" aria-pressed="true">Русский</button>
+        <button type="button" data-language-choice="en" aria-pressed="false">English</button>
+      </div>
+    </div>
+  </section>
+
+  <button class="services-overlay" id="servicesOverlay" type="button" aria-label="Закрыть сервисы" tabindex="-1"></button>
+  <aside class="services-drawer" id="servicesDrawer" aria-label="Все сервисы" aria-hidden="true">
+    <div class="services-drawer-head">
+      <div class="services-drawer-title-row">
+        <button class="nested-services-back" id="nestedServicesBack" type="button" aria-label="Вернуться ко всем сервисам"><img src="/portal-v2/assets/task-services/back.svg" alt=""></button>
+        <h2 id="servicesDrawerTitle">Все сервисы</h2>
+        <button class="services-settings" id="servicesSettingsToggle" type="button" aria-label="Настройки сервисов" aria-pressed="false"><img src="/portal-v2/assets/services-drawer/settings.svg" alt=""></button>
+        <div class="services-view-switch" role="group" aria-label="Вид сервисов">
+          <button class="active" type="button" data-services-view="grid" aria-label="Сетка" aria-pressed="true"><img src="/portal-v2/assets/services-drawer/grid.svg" alt=""></button>
+          <button type="button" data-services-view="list" aria-label="Список" aria-pressed="false"><img src="/portal-v2/assets/services-drawer/list.svg" alt=""></button>
+        </div>
+      </div>
+      <div class="services-search">
+        <img class="services-search-icon" id="servicesSearchIcon" src="/portal-v2/assets/search.svg" alt="">
+        <input id="servicesSearch" type="search" placeholder="Поиск" aria-label="Поиск по сервисам">
+        <button class="services-search-clear" id="servicesSearchClear" type="button" aria-label="Очистить поиск"><img src="/portal-v2/assets/search-clear.svg" alt=""></button>
+      </div>
+    </div>
+    <div class="services-drawer-content" id="servicesDrawerContent"></div>
+  </aside>
+
+  <button class="widgets-overlay" id="widgetsOverlay" type="button" aria-label="Закрыть виджеты" tabindex="-1"></button>
+  <aside class="widgets-drawer" id="widgetsDrawer" aria-label="Виджеты" aria-hidden="true">
+    <h2>Виджеты</h2>
+    <p>Добавленные виджеты появятся в блоке справа на главной странице.</p>
+    <div class="widgets-drawer-grid" id="widgetsDrawerGrid"></div>
+  </aside>
+
+  <button class="sidebar-overlay" type="button" aria-label="Закрыть меню" tabindex="-1"></button>
+
+  <div class="chat-modal" id="chatForwardModal" role="dialog" aria-modal="true" aria-labelledby="chatForwardTitle" hidden>
+    <button class="chat-modal-backdrop" type="button" data-chat-modal-close aria-label="Закрыть"></button>
+    <section class="chat-modal-card">
+      <header><h2 id="chatForwardTitle">Переслать сообщение</h2><button type="button" data-chat-modal-close aria-label="Закрыть">×</button></header>
+      <div class="chat-modal-list" id="chatForwardList"></div>
+    </section>
+  </div>
+
+  <div class="chat-modal" id="chatHistoryModal" role="dialog" aria-modal="true" aria-labelledby="chatHistoryTitle" hidden>
+    <button class="chat-modal-backdrop" type="button" data-chat-modal-close aria-label="Закрыть"></button>
+    <section class="chat-modal-card">
+      <header><h2 id="chatHistoryTitle">Диалоги с ERGiz</h2><button type="button" data-chat-modal-close aria-label="Закрыть">×</button></header>
+      <div class="chat-history-list" id="chatHistoryList"></div>
+    </section>
+  </div>
+
+  <div class="chat-create-panel" id="chatCreateModal" aria-labelledby="chatCreateTitle" hidden>
+    <section class="chat-modal-card chat-create-card" data-chat-create-step="search">
+      <header>
+        <button class="chat-create-back" id="chatCreateBack" type="button" aria-label="Назад"><img src="/portal-v2/assets/chat-new-back.svg" alt=""></button>
+        <h2 id="chatCreateTitle">Написать сообщение</h2>
+        <span class="chat-create-spacer" aria-hidden="true"></span>
+      </header>
+
+      <div class="chat-create-step" id="chatCreateSearchStep">
+        <div class="chat-create-search-row">
+          <label class="chat-create-search"><img src="/portal-v2/assets/chat-new-search.svg" alt=""><input id="chatCreateSearch" type="search" placeholder="Поиск по ФИ, Тел, Должность" aria-label="Поиск сотрудника" autocomplete="off"></label>
+          <button class="chat-create-structure" type="button" aria-label="Оргструктура"><img src="/portal-v2/assets/chat-new-org.svg" alt=""></button>
+        </div>
+        <button class="chat-create-group-row" id="chatStartGroup" type="button"><span><img src="/portal-v2/assets/chat-new-group.svg" alt=""></span><b>Создать группу</b><em><img src="/portal-v2/assets/chat-new-chevron.svg" alt=""></em></button>
+        <div class="chat-create-directory" id="chatCreateResults"></div>
+      </div>
+
+      <div class="chat-create-step" id="chatGroupMembersStep" hidden>
+        <label class="chat-create-search standalone"><img src="/portal-v2/assets/chat-new-search.svg" alt=""><input id="chatGroupSearch" type="search" placeholder="Поиск участников" aria-label="Поиск участников" autocomplete="off"></label>
+        <div class="chat-group-selected" id="chatGroupSelected"></div>
+        <div class="chat-create-directory" id="chatGroupResults"></div>
+        <div class="chat-create-footer"><span id="chatGroupCount">Выбрано: 0</span><button class="primary" id="chatGroupNext" type="button" disabled>Далее</button></div>
+      </div>
+
+      <form class="chat-create-step chat-group-details" id="chatCreateForm" hidden>
+        <button class="chat-group-avatar" type="button" aria-label="Добавить фото группы"><span><img src="/portal-v2/assets/chat-new-group.svg" alt=""></span><em><img src="/portal-v2/assets/chat-list-plus.svg" alt=""></em></button>
+        <label><span>Название группы</span><input id="chatCreateName" type="text" placeholder="Введите название группы" autocomplete="off" required maxlength="60"></label>
+        <div class="chat-group-summary"><b>Участники</b><div id="chatGroupSummary"></div></div>
+        <div class="chat-create-footer"><span id="chatGroupFinalCount"></span><button class="primary" type="submit" id="chatCreateSubmit" disabled>Создать группу</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="chat-action-overlay" id="chatActionOverlay" role="dialog" aria-modal="true" aria-label="Действия с сообщением" hidden>
+    <button class="chat-action-backdrop" type="button" data-chat-action-close aria-label="Закрыть"></button>
+    <section class="chat-action-panel" id="chatActionPanel">
+      <div class="chat-action-preview" id="chatActionPreview"></div>
+      <div class="chat-action-menu" id="chatActionMenu"></div>
+      <div class="chat-action-reactions" id="chatActionReactions" aria-label="Реакции"></div>
+    </section>
+  </div>
+
+  <div class="chat-modal" id="chatConfirmModal" role="dialog" aria-modal="true" aria-labelledby="chatConfirmTitle" hidden>
+    <button class="chat-modal-backdrop" type="button" data-chat-confirm-cancel aria-label="Отмена"></button>
+    <section class="chat-modal-card chat-confirm-card">
+      <header><h2 id="chatConfirmTitle">Удалить сообщение?</h2></header>
+      <p>Сообщение исчезнет из переписки. Отменить это действие нельзя.</p>
+      <div class="chat-confirm-actions"><button type="button" data-chat-confirm-cancel>Отмена</button><button class="danger" id="chatConfirmDelete" type="button">Удалить</button></div>
+    </section>
+  </div>
+
+  <div class="chat-toast" id="chatToast" role="status" aria-live="polite" hidden></div>
+
+  <nav class="mobile-nav" aria-label="Мобильное меню">
+    <a class="active" href="#" data-page="home"><img src="/portal-v2/assets/home.svg" alt=""><span>Главная</span></a>
+    <a href="#chats-page" data-page="chats"><img src="/portal-v2/assets/chat.svg" alt=""><span>Чаты</span></a>
+    <a class="widgets-trigger mobile-widgets-trigger" href="#widgetsDrawer" aria-controls="widgetsDrawer" aria-expanded="false"><img src="/portal-v2/assets/nav-widgets.svg" alt=""><span>Виджеты</span></a>
+    <a href="#"><span>•••</span><span>Ещё</span></a>
+  </nav>

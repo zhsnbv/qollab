@@ -7,7 +7,7 @@ import Widgets from '../components/Widgets';
 import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
 import { toggleTheme } from '../utils/theme';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
-import { basePosts, events } from '../data/feed';
+import { events } from '../data/feed';
 import { allServicesTile } from '../data/services';
 import { usefulLinks } from '../data/widgets';
 import { LINK_ICONS } from '../components/Widgets';
@@ -15,6 +15,8 @@ import { banners } from '../data/banners';
 import { useFavorites } from '../context/FavoritesContext';
 import { unreadTotal } from '../data/notifications';
 import { MagnifyingGlass, CaretRight } from '@phosphor-icons/react';
+import { usePublications } from '../components/publications/usePublications';
+import { useChannels } from '../context/ChannelsContext';
 import './Home.css';
 
 // Ассеты экспортированы из Figma в public/img/home (см. README).
@@ -31,6 +33,8 @@ export default function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const { favorites } = useFavorites();
+  const { posts } = usePublications();
+  const { isSubscribed } = useChannels();
   const [feedTab, setFeedTab] = useState('posts');
   const [menuOpen, setMenuOpen] = useState(false);
   // Уведомления переехали с отдельной вкладки в иконку шапки Главной
@@ -153,13 +157,13 @@ export default function Home() {
         )}
 
         {/* Публикации / Мероприятия — единый вид как в Ленте, по 4 карточки */}
-        <section className="card">
+        <section className="card home-publications">
           <FeedTabs tab={feedTab} onChange={setFeedTab} />
           {feedTab === 'posts' ? (
             <>
               <div className="home-feed">
-                {basePosts.slice(0, 4).map((p, i) => (
-                  <div className="home-feed-item" key={i}><PostCard p={p} compact /></div>
+                {posts.filter(p => isSubscribed(p.channelId) && (p.images.length || p.videos.length)).slice(0, 4).map(p => (
+                  <div className="home-feed-item" key={p.id}><PostCard p={p} /></div>
                 ))}
               </div>
               <button className="all-pub-btn" onClick={() => navigate('/posts')}>

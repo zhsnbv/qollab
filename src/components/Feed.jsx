@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Heart, ChatCircle, Eye, ShareNetwork, CalendarBlank, Megaphone,
+  ShareNetwork, Megaphone,
 } from '@phosphor-icons/react';
 import './Feed.css';
 
@@ -36,42 +34,8 @@ export function FeedTabs({ tab, onChange, withChannels }) {
   );
 }
 
-// Публикация в стиле Medium: канал · дата, заголовок+превью, картинка,
-// строка метрик. В превью — только лайки, комментарии и просмотры: закладка и
-// «ещё» уехали на экран самой публикации, здесь карточка ничего не «делает».
-export function PostCard({ p, compact }) {
-  const [liked, setLiked] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const open = () => navigate('/article', { state: { post: p, background: location } });
-  return (
-    <article className={`post-item ${compact ? 'post-item--compact' : ''}`} onClick={open}>
-      <div className="post-channel">
-        <span className="post-channel-avatar"><img src={p.avatar} alt="" /></span>
-        <span className="post-channel-name">{p.channel}</span>
-        <span className="post-dot" />
-        <span className="post-date">{p.date}</span>
-      </div>
-      <div className="post-row">
-        <div className="post-body">
-          <h3 className={`post-title ${p.read ? 'read' : ''}`}>{p.title}</h3>
-          {p.excerpt && <p className="post-excerpt">{p.excerpt}</p>}
-        </div>
-        {p.thumb && <div className="post-thumb"><img src={p.thumb} alt="" loading="lazy" /></div>}
-      </div>
-      <div className="post-actions" onClick={(e) => e.stopPropagation()}>
-        <button className={`post-act ${liked ? 'liked' : ''}`} onClick={() => setLiked((v) => !v)}>
-          <Heart size={18} weight={liked ? 'fill' : 'regular'} />
-          {Number(String(p.likes).replace(/\s/g, '')) + (liked ? 1 : 0)}
-        </button>
-        <button className="post-act"><ChatCircle size={18} />{p.comments}</button>
-        {/* Просмотры прижаты к правому краю — как в макете */}
-        <span className="post-actions-gap" />
-        <span className="post-act post-act--stat"><Eye size={18} />{p.views ?? '502'}</span>
-      </div>
-    </article>
-  );
-}
+// The main feed, home and channels share the approved mobile publication card.
+export { default as PostCard } from './publications/PublicationCard';
 
 // Карточка мероприятия: картинка, дата, заголовок, организаторы, «Подробнее».
 // Стопка аватарок организаторов. Пустой список — отдельное состояние из

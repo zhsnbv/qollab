@@ -5,7 +5,8 @@ import {
   ChatCircleDots, SlidersHorizontal, ShareNetwork, CalendarBlank,
 } from '@phosphor-icons/react';
 import { allServices } from '../data/services';
-import { basePosts, events } from '../data/feed';
+import { events } from '../data/feed';
+import { searchablePublications as basePosts } from '../data/publications';
 import { employees, guests, searchChannels, enterprises } from '../data/people';
 import './Search.css';
 import SheetTop from '../components/SheetTop';
@@ -135,11 +136,7 @@ function FilterSheet({ kind, open, onClose, value, onChange }) {
 export default function Search() {
   const navigate = useNavigate();
   const location = useLocation();
-  // Домашний background нужен для дальнейшей навигации в статью «поверх»
-  // поиска: если взять background самого поиска (pathname '/search'), базовый
-  // слой (Home) перестанет матчиться в первом <Routes> и пропадёт из-под
-  // статьи. Пробрасываем исходный.
-  const homeBackground = location.state?.background || { pathname: '/' };
+  // Keep search mounted below the reader so query, filters and scroll survive Back.
 
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState('people');
@@ -187,7 +184,7 @@ export default function Search() {
     }
   }, [q, tab, filters]);
 
-  const openPost = (p) => navigate('/article', { state: { post: p, background: homeBackground } });
+  const openPost = (p) => navigate(`/article?post=${encodeURIComponent(p.id)}`, { state: { post: p, background: location } });
   const filterKind = FILTER_TABS[tab] || null;
   const hasResults = results !== null && results.length > 0;
 

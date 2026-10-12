@@ -1,0 +1,23 @@
+.pw-source-shell .pw-channel-header-actions .pw-subscribe-button.qpub-btn-primary { background: #ef7f1a; border-color: #ef7f1a; color: #fff; }
+.pw-source-shell .pw-channel-header-actions .pw-subscribe-button.qpub-btn-primary:hover { background: #df7010; border-color: #df7010; }
+.pw-source-shell .pw-channel-header-actions .pw-subscribe-button.qpub-btn-primary .qpub-btn-icon { color: inherit; }
+.pw-source-shell .pw-channel-header-actions .pw-channel-bell.is-on { background: #fff3e7; border-color: #f7d7b9; }
+.pw-source-shell .pw-channel-header-actions .pw-channel-bell.is-on .qpub-btn-icon { color: #df7417; }
+.pw-source-shell .pw-channel-header-actions .pw-channel-bell:hover { border-color: #ef7f1a; }
+.pw-source-shell .pw-dark .pw-channel-header-actions .pw-channel-bell.is-on { background: #453022; border-color: #725039; }
+.pw-source-shell .pw-dark .pw-channel-header-actions .pw-channel-bell.is-on .qpub-btn-icon { color: #ffab60; }
+.pw-notification-popup { width: 302px; max-width: calc(100vw - 24px); border: 1px solid #eeedea; border-radius: 16px; padding: 8px; background: #fff; box-shadow: 0 8px 28px #00000014; }
+.pw-notification-menu-title { padding: 8px 10px 12px; color: #99958e; font-size: 12px; font-weight: 500; }
+.pw-channel-notifications .qpub-dropdown-menu { box-shadow: none; padding: 0; background: transparent; }
+.pw-channel-notifications .qpub-dropdown-menu .qpub-dropdown-menu-item { min-height: 62px; padding: 10px; border-radius: 10px; gap: 10px; }
+.pw-channel-notifications .qpub-dropdown-menu .qpub-dropdown-menu-item-icon { width: 20px; height: 20px; color: #8b8984; margin: 0; }
+.pw-channel-notifications .qpub-dropdown-menu .qpub-dropdown-menu-item-selected { background: #fff4e9; color: #b9651b; }
+.pw-channel-notifications .qpub-dropdown-menu .qpub-dropdown-menu-item-selected .qpub-dropdown-menu-item-icon { color: #d9751d; }
+.pw-notification-option { display: flex; align-items: center; gap: 8px; }
+.pw-notification-option > span { flex: 1; }
+.pw-notification-option strong { display: block; font-size: 13px; line-height: 20px; font-weight: 550; }
+.pw-notification-option small { display: block; color: #939088; font-size: 11px; line-height: 17px; margin-top: 2px; }
+.pw-notification-option > svg { width: 18px; height: 18px; flex-shrink: 0; }
+@media (max-width: 560px) {
+  .pw-source-shell .pw-channel-header-actions { float: none; justify-content: flex-start; flex-wrap: wrap; margin: 12px 0 0; }
+}

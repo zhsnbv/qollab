@@ -5,10 +5,11 @@ import TopBar, { DotsIcon } from '../components/TopBar';
 import { MagnifyingGlass, CaretRight, GearSix } from '@phosphor-icons/react';
 import { useSkeleton, PostsSkeleton, FadeIn } from '../components/Skeleton';
 import { FeedTabs, PostCard, EventCard } from '../components/Feed';
-import { basePosts, makePost, events } from '../data/feed';
+import { events } from '../data/feed';
 import { channelScopes } from '../data/channels';
 import { useChannels } from '../context/ChannelsContext';
 import ScreenMenu from '../components/ScreenMenu';
+import { usePublications } from '../components/publications/usePublications';
 import './Posts.css';
 
 const BATCH = 8;
@@ -23,7 +24,8 @@ export default function Posts() {
   const { channels: channelList } = useChannels();
   const openEvent = (e) => navigate('/event', { state: { id: e.id, background: location } });
   const [tab, setTab] = useState('posts'); // posts | channels | events
-  const [channel, setChannel] = useState('Все каналы');
+  const [channel, setChannel] = useState(null);
+  const { posts: allPosts } = usePublications();
   const [scope, setScope] = useState('available');
   const [chanQuery, setChanQuery] = useState('');
   const [extraCount, setExtraCount] = useState(BATCH);
@@ -42,16 +44,30 @@ export default function Posts() {
     setEventsShown(EVENTS_BATCH);
   };
 
-  // Публикации — бесконечно; мероприятия — лениво до полного списка (~9)
+  const subscribed = channelList.filter(c => c.subscribed);
+  const strip = [
+    { id: null, name: 'Все каналы', img: '/img/posts/ch-all.png', all: true },
+    ...subscribed.map(c => ({ id: c.id, name: c.name, img: c.avatar, fit: c.fit })),
+  ];
+  const selectedChannel = subscribed.find(c => c.id === channel);
+  const myPosts = allPosts.filter(p => subscribed.some(c => c.id === p.channelId) && (p.images.length || p.videos.length));
+  const filteredPosts = selectedChannel ? myPosts.filter(p => p.channelId === selectedChannel.id) : myPosts;
+  const posts = filteredPosts.slice(0, extraCount);
+  const postsDone = extraCount >= filteredPosts.length;
+
+  // Both lists load in batches; stop at the end instead of repeating stories.
   const eventsDone = eventsShown >= events.length;
   useEffect(() => {
     if (loading) return;
     if (tab === 'events' && eventsDone) return;
+    if (tab === 'posts' && postsDone) return;
+    if (tab === 'channels') return;
+    let timer;
     const io = new IntersectionObserver((entries) => {
       if (!entries[0].isIntersecting || pendingRef.current) return;
       pendingRef.current = true;
       setLoadingMore(true);
-      setTimeout(() => {
+      timer = setTimeout(() => {
         if (tab === 'posts') setExtraCount((c) => c + BATCH);
         else setEventsShown((c) => Math.min(c + EVENTS_BATCH, events.length));
         setLoadingMore(false);
@@ -59,23 +75,8 @@ export default function Posts() {
       }, 600);
     }, { rootMargin: '200px' });
     if (sentinelRef.current) io.observe(sentinelRef.current);
-    return () => io.disconnect();
-  }, [loading, tab, eventsDone]);
-
-  // Лента каналов — это подписки, а не отдельный список: раньше их было два,
-  // и настройка правила один, а полоса показывала другой.
-  const subscribed = channelList.filter((c) => c.subscribed);
-  const strip = [
-    { name: 'Все каналы', img: '/img/posts/ch-all.png', all: true },
-    ...subscribed.map((c) => ({ name: c.name, img: c.avatar, fit: c.fit })),
-  ];
-
-  const allPosts = [...basePosts, ...Array.from({ length: extraCount }, (_, i) => makePost(i))];
-  // «Все каналы» — это все мои каналы: публикации от того, на что не подписан,
-  // в ленте появляться не должны.
-  const myPosts = allPosts.filter((p) => subscribed.some((c) => c.name === p.channel));
-  const posts = channel === 'Все каналы' ? myPosts : myPosts.filter((p) => p.channel === channel);
-  const selectedChannel = strip.find((c) => c.name === channel && !c.all);
+    return () => { io.disconnect(); clearTimeout(timer); pendingRef.current = false; };
+  }, [loading, tab, eventsDone, postsDone, extraCount, channel, filteredPosts.length]);
 
   // «Мои каналы» — те, что веду сам; в прототипе это подмножество подписок.
   const scoped = scope === 'subscribed'
@@ -99,7 +100,7 @@ export default function Posts() {
 
   return (
     <TabLayout topbar={<TopBar title="Лента" actions={actions} />} onRefresh={refresh}>
-      <FadeIn><div className="posts">
+      <FadeIn><div className={`posts ${tab === 'posts' ? 'posts--publications' : ''}`}>
         <div className="posts-tabs-wrap">
           <FeedTabs tab={tab} onChange={setTab} withChannels />
         </div>
@@ -154,13 +155,14 @@ export default function Posts() {
 
         {tab === 'posts' && (
           <>
-            {/* Лента каналов — выбор любого канала или «Все каналы».
-                «Настройка» стоит в конце: начало ленты занято фильтрами, и
-                действие среди них читалось бы как ещё один канал. */}
             <div className="channel-row no-scrollbar">
-              {strip.map((ch, i) => (
-                <button className="channel-item" key={i} onClick={() => setChannel(ch.name)}>
-                  <span className={`channel-ring ${channel === ch.name ? 'active' : ''} ${ch.all ? 'channel-ring--square' : ''}`}>
+              {strip.map(ch => (
+                <button
+                  className="channel-item"
+                  key={ch.id ?? 'all'}
+                  onClick={() => { setChannel(ch.id); setExtraCount(BATCH); }}
+                >
+                  <span className={`channel-ring ${(selectedChannel?.id ?? null) === ch.id ? 'active' : ''} ${ch.all ? 'channel-ring--square' : ''}`}>
                     <span className={`channel-avatar ${ch.all ? 'channel-avatar--all' : ''} ${ch.fit === 'contain' ? 'channel-avatar--cu' : ''}`}>
                       <img src={ch.img} alt="" />
                     </span>
@@ -179,18 +181,22 @@ export default function Posts() {
               </button>
             </div>
 
-            {/* Шапка выбранного канала (Medium: имя + «Перейти в канал») */}
             {selectedChannel && (
               <div className="channel-header">
-                <span className="channel-header-avatar"><img src={selectedChannel.img} alt="" /></span>
+                <span className="channel-header-avatar"><img src={selectedChannel.avatar} alt="" /></span>
                 <span className="channel-header-name">{selectedChannel.name}</span>
-                <button className="channel-header-link">Перейти в канал<CaretRight size={14} weight="bold" /></button>
+                <button
+                  className="channel-header-link"
+                  onClick={() => navigate(`/channel/${selectedChannel.id}`, { state: { background: location } })}
+                >Перейти в канал<CaretRight size={14} weight="bold" /></button>
               </div>
             )}
 
             {/* Пустой ленты не бывает: от обязательных каналов не отписаться */}
             <div className="post-list">
-              {posts.map((p, i) => <PostCard key={i} p={p} />)}
+              {posts.map(p => <PostCard key={p.id} p={p} />)}
+              {!posts.length && <p className="chan-empty">В этом канале пока нет публикаций.</p>}
+              {postsDone && !!posts.length && <p className="pm-feed-end">Вы всё посмотрели</p>}
               <div ref={sentinelRef} aria-hidden style={{ height: 1 }} />
             </div>
             {loadingMore && <div className="spinner-row"><span className="spinner" /></div>}

@@ -1,0 +1,57 @@
+/* Stable property rows: outcome first, followed by clearly labelled people. */
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details { gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border, #eee); }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-post-meta { font-size: 13px; gap: 16px; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-meta-company { margin-left: auto; justify-content: flex-end; }
+.pw-people-strip { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; gap: 4px; min-width: 0; }
+.pw-people-strip.is-scrollable { grid-template-columns: 28px minmax(0, 1fr) 28px; }
+.pw-people-track { position: relative; display: flex; gap: 12px; min-width: 0; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 8px; }
+.pw-people-track::-webkit-scrollbar { display: none; }
+/* Two complete participants plus half of the third; keep narrow cards readable. */
+.pw-people-strip .pw-people-track .pw-person { flex: 0 0 max(232px, calc(40% - 9.6px)); max-width: 100%; min-height: 76px; scroll-snap-align: start; }
+.pw-people-track .pw-person-initials { display: grid; place-items: center; font-weight: 600; }
+.pw-people-strip .pw-people-arrow { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 1px solid var(--border, #e8e8e8); border-radius: 50%; background: var(--surface, #fff); color: var(--text, #37352f); cursor: pointer; transition: color .18s ease, background .18s ease; }
+.pw-people-arrow > svg { display: block; width: 16px; height: 16px; }
+.pw-people-strip .pw-people-arrow:hover:not(:disabled) { color: #ef7f1a; background: var(--orange-soft, #fff3e8); }
+.pw-people-strip .pw-people-arrow:disabled { opacity: .3; cursor: default; }
+.pw-people-track:focus-visible, .pw-people-arrow:focus-visible { outline: 2px solid #ef7f1a; outline-offset: 2px; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 8px; align-items: center; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person-role { font-size: 12px; line-height: 16px; color: #8b8984; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person > img,
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person-initials { width: 28px; height: 28px; margin-top: 0; background: var(--canvas, #f5f5f5); color: #787774; font-size: 10px; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person-copy { gap: 0; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person-name { font-size: 14px; line-height: 20px; font-weight: 500; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person-job { font-size: 12px; line-height: 18px; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-meta-effect strong { font-size: 15px; font-weight: 650; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-meta-rating { gap: 8px; }
+:is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .qpub-rate { font-size: 16px; }
+/* Keep both outcomes at 32px; reduced section padding preserves card height. */
+.pw-publication-details .pw-outcome-badge { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; line-height: 20px; white-space: nowrap; cursor: inherit; }
+.pw-publication-details .pw-meta-effect { background: #edf7f0; border-color: #deeee3; color: #36734e; }
+.pw-publication-details .pw-meta-rating { background: #fff8e6; border-color: #f5ebce; color: #89651c; }
+.pw-outcome-badge > svg { width: 18px; height: 18px; flex-shrink: 0; }
+.pw-outcome-badge .pw-outcome-label { font-size: 12px; font-weight: 500; }
+.pw-publication-details .pw-outcome-badge .pw-outcome-value { font-size: 15px; line-height: 20px; font-weight: 650; font-variant-numeric: tabular-nums; color: inherit; }
+.pw-outcome-scale { font-size: 11px; font-weight: 400; opacity: .8; }
+.pw-outcome-stars, .pw-outcome-stars .qpub-rate { display: inline-flex; align-items: center; height: 20px; }
+.pw-publication-details .pw-outcome-stars .qpub-rate { color: #d8a017; }
+.pw-outcome-stars .qpub-rate-star > div, .pw-outcome-stars .qpub-rate-star-first, .pw-outcome-stars .qpub-rate-star-second { display: flex; align-items: center; height: 20px; }
+.pw-outcome-stars .qpub-rate-star-zero .qpub-rate-star-first, .pw-outcome-stars .qpub-rate-star-zero .qpub-rate-star-second { color: #e3ddcb; }
+.pw-source-shell .pw-dark .pw-meta-effect { background: #24372c; border-color: #34533e; color: #a4d4b3; }
+.pw-source-shell .pw-dark .pw-meta-rating { background: #3b3321; border-color: #51452b; color: #edcf86; }
+.pw-source-shell .pw-dark .pw-outcome-badge .pw-outcome-value { color: inherit; }
+.pw-source-shell .pw-dark .pw-outcome-stars .qpub-rate-star-zero :is(.qpub-rate-star-first, .qpub-rate-star-second) { color: #665b3e; }
+.pw-source-shell .pw-publication-card { transform: none; box-shadow: none; }
+.pw-source-shell .pw-card-compact { cursor: pointer; }
+.pw-source-shell .pw-comment-actions .pw-like-button { font-size: 14px; }
+.pw-source-shell .pw-dark .pw-publication-details .pw-person-name { color: var(--text); }
+@container (max-width: 390px) {
+  :is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-person-role { font-size: 11px; line-height: 14px; }
+}
+@container (max-width: 330px) {
+  :is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-post-meta { gap: 6px; }
+  :is(.pw-source-shell .pw-embedded, .pw-preview-content, .pw-appearance-preview) .pw-publication-details .pw-meta-company { margin-left: 0; justify-content: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-source-shell .pw-publication-card { transition: none; }
+  .pw-source-shell .pw-publication-card:is(:hover, :focus-visible) { transform: none; }
+}

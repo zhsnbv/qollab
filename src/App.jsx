@@ -5,7 +5,7 @@ import ReactionUnreadReview from './gallery/reaction-unread/ReactionUnreadReview
 import NotificationDetail from './screens/NotificationDetail';
 import NotificationHandoff from './screens/NotificationHandoff';
 import TypingHandoff from './screens/TypingHandoff';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Home from './screens/Home';
 import CallsLab, { CallsProvider } from './calls/Calls';
@@ -53,7 +53,13 @@ import { ChannelsProvider } from './context/ChannelsContext';
 import { WidgetsProvider } from './context/WidgetsContext';
 import { useViewportFit } from './utils/useKeyboardInset';
 import { applyTheme, getThemeMode, watchSystemTheme } from './utils/theme';
+import { PublicationsProvider } from './components/publications/PublicationContext';
+import { usePublications } from './components/publications/usePublications';
+import PublicationOverlays from './components/publications/PublicationOverlays';
 import './App.css';
+
+const PublicationsWeb = lazy(() => import('./gallery/publications-web/PublicationsWeb'));
+const PublicationsMobile = lazy(() => import('./gallery/publications-mobile/PublicationsMobile'));
 
 // Роуты с таб-баром. Оверлеи (чат, статья, шит сервисов, поиск...) своего бара
 // не показывают напрямую, но и не размонтируют его: они открываются поверх
@@ -122,8 +128,10 @@ function OverlayRoutes({ location }) {
 }
 
 function AppRoutes() {
+  const { sheet } = usePublications();
   const location = useLocation();
   const background = location.state?.background;
+  const publicationOverlay = location.pathname === '/article' || location.pathname.startsWith('/channel/');
   // Таб-бар рендерим здесь, а не внутри TabLayout: так он переживает смену
   // роута и плашка успевает доехать до нового таба, а не создаётся заново.
   const showNav = TAB_ROUTES.includes((background || location).pathname);
@@ -142,6 +150,8 @@ function AppRoutes() {
 
   return (
     <>
+      <div className="publication-app-stack" inert={!!sheet}>
+      <div className="publication-app-stack" inert={!!background && publicationOverlay} aria-hidden={!!background && publicationOverlay}>
       <Routes location={tabLocation}>
         <Route path="/" element={<Home />} />
         <Route path="/posts" element={<Posts />} />
@@ -149,13 +159,16 @@ function AppRoutes() {
         <Route path="/chats" element={<Chats />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
-      {/* Слои рендерим одним списком с ключом по пути: при закрытии верхнего
+      </div>
+      {/* Слои рендерим одним списком: при закрытии верхнего
           экрана нижний остаётся тем же инстансом и не проигрывает анимацию
           входа заново — иначе при «назад» он въезжает как новый. */}
       {[...underOverlays, location].map((loc) => (
-        <OverlayRoutes key={loc.pathname} location={loc} />
+        <div className="publication-app-stack" key={loc.pathname === '/article' || loc.pathname.startsWith('/channel/') ? loc.key || loc.pathname : loc.pathname} inert={loc !== location && publicationOverlay} aria-hidden={loc !== location && publicationOverlay}><OverlayRoutes location={loc} /></div>
       ))}
-      {showNav && <BottomNav />}
+      {showNav && <div className="publication-app-stack" inert={!!background && publicationOverlay} aria-hidden={!!background && publicationOverlay}><BottomNav /></div>}
+      </div>
+      <PublicationOverlays />
     </>
   );
 }
@@ -191,19 +204,21 @@ export default function App() {
   const authDeliveryReview = window.location.pathname === '/handoff/auth-delivery';
   const reactionPickerReview = window.location.pathname === '/handoff/reaction-picker';
   const reactionUnreadReview = window.location.pathname === '/handoff/reaction-unread';
+  const publicationsWeb = window.location.pathname === '/handoff/publications-web';
+  const publicationsMobile = window.location.pathname === '/handoff/publications-mobile';
   const notificationHandoff = window.location.pathname === '/handoff/notifications';
   const typingHandoff = window.location.pathname === '/handoff/typing';
   const callFlow = window.location.pathname === '/calls/one-to-one';
   const widgetFigma = window.location.pathname === '/widgets-figma';
 
   return (
-    reactionPickerReview ? <ReactionPickerReview /> : reactionUnreadReview ? <ReactionUnreadReview /> : authDeliveryReview ? <AuthDeliveryReview /> : <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><WidgetsProvider>
+    publicationsMobile ? <Suspense fallback={null}><PublicationsMobile /></Suspense> : publicationsWeb ? <Suspense fallback={null}><PublicationsWeb /></Suspense> : reactionPickerReview ? <ReactionPickerReview /> : reactionUnreadReview ? <ReactionUnreadReview /> : authDeliveryReview ? <AuthDeliveryReview /> : <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><PublicationsProvider><WidgetsProvider>
       {categoryHandoff ? <CategoryHandoff /> : typingHandoff ? <TypingHandoff /> : notificationHandoff ? <NotificationHandoff /> : gallery ? <AllScreens /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
         <BrowserRouter>
           <CallsProvider><Device exiting={exiting} splashDone={splashDone} /></CallsProvider>
         </BrowserRouter>
       )}
-    </WidgetsProvider></ChannelsProvider></FavoritesProvider></AuthProvider></CompanyProvider>
+    </WidgetsProvider></PublicationsProvider></ChannelsProvider></FavoritesProvider></AuthProvider></CompanyProvider>
   );
 }
 

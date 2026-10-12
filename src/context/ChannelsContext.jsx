@@ -4,7 +4,8 @@ import { channelList } from '../data/channels';
 // Подписки на каналы. Живут в контексте, а не в экране настройки: их читают
 // и лента публикаций, и вкладка «Каналы», и сам экран настройки — держать
 // такое состояние в одном из них значило бы, что остальные о нём не знают.
-const STORAGE_KEY = 'qollab.channels.v1';
+const STORAGE_KEY = 'qollab.channels.v2';
+const addedChannels = ['erg-production', 'industrial-safety-production'];
 
 const defaults = channelList.filter((c) => c.subscribed).map((c) => c.id);
 // На эти каналы подписывает компания — отписаться нельзя, и в списке они
@@ -14,7 +15,9 @@ const withRequired = (list) => [...new Set([...required, ...list])];
 
 function load() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const current = localStorage.getItem(STORAGE_KEY);
+    const saved = JSON.parse(current || localStorage.getItem('qollab.channels.v1'));
+    if (!current && Array.isArray(saved)) saved.push(...addedChannels);
     // Отсеиваем id, которых в каталоге уже нет (канал закрыли/переименовали)
     if (Array.isArray(saved)) {
       return withRequired(saved.filter((id) => channelList.some((c) => c.id === id)));

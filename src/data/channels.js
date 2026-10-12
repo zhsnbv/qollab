@@ -15,6 +15,18 @@ export const channelList = [
     subscribed: true,
   },
   {
+    id: 'erg-production', name: 'Новости ERG', subscribed: true,
+    avatar: '/img/posts/ch-erg-news.png', cover: '/img/publications-web/prod-power-plant.webp',
+    posts: 'Новости производства', subscribers: 'Подписчики канала',
+    about: 'Новости предприятий, обходы и проекты улучшений команды ERG.',
+  },
+  {
+    id: 'industrial-safety-production', name: 'Өнеркәсіптік қауіпсіздік Промышленная безопасность', subscribed: true,
+    avatar: '/img/publications-web/prod-safety-channel.png', cover: '/img/posts/news/n3.jpg',
+    posts: 'Промышленная безопасность', subscribers: 'Подписчики канала',
+    about: 'Безопасность на производстве, полезные материалы и опыт коллег.',
+  },
+  {
     id: 'bts-news',
     name: 'BTS News',
     avatar: '/img/posts/ch-bts-news.png',
