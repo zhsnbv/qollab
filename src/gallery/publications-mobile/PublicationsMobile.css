@@ -37,7 +37,7 @@ html.publications-mobile-review body { background: #e8e8e8; }
 .pm-channel-banner > span { display: flex; align-items: center; gap: 2px; flex-shrink: 0; font-size: 12px; color: #bc5807; }
 .pm-channel-banner svg { width: 16px; }
 .pm-cards { display: flex; flex-direction: column; gap: 14px; }
-.pm-card { overflow: hidden; background: #fff; border-radius: 22px; border: 1px solid #e9e9e9; scroll-margin-top: 12px; min-width: 0; }
+.pm-card { overflow: hidden; background: #fff; border-radius: var(--radius-lg); border: 1px solid #e9e9e9; scroll-margin-top: 12px; min-width: 0; }
 .pm-card-content { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px 8px; }
 :is(.pm-device, .pm-publications) .pw-cover-header { padding: 12px 12px 0; }
 :is(.pm-device, .pm-publications) .pm-card-channel { display: flex; align-items: center; gap: 2px; min-width: 0; }
@@ -46,7 +46,7 @@ html.publications-mobile-review body { background: #e8e8e8; }
 :is(.pm-device, .pm-publications) .pw-publication-identity .pw-channel-avatar { width: 36px; height: 36px; border: 1px solid #e3e3e3; }
 :is(.pm-device, .pm-publications) .pw-identity-rubric-icon { width: 18px; height: 18px; right: -2px; bottom: -2px; border-width: 1.5px; }
 :is(.pm-device, .pm-publications) .pw-identity-rubric-icon svg { width: 12px; height: 12px; }
-:is(.pm-device, .pm-publications) .pw-identity-name { font-size: 13px; line-height: 17px; font-weight: 650; }
+:is(.pm-device, .pm-publications) .pw-identity-name { display: block; -webkit-line-clamp: unset; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; line-height: 17px; font-weight: 650; }
 :is(.pm-device, .pm-publications) .pw-identity-meta { font-size: 10px; line-height: 15px; column-gap: 4px; }
 :is(.pm-device, .pm-publications) .pw-identity-meta time { font-size: inherit; }
 :is(.pm-device, .pm-publications) .pw-identity-rubric { max-width: 138px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
