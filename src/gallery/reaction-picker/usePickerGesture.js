@@ -14,7 +14,7 @@ export default function usePickerGesture({ platform, root, onMove, onClose, clos
   const start = event => {
     if (closing || gesture.current || event.button !== 0 || event.target.closest('button, input, a')) return;
     const panel = root.current;
-    const stage = panel?.closest('.rp-conversation');
+    const stage = panel?.closest('.rp-conversation, .chatroom');
     if (!stage) return;
     gesture.current = {
       id: event.pointerId, x: event.clientX, y: event.clientY, at: event.timeStamp,

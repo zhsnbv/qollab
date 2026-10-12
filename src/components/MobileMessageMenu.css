@@ -1,0 +1,18 @@
+.mobile-reaction-menu.rp-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  margin: 0;
+  background: transparent;
+  box-shadow: none;
+  isolation: auto;
+}
+.mobile-reaction-menu .rp-picker--mobile { height: min(566px, var(--vvh, 100dvh)); }
+.mobile-reaction-menu .rp-picker-position { max-height: 100%; }
+.mobile-reaction-menu button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .mobile-reaction-menu *, .mobile-reaction-menu *::before, .mobile-reaction-menu *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

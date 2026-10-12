@@ -6,7 +6,7 @@ import { useKeyboardInset } from '../utils/useKeyboardInset';
 import { ConnectingSkeleton } from '../components/ChatState';
 import Message from '../components/Message';
 import { describeLink } from '../utils/linkPreviewApi';
-import MessageMenu from '../components/MessageMenu';
+import MobileMessageMenu from '../components/MobileMessageMenu';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -399,7 +399,9 @@ export default function ChatRoom({ typingPreview } = {}) {
       </div>
 
       {menu && (
-        <MessageMenu
+        <MobileMessageMenu
+          key={menu.msg.id}
+          selected={Object.entries(reactions[menu.msg.id] || {}).find(([, users]) => users.some(user => user.id === ME.id))?.[0]}
           msg={{ ...menu.msg, pinned: pinnedIds.includes(menu.msg.id) }}
           mine={!!menu.msg.mine}
           rect={menu.rect}
