@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, BellSlash, CaretLeft, Checks, Heart, MagnifyingGlass, Monitor, PencilSimple, Plus, PushPin, Smiley } from '@phosphor-icons/react';
+import { ArrowRight, BellSlash, CaretLeft, Checks, MagnifyingGlass, Monitor, PencilSimple, Plus, PushPin, Smiley } from '@phosphor-icons/react';
 import { Avatar } from '../../screens/Chats';
 import { baseChats } from '../../data/chatList';
 import TopBar from '../../components/TopBar';
 import TabLayout from '../../components/TabLayout';
 import BottomNav from '../../components/BottomNav';
 import Message from '../../components/Message';
+import UnreadReactionBadge from '../../components/UnreadReactionBadge';
 import '../../screens/ChatRoom.css';
 import './ReactionUnreadReview.css';
 
@@ -24,10 +25,7 @@ const initialChats = () => baseChats.slice(0, 7).map((chat, index) => ({
 }));
 
 export function UnreadReaction({ active }) {
-  if (!active) return null;
-  return <span className="chat-badge ru-indicator" role="img" aria-label="Непрочитанные реакции">
-    <Heart size={12} weight="fill" aria-hidden="true" />
-  </span>;
+  return <UnreadReactionBadge active={active} className="ru-indicator" />;
 }
 
 function ChatRow({ chat, onOpen }) {

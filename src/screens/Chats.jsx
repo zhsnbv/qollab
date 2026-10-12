@@ -6,11 +6,12 @@ import TabLayout from '../components/TabLayout';
 import TopBar from '../components/TopBar';
 import {
   MagnifyingGlass, Plus,
-  VideoCamera, Camera, FileText, BellSlash, At, Checks, PencilSimple, Check,
+  Camera, FileText, BellSlash, At, Checks, PencilSimple, Check,
 } from '@phosphor-icons/react';
 import { Checkmark20Filled } from '@fluentui/react-icons';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
+import UnreadReactionBadge from '../components/UnreadReactionBadge';
 import { useSkeleton, ChatsSkeleton, FadeIn } from '../components/Skeleton';
 import ErgizAvatar from '../components/ErgizAvatar';
 import { workStatusOf } from '../data/person';
@@ -63,6 +64,14 @@ function makeChat(i) {
 }
 
 const BATCH = 10;
+const READ_KEY = 'qollab-chat-read-v1';
+
+function loadReadIds() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(READ_KEY) || '[]');
+    return Array.isArray(saved) ? saved.filter(id => typeof id === 'string') : [];
+  } catch { return []; }
+}
 
 export function Avatar({ chat }) {
   if (chat.kind === 'system') {
@@ -96,6 +105,7 @@ export function Avatar({ chat }) {
 }
 
 export default function Chats({ notificationPreview } = {}) {
+  const deviceHost = useContext(DeviceHost);
   const savedNotificationModes = useChatNotificationModes();
   const notificationModes = notificationPreview || savedNotificationModes;
   const loading = useSkeleton();
@@ -108,9 +118,9 @@ export default function Chats({ notificationPreview } = {}) {
   // Режим выбора: карандаш в шапке превращает список в набор чекбоксов.
   const [selecting, setSelecting] = useState(false);
   const [picked, setPicked] = useState([]);
-  // Удалённое и прочитанное в прототипе некуда сохранять — держим на экране.
+  // Прочтение сохраняется на время демо-сессии. Витрины изолированы от него.
   const [removed, setRemoved] = useState([]);
-  const [read, setRead] = useState([]);
+  const [read, setRead] = useState(() => deviceHost ? [] : loadReadIds());
   const [confirm, setConfirm] = useState(false);
   const [toast, setToast] = useState('');
 
@@ -118,7 +128,10 @@ export default function Chats({ notificationPreview } = {}) {
   // пробрасывать ради этого состояние наверх пришлось бы через все вкладки.
   // Класс именно на рамке, а не на <html>: в витрине всех экранов рамок много,
   // и с <html> режим выбора одной карточки прятал бы таб-бар у всех.
-  const deviceHost = useContext(DeviceHost);
+  useEffect(() => {
+    if (deviceHost) return;
+    try { sessionStorage.setItem(READ_KEY, JSON.stringify(read)); } catch { /* Demo still works without storage. */ }
+  }, [read, deviceHost]);
   useEffect(() => {
     if (!selecting) return undefined;
     const host = deviceHost || document.querySelector('.device');
@@ -169,15 +182,16 @@ export default function Chats({ notificationPreview } = {}) {
   const chats = [...baseChats, ...Array.from({ length: extraCount }, (_, i) => makeChat(i))]
     .map((c, i) => ({ ...c, id: c.id || `base-${i}` }))
     .filter((c) => !removed.includes(c.id))
-    .map((c) => (read.includes(c.id) ? { ...c, unreadCount: undefined } : c));
+    .map((c) => (read.includes(c.id) ? { ...c, unreadCount: undefined, unreadReaction: false } : c));
   chatIdsRef.current = chats.filter(selectable).map((c) => c.id);
 
   const openChat = (chat) => {
     if (selecting) { if (selectable(chat)) toggle(chat.id); return; }
     if (chat.kind === 'system') return;
+    if (selectable(chat)) setRead(ids => ids.includes(chat.id) ? ids : [...ids, chat.id]);
     if (chat.to) { navigate(chat.to, { state: { background: location } }); return; }
     // contentIcon/icon — React-компоненты, history.pushState не умеет их клонировать
-    const { contentIcon, icon, ...serializable } = chat;
+    const { contentIcon: _contentIcon, icon: _icon, ...serializable } = chat;
     navigate('/chats/dm', { state: { chat: { ...serializable, notificationKey: notificationKey(chat) }, background: location } });
   };
 
@@ -230,6 +244,7 @@ export default function Chats({ notificationPreview } = {}) {
         {chats.map((chat) => (
           <li
             key={chat.id}
+            data-chat-id={chat.id}
             className={`chat-row ${selecting ? 'selecting' : ''} ${picked.includes(chat.id) ? 'picked' : ''}${selecting && !selectable(chat) ? ' locked' : ''}`}
             onClick={() => openChat(chat)}
           >
@@ -265,7 +280,10 @@ export default function Chats({ notificationPreview } = {}) {
                   {chat.contentIcon && <chat.contentIcon size={14} weight="fill" color="var(--color-weak)" style={{ verticalAlign: 'middle', marginRight: 2 }} />}
                   {chat.preview}
                 </span>
-                {chat.unreadCount ? <span className="chat-badge">{chat.unreadCount}</span> : null}
+                {(chat.unreadReaction || chat.unreadCount) && <span className="chat-row-indicators">
+                  <UnreadReactionBadge active={!!chat.unreadReaction} />
+                  {chat.unreadCount ? <span className="chat-badge">{chat.unreadCount}</span> : null}
+                </span>}
               </div>
             </div>
           </li>

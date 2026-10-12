@@ -43,15 +43,6 @@ html.reaction-unread-review .device.ru-phone { width: 402px; max-width: 402px; h
 .ru-chat-row:focus-visible { outline-offset: -3px; }
 .ru-chat-row:disabled { cursor: default; }
 .ru-row-signals { display: inline-flex; align-items: center; flex-shrink: 0; gap: 6px; }
-.ru-indicator {
-  width: 20px; min-width: 20px; padding: 0;
-  background: var(--color-primary-bg);
-  color: var(--color-primary);
-}
-html[data-theme="dark"] .ru-indicator, .ru-board-frame[data-theme="dark"] .ru-indicator {
-  background: color-mix(in srgb, var(--color-primary) 24%, var(--color-white));
-}
-.ru-indicator svg { display: block; flex-shrink: 0; }
 .ru-nav-preview { position: absolute; inset: 0; pointer-events: none; }
 .ru-add-reactions { display: flex; gap: 8px; margin-top: 16px; }
 .ru-add-reactions button { width: 48px; height: 44px; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 12px; font-size: 22px; }

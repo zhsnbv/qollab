@@ -228,3 +228,4 @@
 .chat-row.locked:active { background: transparent; }
 
 .chat-notification-mode { display: inline-flex; flex-shrink: 0; color: var(--color-weak); }
+.chat-row-indicators { display: inline-flex; align-items: center; flex-shrink: 0; gap: 6px; }
