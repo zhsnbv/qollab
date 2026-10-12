@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizePublication, mergePublicationState } from './publicationModel.js';
+import { normalizePublication, mergePublicationState, latestPublications } from './publicationModel.js';
 import { commentCount, appendComment } from '../../gallery/publications-mobile/mobileDiscussion.js';
 
 test('legacy search entries keep a stable identity, media and readable content', () => {
@@ -31,4 +31,17 @@ test('feed and reader derive identical reactions and threaded comment counts', (
   assert.deepEqual(feed, reader); assert.equal(feed.commentCount, 2); assert.equal(feed.liked, true);
   assert.equal(feed.likes, 42); // The display adds one only once.
   assert.equal(post.commentCount, 0); // Never mutate source content.
+});
+
+test('home shows the four newest articles without changing the feed order', () => {
+  const posts = [
+    { id: 'pinned', date: '21 июл 2026, 15:24' },
+    { id: 'morning', date: '9 окт 2026, 10:22' },
+    { id: 'yesterday', date: '8 окт 2026, 16:49' },
+    { id: 'newest', publishedAt: '2026-10-10T12:00:00Z' },
+    { id: 'midday', date: '9 окт 2026, 11:16' },
+    { id: 'unknown' },
+  ];
+  assert.deepEqual(latestPublications(posts).map(post => post.id), ['newest', 'midday', 'morning', 'yesterday']);
+  assert.equal(posts[0].id, 'pinned');
 });

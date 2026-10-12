@@ -136,10 +136,27 @@
 .mission-title { font-size: 16px; font-weight: 600; color: var(--color-text); text-align: center; }
 .mission-text { font-size: 14px; color: var(--color-weak); text-align: center; line-height: 1.45; }
 
-/* Публикации / Мероприятия на Главной — общий вид ленты (карточки в components/Feed.css) */
+/* Compact home overview inside the original shared card. */
+.home-publications > .feed-tabs { gap: var(--space-2); }
+.home-publications .feed-tab { min-width: 0; padding: var(--space-3) var(--space-2); gap: var(--space-2); font-size: 14px; }
 .home-feed { display: flex; flex-direction: column; margin-top: var(--space-2); }
 .home-feed-item { border-bottom: 1px solid var(--color-border); }
 .home-feed-item:last-child { border-bottom: none; }
+.home-publication { padding: var(--space-4) 0; cursor: default; }
+.home-publication:active { opacity: 1; }
+.home-publication .post-channel { gap: 6px; }
+.home-publication-channel { min-width: 0; display: flex; align-items: center; gap: var(--space-2); text-align: left; }
+.home-publication .post-channel-avatar { border: 1px solid var(--color-border); }
+.home-publication .post-channel-name { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; }
+.home-publication .post-dot { flex-shrink: 0; }
+.home-publication .post-channel .post-date { font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+.home-publication-open { width: 100%; text-align: left; gap: var(--space-3); }
+.home-publication .post-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.35; }
+.home-publication .post-excerpt { font-size: 13px; -webkit-line-clamp: 2; }
+.home-publication .post-thumb { border-radius: var(--radius-md); }
+.home-publication .post-actions { margin-top: var(--space-3); }
+.home-publication .pw-like-icon, .home-publication .pw-like-icon > svg { width: 18px; height: 18px; }
+.home-publication .post-act.is-liked { color: var(--color-text); }
 .home-events { display: flex; flex-direction: column; gap: var(--space-4); margin: var(--space-4) 0; }
 
 .all-pub-btn {

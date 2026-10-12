@@ -23,7 +23,7 @@ export default function Posts() {
   // и вкладка должна видеть изменения сразу.
   const { channels: channelList } = useChannels();
   const openEvent = (e) => navigate('/event', { state: { id: e.id, background: location } });
-  const [tab, setTab] = useState('posts'); // posts | channels | events
+  const [tab, setTab] = useState(() => new URLSearchParams(location.search).get('tab') === 'events' ? 'events' : 'posts'); // posts | channels | events
   const [channel, setChannel] = useState(null);
   const { posts: allPosts } = usePublications();
   const [scope, setScope] = useState('available');

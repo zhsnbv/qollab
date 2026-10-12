@@ -9,11 +9,6 @@
 .pm-publications .post-act .pw-like-icon > svg { width: 18px; height: 18px; }
 .pm-publications .post-act.is-liked { color: var(--color-text); }
 .posts--publications .post-list { display: flex; flex-direction: column; gap: 14px; padding: var(--space-3) 12px 20px; }
-.home-publications.card { background: transparent; padding: 0; }
-.home-publications > .feed-tabs { margin: 0 4px 12px; }
-.home-publications .home-feed { gap: 14px; }
-.home-publications .home-feed-item { border: 0; }
-.home-publications .all-pub-btn { margin-top: 12px; background: var(--color-white); border-radius: var(--radius-xl); }
 .cv-posts.cv-posts--publications { display: flex; flex-direction: column; gap: 14px; padding: 14px 12px; background: var(--page-bg); }
 .cv-sub:disabled { opacity: .65; cursor: default; }
 .app-publication-reader { overflow: clip; }

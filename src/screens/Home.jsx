@@ -6,7 +6,9 @@ import ScreenMenu from '../components/ScreenMenu';
 import Widgets from '../components/Widgets';
 import { useSkeleton, HomeSkeleton, FadeIn } from '../components/Skeleton';
 import { toggleTheme } from '../utils/theme';
-import { FeedTabs, PostCard, EventCard } from '../components/Feed';
+import { FeedTabs, EventCard } from '../components/Feed';
+import { HomePublicationCard } from '../components/publications/PublicationCard';
+import { latestPublications } from '../components/publications/publicationModel';
 import { events } from '../data/feed';
 import { allServicesTile } from '../data/services';
 import { usefulLinks } from '../data/widgets';
@@ -35,6 +37,7 @@ export default function Home() {
   const { favorites } = useFavorites();
   const { posts } = usePublications();
   const { isSubscribed } = useChannels();
+  const recentPosts = latestPublications(posts.filter(post => isSubscribed(post.channelId)), 4);
   const [feedTab, setFeedTab] = useState('posts');
   const [menuOpen, setMenuOpen] = useState(false);
   // Уведомления переехали с отдельной вкладки в иконку шапки Главной
@@ -156,14 +159,14 @@ export default function Home() {
           </section>
         )}
 
-        {/* Публикации / Мероприятия — единый вид как в Ленте, по 4 карточки */}
+        {/* Четыре последние статьи в родной карточке раздела Главной. */}
         <section className="card home-publications">
           <FeedTabs tab={feedTab} onChange={setFeedTab} />
           {feedTab === 'posts' ? (
             <>
               <div className="home-feed">
-                {posts.filter(p => isSubscribed(p.channelId) && (p.images.length || p.videos.length)).slice(0, 4).map(p => (
-                  <div className="home-feed-item" key={p.id}><PostCard p={p} /></div>
+                {recentPosts.map(p => (
+                  <div className="home-feed-item" key={p.id}><HomePublicationCard p={p} /></div>
                 ))}
               </div>
               <button className="all-pub-btn" onClick={() => navigate('/posts')}>
@@ -177,7 +180,7 @@ export default function Home() {
                   <EventCard key={e.id} e={e} onOpen={openEvent} />
                 ))}
               </div>
-              <button className="all-pub-btn" onClick={() => navigate('/posts')}>
+              <button className="all-pub-btn" onClick={() => navigate('/posts?tab=events')}>
                 Все мероприятия<CaretRight size={18} color="var(--color-light)" />
               </button>
             </>
