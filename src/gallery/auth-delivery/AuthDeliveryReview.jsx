@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { Bell, CaretLeft, ChatCircleDots, CheckCircle, ArrowRight } from '@phosphor-icons/react';
-import { copy, createDelivery, remainingSeconds, restoreDelivery, sendSms, SESSION_KEY } from './model';
+import { useEffect, useId, useRef, useState } from 'react';
+import { CaretLeft, ChatCircleDots, CheckCircle, ArrowRight } from '@phosphor-icons/react';
+import { copy, createDelivery, remainingSeconds, restoreDelivery, sendSms, formatCountdown, COOLDOWN_MS, SESSION_KEY } from './model';
+import { maskPhone } from '../../utils/phone';
+import { applyTheme } from '../../utils/theme';
+import bellSvg from '/public/img/auth/code-bell.svg?raw';
 import '../../screens/Auth.css';
 import './AuthDeliveryReview.css';
 
@@ -10,6 +13,25 @@ const scenarios = [
   { id: 'sms-wait', channel: 'sms', ready: false, title: 'Код по SMS', note: 'Таймер идёт' },
   { id: 'sms-ready', channel: 'sms', ready: true, title: 'Повторная SMS', note: 'Таймер завершён' },
 ];
+const boardCases = [
+  ...scenarios,
+  { ...scenarios[1], id: 'qollab-captcha', note: 'Капча над кнопкой', captcha: true },
+  { ...scenarios[3], id: 'sms-captcha', note: 'Капча над кнопкой', captcha: true },
+  { ...scenarios[1], id: 'qollab-sending', note: 'Отправка SMS', sending: true },
+  { ...scenarios[3], id: 'sms-sending', note: 'Отправка нового кода', sending: true },
+];
+const DEMO_PHONE = '+77001234567';
+
+function CaptchaPreview({ lang, status, onCheck }) {
+  const t = copy[lang];
+  return <div className="turnstile ad-captcha" data-testid="delivery-captcha" aria-busy={status === 'checking'}>
+    {status === 'passed' ? <CheckCircle size={24} weight="fill" color="var(--color-success)" />
+      : status === 'checking' ? <span className="turnstile-spinner" />
+        : <button className="ad-captcha-check" onClick={onCheck} aria-label={t.robot} />}
+    <span className="turnstile-text" role="status">{status === 'passed' ? t.passed : status === 'checking' ? t.checking : t.robot}</span>
+    <span className="turnstile-brand"><img src="/img/auth/cloudflare.svg" alt="" width="26" height="18" /><b>CLOUDFLARE</b><i>Privacy • Terms</i></span>
+  </div>;
+}
 
 function initialDelivery() {
   const requested = scenarios.find(item => item.id === new URLSearchParams(window.location.search).get('state'));
@@ -20,14 +42,15 @@ function initialDelivery() {
 
 // Reuses Auth.jsx's layout, six-cell single input, Auth.css and Qollab tokens.
 // Kept outside Auth so review does not alter the working login flow.
-function CodeScreen({ lang, setLang, delivery, left, onSendSms, onBack }) {
+function CodeScreen({ lang, setLang, delivery, left, onSendSms, onBack, sending = false, captcha = false, captchaStatus = 'passed', onCheckCaptcha }) {
   const [code, setCode] = useState('');
   const [invalid, setInvalid] = useState(false);
   const [success, setSuccess] = useState(false);
   const input = useRef(null);
+  const id = useId();
   const t = copy[lang];
   const inQollab = delivery.channel === 'qollab';
-  const time = `00:${String(left).padStart(2, '0')}`;
+  const time = formatCountdown(left);
   const label = left > 0
     ? `${inQollab ? t.qollabWait : t.smsWait} ${time}`
     : inQollab ? t.qollabReady : t.smsReady;
@@ -46,9 +69,9 @@ function CodeScreen({ lang, setLang, delivery, left, onSendSms, onBack }) {
 
   useEffect(() => {
     if (!success) return;
-    const dialog = document.getElementById('delivery-success');
+    const dialog = document.getElementById(`${id}-success`);
     dialog?.focus();
-  }, [success]);
+  }, [success, id]);
 
   const closeSuccess = () => {
     setSuccess(false);
@@ -69,56 +92,63 @@ function CodeScreen({ lang, setLang, delivery, left, onSendSms, onBack }) {
           aria-pressed={lang === id} onClick={() => setLang(id)}>{title}</button>)}
       </div></div>
       <div className="auth-badge" aria-hidden="true">
-        {inQollab ? <Bell size={32} weight="fill" /> : <ChatCircleDots size={32} weight="fill" />}
+        {inQollab ? <span className="ad-bell" dangerouslySetInnerHTML={{__html: bellSvg}} /> : <ChatCircleDots size={32} weight="fill" />}
       </div>
       <h2 className="auth-title">{t.title}</h2>
       <p className="auth-sub auth-sub--phone" data-testid="delivery-description">
-        {inQollab ? t.qollab : <>{t.sms} <b>+7 700 *** ** 67</b></>}
+        {inQollab ? t.qollab : <>{t.sms} <b>{maskPhone(DEMO_PHONE)}</b></>}
       </p>
       <div className="otp">
         <input ref={input} className="otp-input" inputMode="numeric" autoComplete="one-time-code"
           aria-label={t.code} aria-invalid={invalid} aria-describedby={invalid ? 'delivery-code-error' : undefined}
-          maxLength={6} value={code} onChange={event => changeCode(event.target.value)} />
+          maxLength={6} value={code} disabled={sending} onChange={event => changeCode(event.target.value)} />
         {Array.from({length: 6}, (_, index) => <span key={index} aria-hidden="true"
           className={`otp-cell${invalid ? ' error' : ''}${!invalid && index === code.length ? ' active' : ''}`}>
           {code[index] || ''}
         </span>)}
       </div>
       {invalid && <p className="auth-error auth-error--center" id="delivery-code-error" role="alert">{t.invalid}</p>}
-      <button className="auth-btn auth-btn--ghost"
-        data-testid="delivery-resend" disabled={left > 0 || success} onClick={onSendSms}>{label}</button>
+      {captcha && left === 0 && <CaptchaPreview lang={lang} status={captchaStatus} onCheck={onCheckCaptcha} />}
+      {sending ? <div className="ad-send-status" role="status" data-testid="delivery-sending" aria-label={t.sending}>
+        <span className="ad-spinner" aria-hidden="true" /><span className="ad-sr-only">{t.sending}</span>
+      </div> : <button className={`auth-btn auth-btn--ghost${left > 0 ? ' ad-resend-wait' : ''}`}
+        data-testid="delivery-resend" disabled={left > 0 || success || (captcha && captchaStatus !== 'passed')} onClick={onSendSms}>
+        {left > 0 ? <><span>{inQollab ? t.qollabWait : t.smsWait}</span><span className="ad-countdown">{time}</span></> : label}
+      </button>}
     </div>
     {success && <div className="auth-dialog-wrap" onKeyDown={event => { if (event.key === 'Escape') closeSuccess(); }}>
-      <div className="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="delivery-success-title">
+      <div className="auth-dialog" role="dialog" aria-modal="true" aria-labelledby={`${id}-title`}>
         <div className="auth-dialog-body">
           <CheckCircle size={32} weight="fill" color="var(--color-success)" />
-          <h3 className="auth-dialog-title" id="delivery-success-title">{t.success}</h3>
+          <h3 className="auth-dialog-title" id={`${id}-title`}>{t.success}</h3>
           <p>{t.successText}</p>
         </div>
-        <div className="auth-dialog-actions"><button id="delivery-success" className="auth-dialog-btn" onClick={closeSuccess}>{t.return}</button></div>
+        <div className="auth-dialog-actions"><button id={`${id}-success`} className="auth-dialog-btn" onClick={closeSuccess}>{t.return}</button></div>
       </div>
     </div>}
   </section>;
 }
 
-function DeliveryBoard() {
+function DeliveryBoard({ theme }) {
   return <main className="ad-board" id="auth-delivery-board">
     <header className="ad-board-header">
       <p>QOLLAB · QM-2557</p>
       <h1>Авторизация · доставка кода</h1>
-      <p>8 экранов · 402 × 820 px · русский и казахский · согласовано 08.10.2026</p>
+      <p>32 экрана · 402 × 820 px · русский и казахский · обе темы · правки 12.10.2026</p>
       <a href="?lang=ru">Открыть интерактивный прототип</a>
     </header>
-    <div className="ad-board-grid">
-      {['ru', 'kk'].flatMap((language, row) => scenarios.map((scenario, index) => <figure key={`${language}-${scenario.id}`}>
-        <figcaption><strong>0{row * 4 + index + 1} · {language === 'ru' ? 'Русский' : 'Қазақша'}</strong>
+    {['light', 'dark'].flatMap((mode) => ['ru', 'kk'].map(language => <section className="ad-board-group" key={`${mode}-${language}`}>
+      <h2>{language === 'ru' ? 'Русский' : 'Қазақша'} · {mode === 'light' ? 'Светлая тема' : 'Тёмная тема'}</h2>
+      <div className="ad-board-grid">
+      {boardCases.map((scenario, index) => <figure key={scenario.id}>
+        <figcaption><strong>{String(index + 1).padStart(2, '0')} · {language === 'ru' ? 'Русский' : 'Қазақша'}</strong>
           <p>{scenario.title} · {scenario.note}</p></figcaption>
-        <div className="ad-board-screen" data-export-screen={`${language}-${scenario.id}`} inert>
-          <CodeScreen lang={language} delivery={createDelivery(scenario.channel, scenario.ready, 30_000)}
-            left={scenario.ready ? 0 : 30} />
+        <div className={`ad-board-screen${mode !== theme ? ' ad-theme-override' : ''}`} data-theme={mode} data-export-screen={`${mode}-${language}-${scenario.id}`} inert>
+          <CodeScreen lang={language} delivery={createDelivery(scenario.channel, scenario.ready, COOLDOWN_MS)}
+            left={scenario.ready ? 0 : 60} captcha={scenario.captcha} sending={scenario.sending} />
         </div>
-      </figure>))}
-    </div>
+      </figure>)}
+      </div></section>))}
   </main>;
 }
 
@@ -128,12 +158,17 @@ export default function AuthDeliveryReview() {
   const [lang, setLang] = useState(() => new URLSearchParams(window.location.search).get('lang') === 'kk' ? 'kk' : 'ru');
   const [now, setNow] = useState(Date.now);
   const [screenVersion, setScreenVersion] = useState(0);
+  const [theme, setTheme] = useState(() => new URLSearchParams(window.location.search).get('theme') === 'dark' ? 'dark' : 'light');
+  const [captcha, setCaptcha] = useState(() => new URLSearchParams(window.location.search).get('captcha') === '1');
+  const [captchaStatus, setCaptchaStatus] = useState('idle');
+  const [sending, setSending] = useState(false);
+  const pending = useRef(null);
+  const captchaPending = useRef(null);
   const left = remainingSeconds(delivery.resendAt, now);
   const current = `${delivery.channel}-${left > 0 ? 'wait' : 'ready'}`;
 
   useEffect(() => {
     document.documentElement.classList.add('auth-delivery-review');
-    document.documentElement.dataset.theme = 'light';
     document.documentElement.dataset.company = 'erg';
     document.title = 'QM-2557 · Авторизация · Qollab';
     const url = new URL(window.location.href);
@@ -141,6 +176,9 @@ export default function AuthDeliveryReview() {
     window.history.replaceState(null, '', url);
     return () => document.documentElement.classList.remove('auth-delivery-review');
   }, []);
+
+  useEffect(() => { applyTheme(theme); }, [theme]);
+  useEffect(() => () => { clearTimeout(pending.current); clearTimeout(captchaPending.current); }, []);
 
   useEffect(() => {
     if (board) return;
@@ -163,6 +201,10 @@ export default function AuthDeliveryReview() {
   }, [board]);
 
   const choose = scenario => {
+    clearTimeout(pending.current);
+    clearTimeout(captchaPending.current);
+    setSending(false);
+    setCaptchaStatus('idle');
     const time = Date.now();
     setNow(time);
     setDelivery(createDelivery(scenario.channel, scenario.ready, time));
@@ -173,12 +215,27 @@ export default function AuthDeliveryReview() {
     window.history.replaceState(null, '', url);
   };
   const requestSms = () => {
-    const time = Date.now();
-    const next = sendSms(delivery, time);
-    if (next === delivery) return;
-    setNow(time);
-    setDelivery(next);
-    setScreenVersion(value => value + 1);
+    if (sending || remainingSeconds(delivery.resendAt) > 0 || (captcha && captchaStatus !== 'passed')) return;
+    setSending(true);
+    pending.current = setTimeout(() => {
+      const time = Date.now();
+      setNow(time);
+      setDelivery(sendSms(delivery, time));
+      setSending(false);
+      setCaptchaStatus('idle');
+      setScreenVersion(value => value + 1);
+    }, 1200);
+  };
+  const checkCaptcha = () => {
+    if (captchaStatus !== 'idle') return;
+    setCaptchaStatus('checking');
+    captchaPending.current = setTimeout(() => setCaptchaStatus('passed'), 1200);
+  };
+  const changeTheme = value => {
+    setTheme(value);
+    const url = new URL(window.location.href);
+    url.searchParams.set('theme', value);
+    window.history.replaceState(null, '', url);
   };
   const changeLanguage = value => {
     setLang(value);
@@ -187,11 +244,11 @@ export default function AuthDeliveryReview() {
     window.history.replaceState(null, '', url);
   };
 
-  if (board) return <DeliveryBoard />;
+  if (board) return <DeliveryBoard theme={theme} />;
 
   return <main className="ad-review">
     <header className="ad-review-header">
-      <div className="ad-review-brand"><img src="/img/auth/app-icon.svg" width="32" height="32" alt="" /><span>qollab <i>/</i> QM-2557</span><span className="ad-review-tag">Согласовано</span></div>
+      <div className="ad-review-brand"><img src="/img/auth/app-icon.svg" width="32" height="32" alt="" /><span>qollab <i>/</i> QM-2557</span><span className="ad-review-tag">Правки 12.10</span></div>
       <h1>Куда отправлен код</h1>
       <p>Авторизация с понятной подсказкой о доставке — в существующем дизайне Qollab.</p>
     </header>
@@ -208,13 +265,20 @@ export default function AuthDeliveryReview() {
             <ArrowRight size={18} aria-hidden="true" />
           </button>)}
         </div>
+        <div className="ad-review-options">
+          <div className="auth-lang" aria-label="Тема">
+            {[['light', 'Светлая'], ['dark', 'Тёмная']].map(([value, title]) => <button key={value}
+              className={`auth-lang-btn${theme === value ? ' active' : ''}`} aria-pressed={theme === value} onClick={() => changeTheme(value)}>{title}</button>)}
+          </div>
+          <label><input type="checkbox" checked={captcha} onChange={event => { clearTimeout(captchaPending.current); setCaptcha(event.target.checked); setCaptchaStatus('idle'); }} disabled={sending} /> Показать капчу на экранах 2 и 4</label>
+        </div>
         <div className="ad-review-notes">
           <h3>Что проверить</h3>
           <p>В Qollab — колокольчик и подсказка про «Уведомления». После таймера кнопка отправляет SMS и меняет экран.</p>
-          <p>Язык переключается внутри телефона. Таймер продолжает идти при смене языка, сворачивании вкладки и перезагрузке.</p>
+          <p>Таймер начинается с 01:00 и сохраняется при смене языка, темы и перезагрузке. Во время отправки кнопка заменяется индикатором.</p>
           <p>Введи любые 6 цифр для подтверждения. <b>000000</b> покажет ошибку ввода.</p>
         </div>
-        <div className="ad-review-footnote"><span className="ad-review-dot" />Отдельный прототип. Отправка и проверка кода имитируются.</div>
+        <div className="ad-review-footnote"><span className="ad-review-dot" />Отдельный прототип. Капча, отправка и проверка кода имитируются.</div>
         <a className="ad-review-source" href="?view=board">Все экраны для Figma <ArrowRight size={14} /></a><br />
         <a className="ad-review-source" href="https://jira2.erg.kz/browse/QM-2557" target="_blank" rel="noreferrer">Открыть задачу QM-2557 <ArrowRight size={14} /></a>
       </aside>
@@ -222,9 +286,10 @@ export default function AuthDeliveryReview() {
         <div className="ad-preview-caption"><span>{lang === 'ru' ? 'Русский' : 'Қазақша'}</span><span>402 × 820</span></div>
         <div className="ad-phone" data-testid="delivery-phone">
           <CodeScreen key={`${screenVersion}-${delivery.sentAt}`} lang={lang} setLang={changeLanguage} delivery={delivery} left={left}
+            sending={sending} captcha={captcha} captchaStatus={captchaStatus} onCheckCaptcha={checkCaptcha}
             onSendSms={requestSms} onBack={() => document.querySelector('.ad-scenario.is-selected')?.focus()} />
         </div>
-        <p className="ad-preview-note">{delivery.channel === 'qollab' ? 'Код в уведомлениях Qollab' : 'Код отправлен по SMS'}<span>·</span>{left > 0 ? `Доступно через ${left} с` : 'Повторная отправка доступна'}</p>
+        <p className="ad-preview-note">{delivery.channel === 'qollab' ? 'Код в уведомлениях Qollab' : 'Код отправлен по SMS'}<span>·</span>{sending ? 'Отправляем код…' : left > 0 ? `Доступно через ${left} с` : 'Повторная отправка доступна'}</p>
       </div>
     </div>
   </main>;

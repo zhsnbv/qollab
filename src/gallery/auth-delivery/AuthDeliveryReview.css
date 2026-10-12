@@ -1,6 +1,6 @@
 html.auth-delivery-review, html.auth-delivery-review body { position: static; min-height: 100%; height: auto; }
 html.auth-delivery-review { overflow: auto; }
-html.auth-delivery-review body { overflow: visible; background: #f7f7f8; }
+html.auth-delivery-review body { overflow: visible; background: var(--page-bg); }
 html.auth-delivery-review #root { height: auto; }
 .ad-review { max-width: 1120px; margin: 0 auto; padding: 40px 48px 48px; color: var(--color-text); }
 .ad-review-header { padding-bottom: 32px; border-bottom: 1px solid #e6e6e8; }
@@ -38,11 +38,32 @@ html.auth-delivery-review #root { height: auto; }
 /* Existing Auth styles own spacing, typography and OTP geometry. Only allow
    long localized button text to wrap; no new layout inside the product screen. */
 .ad-code-screen .auth-btn { height: auto; min-height: 51px; padding: 10px 16px; line-height: 1.4; }
-.ad-code-screen[data-channel="qollab"] .auth-btn:not(:disabled) { color: #000; }
+.ad-code-screen[data-channel="qollab"] .auth-btn:not(:disabled) { color: var(--color-text); }
 .ad-code-screen button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
 .ad-code-screen .otp:focus-within .otp-cell.active { box-shadow: 0 0 0 1px var(--color-primary); }
 .ad-code-screen .auth-dialog-body > svg { margin-bottom: 12px; }
 .ad-review-panel button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.ad-code-screen .ad-resend-wait { flex-direction: column; gap: 3px; min-height: 64px; }
+.ad-countdown { display: block; font-variant-numeric: tabular-nums; }
+.ad-bell, .ad-bell svg { display: block; width: 32px; height: 32px; }
+.ad-captcha-check { width: 24px; height: 24px; flex-shrink: 0; border: 2px solid var(--color-weak); border-radius: 3px; background: var(--color-white); }
+.ad-send-status { margin-top: var(--space-6); min-height: 51px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--color-weak); }
+.ad-spinner { display: block; width: 24px; height: 24px; border: 2px solid var(--color-border); border-top-color: currentColor; border-radius: 50%; animation: ad-spin .7s linear infinite; }
+@keyframes ad-spin { to { transform: rotate(360deg); } }
+.ad-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ad-review-options { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
+.ad-review-options label { display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.5; color: var(--color-text); }
+.ad-review-options input { accent-color: var(--color-primary); width: 18px; height: 18px; flex-shrink: 0; }
+.ad-board-group { margin-top: 40px; }
+.ad-board-group > h2 { font-size: 22px; margin-bottom: 24px; }
+.ad-review-header, .ad-review-notes { border-color: var(--color-border); }
+.ad-review-header > p, .ad-review-panel > p, .ad-review-notes p, .ad-review-source { color: var(--color-weak); }
+.ad-review-tag { color: var(--color-primary); border-color: var(--color-primary-border); background: var(--color-primary-bg); }
+.ad-scenario { background: var(--color-white); border-color: var(--color-border); }
+.ad-scenario.is-selected { background: var(--color-primary-bg); }
+.ad-scenario-number, .ad-review-footnote { background: var(--color-background); color: var(--color-weak); }
+.ad-review-notes b { color: var(--color-text); }
+.ad-phone { box-shadow: 0 0 0 1px var(--color-border), 0 12px 36px #00000006; }
 .ad-board { width: 1884px; padding: 48px; background: #f7f7f8; }
 .ad-board-header { margin-bottom: 36px; }
 .ad-board-header h1 { font-size: 30px; margin: 12px 0; }
@@ -72,3 +93,44 @@ html.auth-delivery-review #root { height: auto; }
   .ad-phone { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .ad-review * { animation: none !important; transition: none !important; } }
+
+/* Existing Qollab theme tokens scoped to export frames. */
+.ad-board-screen[data-theme="light"] {
+  --color-white: #ffffff;
+  --color-heading: rgba(0, 0, 0, 0.88);
+  --color-weak: #999999;
+  --color-background: #f5f5f5;
+  --color-text: #333333;
+  --color-primary: #ef7f1a;
+  --color-primary-bg: #fdf2e8;
+  --color-primary-border: #f8c89d;
+  --color-primary-bg-hover: #fbe0c8;
+  --color-border: #eeeeee;
+  --color-light: #cccccc;
+  --color-success: #00b578;
+  --color-danger: #f04438;
+  --color-disabled: rgba(0, 0, 0, 0.25);
+  --danger-bg: #fdeceb;
+  --color-background: та задаёт заметный
+     контраст для пилюль, а здесь он даёт светлый ободок по краю картинки. */
+  --img-placeholder: #f5f5f5;
+  --page-bg: #f3f3f3;
+}
+
+/* Existing Qollab theme tokens scoped to export frames. */
+.ad-board-screen[data-theme="dark"] {
+  --color-white: #2b2a27;
+  --color-heading: rgba(255, 250, 242, 0.92);
+  --color-weak: #a5a096;
+  --color-background: #3a3833;
+  --color-text: #f0eee6;
+  --color-primary: #f08a2c;
+  --color-primary-bg: #3a2a18;
+  --color-primary-border: #7a4d1f;
+  --color-primary-bg-hover: #46301a;
+  --color-border: #3d3b36;
+  --color-light: #6b675f;
+  --color-disabled: rgba(255, 250, 242, 0.3);
+  --danger-bg: #3a201e;
+  --page-bg: #1f1e1b;
+}
