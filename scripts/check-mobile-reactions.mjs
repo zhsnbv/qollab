@@ -19,17 +19,25 @@ try {
     await col.asElement().evaluate(el => el.scrollIntoView({ block: 'center' }));
     await pause(150);
     const box = await col.asElement().boundingBox();
+    const hit = await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.closest('.msg-col')?.textContent, { x: box.x + box.width / 2, y: box.y + box.height / 2 });
+    if (!hit?.includes(text)) {
+      await page.screenshot({ path: `${output}/blocked-message.png` });
+      throw new Error(`Message obstructed at ${JSON.stringify(box)}: ${hit}`);
+    }
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
     await pause(500);
     await page.mouse.up();
     await page.waitForSelector('.mobile-reaction-menu .rp-context-menu[data-ready="yes"]', { timeout: 6000 });
     await pause(550);
+    const backdrop = await page.$eval('.mobile-reaction-menu > .rp-picker-scrim', el => getComputedStyle(el).backdropFilter);
+    assert.equal(backdrop, 'blur(4px)');
   };
   const expand = async () => {
     await page.click('[aria-label="Все реакции"]');
     await page.waitForSelector('.mobile-reaction-menu .rp-picker');
     await pause(320);
+    assert.equal(await page.$eval('.mobile-reaction-menu > .rp-picker-scrim', el => getComputedStyle(el).backdropFilter), 'blur(4px)');
   };
 
   for (const type of ['group', 'dm']) {
@@ -41,6 +49,8 @@ try {
     }
     await page.waitForSelector('.cr-input [contenteditable="true"]');
     await pause(1600);
+    // Let the scripted history finish before gestures; it auto-scrolls the chat.
+    if (type === 'group') await page.waitForFunction(() => [...document.querySelectorAll('.cr-messages .msg-text')].some(el => el.textContent === 'Ок, я за 🚀'));
     const text = `QM2591 ${type}: reaction test`;
     await page.click('.cr-input [contenteditable="true"]');
     await page.keyboard.type(text);
@@ -59,6 +69,9 @@ try {
     assert.ok(Math.abs(geometry.below - 10) < 1, JSON.stringify(geometry));
     assert.ok(geometry.bottom >= 11, JSON.stringify(geometry));
     await page.screenshot({ path: `${output}/${type}-quick.png` });
+    await page.mouse.click(8, 100);
+    await page.waitForFunction(() => !document.querySelector('.mobile-reaction-menu'));
+    await openMessage(text);
     await expand();
     await page.type('[aria-label="Поиск эмодзи"]', 'ракета');
     await page.waitForSelector('.rp-emoji');

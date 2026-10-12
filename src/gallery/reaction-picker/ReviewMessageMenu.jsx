@@ -16,7 +16,7 @@ const GAP = 10;  // просвет между сообщением и панел
 const EDGE = 12; // минимальный отступ от краёв экрана
 
 
-export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAction, onReact, onExpand, selected, platform, pointer }) {
+export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAction, onReact, onExpand, selected, platform, pointer, backdrop = true }) {
   const wrapRef = useRef(null);
   const cloneRef = useRef(null);
   const reactRef = useRef(null);
@@ -86,7 +86,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
 
   return (
     <div className={`msgmenu-wrap rp-context-menu rp-context-menu--${platform}`} ref={wrapRef} data-ready={box ? 'yes' : 'no'} data-shift={box?.shift || 0} data-cursor-x={pointer?.x} data-cursor-y={pointer?.y}>
-      <button className="msgmenu-scrim" onClick={onClose} aria-label="Закрыть" />
+      {backdrop && <button className="msgmenu-scrim" onClick={onClose} aria-label="Закрыть" />}
 
       <div className="rp-menu-group" style={box ? mobile
         ? { '--rp-start-y': `${-box.shift}px` }

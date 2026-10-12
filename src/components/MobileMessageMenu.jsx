@@ -53,13 +53,13 @@ export default function MobileMessageMenu({ selected, onClose, onReact, ...menu 
   };
 
   return <div ref={root} className="rp-stage mobile-reaction-menu">
+    <button className={`rp-picker-scrim ${closing ? 'is-closing' : ''}`} aria-label="Закрыть реакции" onClick={expanded ? close : onClose} />
     {expanded ? <>
-      <button className={`rp-picker-scrim ${closing ? 'is-closing' : ''}`} aria-label="Закрыть реакции" onClick={close} />
       <div className="rp-picker-position">
         <EmojiPicker platform="mobile" selected={selected} onSelect={choose} onClose={close}
           closing={closing} messageText={menu.msg.text || 'Вложение'} />
       </div>
-    </> : <ReviewMessageMenu {...menu} platform="mobile" selected={selected}
+    </> : <ReviewMessageMenu {...menu} platform="mobile" selected={selected} backdrop={false}
       onClose={onClose} onReact={onReact} onExpand={() => setExpanded(true)} />}
   </div>;
 }
