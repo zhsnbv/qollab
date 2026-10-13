@@ -1,3 +1,4 @@
+import PublicationScreenCell from '../gallery/publication-screens/PublicationScreenCell';
 import { CallsProvider } from '../calls/Calls';
 import { useEffect, useRef, useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -108,7 +109,7 @@ export default function AllScreens() {
       <header className="gal-top">
         <div className="gal-head">
           <h1>Все экраны</h1>
-          <p>{SCREEN_COUNT} состояний приложения. Все экраны — 402×820.</p>
+          <p>{SCREEN_COUNT} состояний приложения. Публикации — 402×870; остальные разделы — 402×820.</p>
         </div>
         <div className="gal-switches">
           <div className="gal-seg">
@@ -177,7 +178,7 @@ export default function AllScreens() {
           {g.hint && <p className="gal-group-hint">{g.hint}</p>}
           {g.id==='calls'&&<div className="gal-call-settings" aria-label="Настройки экранов звонков"><a className="gal-chip active" href="/calls/one-to-one" target="_blank" rel="noreferrer">Пройти сценарий звонка 1 на 1</a><button className="gal-chip" aria-pressed={animateWaves} onClick={()=>setAnimateWaves(v=>!v)}>Волны: {animateWaves?'движение':'пауза'}</button><a className="gal-chip" href="/handoff/qollab-call-waves.zip" download>Скачать волны для разработки</a><a className="gal-chip" href="/handoff/call-waves/demo.html" target="_blank" rel="noreferrer">Анимация и состояния</a></div>}
           <div className="gal-grid">
-            {g.items.map((item) => <Cell key={item.id} item={item} animateWaves={animateWaves} />)}
+            {g.items.map((item) => item.kind === 'publication-frame' ? <PublicationScreenCell key={item.id} item={item} theme={theme} company={company} lang={lang} /> : <Cell key={item.id} item={item} animateWaves={animateWaves} />)}
           </div>
         </section>
       ))}

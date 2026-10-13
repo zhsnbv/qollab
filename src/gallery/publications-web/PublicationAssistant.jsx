@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Popover } from 'antd';
 import { BotAvatar } from 'bot-avatars';
@@ -50,30 +51,32 @@ function Result({ item, index, onApply, busy }) {
   </article>;
 }
 export default function PublicationAssistant({ draft, onApply, dockRaised }) {
+  const scenario = usePublicationScenario();
   const historyKey = `assistant:${draft.assistantId}`;
   const infoId = useId(), infoTrigger = useRef(null);
-  const [infoOpen, setInfoOpen] = useState(false);
-  const [chat, setChat] = useState(emptyChat), [loaded, setLoaded] = useState(false);
-  const [open, setOpen] = useState(false), [hovered, setHovered] = useState(false), [unread, setUnread] = useState(false);
-  const [busy, setBusy] = useState(false), [reading, setReading] = useState(false), [progress, setProgress] = useState('');
-  const [error, setError] = useState(''), [storageError, setStorageError] = useState(''), [notice, setNotice] = useState('');
-  const [dragging, setDragging] = useState(false), [history, setHistory] = useState(false), [confirm, setConfirm] = useState(null), [undo, setUndo] = useState(null);
+  const [infoOpen, setInfoOpen] = useState(scenario?.assistant === 'info');
+  const [chat, setChat] = useState(() => scenario ? { ...scenario.assistantChat, messages: scenario.assistantChat.messages.map(item => ({ ...item, base: fingerprint(draft) })) } : emptyChat()), [loaded, setLoaded] = useState(!!scenario);
+  const [open, setOpen] = useState(!!scenario?.assistant), [hovered, setHovered] = useState(false), [unread, setUnread] = useState(false);
+  const [busy, setBusy] = useState(scenario?.assistant === 'working'), [reading, setReading] = useState(false), [progress, setProgress] = useState(scenario?.assistant === 'working' ? 'Собираю статью и редактирую текст…' : '');
+  const [error, setError] = useState(scenario?.assistant === 'error' ? 'Не удалось обработать материалы. Попробуйте отправить запрос ещё раз.' : ''), [storageError, setStorageError] = useState(''), [notice, setNotice] = useState('');
+  const [dragging, setDragging] = useState(false), [history, setHistory] = useState(scenario?.assistant === 'history'), [confirm, setConfirm] = useState(null), [undo, setUndo] = useState(null);
   const input = useRef(null), fileInput = useRef(null), log = useRef(null), launcher = useRef(null), controller = useRef(null);
   const mounted = useRef(true), currentDraft = useRef(draft), currentOpen = useRef(open), readingLock = useRef(false);
   currentDraft.current = draft; currentOpen.current = open;
   useEffect(() => {
+    if (scenario) return;
     mounted.current = true;
     let active = true;
     (writeQueues.get(historyKey) || Promise.resolve()).catch(() => {}).then(() => loadReview(historyKey)).then(saved => { if (active) { if (saved) setChat(saved); setLoaded(true); } }).catch(() => { if (active) { setStorageError('Не удалось прочитать историю. Обновите страницу, чтобы не перезаписать её.'); } });
     return () => { active = false; mounted.current = false; controller.current?.abort(); };
-  }, [historyKey]);
+  }, [historyKey, scenario]);
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || scenario) return;
     const save = () => persist(historyKey, chat).then(() => { if (mounted.current) setStorageError(''); }).catch(() => { if (mounted.current) setStorageError('Не удалось сохранить историю. Проверьте свободное место на устройстве.'); });
     const timer = setTimeout(save, 300);
     return () => { clearTimeout(timer); save(); };
-  }, [chat, loaded, historyKey]);
-  useEffect(() => { if (open) { setUnread(false); input.current?.focus(); } }, [open]);
+  }, [chat, loaded, historyKey, scenario]);
+  useEffect(() => { if (open) { setUnread(false); if (!scenario) input.current?.focus(); } }, [open, scenario]);
   useEffect(() => { if (open) log.current?.scrollTo({ top: history ? 0 : log.current.scrollHeight, behavior: 'instant' }); }, [chat.messages.length, busy, open, history]);
   const close = () => { setInfoOpen(false); setOpen(false); launcher.current?.focus(); };
   const changeInput = value => { setChat(old => ({ ...old, input: value })); setNotice(''); };
@@ -87,6 +90,7 @@ export default function PublicationAssistant({ draft, onApply, dockRaised }) {
     readingLock.current = false;
   };
   const send = async () => {
+    if (scenario) return;
     if (controller.current || busy || readingLock.current || !loaded || !chat.input.trim()) return;
     setError(''); setNotice(''); setHistory(false); setConfirm(null);
     let prompt;
@@ -152,7 +156,7 @@ export default function PublicationAssistant({ draft, onApply, dockRaised }) {
       {undo && <button className="pw-assistant-undo" type="button" onClick={() => undoApply()}><ArrowUndo20Regular />Отменить применение</button>}
       <footer className="pw-assistant-composer">
         {!!chat.files.length && <div className="pw-assistant-files">{chat.files.map(file => <div className="pw-assistant-file" key={file.id}>{file.kind === 'image' ? <img src={file.src} alt="" /> : <Document20Regular />}<span title={file.name}>{file.name}<small>{file.kind === 'image' ? 'Для медиа статьи' : `${file.text.length.toLocaleString('ru-RU')} симв. · текст прочитан`}</small></span><button type="button" disabled={busy || reading} aria-label={`Убрать ${file.name}`} onClick={() => setChat(old => ({ ...old, files: old.files.filter(f => f.id !== file.id) }))}><Dismiss20Regular /></button></div>)}</div>}
-        <div className="pw-assistant-input"><textarea ref={input} aria-label="Задача Квилли" placeholder={chat.messages.length ? 'Что ещё поправить в статье?' : 'О чём пишем? Добавьте детали…'} value={chat.input} disabled={!loaded} rows={2} onChange={e => changeInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }} /><div className="pw-assistant-input-actions"><button type="button" className="pw-assistant-icon" aria-label="Прикрепить материалы" title="Прикрепить документы или фото" disabled={!loaded || busy || reading} onClick={() => fileInput.current.click()}><Attach20Regular /></button><span>{reading ? 'Читаю файлы…' : 'PDF, DOCX, текст, фото'}</span>{busy ? <button type="button" className="pw-assistant-stop" aria-label="Остановить подготовку" onClick={() => controller.current?.abort()}><span /></button> : <button type="button" className="pw-assistant-send" aria-label="Отправить задачу" disabled={!loaded || reading || !chat.input.trim()} onClick={send}><ArrowUp20Filled /></button>}</div></div>
+        <div className="pw-assistant-input"><textarea ref={input} aria-label="Задача Квилли" placeholder={chat.messages.length ? 'Что ещё поправить в статье?' : 'О чём пишем? Добавьте детали…'} value={chat.input} disabled={!loaded} rows={2} onChange={e => changeInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }} /><div className="pw-assistant-input-actions"><button type="button" className="pw-assistant-icon" aria-label="Прикрепить материалы" title="Прикрепить документы или фото" disabled={!loaded || busy || reading} onClick={() => fileInput.current.click()}><Attach20Regular /></button><span>{reading ? 'Читаю файлы…' : 'PDF, DOCX, текст, фото'}</span>{busy ? <button type="button" className="pw-assistant-stop" aria-label="Остановить подготовку" onClick={() => { if (scenario) { setBusy(false); setProgress(''); } else controller.current?.abort(); }}><span /></button> : <button type="button" className="pw-assistant-send" aria-label="Отправить задачу" disabled={!loaded || reading || !chat.input.trim()} onClick={send}><ArrowUp20Filled /></button>}</div></div>
         <input ref={fileInput} type="file" accept={ASSISTANT_ACCEPT} multiple hidden onChange={e => { attach(Array.from(e.target.files || [])); e.target.value = ''; }} />
       </footer>
       {dragging && <div className="pw-assistant-drop"><Attach20Regular /><b>Отпустите файлы здесь</b><span>До 5 файлов · до 10 МБ каждый</span></div>}

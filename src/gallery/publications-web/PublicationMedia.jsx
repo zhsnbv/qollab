@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronLeft24Regular, ChevronRight24Regular, Dismiss24Regular, FullScreenMaximize20Regular, Play20Filled } from '@fluentui/react-icons';
@@ -47,7 +48,8 @@ function useSlideshow(root, index, count, blocked, onNext) {
     return () => { observer.disconnect(); document.removeEventListener('visibilitychange', visibility); motion.removeEventListener('change', preference); };
   }, [root, count]);
   const state = count < 2 ? 'single' : reducedMotion ? 'reduced-motion' : hidden ? 'hidden' : !visible ? 'offscreen' : hovered ? 'hover' : focused ? 'focus' : blocked ? 'media' : 'playing';
-  const running = state === 'playing';
+  const scenario = usePublicationScenario();
+  const running = state === 'playing' && !scenario;
   useEffect(() => {
     if (!running) return;
     let frame, previous = performance.now();
@@ -98,7 +100,8 @@ function MediaLightbox({ post, items, initialIndex, onChange, onClose }) {
 }
 
 export default function PublicationMedia({ post, cover, headerControls = false, controlsTarget, onImageClick }) {
-  const [active, setActive] = useState(0), [viewer, setViewer] = useState(null);
+  const scenario = usePublicationScenario();
+  const [active, setActive] = useState(scenario?.mediaIndex || 0), [viewer, setViewer] = useState(scenario?.lightbox ? scenario.mediaIndex || 0 : null);
   const carousel = useRef(null), returnFocus = useRef(null);
   const items = [...cardImages(post, !!cover).map(p => ({ ...p, kind: 'image' })), ...(post.videos || []).map(v => ({ ...v, kind: 'video' }))];
   const index = Math.min(active, Math.max(0, items.length - 1)), item = items[index];

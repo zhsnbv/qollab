@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../gallery/publication-screens/ScenarioContext';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './Skeleton.css';
@@ -10,10 +11,11 @@ const visitedRoutes = new Set();
 // а контент проявляется плавным fade-in (см. класс .fade-in / <FadeIn>).
 export function useSkeleton(delay = 700) {
   const { pathname } = useLocation();
-  const [loading, setLoading] = useState(() => !visitedRoutes.has(pathname));
+  const scenario = usePublicationScenario();
+  const [loading, setLoading] = useState(() => scenario ? !!scenario.loading : !visitedRoutes.has(pathname));
 
   useEffect(() => {
-    if (!loading) return;
+    if (!loading || scenario) return;
     const t = setTimeout(() => {
       visitedRoutes.add(pathname);
       setLoading(false);

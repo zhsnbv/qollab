@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Button, Checkbox, Collapse, Divider, Form, Input, InputNumber, Modal, Radio, Rate, Select, Tooltip, message } from 'antd';
 import { ArrowLeft20Regular, ArrowDownload20Regular, Eye20Regular, Image20Regular, Video20Regular, Delete20Regular, Edit20Regular } from '@fluentui/react-icons';
@@ -12,6 +13,7 @@ import { COMPANIES, PEOPLE, PHOTO_STATUSES, PROJECT_FIELDS, TYPES, videoEmbed } 
 const readFile = file => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
 const required = label => [{ required: true, whitespace: true, message: `Заполните поле «${label}»` }];
 export default function PublicationEditor({ initial, onCancel, onSave, onPreview }) {
+  const scenario = usePublicationScenario();
   const [form] = Form.useForm();
   const [draft, setDraft] = useState(() => ({ ...initial, assistantId: initial.assistantId || (initial.id ? `post:${initial.id}` : crypto.randomUUID()), cardAppearance: initial.cardAppearance ?? cardAppearance(initial), rubric: rubricValue(initial) }));
   const [dirty, setDirty] = useState(false);
@@ -23,8 +25,8 @@ export default function PublicationEditor({ initial, onCancel, onSave, onPreview
     if (footerRef.current) observer.observe(footerRef.current);
     return () => observer.disconnect();
   }, []);
-  const [videoModal, setVideoModal] = useState(null), [videoUrl, setVideoUrl] = useState(''), [videoError, setVideoError] = useState('');
-  const [photoModal, setPhotoModal] = useState(null), [photoError, setPhotoError] = useState('');
+  const [videoModal, setVideoModal] = useState(scenario?.videoModal || null), [videoUrl, setVideoUrl] = useState(''), [videoError, setVideoError] = useState('');
+  const [photoModal, setPhotoModal] = useState(scenario?.photoModal ? initial.images?.[1] || initial.images?.[0] : null), [photoError, setPhotoError] = useState('');
   const [cancelOpen, setCancelOpen] = useState(false), [loading, setLoading] = useState(false);
   const imageInput = useRef(null), fileInput = useRef(null);
   const isProject = draft.type === 'project', isAudit = draft.type === 'audit';

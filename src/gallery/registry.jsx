@@ -1,3 +1,4 @@
+import { MOBILE_CASES } from './publication-screens/cases';
 import { NOTIFICATION_MODES } from '../data/chatNotificationModes';
 import { CALLS_GROUP } from './calls';
 import Home from '../screens/Home';
@@ -100,6 +101,7 @@ const groupChat = {
 const at = (pathname, state) => ({ pathname, state });
 
 export const SCREEN_GROUPS = [
+  { id: 'publications', title: 'Публикации · все состояния', hint: 'Актуальная мобильная лента и просмотр статей. 402×870. Каждый экран открывается отдельно; прокрутка и действия работают.', items: MOBILE_CASES.map(item => ({ id: `publication-${item.id}`, scenarioId: item.id, title: item.title, note: item.group, kind: 'publication-frame' })) },
   CALLS_GROUP,
   {
     id: 'entry',

@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../gallery/publication-screens/ScenarioContext';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TabLayout from '../components/TabLayout';
@@ -16,6 +17,7 @@ const BATCH = 8;
 const EVENTS_BATCH = 3;
 
 export default function Posts() {
+  const scenario = usePublicationScenario();
   const loading = useSkeleton();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,8 +25,8 @@ export default function Posts() {
   // и вкладка должна видеть изменения сразу.
   const { channels: channelList } = useChannels();
   const openEvent = (e) => navigate('/event', { state: { id: e.id, background: location } });
-  const [tab, setTab] = useState(() => new URLSearchParams(location.search).get('tab') === 'events' ? 'events' : 'posts'); // posts | channels | events
-  const [channel, setChannel] = useState(null);
+  const [tab, setTab] = useState(() => scenario?.tab || (new URLSearchParams(location.search).get('tab') === 'events' ? 'events' : 'posts')); // posts | channels | events
+  const [channel, setChannel] = useState(scenario?.filter || null);
   const { posts: allPosts } = usePublications();
   const [scope, setScope] = useState('available');
   const [chanQuery, setChanQuery] = useState('');

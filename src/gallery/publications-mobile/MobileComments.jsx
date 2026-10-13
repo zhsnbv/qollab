@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { ArrowUp16Regular, ChevronDown20Regular, ChevronUp20Regular, Dismiss20Regular, Send20Filled, Comment24Regular } from '@fluentui/react-icons';
 import { LikeButton } from '../publications-web/PostViews';
@@ -5,8 +6,9 @@ import { appendComment, commentCount, sortComments, toggleCommentLike } from './
 import MobileSheet from './MobileSheet';
 
 function Comment({ item, onReply, onLike, depth = 0, parent, onParent }) {
+  const scenario = usePublicationScenario();
   const replyCount = commentCount(item.replies);
-  const [expanded, setExpanded] = useState(() => replyCount <= 3);
+  const [expanded, setExpanded] = useState(() => scenario?.comments === 'expanded' || replyCount <= 3);
   const repliesId = useId();
   const head = useRef(null);
   const previousReplyCount = useRef(replyCount);
@@ -27,7 +29,8 @@ function Comment({ item, onReply, onLike, depth = 0, parent, onParent }) {
 }
 
 export default function MobileComments({ post, items, onChange, draft, onDraft, onClose, sheetVariant }) {
-  const [sort, setSort] = useState('popular'), [replying, setReplying] = useState(null);
+  const scenario = usePublicationScenario();
+  const [sort, setSort] = useState('popular'), [replying, setReplying] = useState(scenario?.comments === 'reply' ? items[0] : null);
   const [sent, setSent] = useState(false);
   const input = useRef(null), list = useRef(null);
   useLayoutEffect(() => {

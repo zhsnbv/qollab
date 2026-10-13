@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import { useId, useRef, useState } from 'react';
 import { MoreVertical20Filled, Settings20Filled, ChevronRight20Regular, ChevronDown20Regular, ChevronUp20Regular, Comment24Regular, Share24Regular, Eye24Regular } from '@fluentui/react-icons';
 import PublicationIdentity from '../publications-web/PublicationIdentity';
@@ -22,7 +23,8 @@ export function PublicationActions({ post, onLike, onComments, onShare, onStats,
 }
 
 export function MobileCard({ post, onOpen, onChannel, onMenu, Actions = PublicationActions, ...actions }) {
-  const [expanded, setExpanded] = useState(false), [controls, setControls] = useState(null);
+  const scenario = usePublicationScenario();
+  const [expanded, setExpanded] = useState(!!scenario?.expanded), [controls, setControls] = useState(null);
   const id = useId(), card = useRef(null);
   const channel = <div className="pm-card-channel"><PublicationIdentity post={post} onChannel={onChannel} /><span className="pw-header-media-actions" ref={setControls} /><button className="pm-more" aria-label={`Действия: ${titleOf(post)}`} onClick={onMenu}><MoreVertical20Filled /></button></div>;
   return <article ref={card} className="pm-card pw-card-tile pw-card-cover" style={rubricStyle(post)} data-post-id={post.id} onPointerDown={event => { card.current._tap = { x: event.clientX, y: event.clientY }; }} onClick={event => {

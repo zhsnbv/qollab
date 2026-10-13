@@ -103,3 +103,8 @@ html.gallery .device.gal-device{width:402px!important;min-width:402px!important;
   transition: background 0.15s, color 0.15s; -webkit-tap-highlight-color: transparent;
 }
 .gal-seg-btn.active { background: var(--color-white); color: var(--color-text); box-shadow: var(--nav-edge); }
+
+/* Publication handoff keeps the agreed taller mobile viewport. */
+.gal-publication-frame { width: 402px; height: 870px; pointer-events: auto; }
+.gal-publication-frame iframe { display: block; width: 402px; height: 870px; border: 0; background: white; }
+.gal-publication-cell .gal-title { text-decoration: none; }

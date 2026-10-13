@@ -1,9 +1,11 @@
+import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import '@ant-design/v5-patch-for-react-19';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { App as AntApp, Button, ConfigProvider, Dropdown, Empty, Input, Modal, message } from 'antd';
 import ruRU from 'antd/locale/ru_RU';
 import { Add20Regular, ChevronDown20Regular, TextBulletList20Regular, Grid20Regular, News20Regular, ClipboardTask20Regular, Lightbulb20Regular, Home20Regular, Apps20Regular, Chat20Regular, Calendar20Regular, People20Regular, Organization20Regular, Megaphone20Regular, Settings20Regular, Search20Regular, PanelLeftContract20Regular, WeatherSunny20Regular, Globe20Regular, ArrowLeft20Regular, ChevronRight20Regular, Alert20Regular } from '@fluentui/react-icons';
 import PortalShell from './PortalShell';
+import ScrollToTop from '../../components/ScrollToTop';
 import PublicationEditor from './PublicationEditor';
 import PublicationSound from './PublicationSound';
 import ChannelHeader from './ChannelHeader';
@@ -38,28 +40,30 @@ function Shell({ admin, onNavigate, onInfo, children, query, onQuery, locked }) 
 }
 function CreateButton({ onCreate, channel }) { return <Dropdown trigger={['click']} placement="bottomRight" menu={{ items: Object.entries(TYPES).filter(([key]) => key === 'news' || channel?.[key] !== false).map(([key, label]) => ({ key, label, icon: key === 'news' ? <News20Regular /> : key === 'audit' ? <ClipboardTask20Regular /> : <Lightbulb20Regular /> })), onClick: ({ key }) => onCreate(key) }}><Button type="primary" shape="round" icon={<Add20Regular />}>Создать публикацию<ChevronDown20Regular /></Button></Dropdown>; }
 function WebReview() {
-  const [posts, setPosts] = useState(INITIAL_POSTS);
+  const scenario = usePublicationScenario();
+  const [posts, setPosts] = useState(() => scenario?.posts || INITIAL_POSTS);
   const [channel, setChannel] = useState(INITIAL_CHANNEL);
   const readerOrigin = useRef({ page: 'feed', query: '', scroll: 0, filter: null, channelId: OWN_CHANNEL_ID }), restoreScroll = useRef(null);
   const initialId = new URLSearchParams(window.location.hash.slice(1)).get('post');
   const initialChannelId = new URLSearchParams(window.location.hash.slice(1)).get('channel');
-  const [page, setPage] = useState(initialId ? 'reader' : initialChannelId ? 'channel' : 'feed');
-  const [feedChannelId, setFeedChannelId] = useState(null), [activeChannelId, setActiveChannelId] = useState(initialChannelId || OWN_CHANNEL_ID);
-  const [feedSubscriptions, setFeedSubscriptions] = useState({});
+  const [page, setPage] = useState(scenario?.page || (initialId ? 'reader' : initialChannelId ? 'channel' : 'feed'));
+  const [feedChannelId, setFeedChannelId] = useState(scenario?.filter || null), [activeChannelId, setActiveChannelId] = useState(scenario?.channel || initialChannelId || OWN_CHANNEL_ID);
+  const [feedSubscriptions, setFeedSubscriptions] = useState(scenario?.unsubscribed ? { [scenario.channel]: false } : {});
   const [channelNotifications, setChannelNotifications] = useState({});
-  const [selectedId, setSelectedId] = useState(initialId || 'news');
-  const [editor, setEditor] = useState(null), [preview, setPreview] = useState(null);
-  const [query, setQuery] = useState('');
-  const [deleting, setDeleting] = useState(null), [discussions, setDiscussions] = useState(() => Object.fromEntries([PRODUCTION_IMPROVEMENT, ...MORE_FEED_POSTS].map(post => [post.id, []])));
+  const [selectedId, setSelectedId] = useState(scenario?.post || initialId || 'news');
+  const [editor, setEditor] = useState(scenario?.editor || null), [preview, setPreview] = useState(scenario?.preview ? scenario.editor : null);
+  const [query, setQuery] = useState(scenario?.query || '');
+  const [deleting, setDeleting] = useState(null), [discussions, setDiscussions] = useState(() => scenario?.discussions || Object.fromEntries([PRODUCTION_IMPROVEMENT, ...MORE_FEED_POSTS].map(post => [post.id, []])));
   const [sampleBatches, setSampleBatches] = useState([FEED_SAMPLE_BATCH, IMPROVEMENT_SAMPLE_BATCH]);
   const [messageApi, contextHolder] = message.useMessage();
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(!!scenario);
   useEffect(() => {
+    if (scenario) return;
     let active = true;
     loadReview().then(saved => { if (active && saved?.posts) { const expanded = addProductionImprovement(addFeedSamples(saved)); setPosts(upgradePublicationExamples(expanded.posts)); setDiscussions(expanded.discussions || {}); setSampleBatches(expanded.sampleBatches); setChannel({ ...INITIAL_CHANNEL, ...saved.channel }); setFeedSubscriptions(saved.feedSubscriptions || {}); setChannelNotifications(saved.channelNotifications || {}); } }).catch(() => {}).finally(() => { if (active) setLoaded(true); });
     return () => { active = false; };
-  }, []);
-  useEffect(() => { if (!loaded) return; saveReview({ posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches }).catch(() => messageApi.warning('Не удалось сохранить изменения. Не закрывайте вкладку, чтобы не потерять данные.')); }, [posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches, loaded, messageApi]);
+  }, [scenario]);
+  useEffect(() => { if (!loaded || scenario) return; saveReview({ posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches }).catch(() => messageApi.warning('Не удалось сохранить изменения. Не закрывайте вкладку, чтобы не потерять данные.')); }, [posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches, loaded, messageApi, scenario]);
   const info = text => messageApi.info(text);
   useEffect(() => { document.documentElement.classList.add('publications-web-review'); const title = document.title; document.title = 'Публикации — Qollab'; return () => { document.documentElement.classList.remove('publications-web-review'); document.title = title; }; }, []);
   const navigate = next => { setPage(next); setQuery(''); window.scrollTo(0, 0); window.history.replaceState(null, '', window.location.pathname); };
@@ -85,7 +89,7 @@ function WebReview() {
   const changeChannel = changes => { setChannel(v => ({ ...v, ...changes })); if (changes.name || changes.avatar) setPosts(v => v.map(p => publicationChannelId(p, channel) === OWN_CHANNEL_ID ? ({ ...p, channelId: OWN_CHANNEL_ID, ...(changes.name ? { channel: changes.name } : {}), ...(changes.avatar ? { channelAvatar: changes.avatar } : {}) }) : p));  };
   const update = (id, changes) => setPosts(list => list.map(p => p.id === id ? { ...p, ...changes } : p));
   const like = post => update(post.id, { liked: !post.liked });
-  const share = async post => { const url = new URL(window.location.pathname, window.location.origin); url.hash = `post=${post.id}`; try { await navigator.clipboard.writeText(url.href); messageApi.success('Ссылка на публикацию скопирована'); } catch { Modal.info({ title: 'Ссылка на публикацию', content: <Input readOnly value={url.href} onFocus={e => e.target.select()} /> }); } };
+  const share = async post => { const url = new URL(window.location.pathname, window.location.origin); url.hash = `post=${post.id}`; if (scenario) { Modal.info({ title: 'Ссылка на публикацию', content: <Input readOnly value={url.href} /> }); return; } try { await navigator.clipboard.writeText(url.href); messageApi.success('Ссылка на публикацию скопирована'); } catch { Modal.info({ title: 'Ссылка на публикацию', content: <Input readOnly value={url.href} onFocus={e => e.target.select()} /> }); } };
   const save = draft => { const post = { ...draft, id: draft.id || crypto.randomUUID(), channel: draft.channel || channel.name, channelId: draft.channelId || (draft.id ? publicationChannelId(draft, channel) : OWN_CHANNEL_ID), channelAvatar: draft.channelAvatar || channel.avatar, date: draft.date || 'Только что', likes: draft.likes || 0, commentCount: draft.commentCount || 0, views: draft.views || '0', lead: draft.lead || (draft.type === 'audit' ? documentText(draft.description).trim().slice(0, 220) : '') }; setPosts(list => draft.id ? list.map(p => p.id === draft.id ? post : p) : [post, ...list]); if (!draft.id) setDiscussions(v => ({ ...v, [post.id]: [] })); setEditor(null); setPreview(null); openChannel(publicationChannelId(post, channel)); messageApi.success(draft.id ? 'Изменения сохранены' : 'Публикация создана'); };
   const selected = posts.find(p => p.id === selectedId);
   const channels = publicationChannels(posts, channel, feedSubscriptions);
@@ -129,6 +133,7 @@ function WebReview() {
       <div className="pw-posts">{ordered.map(post => <PublicationCard key={post.id} post={post} onOpen={() => open(post)} onLike={() => like(post)} onShare={() => share(post)} onEdit={() => edit(post)} onPin={() => update(post.id, { pinned: !post.pinned })} onDelete={() => setDeleting(post)} onChannel={() => openChannel(publicationChannelId(post, channel))} />)}{!ordered.length && <div className="pw-empty"><Empty description={query ? 'Публикации не найдены' : selectedFeedChannel || page === 'channel' ? 'В этом канале пока нет публикаций' : 'В ленте пока нет публикаций'} />{query ? <Button onClick={() => setQuery('')}>Сбросить поиск</Button> : page === 'channel' && canManageChannel && <CreateButton onCreate={create} channel={channel} />}</div>}</div>
       <p className="pw-feed-end">Все публикации загружены</p></>}
     </div></div>}
+    {['feed', 'channel', 'reader'].includes(page) && <ScrollToTop key={`${page}-${selectedId}-${activeChannelId}`} documentScroll />}
   </PortalShell>{page === 'editor' && <Shell admin locked={!!editor} onNavigate={navigate} onInfo={info} query={query} onQuery={setQuery}>    {page === 'editor' && editor && <><div hidden={!!preview}><PublicationEditor key={editor.id || editor.type} initial={editor} onCancel={() => { setEditor(null); navigate('channel'); }} onPreview={post => { setPreview(post); window.scrollTo(0, 0); }} onSave={save} /></div>{preview && <><header className="pw-prod-page-header pw-preview-bar"><Button icon={<ArrowLeft20Regular />} onClick={() => setPreview(null)}>Вернуться к редактированию</Button><h1>Предпросмотр публикации</h1><Button type="primary" onClick={() => save(preview)}>{preview.id ? 'Сохранить изменения' : 'Создать пост'}</Button></header><div className="pw-preview-content"><PublicationReader post={preview} preview onLike={() => info('Реакции доступны после создания публикации')} onShare={() => info('Ссылка появится после создания публикации')} /></div></>}</>}
 </Shell>}<Modal title="Удалить публикацию?" open={!!deleting} onCancel={() => setDeleting(null)} okText="Удалить" cancelText="Отмена" okButtonProps={{ danger: true }} onOk={() => { const deleted = deleting; setPosts(list => list.filter(p => p.id !== deleted.id)); setDeleting(null); messageApi.open({ type: 'success', duration: 10, content: <span>Публикация удалена. <button className="pw-undo" onClick={() => { setPosts(list => list.some(p => p.id === deleted.id) ? list : [deleted, ...list]); messageApi.destroy(); }}>Восстановить</button></span> }); }}><p>«{deleting && titleOf(deleting)}» будет удалена.</p></Modal></>;
 }

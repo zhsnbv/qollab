@@ -1,6 +1,7 @@
-import { useId, useLayoutEffect, useRef, useState } from 'react';
+import { usePublicationScenario } from '../publication-screens/ScenarioContext';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Dropdown, Input, Rate, Select } from 'antd';
-import { Heart20Regular, Heart20Filled, Comment20Regular, Share20Regular, MoreVertical20Filled, Pin20Regular, Edit20Regular, Delete20Regular, Location20Regular, Document20Regular, ChevronUp20Regular, ChevronDown20Regular, Send20Filled, ArrowTrending20Filled, Star16Filled } from '@fluentui/react-icons';
+import { ArrowUp16Regular, Heart20Regular, Heart20Filled, Comment20Regular, Share20Regular, MoreVertical20Filled, Pin20Regular, Edit20Regular, Delete20Regular, Location20Regular, Document20Regular, ChevronUp20Regular, ChevronDown20Regular, Send20Filled, ArrowTrending20Filled, Star16Filled } from '@fluentui/react-icons';
 import { PEOPLE, PROJECT_FIELDS, titleOf } from './data';
 import RichEditor from './RichEditor';
 import Media from './PublicationMedia';
@@ -93,7 +94,8 @@ export function CollapsibleBody({ post, id, expanded }) {
   </div>;
 }
 export function PublicationCard({ post, preview = false, onOpen, onLike, onShare, onEdit, onPin, onDelete, onChannel }) {
-  const [expanded, setExpanded] = useState(false), [mediaActions, setMediaActions] = useState(null);
+  const scenario = usePublicationScenario();
+  const [expanded, setExpanded] = useState(!!scenario?.expanded), [mediaActions, setMediaActions] = useState(null);
   const bodyId = useId(), card = useRef(null);
   const hasText = !preview && hasBody(post), isCover = cardAppearance(post) === 'cover';
   const toggleBody = () => {
@@ -123,9 +125,10 @@ export function PublicationCard({ post, preview = false, onOpen, onLike, onShare
 }
 
 function CommentComposer({ onSend, replyingTo, onCancel }) {
-  const [text, setText] = useState(''), [expanded, setExpanded] = useState(!!replyingTo);
+  const scenario = usePublicationScenario();
+  const [text, setText] = useState(scenario?.comments === 'draft' ? 'Спасибо за подробный материал! Поделюсь с командой.' : ''), [expanded, setExpanded] = useState(!!replyingTo || scenario?.comments === 'draft');
   const input = useRef(null);
-  useLayoutEffect(() => { if (expanded) input.current?.focus(); }, [expanded]);
+  useLayoutEffect(() => { if (expanded && !scenario) input.current?.focus(); }, [expanded, scenario]);
   if (!expanded) return <button type="button" className="pw-comment-prompt" aria-expanded={false} onClick={() => setExpanded(true)}>Написать комментарий…</button>;
   const cancel = () => { if (replyingTo) onCancel(); else { setText(''); setExpanded(false); } };
   return <div className="pw-comment-compose" onBlur={event => { if (!replyingTo && !text.trim() && !event.currentTarget.contains(event.relatedTarget)) setExpanded(false); }} onKeyDown={event => { if (event.key === 'Escape' && !text.trim()) cancel(); }}>
@@ -134,9 +137,41 @@ function CommentComposer({ onSend, replyingTo, onCancel }) {
     <div className="pw-comment-compose-actions">{!replyingTo && <Button type="text" shape="round" onClick={cancel}>Отмена</Button>}<Button className="pw-comment-send" type="primary" shape="round" disabled={!text.trim()} icon={<Send20Filled />} onClick={() => { onSend(text.trim()); setText(''); if (!replyingTo) setExpanded(false); }}>{replyingTo ? 'Ответить' : 'Отправить'}</Button></div>
   </div>;
 }
-function Comment({ item, onReply }) {
-  const [liked, setLiked] = useState(false), [reply, setReply] = useState(false), [collapsed, setCollapsed] = useState(false);
-  return <div className="pw-comment"><div className="pw-comment-top"><img src={item.avatar} alt="" /><div className="pw-comment-identity"><div className="pw-comment-name"><strong>{item.name}</strong>{item.channel && <span className="pw-comment-channel">Канал</span>}</div><time>{item.date}</time></div></div><div className="pw-comment-body"><p>{item.text}</p><div className="pw-comment-actions"><button className="pw-comment-reply" onClick={() => setReply(!reply)}>Ответить</button><LikeButton comment liked={liked} count={item.likes + (liked ? 1 : 0) || ''} onClick={() => setLiked(!liked)} /></div>{reply && <CommentComposer replyingTo={item.name} onCancel={() => setReply(false)} onSend={text => { onReply(item.id, text); setReply(false); }} />}</div>{!!item.replies.length && <><button className="pw-collapse-replies" onClick={() => setCollapsed(!collapsed)}><ChevronDown20Regular style={{ transform: collapsed ? 'rotate(-90deg)' : undefined }} />{collapsed ? `Показать ответы (${item.replies.length})` : 'Свернуть ветку'}</button>{!collapsed && <div className="pw-replies">{item.replies.map(c => <Comment key={c.id} item={c} onReply={onReply} />)}</div>}</>}</div>;
+function countReplies(items) {
+  return items.reduce((sum, item) => sum + 1 + countReplies(item.replies || []), 0);
+}
+function Comment({ item, onReply, depth = 0, parent, onParent }) {
+  const scenario = usePublicationScenario();
+  const replyCount = countReplies(item.replies);
+  const [liked, setLiked] = useState(false), [reply, setReply] = useState(false);
+  const [expanded, setExpanded] = useState(() => scenario?.comments === 'expanded' || replyCount <= 3);
+  const repliesId = useId(), head = useRef(null), previousReplyCount = useRef(replyCount);
+  useEffect(() => {
+    if (replyCount > previousReplyCount.current) setExpanded(true);
+    previousReplyCount.current = replyCount;
+  }, [replyCount]);
+  return <div className={`pw-comment ${depth ? 'pw-comment--reply' : ''}`}>
+    <div className="pw-comment-top" ref={head}>
+      <img src={item.avatar} alt="" />
+      <div className="pw-comment-identity"><div className="pw-comment-name">
+        <strong>{item.name}</strong>
+        {parent && <button type="button" className="pw-comment-parent" aria-label={`К комментарию: ${parent.name}`} title={`Ответ для ${parent.name}`} onClick={onParent}><ArrowUp16Regular /></button>}
+        {item.channel && <span className="pw-comment-channel">Канал</span>}
+      </div><time>{item.date}</time></div>
+    </div>
+    <div className="pw-comment-body">
+      <p>{item.text}</p>
+      <div className="pw-comment-actions">
+        {!!replyCount && <button type="button" className="pw-collapse-replies" aria-expanded={expanded} aria-controls={repliesId} aria-label={expanded ? `Свернуть ответы (${replyCount})` : `Развернуть ответы (${replyCount})`} onClick={() => setExpanded(!expanded)}>{expanded ? 'Свернуть' : `Ответы (${replyCount})`}{expanded ? <ChevronUp20Regular /> : <ChevronDown20Regular />}</button>}
+        <button type="button" className="pw-comment-reply" onClick={() => setReply(!reply)}>Ответить</button>
+        <LikeButton comment liked={liked} count={item.likes + Number(liked) || ''} onClick={() => setLiked(!liked)} />
+      </div>
+      {reply && <CommentComposer replyingTo={item.name} onCancel={() => setReply(false)} onSend={text => { onReply(item.id, text); setReply(false); }} />}
+    </div>
+    {!!replyCount && expanded && <div id={repliesId} className={`pw-replies ${depth >= 2 ? 'pw-replies--deep' : ''}`}>
+      {item.replies.map(child => <Comment key={child.id} item={child} onReply={onReply} depth={depth + 1} parent={item} onParent={() => head.current?.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })} />)}
+    </div>}
+  </div>;
 }
 export function Comments({ enabled, items, onChange }) {
   const [sort, setSort] = useState('popular');

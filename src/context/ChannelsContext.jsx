@@ -1,3 +1,4 @@
+import { usePublicationScenario } from '../gallery/publication-screens/ScenarioContext';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { channelList } from '../data/channels';
 
@@ -29,11 +30,13 @@ function load() {
 const ChannelsContext = createContext(null);
 
 export function ChannelsProvider({ children }) {
-  const [subscribedIds, setSubscribedIds] = useState(load);
+  const scenario = usePublicationScenario();
+  const [subscribedIds, setSubscribedIds] = useState(() => scenario ? defaults.filter(id => !scenario.unsubscribed || id !== scenario.channel) : load());
 
   useEffect(() => {
+    if (scenario) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(subscribedIds)); } catch { /* ignore */ }
-  }, [subscribedIds]);
+  }, [subscribedIds, scenario]);
 
   const value = useMemo(() => ({
     subscribedIds,
