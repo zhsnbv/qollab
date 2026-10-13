@@ -1,21 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { WEB_CASES, MOBILE_CASES } from './cases';
 import { PublicationScenarioContext } from './ScenarioContext';
 import { INITIAL_POSTS, emptyPost, PHOTO_STATUSES } from '../publications-web/data';
 import { initialComments } from '../publications-web/publicationContent';
 import { legacyDeltaToBlocks } from '../publications-web/blockDocument';
-import PublicationsWeb from '../publications-web/PublicationsWeb';
-import { DeviceHost } from '../../components/Portal';
-import { PublicationsProvider } from '../../components/publications/PublicationContext';
-import { usePublications } from '../../components/publications/usePublications';
-import PublicationOverlays from '../../components/publications/PublicationOverlays';
-import { ChannelsProvider } from '../../context/ChannelsContext';
-import Posts from '../../screens/Posts';
-import ArticleView from '../../screens/ArticleView';
-import ChannelView from '../../screens/ChannelView';
-import ChannelSettings from '../../screens/ChannelSettings';
-import BottomNav from '../../components/BottomNav';
+const PublicationsWeb = lazy(() => import('../publications-web/PublicationsWeb'));
+const MobileStateFlow = lazy(() => import('./MobileStateFlow'));
 import './PublicationStateFrame.css';
 
 function makeScenario(spec, platform) {
@@ -40,24 +30,6 @@ function makeScenario(spec, platform) {
   return { ...spec, platform, post: postId, page: spec.page || 'feed', posts, editor, assistantChat,
     discussions: { [postId]: discussion }, saved: { likes: { [postId]: !!spec.liked }, bookmarks: { [postId]: !!spec.liked }, threads: { [postId]: discussion }, drafts: { [postId]: spec.comments === 'draft' ? 'Спасибо за подробный материал!\nПоделюсь с командой.' : '' } },
   };
-}
-function MobileFlow({ scenario }) {
-  const { setSheet, resolve, sheet } = usePublications();
-  const location = useLocation();
-  const started = useRef(false), resolver = useRef(resolve);
-  resolver.current = resolve;
-  useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    // Run after the ordinary route effect has closed old sheets.
-    const timer = setTimeout(() => {
-      if (scenario.sheet || scenario.menu) setSheet({ type: scenario.menu ? 'menu' : scenario.sheet, post: resolver.current(scenario.post) });
-    }, 50);
-    return () => { clearTimeout(timer); started.current = false; };
-  }, [scenario, setSheet]);
-  return <><div className="publication-app-stack" inert={!!sheet}>
-    <Routes><Route path="/posts" element={<><Posts /><BottomNav /></>} /><Route path="/article" element={<ArticleView />} /><Route path="/channel/:channelId" element={<ChannelView />} /><Route path="/channels/settings" element={<ChannelSettings />} /></Routes>
-  </div><PublicationOverlays /><span hidden data-frame-route={location.pathname} /></>;
 }
 // Scenario preparation uses only existing UI controls. No data is written to the user's storage.
 function PrepareState({ scenario }) {
@@ -111,7 +83,6 @@ function PrepareState({ scenario }) {
   return null;
 }
 export default function PublicationStateFrame() {
-  const [host, setHost] = useState(null);
   const params = new URLSearchParams(window.location.search);
   const platform = params.get('platform') === 'web' ? 'web' : 'mobile';
   const spec = (platform === 'web' ? WEB_CASES : MOBILE_CASES).find(item => item.id === params.get('case'));
@@ -126,9 +97,8 @@ export default function PublicationStateFrame() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [platform, spec]);
   if (!scenario) return <p>Состояние не найдено. <a href="/all?group=publications">Открыть все состояния</a></p>;
-  const route = scenario.page === 'reader' ? `/article?post=${scenario.post}` : scenario.page === 'channel' ? `/channel/${scenario.channel || 'erg-news'}` : scenario.page === 'settings' ? '/channels/settings' : '/posts';
   return <PublicationScenarioContext.Provider value={scenario}>
-    {platform === 'web' ? <PublicationsWeb /> : <div className="device publication-state-device" ref={setHost}>{host && <DeviceHost.Provider value={host}><ChannelsProvider><PublicationsProvider><MemoryRouter initialEntries={[route]}><MobileFlow scenario={scenario} /></MemoryRouter></PublicationsProvider></ChannelsProvider></DeviceHost.Provider>}</div>}
+    <Suspense fallback={null}>{platform === 'web' ? <PublicationsWeb /> : <MobileStateFlow scenario={scenario} />}</Suspense>
     <PrepareState scenario={scenario} />
   </PublicationScenarioContext.Provider>;
 }

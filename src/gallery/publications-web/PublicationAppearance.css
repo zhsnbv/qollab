@@ -70,7 +70,7 @@ button.pw-cover-title:focus-visible, .pw-cover-header button:focus-visible { out
 .pw-rubric-option svg { width: 18px; height: 18px; }
 
 .pw-app .pw-post-actions { border-top: 1px solid #e8e8e8; padding-top: 14px; margin-top: 2px; gap: 8px; }
-.pw-app .pw-post-actions button, .pw-app .pw-post-actions .pw-views { color: #787774; font-size: 15px; font-weight: 550; gap: 7px; min-height: 36px; padding: 6px 9px; border-radius: 10px; transition: background-color .24s cubic-bezier(.22,.61,.36,1), color .24s cubic-bezier(.22,.61,.36,1); }
+.pw-app .pw-post-actions button, .pw-app .pw-post-actions .pw-views { color: #787774; font-size: 15px; line-height: 20px; font-weight: 550; gap: 7px; min-height: 36px; padding: 6px 9px; border-radius: 10px; transition: background-color .24s cubic-bezier(.22,.61,.36,1), color .24s cubic-bezier(.22,.61,.36,1); }
 .pw-app .pw-post-actions button:hover { color: #333; background: #f2f2f2; }
 .pw-app .pw-post-actions > button:first-child { margin-inline-start: -9px; }
 .pw-app .pw-post-actions button > svg, .pw-app .pw-post-actions .pw-views > svg,

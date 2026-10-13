@@ -42,3 +42,9 @@ His web is already built: transfer only publication feed/cards, reading/discussi
 - Application + Storybook build passed from a clean release based on origin/main b84bbd5.
 - Focused lint: no errors; existing react-refresh export warnings in ChannelsContext/Skeleton only.
 - Visual review: mobile feed and threaded comments; web article, editor and Quilly.
+
+## CSS integration correction — 2026-10-13
+
+Cloudflare exposed CSS order conflicts between the mobile application, old portal rules and shared publication styles. The web review and gallery frames now have isolated entry graphs in the source app. Gaziz should retain his own entrypoint and avoid importing the mobile application's global styles.
+
+The package includes corrected PortalShell.css, PublicationPolish.css, PublicationAppearance.css and PublicationsWeb.css: obsolete avatar/person/share sizing is removed, legacy portal selectors have lower specificity, and reaction line-height is explicit. PublicationIdentity uses 44px avatars; action buttons use 15px type, 21px icons and 8px gaps; cover menu icon stays white. Preserve these component-owned rules when integrating.
