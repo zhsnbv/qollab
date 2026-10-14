@@ -15,7 +15,7 @@ export const companies = [
     name: 'Integra',
     full: 'Integra Construction KZ',
     domain: 'integra.qollab.kz',
-    accent: '#140f4d',
+    accent: '#0A214F',
   },
   {
     id: 'bts',
