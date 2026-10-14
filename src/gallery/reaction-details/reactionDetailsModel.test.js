@@ -26,7 +26,7 @@ test('combined activity deduplicates people and keeps reaction and read timestam
 
 test('private read timestamp is short and read-only fixtures have no reactions', () => {
   assert.equal(shortTime(singleReader[0].createdAt), 'Вчера, 16:35');
-  assert.equal(shortTime(DEMO_NOW), '11:30');
+  assert.equal(shortTime(DEMO_NOW), 'Сегодня, 11:30');
   assert.equal(reactionFixtures('personal').length, 0);
   assert.equal(reactionFixtures('readers-list').length, 0);
 });

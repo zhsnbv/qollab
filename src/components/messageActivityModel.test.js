@@ -32,7 +32,7 @@ test('invalid reads, author reads, duplicate reads and changed reactions do not 
 });
 test('compact dates use the target timezone and calendar year',()=>{
  const now='2026-01-01T01:00:00+05:00',tz='Asia/Almaty';
- assert.equal(compactActivityTime('2025-12-31T20:05:00Z',now,tz),'01:05');
+ assert.equal(compactActivityTime('2025-12-31T20:05:00Z',now,tz),'Сегодня, 01:05');
  assert.equal(compactActivityTime('2025-12-31T18:59:00Z',now,tz),'Вчера, 23:59');
  assert.match(compactActivityTime('2025-12-25T12:00:00Z',now,tz),/2025/);
  assert.equal(compactActivityTime('invalid',now,tz),'');
@@ -41,4 +41,10 @@ test('compact dates use the target timezone and calendar year',()=>{
 test('reactors stay above readers even when a read event is newer',()=>{
  const a=normalizeMessageActivity({mine:true,readers:[{userId:'r',name:'Reader',readAt:'2026-10-14T06:00:00Z'}],reactions:[{userId:'a',name:'Reactor',emoji:'x',reactedAt:readAt}]});
  assert.deepEqual(a.people.map(p=>p.userId),['a','r']);
+});
+
+test('relative dates follow calendar days through daylight-saving changes',()=>{
+ const tz='America/New_York';
+ assert.equal(compactActivityTime('2026-03-08T10:00:00-04:00','2026-03-09T00:30:00-04:00',tz),'Вчера, 10:00');
+ assert.equal(compactActivityTime('2026-10-31T10:00:00-04:00','2026-11-01T23:30:00-05:00',tz),'Вчера, 10:00');
 });

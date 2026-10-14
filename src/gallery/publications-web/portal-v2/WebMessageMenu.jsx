@@ -29,20 +29,23 @@ export default function WebMessageMenu({ message, reactions = [], readEntries = 
     const container = layer.current;
     const place = () => {
       if (!stack.current || !container) return;
-      setBox({ left: Math.max(8, Math.min(position.x, container.clientWidth - stack.current.offsetWidth - 8)), top: Math.max(8, Math.min(position.y, container.clientHeight - stack.current.offsetHeight - 8)) });
+      setBox({ left: Math.max(8, Math.min(position.x, container.clientWidth - stack.current.offsetWidth - 8)), top: Math.max(8, Math.min(position.y, container.clientHeight - stack.current.offsetHeight - 8)), '--qwm-origin': message.mine ? 'right top' : 'left top' });
     };
     place();
     const observer = new ResizeObserver(place);
     observer.observe(container);
     return () => observer.disconnect();
-  }, [position.x, position.y, label, picker]);
+  }, [position.x, position.y, label, picker, message.mine]);
   useLayoutEffect(() => {
     if (!details || !box || !popover.current || !summary.current) return;
     const container = layer.current, bounds = stack.current.getBoundingClientRect(), row = summary.current.getBoundingClientRect();
     const scale = bounds.width / stack.current.offsetWidth;
-    const side = box.left + stack.current.offsetWidth + 6 + 288 <= container.clientWidth - 8 ? 'right' : 'left';
+    const menuBounds = summary.current.closest('.qwm-menu').getBoundingClientRect();
+    const menuLeft = box.left + (menuBounds.left - bounds.left) / scale;
+    const menuWidth = menuBounds.width / scale;
+    const side = menuLeft + menuWidth + 6 + 288 <= container.clientWidth - 8 ? 'right' : 'left';
     const top = Math.max(8 - box.top, Math.min((row.top - bounds.top) / scale, container.clientHeight - box.top - popover.current.offsetHeight - 8));
-    const proposedLeft = box.left + (side === 'right' ? stack.current.offsetWidth + 6 : -294);
+    const proposedLeft = menuLeft + (side === 'right' ? menuWidth + 6 : -294);
     const left = Math.max(8, Math.min(proposedLeft, container.clientWidth - 296)) - box.left;
     setFlyout({ side, top, left });
   }, [details, box, reactions.length, readEntries.length]);
@@ -51,7 +54,7 @@ export default function WebMessageMenu({ message, reactions = [], readEntries = 
     const container = layer.current;
     setDetails(false);
     const width = Math.min(376, container.clientWidth - 16), height = Math.min(476, container.clientHeight - 16);
-    setPickerBox({ left: Math.max(8, Math.min(box.left + 232 - width, container.clientWidth - width - 8)), top: Math.max(8, Math.min(box.top, container.clientHeight - height - 8)), width, height });
+    setPickerBox({ left: Math.max(8, Math.min(box.left + stack.current.offsetWidth - width, container.clientWidth - width - 8)), top: Math.max(8, Math.min(box.top, container.clientHeight - height - 8)), width, height });
     setPicker(true);
   };
   const movePicker = position => setPickerBox(previous => ({ ...previous, ...position }));
@@ -73,10 +76,10 @@ export default function WebMessageMenu({ message, reactions = [], readEntries = 
     ['pin', message.pinned ? 'Открепить' : 'Закрепить', PushPin], ['forward', 'Переслать', Share],
     ...(allowDelete ? [['delete', 'Удалить', Trash]] : []), ['select', message.selected ? 'Снять выбор' : 'Выбрать', CheckCircle],
   ];
-  return <div className="qwm-layer rp-conversation" ref={layer} onKeyDown={navigate}>
+  return <div className="qwm-layer rp-conversation" ref={layer} onKeyDown={navigate} data-capture={capture || undefined}>
     <button type="button" className="qwm-dismiss" aria-label="Закрыть меню" tabIndex={-1} onClick={onClose} />
-    <div className="qwm-stack" ref={stack} style={box || { visibility: 'hidden' }} hidden={picker}>
-      <div className="qwm-quick" aria-label="Быстрые реакции">{quickReactions.map(emoji => <button type="button" key={emoji} aria-label={`Реакция ${emoji}`} aria-pressed={reactions.some(item => item.user.id === 'me' && item.emoji === emoji)} onClick={() => onReact(emoji)}>{emoji}</button>)}<button type="button" ref={more} aria-label="Все эмодзи" onClick={openPicker}><Plus size={18} /></button></div>
+    <div className={`qwm-stack ${message.mine ? 'qwm-stack--right' : ''}`} ref={stack} style={box || { visibility: 'hidden' }} hidden={picker}>
+      <div className="qwm-quick" aria-label="Быстрые реакции">{quickReactions.map(emoji => <button type="button" key={emoji} aria-label={`Реакция ${emoji}`} aria-pressed={reactions.some(item => item.user.id === 'me' && item.emoji === emoji)} onClick={() => onReact(emoji)}><span>{emoji}</span></button>)}<button type="button" ref={more} aria-label="Все эмодзи" onClick={openPicker}><Plus size={18} /></button></div>
       <div className="qwm-menu" role="menu" aria-label="Меню сообщения">
         {personal && message.mine && readEntries.length > 0 && <div className="qwm-personal-read" aria-label={`Прочитано ${formatTime(readEntries[0].createdAt, now)}`}><Checks size={16} /><time dateTime={readEntries[0].createdAt}>{shortTime(readEntries[0].createdAt, now)}</time></div>}
         {label && <div className="qwm-meta"><button type="button" className="qwm-meta-row" role="menuitem" ref={summary} aria-haspopup="true" aria-expanded={details} aria-controls={details ? id : undefined} onMouseEnter={reveal} onMouseLeave={hideSoon} onClick={reveal}>

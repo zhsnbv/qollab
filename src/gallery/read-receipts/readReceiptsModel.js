@@ -1,6 +1,7 @@
+import { formatActivityDate } from '../../utils/activityDate.js';
+
 export const DEMO_NOW = '2026-10-14T11:00:00+05:00';
 const TIME_ZONE = 'Asia/Almaty';
-const day = value => new Intl.DateTimeFormat('en-CA', { timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));
 
 // Only real read events from other people belong in the list. No delivered section.
 export function getReaders(entries, authorId) {
@@ -15,11 +16,7 @@ export function getReaders(entries, authorId) {
 }
 
 export function readTime(value, now = DEMO_NOW) {
-  const time = new Intl.DateTimeFormat('ru-RU', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit' }).format(new Date(value));
-  if (day(value) === day(now)) return time;
-  if (day(value) === day(Date.parse(now) - 86400000)) return `Вчера, ${time}`;
-  const date = new Intl.DateTimeFormat('ru-RU', { timeZone: TIME_ZONE, day: 'numeric', month: 'short', ...(new Date(value).getUTCFullYear() !== new Date(now).getUTCFullYear() ? { year: 'numeric' } : {}) }).format(new Date(value));
-  return `${date}, ${time}`;
+  return formatActivityDate(value, now, TIME_ZONE);
 }
 
 export function readSummary({ mine, readers, personal = false, now = DEMO_NOW }) {

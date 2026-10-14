@@ -59,7 +59,7 @@ test('newest read first, equal timestamps ordered by name without changing input
   assert.deepEqual(rows.map(row => row.userId), ['d', 'a', 'n']);
 });
 test('read time uses Almaty calendar days across UTC midnight and year boundaries', () => {
-  assert.equal(readTime('2026-10-13T20:05:00Z'), '01:05');
+  assert.equal(readTime('2026-10-13T20:05:00Z'), 'Сегодня, 01:05');
   assert.equal(readTime('2026-10-13T18:59:00Z'), 'Вчера, 23:59');
   assert.equal(readTime('2026-10-10T11:35:00Z'), '10 окт., 16:35');
   assert.equal(readTime('2025-10-10T11:35:00Z'), '10 окт. 2025 г., 16:35');

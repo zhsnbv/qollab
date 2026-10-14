@@ -1,3 +1,5 @@
+import { formatActivityDate } from '../../utils/activityDate.js';
+
 // Local review fixtures only. Production reactions already arrive with each post.
 export const DEMO_NOW = new Date('2026-10-14T11:30:00+05:00');
 const people = [
@@ -45,13 +47,7 @@ export function toggleReaction(reactions, emoji, user = me, now = DEMO_NOW) {
   return selected ? others : [...others, { user, emoji, createdAt: now.toISOString() }];
 }
 export function formatTime(value, now = DEMO_NOW) {
-  const date = new Date(value);
-  const options = { timeZone: 'Asia/Almaty' };
-  const day = d => new Intl.DateTimeFormat('en-CA', options).format(d);
-  const time = new Intl.DateTimeFormat('ru-RU', { ...options, hour: '2-digit', minute: '2-digit' }).format(date);
-  if (day(date) === day(now)) return `Сегодня в ${time}`;
-  if (day(date) === day(new Date(now.getTime() - 86400000))) return `Вчера в ${time}`;
-  return `${new Intl.DateTimeFormat('ru-RU', { ...options, day: 'numeric', month: 'short', ...(date.getFullYear() !== now.getFullYear() ? { year: 'numeric' } : {}) }).format(date)} в ${time}`;
+  return formatActivityDate(value, now, 'Asia/Almaty').replace(', ', ' в ');
 }
 export function readLabel(mine, entries) {
   if (!mine || entries.length === 0) return null;
@@ -59,7 +55,7 @@ export function readLabel(mine, entries) {
 }
 
 export function shortTime(value, now = DEMO_NOW) {
-  return formatTime(value, now).replace('Сегодня в ', '').replace('Вчера в ', 'Вчера, ').replace(' в ', ', ');
+  return formatActivityDate(value, now, 'Asia/Almaty');
 }
 
 export function activityLabel(reactions, readEntries, mine = false) {

@@ -55,7 +55,8 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
     const column = node.querySelector('.msg-col');
     const clonedColumn = clone.querySelector('.msg-col');
     if (column && clonedColumn) {
-      clonedColumn.style.width = `${column.offsetWidth}px`;
+      // offsetWidth rounds down fractional pixels and can wrap one more line.
+      clonedColumn.style.width = getComputedStyle(column).width;
       clonedColumn.style.maxWidth = 'none';
       clonedColumn.style.flex = '0 0 auto';
     }
@@ -80,7 +81,8 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
       const bubble = local(node?.querySelector('.msg-bubble, .msg-document')?.getBoundingClientRect() || rect);
       const reactH = reactRef.current?.offsetHeight || 0;
       const listH = listRef.current?.scrollHeight || 0;
-      const reactW = reactRef.current?.offsetWidth || 232;
+      const reactW = reactRef.current?.offsetWidth || 328;
+      const listW = listRef.current?.offsetWidth || 232;
       const width = root.clientWidth, height = root.clientHeight;
       if (platform === 'web') {
         const x = pointer?.x ?? bubble.right;
@@ -94,6 +96,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
       setBox({
         ...geometry,
         left: Math.max(EDGE, Math.min(mine ? bubble.right - reactW : bubble.left, width - EDGE - reactW)),
+        listLeft: Math.max(EDGE, Math.min(mine ? bubble.right - listW : bubble.left, width - EDGE - listW)),
         rowTop: row.top + geometry.shift,
         rowLeft: row.left,
         rowWidth: row.width,
@@ -156,7 +159,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
       <div
         className={`msgmenu-list msgmenu--${side}`}
         ref={listRef}
-        style={box ? { ...(mobile ? { top: `${box.listTop}px`, ...offset } : {}), maxHeight: `${box.listMax}px` } : undefined}
+        style={box ? { ...(mobile ? { top: `${box.listTop}px`, left: `${box.listLeft}px` } : {}), maxHeight: `${box.listMax}px` } : undefined}
         data-ready={box ? 'yes' : 'no'}
       >
         {activitySlot}

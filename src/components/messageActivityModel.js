@@ -1,16 +1,10 @@
+import { formatActivityDate } from '../utils/activityDate.js';
+
 const validTime = value => value != null && Number.isFinite(Date.parse(value));
 const reactionWord = count => count % 100 >= 11 && count % 100 <= 14 ? 'реакций' : count % 10 === 1 ? 'реакция' : count % 10 >= 2 && count % 10 <= 4 ? 'реакции' : 'реакций';
 
 export function compactActivityTime(value, now = new Date(), timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone) {
-  if (!validTime(value)) return '';
-  const date = new Date(value), today = new Date(now);
-  const dayKey = d => new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
-  const clock = new Intl.DateTimeFormat('ru-RU', { timeZone, hour: '2-digit', minute: '2-digit' }).format(date);
-  if (dayKey(date) === dayKey(today)) return clock;
-  if (dayKey(date) === dayKey(new Date(today.getTime() - 86400000))) return 'Вчера, ' + clock;
-  const currentYear = new Intl.DateTimeFormat('en', { timeZone, year: 'numeric' }).format(today);
-  const year = new Intl.DateTimeFormat('en', { timeZone, year: 'numeric' }).format(date);
-  return new Intl.DateTimeFormat('ru-RU', { timeZone, day: 'numeric', month: 'short', ...(year !== currentYear ? {year:'numeric'} : {}) }).format(date) + ', ' + clock;
+  return formatActivityDate(value, now, timeZone);
 }
 
 function identity(person) {
