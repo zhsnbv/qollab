@@ -44,10 +44,12 @@ export default function WebMessageMenu({ message, reactions = [], readEntries = 
     const menuLeft = box.left + (menuBounds.left - bounds.left) / scale;
     const menuWidth = menuBounds.width / scale;
     const side = menuLeft + menuWidth + 6 + 288 <= container.clientWidth - 8 ? 'right' : 'left';
-    const top = Math.max(8 - box.top, Math.min((row.top - bounds.top) / scale, container.clientHeight - box.top - popover.current.offsetHeight - 8));
+    // Keep the flyout below the quick reactions; long lists scroll instead of rising over them.
+    const top = Math.max(8 - box.top, (row.top - bounds.top) / scale);
+    const maxHeight = Math.min(368, Math.max(0, container.clientHeight - box.top - top - 8));
     const proposedLeft = menuLeft + (side === 'right' ? menuWidth + 6 : -294);
     const left = Math.max(8, Math.min(proposedLeft, container.clientWidth - 296)) - box.left;
-    setFlyout({ side, top, left });
+    setFlyout({ side, top, left, maxHeight });
   }, [details, box, reactions.length, readEntries.length]);
   useEffect(() => { if (!capture) stack.current?.querySelector('[role="menuitem"]')?.focus({ preventScroll: true }); }, [capture]);
   const openPicker = () => {
@@ -88,7 +90,7 @@ export default function WebMessageMenu({ message, reactions = [], readEntries = 
         {actions.map(([key, text, Icon]) => <button type="button" role="menuitem" className={`qwm-action ${key === 'delete' ? 'qwm-danger' : ''} ${key === 'select' ? 'qwm-separated' : ''}`} key={key} onMouseEnter={() => setDetails(false)} onClick={() => onAction(key)}><Icon size={16} /><span>{text}</span></button>)}
       </div>
       {details && label && <div className={`qwm-flyout qwm-flyout--${flyout?.side || 'left'}`} style={{ top: flyout?.top ?? 44, ...(flyout ? { left: flyout.left, right: 'auto' } : {}) }} onMouseEnter={keepOpen} onMouseLeave={hideSoon}>
-        <section className="qwm-activity" ref={popover} id={id} aria-label={title}>
+        <section className="qwm-activity" ref={popover} id={id} aria-label={title} style={{ maxHeight: flyout?.maxHeight }}>
           <header className="qwm-activity-head"><h2>{title}</h2><span>{entries.length}</span><button type="button" onClick={hideDetails} aria-label="Закрыть список"><X size={16} /></button></header>
           <div className="qwm-list-scroll" tabIndex={0} aria-label="Участники и время"><ul>{entries.map(({ user, reactions: userReactions, readAt }) => <li key={user.id}>
             <Avatar user={user} /><div className="qwm-person-text"><strong title={user.name}>{user.name}</strong><div className="qwm-person-times">
