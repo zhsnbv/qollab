@@ -13,17 +13,18 @@ export const scenarios = [
   { id: 'menu', title: 'Своё сообщение', note: 'Прочтения + реакции' },
   { id: 'one-reader', title: 'Один читатель', note: 'Прочитано + время' },
   { id: 'incoming', title: 'Чужое сообщение', note: 'Только реакции' },
-  { id: 'list', title: 'Список реакций', note: 'Разные эмодзи и время' },
-  { id: 'single', title: 'Одна реакция', note: 'Компактное окно' },
+  { id: 'list', title: 'Реакции и просмотры', note: 'Один список без дублей' },
+  { id: 'single', title: 'Одна реакция', note: 'Вложенный список' },
   { id: 'long', title: 'Длинный список', note: 'Прокрутка, длинное имя' },
   { id: 'readers-one', title: 'Один просмотр', note: 'Список из одного человека' },
   { id: 'readers-list', title: 'Просмотры', note: 'Прочитавшие и время' },
   { id: 'readers-long', title: 'Много просмотров', note: 'Прокрутка списка' },
   { id: 'no-readers', title: 'Никто не прочитал', note: 'Только строка реакций' },
   { id: 'no-reactions', title: 'Без реакций', note: 'В меню нет строки' },
+  { id: 'personal', title: 'Личная переписка', note: 'Дата и галочки без перехода' },
 ];
 export function reactionFixtures(scenario) {
-  const count = scenario === 'no-reactions' ? 0 : scenario === 'single' ? 1 : scenario === 'long' ? 24 : 6;
+  const count = scenario === 'no-reactions' || scenario.startsWith('readers-') || scenario === 'personal' ? 0 : scenario === 'single' ? 1 : scenario === 'long' ? 24 : 6;
   return Array.from({ length: count }, (_, i) => ({
     user: i < 6 ? people[i] : { id: `person-${i}`, name: ['Дарья Ким', 'Ерлан Сулейменов', 'Наталья Иванова', 'Алексей Смирнов', 'Айгерим Тлеубергенова', 'Михаил Петров'][i % 6], initials: ['ДК', 'ЕС', 'НИ', 'АС', 'АТ', 'МП'][i % 6] },
     emoji: ['👍', '❤️', '👍', '😂', '❤️', '🙏'][i % 6],
@@ -54,5 +55,35 @@ export function formatTime(value, now = DEMO_NOW) {
 }
 export function readLabel(mine, entries) {
   if (!mine || entries.length === 0) return null;
-  return entries.length === 1 ? `Прочитано ${formatTime(entries[0].createdAt).toLowerCase()}` : `Просмотров сообщения: ${entries.length}`;
+  return `Прочитали ${entries.length}`;
+}
+
+export function shortTime(value, now = DEMO_NOW) {
+  return formatTime(value, now).replace('Сегодня в ', '').replace('Вчера в ', 'Вчера, ').replace(' в ', ', ');
+}
+
+export function activityLabel(reactions, readEntries, mine = false) {
+  const count = reactions.length;
+  const readersCount = mine ? new Set(readEntries.map(item => item.user.id)).size : 0;
+  const plural = count % 10 === 1 && count % 100 !== 11 ? 'реакция' : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? 'реакции' : 'реакций';
+  return count && readersCount ? `${count} ${plural} · ${readersCount} прочитали` : count ? `${count} ${plural}` : readersCount ? `Прочитали ${readersCount}` : null;
+}
+
+// A person appears once, even when they both read and reacted. Keep both times.
+export function messageActivity(reactions, readEntries, mine = false) {
+  const people = new Map();
+  for (const { user, createdAt } of mine ? readEntries : []) {
+    const existing = people.get(user.id);
+    if (!existing || Date.parse(createdAt) > Date.parse(existing.readAt)) people.set(user.id, { user, readAt: createdAt, reactions: [] });
+  }
+  for (const { user, emoji, createdAt } of reactions) {
+    const person = people.get(user.id) || { user, reactions: [] };
+    const duplicate = person.reactions.find(item => item.emoji === emoji);
+    if (!duplicate) person.reactions.push({ emoji, createdAt });
+    else if (Date.parse(createdAt) > Date.parse(duplicate.createdAt)) duplicate.createdAt = createdAt;
+    people.set(user.id, person);
+  }
+  return [...people.values()].sort((a, b) => Number(b.reactions.length > 0) - Number(a.reactions.length > 0)
+    || Math.max(...b.reactions.map(item => Date.parse(item.createdAt)), Date.parse(b.readAt) || 0) - Math.max(...a.reactions.map(item => Date.parse(item.createdAt)), Date.parse(a.readAt) || 0)
+    || a.user.name.localeCompare(b.user.name, 'ru'));
 }

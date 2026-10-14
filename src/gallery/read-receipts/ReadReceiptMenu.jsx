@@ -1,12 +1,12 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Checks, CaretRight } from '@phosphor-icons/react';
+import { Checks, CaretRight, HeartStraight } from '@phosphor-icons/react';
 import { ArrowReply24Regular, Copy24Regular, Edit24Regular, Pin24Regular, Share24Regular, Delete24Regular, CheckmarkCircle24Regular } from '@fluentui/react-icons';
 import { REACTIONS } from '../../components/MessageMenu';
 import { mobileMenuGeometry } from '../reaction-picker/menuGeometry';
 import '../../components/MessageMenu.css';
 
 // Isolated QM-2604 menu. Shared menus remain available to concurrent QM-2611 work.
-export default function ReadReceiptMenu({ msg, rect, node, summary, onClose, onReaders, onAction, capture }) {
+export default function ReadReceiptMenu({ msg, rect, node, summary, personal, combined, onClose, onReaders, onAction, capture }) {
   const root = useRef(null), copy = useRef(null), reactions = useRef(null), list = useRef(null);
   const [box, setBox] = useState(null);
   useLayoutEffect(() => {
@@ -21,7 +21,7 @@ export default function ReadReceiptMenu({ msg, rect, node, summary, onClose, onR
   const ready = !!box;
   useLayoutEffect(() => { if (!capture && ready) list.current?.querySelector('button')?.focus({ preventScroll: true }); }, [ready, capture]);
   const items = [
-    ['reply', 'Ответить', ArrowReply24Regular], ['copy', 'Скопировать', Copy24Regular],
+    ['reply', 'Ответить', ArrowReply24Regular], ['copy', 'Копировать', Copy24Regular],
     ...(msg.mine ? [['edit', 'Изменить', Edit24Regular]] : []),
     ['pin', 'Закрепить', Pin24Regular], ['forward', 'Переслать', Share24Regular],
     ['delete', 'Удалить', Delete24Regular], ['select', 'Выбрать', CheckmarkCircle24Regular],
@@ -40,9 +40,11 @@ export default function ReadReceiptMenu({ msg, rect, node, summary, onClose, onR
       {REACTIONS.map(emoji => <button key={emoji} className="msgmenu-reaction" aria-label={`Реакция ${emoji}`} onClick={() => onAction(`Реакция ${emoji}`)}>{emoji}</button>)}
     </div>
     <div className="msgmenu-list rr-menu-list" ref={list} style={box ? { top: box.listTop, maxHeight: box.listMax } : undefined}>
-      {summary && <button className="rr-summary" onClick={onReaders} aria-label={summary}>
-        <Checks size={20} /><span>{summary}</span><CaretRight size={18} weight="bold" />
-      </button>}
+      {summary && (personal ? <div className="rr-summary rr-summary-static" aria-label={`Прочитано: ${summary}`}>
+        <Checks size={18} aria-hidden="true" /><span>{summary}</span>
+      </div> : <button className="rr-summary" onClick={onReaders} aria-label={summary}>
+        {combined ? <HeartStraight size={18} aria-hidden="true" /> : <Checks size={18} aria-hidden="true" />}<span>{summary}</span><CaretRight size={14} weight="bold" aria-hidden="true" />
+      </button>)}
       {items.map(([id, label, Icon]) => <button key={id} className={`msgmenu-item ${id === 'delete' ? 'danger' : ''} ${id === 'select' ? 'divided' : ''}`} onClick={() => onAction(label)}><Icon /><span>{label}</span></button>)}
     </div>
   </div>;

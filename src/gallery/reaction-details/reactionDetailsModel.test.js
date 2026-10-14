@@ -1,12 +1,34 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { DEMO_NOW, formatTime, groupReactions, reactionFixtures, readers, readLabel, singleReader, sortReactions, toggleReaction } from './reactionDetailsModel.js';
+import { DEMO_NOW, formatTime, groupReactions, reactionFixtures, readers, readLabel, singleReader, sortReactions, toggleReaction, messageActivity, activityLabel, shortTime } from './reactionDetailsModel.js';
 
-test('read receipts are author-only, singular includes time and plural includes count', () => {
+test('read receipt count is author-only', () => {
   assert.equal(readLabel(false, readers), null);
   assert.equal(readLabel(true, []), null);
-  assert.equal(readLabel(true, singleReader), 'Прочитано вчера в 16:35');
-  assert.equal(readLabel(true, readers), 'Просмотров сообщения: 3');
+  assert.equal(readLabel(true, singleReader), 'Прочитали 1');
+  assert.equal(readLabel(true, readers), 'Прочитали 3');
+});
+
+test('combined activity deduplicates people and keeps reaction and read timestamps', () => {
+  const reactions = reactionFixtures('list');
+  const list = messageActivity(reactions, readers, true);
+  assert.equal(list.length, 6);
+  const person = list.find(item => item.user.id === readers[0].user.id);
+  assert.equal(person.readAt, readers[0].createdAt);
+  assert.equal(person.reactions[0].createdAt, reactions[0].createdAt);
+  assert.equal(activityLabel(reactions, readers, true), '6 реакций · 3 прочитали');
+  assert.ok(messageActivity(reactions, readers, false).every(item => !item.readAt));
+  assert.equal(activityLabel(reactions, readers, false), '6 реакций');
+  assert.equal(activityLabel([], []), null);
+  assert.equal(activityLabel(reactions, readers, undefined), '6 реакций');
+  assert.ok(messageActivity(reactions, readers, undefined).every(item => !item.readAt));
+});
+
+test('private read timestamp is short and read-only fixtures have no reactions', () => {
+  assert.equal(shortTime(singleReader[0].createdAt), 'Вчера, 16:35');
+  assert.equal(shortTime(DEMO_NOW), '11:30');
+  assert.equal(reactionFixtures('personal').length, 0);
+  assert.equal(reactionFixtures('readers-list').length, 0);
 });
 test('count represents individual reactions, not distinct emoji', () => {
   const reactions = reactionFixtures('list');

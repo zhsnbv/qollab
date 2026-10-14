@@ -16,15 +16,28 @@ export function getReaders(entries, authorId) {
 
 export function readTime(value, now = DEMO_NOW) {
   const time = new Intl.DateTimeFormat('ru-RU', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit' }).format(new Date(value));
-  if (day(value) === day(now)) return `сегодня в ${time}`;
-  if (day(value) === day(Date.parse(now) - 86400000)) return `вчера в ${time}`;
-  const date = new Intl.DateTimeFormat('ru-RU', { timeZone: TIME_ZONE, day: 'numeric', month: 'long', ...(new Date(value).getUTCFullYear() !== new Date(now).getUTCFullYear() ? { year: 'numeric' } : {}) }).format(new Date(value));
-  return `${date} в ${time}`;
+  if (day(value) === day(now)) return time;
+  if (day(value) === day(Date.parse(now) - 86400000)) return `Вчера, ${time}`;
+  const date = new Intl.DateTimeFormat('ru-RU', { timeZone: TIME_ZONE, day: 'numeric', month: 'short', ...(new Date(value).getUTCFullYear() !== new Date(now).getUTCFullYear() ? { year: 'numeric' } : {}) }).format(new Date(value));
+  return `${date}, ${time}`;
 }
 
-export function readSummary({ mine, readers, now = DEMO_NOW }) {
+export function readSummary({ mine, readers, personal = false, now = DEMO_NOW }) {
   if (!mine || readers.length === 0) return null;
-  return readers.length === 1 ? `Прочитано ${readTime(readers[0].readAt, now)}` : `Просмотров сообщения: ${readers.length}`;
+  return personal ? readTime(readers[0].readAt, now) : `Прочитали ${readers.length}`;
+}
+
+// One person occupies one row even when they both read and reacted.
+export function mergeReadActivity(readers, reactions) {
+  const people = new Map(getReaders(readers).map(reader => [reader.userId, { ...reader }]));
+  for (const reaction of reactions) {
+    if (!reaction.userId || !reaction.emoji || !Number.isFinite(Date.parse(reaction.reactedAt))) continue;
+    const previous = people.get(reaction.userId);
+    if (previous?.reactedAt && Date.parse(previous.reactedAt) > Date.parse(reaction.reactedAt)) continue;
+    people.set(reaction.userId, { ...reaction, ...previous, emoji: reaction.emoji, reactedAt: reaction.reactedAt });
+  }
+  const lastEvent = person => Math.max(Date.parse(person.readAt) || 0, Date.parse(person.reactedAt) || 0);
+  return [...people.values()].sort((a, b) => Number(Boolean(b.emoji)) - Number(Boolean(a.emoji)) || lastEvent(b) - lastEvent(a) || a.name.localeCompare(b.name, 'ru') || a.userId.localeCompare(b.userId));
 }
 
 const people = [
@@ -43,9 +56,14 @@ export function demoReaders(count) {
   }), 'me');
 }
 
+export function demoReactions(readers) {
+  return readers.slice(0, 3).map((reader, index) => ({ userId: reader.userId, name: reader.name, avatar: reader.avatar,
+    emoji: ['❤️', '👍', '😂'][index], reactedAt: new Date(Date.parse(reader.readAt) + (index + 1) * 30000).toISOString() }));
+}
+
 export const RECEIPT_STATES = [
   { id: 'zero', title: 'Никто не прочитал', note: '0 · строки в меню нет', count: 0, view: 'menu' },
-  { id: 'one', title: 'Один читатель', note: '1 · время в строке', count: 1, view: 'menu' },
+  { id: 'one', title: 'Один читатель', note: 'Прочитали 1', count: 1, view: 'menu' },
   { id: 'two', title: 'Два читателя', note: '2 · счётчик просмотров', count: 2, view: 'menu' },
   { id: 'many', title: 'Несколько читателей', note: '6 · счётчик просмотров', count: 6, view: 'menu' },
   { id: 'list-one', title: 'Список · один', note: 'Аватар, имя, время, галочки', count: 1, view: 'list' },
@@ -53,6 +71,8 @@ export const RECEIPT_STATES = [
   { id: 'list-many', title: 'Список · несколько', note: 'Длинное имя и одинаковое время', count: 6, view: 'list' },
   { id: 'large', title: 'Большая группа', note: '94 · обычная прокрутка', count: 94, view: 'list' },
   { id: 'personal', title: 'Личный чат · меню', note: 'Прочтение собеседником', count: 1, view: 'menu', personal: true },
-  { id: 'personal-list', title: 'Личный чат · список', note: 'Всегда один человек', count: 1, view: 'list', personal: true },
+  { id: 'personal-list', title: 'Личный чат · статус', note: 'Дата и галочки, без перехода', count: 1, view: 'menu', personal: true },
   { id: 'incoming', title: 'Чужое сообщение', note: 'Строка доступна только автору', count: 6, view: 'menu', incoming: true },
+  { id: 'combined', title: 'Реакции и просмотры · меню', note: 'Одна строка, два счётчика', count: 6, view: 'menu', combined: true },
+  { id: 'combined-list', title: 'Реакции и просмотры · список', note: 'Один человек — одна строка', count: 6, view: 'list', combined: true },
 ];
