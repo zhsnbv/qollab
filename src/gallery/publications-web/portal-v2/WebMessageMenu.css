@@ -32,10 +32,6 @@
 .qwm-flyout--left::before { right: -8px; }
 .qwm-flyout--right::before { left: -8px; }
 .qwm-activity { width: 288px; max-height: min(368px, calc(100dvh - 16px)); background: var(--qwm-surface); border: 1px solid var(--qwm-border); border-radius: 10px; box-shadow: 0 6px 24px #0002; overflow: hidden; display: flex; flex-direction: column; }
-.qwm-activity-head { display: flex; align-items: center; gap: 7px; flex-shrink: 0; padding: 8px 10px; border-bottom: 1px solid var(--qwm-border); }
-.qwm-activity-head h2 { padding: 0; margin: 0; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--qwm-text); }
-.qwm-activity-head > span { color: var(--qwm-muted); font-size: 11px; }
-.qwm-activity-head button { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--qwm-background); color: var(--qwm-muted); margin-left: auto; }
 .qwm-list-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--qwm-muted) transparent; padding: 3px; }
 .qwm-list-scroll ul { list-style: none; margin: 0; padding: 0; }
 .qwm-list-scroll li { display: flex; gap: 8px; align-items: center; min-height: 52px; padding: 8px 7px; }

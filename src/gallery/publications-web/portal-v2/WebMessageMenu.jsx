@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
-import { ArrowBendUpLeft, CaretRight, Checks, CheckCircle, Copy, PencilSimple, Plus, PushPin, Share, Smiley, Trash, X } from '@phosphor-icons/react';
+import { ArrowBendUpLeft, CaretRight, Checks, CheckCircle, Copy, PencilSimple, Plus, PushPin, Share, Smiley, Trash } from '@phosphor-icons/react';
 import EmojiPicker from '../../reaction-picker/EmojiPicker';
 import { activityLabel, messageActivity, shortTime, formatTime } from '../../reaction-details/reactionDetailsModel';
 import './WebMessageMenu.css';
@@ -91,7 +91,6 @@ export default function WebMessageMenu({ message, reactions = [], readEntries = 
       </div>
       {details && label && <div className={`qwm-flyout qwm-flyout--${flyout?.side || 'left'}`} style={{ top: flyout?.top ?? 44, ...(flyout ? { left: flyout.left, right: 'auto' } : {}) }} onMouseEnter={keepOpen} onMouseLeave={hideSoon}>
         <section className="qwm-activity" ref={popover} id={id} aria-label={title} style={{ maxHeight: flyout?.maxHeight }}>
-          <header className="qwm-activity-head"><h2>{title}</h2><span>{entries.length}</span><button type="button" onClick={hideDetails} aria-label="Закрыть список"><X size={16} /></button></header>
           <div className="qwm-list-scroll" tabIndex={0} aria-label="Участники и время"><ul>{entries.map(({ user, reactions: userReactions, readAt }) => <li key={user.id}>
             <Avatar user={user} /><div className="qwm-person-text"><strong title={user.name}>{user.name}</strong><div className="qwm-person-times">
               {userReactions.length > 0 && <span title={`Реакция: ${formatTime(userReactions[0].createdAt, now)}`}><Smiley size={12} /><time dateTime={userReactions[0].createdAt}>{shortTime(userReactions[0].createdAt, now)}</time></span>}
