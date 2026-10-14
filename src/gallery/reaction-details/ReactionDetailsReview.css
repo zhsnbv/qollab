@@ -1,5 +1,7 @@
-html.reaction-details-review, html.reaction-details-review body { position: static; height: auto; min-height: 100%; overflow: auto; }
-html.reaction-details-review body { display: block; padding: 0; background: var(--page-bg); }
+/* Keep the document as the only page scroller; the mobile body lock traps wheel input here. */
+html.reaction-details-review, html.reaction-details-review body { position: static; height: auto; min-height: 100%; overscroll-behavior: auto; }
+html.reaction-details-review { overflow: auto; }
+html.reaction-details-review body { display: block; padding: 0; overflow: visible; background: var(--page-bg); }
 html.reaction-details-review #root { height: auto; }
 html.reaction-details-review #root > .rd-stage { border-radius: 0; box-shadow: none; }
 .rd-review { max-width: 1536px; margin: auto; padding: 32px 40px; }
