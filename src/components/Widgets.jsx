@@ -12,6 +12,7 @@ import {
 import { Headset, UserFocus } from '@phosphor-icons/react';
 import { useWidgets } from '../context/WidgetsContext';
 import Toast from './Toast';
+import IntegraMission from './IntegraMission';
 import { widgetData, usefulLinks } from '../data/widgets';
 import './Widgets.css';
 
@@ -54,6 +55,7 @@ const TASK_SOURCE_ICONS = {
 // каждая строка, а шапка и подвал ведут в сам сервис. Где адрес один
 // (безопасность, журнал), действие тоже одно — кнопка внизу.
 const NAV = {
+  mission: { foot: null },
   mail: { foot: 'Перейти в почту', open: 'Откроется почта' },
   meet: { foot: 'Перейти в календарь', open: 'Откроется календарь встреч' },
   tasks: { foot: 'Все задачи', open: 'Откроются мои задачи' },
@@ -159,6 +161,7 @@ export function Timeline({ list, now, onRow }) {
 // Тело каждого виджета своё: виджет тем и полезен, что показывает суть сервиса,
 // а не одинаковую плашку со счётчиком.
 function Body({ id, now, onRow }) {
+  if (id === 'mission') return <IntegraMission />;
   if (id === 'meet') {
     const list = widgetData.meetings;
     if (!list.length) return <div className="wg-msg"><b>На сегодня встреч нет</b></div>;
@@ -282,7 +285,7 @@ export function WidgetCard({ w, now, onOpen = () => {} }) {
   const foot = footLabel(w.id, now);
 
   return (
-    <article className="wgs-card">
+    <article className="wgs-card" data-widget={w.id}>
       <div className="wgs-cap">
         <span className="wgs-name">{w.title}</span>
         {count != null && <span className="wgs-count">{count}</span>}

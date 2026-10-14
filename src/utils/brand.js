@@ -25,6 +25,7 @@ function applyTo(node, rules) {
   const dirty = [];
   while (walker.nextNode()) {
     const n = walker.currentNode;
+    if (n.parentElement?.closest('[data-brand-preserve]')) continue;
     if (n.nodeValue.includes('ERG')) dirty.push(n);
   }
   dirty.forEach((n) => {
@@ -46,7 +47,7 @@ export function startBrandSwap(brand) {
     records.forEach((r) => {
       r.addedNodes.forEach((n) => {
         if (n.nodeType === Node.ELEMENT_NODE) applyTo(n, rules);
-        else if (n.nodeType === Node.TEXT_NODE && n.nodeValue.includes('ERG')) {
+        else if (n.nodeType === Node.TEXT_NODE && n.nodeValue.includes('ERG') && !n.parentElement?.closest('[data-brand-preserve]')) {
           let v = n.nodeValue;
           rules.forEach(([re, to]) => { v = v.replace(re, to); });
           n.nodeValue = v;

@@ -5,7 +5,6 @@ import {
 } from '@phosphor-icons/react';
 import { useWidgets } from '../context/WidgetsContext';
 import { WIDGET_ICONS } from '../components/Widgets';
-import { widgetList } from '../data/widgets';
 import { useScrolled } from '../utils/useScrolled';
 import { useReorder } from '../utils/useReorder';
 import Toast from '../components/Toast';
@@ -21,11 +20,11 @@ import './WidgetSettings.css';
 export default function WidgetSettings() {
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
-  const { widgets, order, isHidden, toggle, reset, isDefault, setOrder } = useWidgets();
+  const { widgets, availableWidgets, order, isHidden, toggle, reset, isDefault, setOrder } = useWidgets();
   const [closing, setClosing] = useState(false);
   const [toast, setToast] = useState('');
 
-  const hidden = widgetList.filter((w) => isHidden(w.id));
+  const hidden = availableWidgets.filter((w) => isHidden(w.id));
 
   // Тащим только видимые, а пишем полный порядок: скрытые остаются на своих
   // местах, поэтому возвращённый виджет встаёт туда же, откуда его убрали,

@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { DeviceHost } from '../components/Portal';
 import { SCREEN_GROUPS, SCREEN_COUNT } from '../gallery/registry';
 import { companies } from '../data/companies';
+import { useCompany } from '../context/CompanyContext';
 import { LANGS, getLang, setLang } from '../i18n/runtime';
 import './AllScreens.css';
 
@@ -73,6 +74,7 @@ const param = (name, allowed, fallback) => {
 };
 
 export default function AllScreens() {
+  const { setCompanyId } = useCompany();
   const [group, setGroup] = useState(() => query().get('group') || 'all');
   const [animateWaves,setAnimateWaves]=useState(false);
   const [theme, setTheme] = useState(() => param('theme', ['light', 'dark'], 'light'));
@@ -89,7 +91,7 @@ export default function AllScreens() {
   // Тема и пространство переключаются теми же атрибутами на <html>, что и
   // в приложении: все полсотни рамок перекрашиваются разом, без перезагрузки.
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
-  useEffect(() => { document.documentElement.dataset.company = company; }, [company]);
+  useEffect(() => { setCompanyId(company); }, [company, setCompanyId]);
 
   // Адрес переписываем без записи в историю: «назад» должен уводить с витрины,
   // а не отматывать переключения темы.
@@ -136,7 +138,7 @@ export default function AllScreens() {
               </button>
             ))}
           </div>
-          <div className="gal-seg">
+          <div className="gal-seg" data-brand-preserve>
             {companies.map((c) => (
               <button
                 key={c.id}

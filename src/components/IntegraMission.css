@@ -1,0 +1,177 @@
+/* The common WidgetCard owns the 341px height, header, border and shadow. */
+.integra-mission {
+  --im-copy: #4d5665;
+  --im-ink: #0a214f;
+  --im-particle: #5280bd;
+  --im-spark: #fff;
+  --im-halo: #82afe6;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  isolation: isolate;
+  container-type: inline-size;
+}
+.integra-mission-hero {
+  position: relative;
+  flex: 0 0 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.integra-mission-glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 62% 65% at 50% 0%, #ffffffcc, #d5e8ff3d 45%, transparent 80%),
+    linear-gradient(180deg, #b8d3f7a6 0%, #d4e5fd73 30%, #e9f2fe33 58%, transparent 88%);
+  pointer-events: none;
+}
+.integra-mission-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0 12% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ffffffb3, transparent);
+}
+.integra-mission-logo {
+  position: relative;
+  z-index: 2;
+  width: 130px;
+  aspect-ratio: 243 / 84;
+  filter: drop-shadow(0 3px 6px #0a214f12);
+}
+.integra-mission-logo img { display: block; width: 100%; height: 100%; }
+.integra-mission-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  mask: url('/img/integra/logo_integra_blue.svg') center / contain no-repeat;
+  -webkit-mask: url('/img/integra/logo_integra_blue.svg') center / contain no-repeat;
+  pointer-events: none;
+}
+.integra-mission-shine::before {
+  content: '';
+  position: absolute;
+  inset: -40% auto -40% 0;
+  width: 34%;
+  background: linear-gradient(90deg, #fff0, #dceaff80 25%, #fff 50%, #e1efff80 75%, #fff0);
+  transform: translateX(-160%) skewX(-24deg);
+  opacity: 0;
+  animation: integra-logo-shine 14s ease-in-out 1.8s infinite;
+}
+.integra-mission-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%);
+}
+.integra-mission-particles span {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--im-particle);
+  box-shadow: 0 0 4px var(--im-halo);
+  opacity: 0;
+  animation: integra-particle 9s ease-in-out infinite;
+}
+.integra-mission-particles span:nth-child(3n) { background: var(--im-spark); box-shadow: 0 0 3px var(--im-halo), 0 0 8px var(--im-halo); }
+.integra-mission-particles .is-soft { filter: blur(1.2px); }
+.integra-mission-particles .is-sparkle { background: transparent; box-shadow: none; filter: drop-shadow(0 0 3px var(--im-halo)); }
+.integra-mission-particles .is-sparkle::before,
+.integra-mission-particles .is-sparkle::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(90deg, transparent, var(--im-spark), transparent);
+  inset: 40% -65%;
+  border-radius: 50%;
+}
+.integra-mission-particles .is-sparkle::after { transform: rotate(90deg); }
+.integra-mission-content {
+  flex: 1;
+  min-height: 0;
+  padding: 0 12px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--im-copy);
+}
+.integra-mission-statement {
+  margin: 0;
+  color: var(--im-ink);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.25px;
+}
+.integra-mission-values {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  list-style: none;
+  margin: 15px 0 0;
+  padding: 15px 0 0;
+  font-size: clamp(9.5px, 3.35cqi, 11.5px);
+  line-height: 17px;
+  white-space: nowrap;
+}
+.integra-mission-values li { display: flex; align-items: center; gap: 6px; }
+.integra-mission-values li + li::before {
+  content: '';
+  width: 2px;
+  height: 2px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .5;
+}
+.integra-mission-values::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(50% - 16px);
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-primary-border), transparent);
+}
+
+@keyframes integra-logo-shine {
+  0% { transform: translateX(-160%) skewX(-24deg); opacity: 0; }
+  1% { opacity: .95; }
+  13% { transform: translateX(410%) skewX(-24deg); opacity: .95; }
+  14%, 100% { transform: translateX(410%) skewX(-24deg); opacity: 0; }
+}
+@keyframes integra-particle {
+  0%, 100% { opacity: .08; transform: translate3d(0, 3px, 0) scale(.7); }
+  32% { opacity: var(--brightness); }
+  62% { opacity: .25; }
+  82% { opacity: .5; transform: translate3d(var(--drift), -5px, 0) scale(1.1); }
+}
+.integra-mission-hero:not(.is-playing) .integra-mission-particles span,
+.integra-mission-hero:not(.is-playing) .integra-mission-shine::before { animation-play-state: paused; }
+
+html[data-theme='dark'] .integra-mission {
+  --im-copy: #c4cad7;
+  --im-ink: #e0ebff;
+  --im-particle: #b4d4ff;
+  --im-spark: #ecf6ff;
+  --im-halo: #8fbfff80;
+}
+html[data-theme='dark'] .integra-mission-logo img { filter: brightness(0) invert(1); }
+html[data-theme='dark'] .integra-mission-glow {
+  background:
+    radial-gradient(ellipse 65% 70% at 50% -10%, #e2f1ff73, #9ac7ff29 42%, transparent 80%),
+    linear-gradient(180deg, #315a9980 0%, #27457452 32%, #2139581a 60%, transparent 88%);
+}
+html[data-theme='dark'] .integra-mission-shine::before { background: linear-gradient(90deg, #fff0, #8bc5ff 50%, #fff0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .integra-mission-particles span, .integra-mission-shine::before { animation: none; }
+  .integra-mission-particles span { opacity: .4; }
+}

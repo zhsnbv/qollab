@@ -16,6 +16,7 @@ export const companies = [
     full: 'Integra Construction KZ',
     domain: 'integra.qollab.kz',
     accent: '#0A214F',
+    excludedWidgets: ['journal', 'safety'],
   },
   {
     id: 'bts',

@@ -6,6 +6,14 @@
 // раскраску иконок незачем — цветом отмечено только то, что что-то значит.
 export const widgetList = [
   {
+    id: 'mission',
+    name: 'Миссия и ценности',
+    title: 'Миссия и ценности',
+    icon: 'Book',
+    user: false,
+    companies: ['integra'],
+  },
+  {
     id: 'mail',
     name: 'Почта',
     title: 'Входящая почта',

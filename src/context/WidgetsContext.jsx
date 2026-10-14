@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { widgetList } from '../data/widgets';
+import { useCompany } from './CompanyContext';
 
 // Настройки виджетов у сотрудника. Храним не список карточек, а отличия от
 // общего набора — как требует ТЗ: когда администратор добавит новый виджет,
@@ -26,6 +27,7 @@ function load() {
 const WidgetsContext = createContext(null);
 
 export function WidgetsProvider({ children }) {
+  const { company } = useCompany();
   const [prefs, setPrefs] = useState(load);
 
   useEffect(() => {
@@ -39,25 +41,37 @@ export function WidgetsProvider({ children }) {
     const rest = DEFAULT_ORDER.filter((id) => !known.includes(id));
     // order — полный порядок вместе со скрытыми: панель настройки переставляет
     // видимые, но обязана вернуть скрытый виджет туда же, откуда его убрали.
-    const order = [...known, ...rest];
+    // Правило пространства действует и для старых сохранённых настроек.
+    const availableWidgets = widgetList.filter((w) =>
+      (!w.companies || w.companies.includes(company.id)) && !company.excludedWidgets?.includes(w.id));
+    const allowed = new Set(availableWidgets.map((w) => w.id));
+    const order = [...known, ...rest].filter((id) => allowed.has(id));
     const visible = order.filter((id) => !prefs.hidden.includes(id));
 
     return {
       widgets: visible.map((id) => byId[id]),
+      availableWidgets,
       order,
       isHidden: (id) => prefs.hidden.includes(id),
       // Постоянные не трогаем: у них в панели нет кнопки, но проверяем и здесь
       toggle: (id) => setPrefs((p) => {
-        if (!byId[id]?.user) return p;
+        if (!allowed.has(id) || !byId[id]?.user) return p;
         return p.hidden.includes(id)
           ? { ...p, hidden: p.hidden.filter((x) => x !== id) }
           : { ...p, hidden: [...p.hidden, id] };
       }),
       reset: () => setPrefs({ hidden: [], order: [] }),
-      setOrder: (order) => setPrefs((p) => ({ ...p, order })),
+      setOrder: (order) => setPrefs((p) => {
+        // Недоступные в текущем пространстве карточки сохраняют свои места
+        // в личном порядке для возвращения в другое пространство.
+        let i = 0;
+        const next = order.filter((id) => allowed.has(id));
+        const merged = [...known, ...rest].map((id) => allowed.has(id) ? next[i++] : id);
+        return { ...p, order: merged.filter(Boolean) };
+      }),
       isDefault: !prefs.hidden.length && !prefs.order.length,
     };
-  }, [prefs]);
+  }, [prefs, company]);
 
   return <WidgetsContext.Provider value={value}>{children}</WidgetsContext.Provider>;
 }
