@@ -1,3 +1,5 @@
+import { mountWebMessageMenu } from './mountWebMessageMenu';
+import { normalizePortalReactions, portalReadEntries, portalReactionGroups, togglePortalReaction, seedPortalActivity, recordPortalRead, isPrivateChat } from './chatActivity';
 /* eslint-disable no-unused-vars -- Preserve upstream shell helpers for parity. */
 // Source: gazizomarkhanov-dev/qollab-portal-v2 @ f8148b6. Only integration/lifecycle adapters differ.
 export function initializePortal(root, bridge) {
@@ -1095,6 +1097,7 @@ chatContacts.forEach((contact) => {
     message.reactions ||= [];
     message.pinned ||= false;
   });
+  seedPortalActivity(contact);
 });
 
 const chatContactList = document.querySelector('#chatContactList');
@@ -1170,10 +1173,7 @@ const chatGroupNext = document.querySelector('#chatGroupNext');
 const chatGroupSummary = document.querySelector('#chatGroupSummary');
 const chatGroupFinalCount = document.querySelector('#chatGroupFinalCount');
 const chatActionOverlay = document.querySelector('#chatActionOverlay');
-const chatActionPanel = document.querySelector('#chatActionPanel');
-const chatActionPreview = document.querySelector('#chatActionPreview');
-const chatActionMenu = document.querySelector('#chatActionMenu');
-const chatActionReactions = document.querySelector('#chatActionReactions');
+const webMessageMenu = mountWebMessageMenu(chatActionOverlay);
 const chatConfirmModal = document.querySelector('#chatConfirmModal');
 const chatConfirmDelete = document.querySelector('#chatConfirmDelete');
 const chatToast = document.querySelector('#chatToast');
@@ -1354,10 +1354,10 @@ function genericHeaderChatMessagesMarkup(contact) {
     const text = message.text ? `<p>${escapeChatText(message.text)}</p>` : '';
     const reply = message.reply ? `<div class="header-chat-internal-quote"><strong>${message.own ? 'Ответ' : escapeChatText(message.author || contact.name)}</strong><span>${escapeChatText(typeof message.reply === 'string' ? message.reply : message.reply.text)}</span></div>` : '';
     const attachment = message.attachment ? `<img src="${asset(message.attachment)}" alt="Вложение" style="width:100%;border-radius:8px">` : (message.attachmentLabel ? `<div class="chat-file-card"><span>${message.attachmentKind === 'photo' ? '▧' : message.attachmentKind === 'poll' ? '☷' : '▤'}</span><b>${escapeChatText(message.attachmentLabel)}</b></div>` : '');
-    const reactions = (message.reactions || []).map((emoji) => `<button class="chat-reaction-chip" type="button" data-chat-reaction="${emoji}" data-message-id="${message.id}">${emoji}</button>`).join('');
+    const reactions = chatReactionsMarkup(message);
     const menu = `<button class="chat-message-menu-trigger" type="button" data-chat-menu="${message.id}" aria-label="Действия с сообщением">•••</button>`;
     const statusAsset = message.status === 'sent' ? 'chat-internal-sent.svg' : 'chat-internal-read.svg';
-    return `<div class="header-chat-internal-row${ownClass}" data-chat-message-id="${message.id}" data-chat-surface="overlay"><div class="header-chat-internal-message">${avatar}<div class="header-chat-internal-bubble${message.pinned ? ' is-pinned' : ''}">${message.forwarded ? '<small class="chat-forwarded">Переслано</small>' : ''}${author}${reply}${attachment}${text}${message.edited ? '<small class="chat-edited">изменено</small>' : ''}<time>${message.time}${message.own ? `<img src="${asset(statusAsset)}" alt="${message.status === 'sent' ? 'Отправлено' : 'Прочитано'}">` : ''}</time>${reactions ? `<div class="chat-reactions">${reactions}</div>` : ''}${menu}</div></div></div>`;
+    return `<div class="header-chat-internal-row${ownClass}${message.selected ? ' pw-chat-selected' : ''}" data-chat-message-id="${message.id}" data-chat-surface="overlay"><div class="header-chat-internal-message">${avatar}<div class="header-chat-internal-bubble${message.pinned ? ' is-pinned' : ''}">${message.forwarded ? '<small class="chat-forwarded">Переслано</small>' : ''}${author}${reply}${attachment}${text}${message.edited ? '<small class="chat-edited">изменено</small>' : ''}<time>${message.time}${message.own ? `<img src="${asset(statusAsset)}" alt="${message.status === 'sent' ? 'Отправлено' : 'Прочитано'}">` : ''}</time>${reactions ? `<div class="chat-reactions">${reactions}</div>` : ''}${menu}</div></div></div>`;
   }).join('')}${typing}${prompts}`;
 }
 
@@ -1594,7 +1594,7 @@ function scheduleChatReply(contact, question) {
   setTimeout(() => {
     contact.typing = false;
     contact.messages.forEach((message) => {
-      if (message.own && contact.kind !== 'group') message.status = 'read';
+      recordPortalRead(message, contact);
     });
     const answer = contact.kind === 'bot'
       ? (ergizAnswers[question] || 'Я нашёл информацию по вашему вопросу. Откройте нужный сервис из меню — если потребуется, помогу выбрать раздел.')
@@ -1697,34 +1697,50 @@ function newErgizDialog() {
   showChatToast('Новый диалог с ERGiz');
 }
 
-function closeChatActionOverlay() {
+function closeChatActionOverlay(restoreFocus = true) {
   clearTimeout(chatLongPressTimer);
   chatLongPressTimer = null;
+  const target = actionOverlayMessage;
   actionOverlayMessage = null;
   chatActionOverlay.hidden = true;
+  webMessageMenu.close();
+  if (restoreFocus && target) requestAnimationFrame(() => {
+    const container = target.surface === 'overlay' ? headerChatConversationMessages : chatMessages;
+    container.querySelector(`[data-chat-menu="${CSS.escape(target.messageId)}"]`)?.focus({ preventScroll: true });
+  });
 }
 
-function openChatActionOverlay(message, surface) {
+function openChatActionOverlay(message, surface, anchor) {
   const contact = activeChatContact();
   if (!contact || !message) return;
   actionOverlayMessage = { contactId: contact.id, messageId: message.id, surface };
-  const content = message.text || message.attachmentLabel || 'Вложение';
-  const author = !message.own && message.author ? `<strong>${escapeChatText(message.author)}</strong>` : '';
-  chatActionPanel.classList.toggle('own', Boolean(message.own));
-  chatActionPreview.innerHTML = `<div class="chat-action-bubble${message.own ? ' own' : ''}">${author}<p>${escapeChatText(content)}</p><time>${escapeChatText(message.time || '')}</time></div>`;
-  const actions = [
-    ['reply', '↩', 'Ответить'],
-    ['copy', '▣', 'Скопировать'],
-    ...(message.own && message.text ? [['edit', '✎', 'Изменить']] : []),
-    ['pin', '⌖', message.pinned ? 'Открепить' : 'Закрепить'],
-    ['forward', '⇥', 'Переслать'],
-    ['delete', '⌫', 'Удалить'],
-    ['select', '◉', 'Выбрать']
-  ];
-  chatActionMenu.innerHTML = actions.map(([action, icon, label]) => `<button type="button" data-chat-overlay-action="${action}"${action === 'delete' ? ' class="danger"' : ''}><span>${icon}</span><b>${label}</b></button>`).join('');
-  chatActionReactions.innerHTML = ['❤️', '👍', '😂', '😮', '😢', '🙏'].map((emoji) => `<button type="button" data-chat-overlay-reaction="${emoji}" aria-label="Реакция ${emoji}">${emoji}</button>`).join('');
+  const container = surface === 'overlay' ? headerChatConversationMessages : chatMessages;
+  const row = container.querySelector(`[data-chat-message-id="${CSS.escape(message.id)}"]`);
+  const rect = anchor || row?.querySelector('[data-chat-menu]')?.getBoundingClientRect();
   chatActionOverlay.hidden = false;
-  requestAnimationFrame(() => chatActionMenu.querySelector('button')?.focus({ preventScroll: true }));
+  const bounds = chatActionOverlay.getBoundingClientRect();
+  webMessageMenu.open({
+    message: { ...message, mine: Boolean(message.own) },
+    reactions: normalizePortalReactions(message.reactions),
+    readEntries: portalReadEntries(message, contact),
+    personal: isPrivateChat(contact),
+    position: { x: (rect?.right || bounds.left + 244) - bounds.left - 232, y: (rect?.bottom || bounds.top + 12) - bounds.top + 4 },
+    allowDelete: true,
+    onClose: () => closeChatActionOverlay(),
+    onAction: performChatMessageAction,
+    onReact: emoji => {
+      togglePortalReaction(message, emoji);
+      closeChatActionOverlay();
+      updateChatViews();
+    },
+  });
+}
+
+function chatReactionsMarkup(message) {
+  return Object.entries(portalReactionGroups(message)).map(([emoji, users]) => {
+    const mine = users.some(user => user.id === 'me');
+    return `<button class="chat-reaction-chip${mine ? ' is-mine' : ''}" type="button" data-chat-reaction="${escapeChatText(emoji)}" data-message-id="${message.id}" aria-pressed="${mine}" aria-label="${escapeChatText(emoji)}: ${users.length}${mine ? ', ваша реакция' : ''}">${escapeChatText(emoji)}<span>${users.length}</span></button>`;
+  }).join('');
 }
 
 function performChatMessageAction(action) {
@@ -1736,7 +1752,7 @@ function performChatMessageAction(action) {
     closeChatActionOverlay();
     return;
   }
-  closeChatActionOverlay();
+  closeChatActionOverlay(!['reply', 'edit', 'forward', 'delete'].includes(action));
   if (action === 'reply') chatComposerState = { mode: 'reply', messageId: message.id };
   if (action === 'edit' && message.own && message.text) {
     chatComposerState = { mode: 'edit', messageId: message.id };
@@ -1744,8 +1760,8 @@ function performChatMessageAction(action) {
     chatMessageInput.value = message.text;
   }
   if (action === 'copy') {
-    navigator.clipboard?.writeText(message.text || message.attachmentLabel || '').catch(() => {});
-    showChatToast('Скопировано');
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(message.text || message.attachmentLabel || '').then(() => showChatToast('Скопировано'), () => showChatToast('Копирование недоступно'));
+    else showChatToast('Копирование недоступно');
   }
   if (action === 'pin') {
     message.pinned = !message.pinned;
@@ -1755,8 +1771,9 @@ function performChatMessageAction(action) {
   if (action === 'delete') {
     pendingDelete = { contactId: contact.id, messageId: message.id };
     chatConfirmModal.hidden = false;
+    requestAnimationFrame(() => chatConfirmDelete.focus());
   }
-  if (action === 'select') showChatToast('Сообщение выбрано');
+  if (action === 'select') { message.selected = !message.selected; showChatToast(message.selected ? 'Сообщение выбрано' : 'Выбор снят'); }
   updateChatViews();
   if (action === 'reply' || action === 'edit') {
     const input = target.surface === 'overlay' ? headerChatConversationInput : chatMessageInput;
@@ -1784,12 +1801,12 @@ function handleChatMessageClick(event, surface) {
   if (!message) return;
   const menuTrigger = event.target.closest('[data-chat-menu]');
   if (menuTrigger) {
-    openChatActionOverlay(message, surface);
+    openChatActionOverlay(message, surface, menuTrigger.getBoundingClientRect());
     return;
   }
   const reaction = event.target.closest('[data-chat-reaction]');
   if (reaction) {
-    message.reactions = (message.reactions || []).filter((emoji) => emoji !== reaction.dataset.chatReaction);
+    togglePortalReaction(message, reaction.dataset.chatReaction);
     updateChatViews();
     return;
   }
@@ -1804,6 +1821,14 @@ function attachChatLongPress(root, surface) {
     const row = event.target.closest('[data-chat-message-id]');
     if (!row) return;
     const message = activeChatContact().messages.find((item) => item.id === row.dataset.chatMessageId);
+    if (!message) return;
+    event.preventDefault();
+    openChatActionOverlay(message, surface, { right: event.clientX + 232, bottom: event.clientY });
+  });
+  root.addEventListener('keydown', event => {
+    if (event.key !== 'ContextMenu' && !(event.shiftKey && event.key === 'F10')) return;
+    const row = event.target.closest('[data-chat-message-id]');
+    const message = row && activeChatContact().messages.find(item => item.id === row.dataset.chatMessageId);
     if (!message) return;
     event.preventDefault();
     openChatActionOverlay(message, surface);
@@ -1839,24 +1864,6 @@ headerChatConversationMessages.addEventListener('click', (event) => handleChatMe
 chatMessages.addEventListener('click', (event) => handleChatMessageClick(event, 'page'));
 attachChatLongPress(headerChatConversationMessages, 'overlay');
 attachChatLongPress(chatMessages, 'page');
-document.querySelectorAll('[data-chat-action-close]').forEach((button) => button.addEventListener('click', closeChatActionOverlay));
-chatActionMenu.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-chat-overlay-action]');
-  if (button) performChatMessageAction(button.dataset.chatOverlayAction);
-});
-chatActionReactions.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-chat-overlay-reaction]');
-  if (!button || !actionOverlayMessage) return;
-  const target = { ...actionOverlayMessage };
-  const contact = chatContacts.find((item) => item.id === target.contactId);
-  const message = contact?.messages.find((item) => item.id === target.messageId);
-  if (!message) return;
-  const emoji = button.dataset.chatOverlayReaction;
-  const current = message.reactions || [];
-  message.reactions = current.includes(emoji) ? current.filter((item) => item !== emoji) : [...current, emoji];
-  closeChatActionOverlay();
-  updateChatViews();
-});
 [headerChatComposeContext, chatComposeContext].forEach((container) => container.addEventListener('click', (event) => {
   if (event.target.closest('[data-compose-cancel]')) resetComposerState(true);
 }));
@@ -1886,7 +1893,7 @@ headerChatContactList.addEventListener('click', (event) => {
 document.addEventListener('click', (event) => {
   if (!document.body.classList.contains('header-chat-open')) return;
   const path = event.composedPath();
-  if (path.includes(headerChatPopover) || path.includes(headerChatTrigger) || event.target.closest('.chat-modal') || event.target.closest('.chat-action-overlay')) return;
+  if (path.includes(headerChatPopover) || path.includes(headerChatTrigger) || path.includes(chatActionOverlay) || event.target.closest('.chat-modal')) return;
   setHeaderChatPopover(false);
 });
 document.addEventListener('keydown', (event) => {
@@ -1931,10 +1938,10 @@ function renderChatMessage(message, contact) {
   const attachmentCard = message.attachmentLabel ? `<div class="chat-file-card"><span>${message.attachmentKind === 'photo' ? '▧' : message.attachmentKind === 'poll' ? '☷' : '▤'}</span><b>${escapeChatText(message.attachmentLabel)}</b></div>` : '';
   const text = message.text ? `<p class="${message.link ? 'chat-link' : ''}">${escapeChatText(message.text)}</p>` : '';
   const avatar = message.own ? '' : `<img class="chat-message-avatar" src="${asset(contact.avatar)}" alt="">`;
-  const reactions = (message.reactions || []).map((emoji) => `<button class="chat-reaction-chip" type="button" data-chat-reaction="${emoji}" data-message-id="${message.id}">${emoji}</button>`).join('');
+  const reactions = chatReactionsMarkup(message);
   const menu = `<button class="chat-message-menu-trigger" type="button" data-chat-menu="${message.id}" aria-label="Действия с сообщением">•••</button>`;
   const statusAsset = message.status === 'sent' ? 'chat-sent.svg' : 'chat-read.svg';
-  return `<div class="chat-message${message.own ? ' own' : ''}" data-chat-message-id="${message.id}" data-chat-surface="page">${avatar}<div class="chat-bubble${message.pinned ? ' is-pinned' : ''}">${message.forwarded ? '<small class="chat-forwarded">Переслано</small>' : ''}${author}${reply}${attachment}${attachmentCard}${text}${message.edited ? '<small class="chat-edited">изменено</small>' : ''}<span class="chat-message-time">${message.time}${message.own ? `<img src="${asset(statusAsset)}" alt="${message.status === 'sent' ? 'Отправлено' : 'Прочитано'}">` : ''}</span>${reactions ? `<div class="chat-reactions">${reactions}</div>` : ''}${menu}</div></div>`;
+  return `<div class="chat-message${message.own ? ' own' : ''}${message.selected ? ' pw-chat-selected' : ''}" data-chat-message-id="${message.id}" data-chat-surface="page">${avatar}<div class="chat-bubble${message.pinned ? ' is-pinned' : ''}">${message.forwarded ? '<small class="chat-forwarded">Переслано</small>' : ''}${author}${reply}${attachment}${attachmentCard}${text}${message.edited ? '<small class="chat-edited">изменено</small>' : ''}<span class="chat-message-time">${message.time}${message.own ? `<img src="${asset(statusAsset)}" alt="${message.status === 'sent' ? 'Отправлено' : 'Прочитано'}">` : ''}</span>${reactions ? `<div class="chat-reactions">${reactions}</div>` : ''}${menu}</div></div>`;
 }
 
 function renderActiveChat() {
@@ -2345,6 +2352,7 @@ root.addEventListener('click', event => {
 root.addEventListener('keydown', event => {
   if (event.key === 'Enter' && event.target.matches('.channel-card') && event.target.textContent.includes('ERG News')) { event.preventDefault(); bridge.onPage?.('channel'); }
 });
+if (new URLSearchParams(window.location.search).get('section') === 'chats') showPortalPage('chats', { integration: true });
 return {
   selectPage(page) {
     root.classList.toggle('pw-channel-mode', page === 'channel');
@@ -2357,6 +2365,6 @@ return {
     }
   },
   setSearch(value) { root.querySelector('.searchbox input').value = value; },
-  destroy() { abort.abort(); timers.forEach(realWindow.clearTimeout); frames.forEach(realWindow.cancelAnimationFrame); root.replaceChildren(); }
+  destroy() { abort.abort(); timers.forEach(realWindow.clearTimeout); frames.forEach(realWindow.cancelAnimationFrame); webMessageMenu.destroy(); root.replaceChildren(); }
 };
 }

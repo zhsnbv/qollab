@@ -153,9 +153,13 @@ function BubbleFooter({ reactions, mine, msg, onToggleReaction }) {
 function useLongPress(onLongPress, msg) {
   const timer = useRef(null);
   const moved = useRef(false);
+  const origin = useRef({x:0,y:0});
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   const start = (e) => {
-    if (!onLongPress) return;
+    if (!onLongPress || (e.button !== undefined && e.button !== 0) || e.target.closest('button, a, input')) return;
+    clearTimeout(timer.current);
+    origin.current = {x:e.clientX,y:e.clientY};
     moved.current = false;
     const el = e.currentTarget;
     timer.current = setTimeout(() => {
@@ -163,14 +167,23 @@ function useLongPress(onLongPress, msg) {
     }, 420);
   };
   const cancel = () => clearTimeout(timer.current);
-  const move = () => { moved.current = true; cancel(); };
+  const move = event => {
+    if (Math.hypot(event.clientX-origin.current.x, event.clientY-origin.current.y) < 8) return;
+    moved.current = true; cancel();
+  };
 
   return {
     onPointerDown: start,
     onPointerUp: cancel,
+    onPointerCancel: cancel,
     onPointerLeave: cancel,
     onPointerMove: move,
-    onContextMenu: (e) => e.preventDefault(),
+    onContextMenu: event => {
+      if (!onLongPress || event.target.closest('button, a, input')) return;
+      event.preventDefault(); cancel();
+      const node = event.currentTarget.closest('.msg');
+      onLongPress(msg, event.currentTarget.getBoundingClientRect(), node);
+    },
   };
 }
 
@@ -243,6 +256,13 @@ export default function Message({
     <div
       className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''} ${swipe.snap ? 'msg--snap' : ''}`}
       style={swipe.dx ? { transform: `translateX(${swipe.dx}px)` } : undefined}
+      tabIndex={onLongPress ? 0 : undefined}
+      onKeyDown={event => {
+        if (!onLongPress || event.target !== event.currentTarget || !(event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10'))) return;
+        event.preventDefault();
+        const node = event.currentTarget;
+        onLongPress(msg, (node.querySelector('.msg-bubble, .msg-document') || node).getBoundingClientRect(), node);
+      }}
       {...swipe.handlers}
     >
       {swipe.dx > 0 && (

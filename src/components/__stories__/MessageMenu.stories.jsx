@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Message from '../Message';
-import MessageMenu from '../MessageMenu';
+import MessageMenu from '../MobileMessageMenu';
 import '../../screens/ChatRoom.css';
 
 const msgs = [

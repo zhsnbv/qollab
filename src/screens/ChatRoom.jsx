@@ -7,6 +7,7 @@ import { ConnectingSkeleton } from '../components/ChatState';
 import Message from '../components/Message';
 import { describeLink } from '../utils/linkPreviewApi';
 import MobileMessageMenu from '../components/MobileMessageMenu';
+import { activityFixtureReaders } from '../components/messageActivityModel';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -122,7 +123,7 @@ export default function ChatRoom({ typingPreview } = {}) {
 
   const onLongPress = (msg, rect, node) => setMenu({ msg, rect, node });
 
-  const ME = { id: 'me', initials: 'Я', tint: 'orange' };
+  const ME = { id: 'me', name: 'Вы', initials: 'Я', tint: 'orange' };
 
   const toggleReaction = (msgId, emoji) => {
     setReactions((all) => {
@@ -133,7 +134,7 @@ export default function ChatRoom({ typingPreview } = {}) {
         groups[key] = groups[key].filter((u) => u.id !== ME.id);
         if (groups[key].length === 0) delete groups[key];
       });
-      if (!alreadyMine) groups[emoji] = [...(groups[emoji] || []), ME];
+      if (!alreadyMine) groups[emoji] = [...(groups[emoji] || []), {...ME, reactedAt: new Date().toISOString()}];
       return { ...all, [msgId]: groups };
     });
   };
@@ -228,7 +229,7 @@ export default function ChatRoom({ typingPreview } = {}) {
             emoji,
             ids.map((pid) => {
               const p = participants.find((x) => x.profileId === pid) || {};
-              return { id: pid, avatar: p.avatar, initials: p.initials, tint: p.tint };
+              return { id: pid, name: p.short, avatar: p.avatar, initials: p.initials, tint: p.tint, reactedAt: new Date().toISOString() };
             }),
           ]));
           setReactions((all) => ({ ...all, [id]: groups }));
@@ -238,8 +239,7 @@ export default function ChatRoom({ typingPreview } = {}) {
     });
   };
 
-  // Групповой чат: прочтение не отслеживаем — статус своих сообщений
-  // останавливается на «доставлено» (серые галочки), как просили.
+  // Demo read events arrive with the simulated participants' reply; sent/delivered alone never creates a reader.
   const send = () => {
     const text = input.trim();
     if (!text) return;
@@ -257,7 +257,7 @@ export default function ChatRoom({ typingPreview } = {}) {
     const quote = reply
       ? { author: reply.mine ? 'Вы' : reply.author?.short, text: reply.text || 'Вложение', color: reply.author?.color }
       : undefined;
-    setMessages((m) => [...m, { id, mine: true, kind: 'text', text, time: now(), status: 'sent', quote }]);
+    setMessages((m) => [...m, { id, mine: true, kind: 'text', text, time: now(), createdAt: Date.now(), status: 'sent', quote }]);
     setReply(null);
     setInput('');
     timersRef.current.push(setTimeout(() => {
@@ -269,7 +269,9 @@ export default function ChatRoom({ typingPreview } = {}) {
     timersRef.current.push(setTimeout(() => setTyping([author, coAuthor]), 400));
     timersRef.current.push(setTimeout(() => {
       setTyping(null);
-      setMessages((m) => [...m, { id: ++uid, author, kind: 'text', text: pick(replies), time: now() }]);
+      const readAt = new Date().toISOString();
+      const readers = activityFixtureReaders([author, coAuthor].map(person => ({...person, userId:person.profileId, name:person.short})), readAt);
+      setMessages((m) => [...m.map(message => message.id === id ? {...message, status:'read', readReceipts:readers} : message), { id: ++uid, author, kind: 'text', text: pick(replies), time: now() }]);
     }, delay));
   };
 
@@ -403,6 +405,7 @@ export default function ChatRoom({ typingPreview } = {}) {
           key={menu.msg.id}
           selected={Object.entries(reactions[menu.msg.id] || {}).find(([, users]) => users.some(user => user.id === ME.id))?.[0]}
           msg={{ ...menu.msg, pinned: pinnedIds.includes(menu.msg.id) }}
+          activity={{readers:messages.find(message => message.id === menu.msg.id)?.readReceipts || [], reactions:reactions[menu.msg.id] || {}}}
           mine={!!menu.msg.mine}
           rect={menu.rect}
           node={menu.node}

@@ -1,9 +1,8 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
-import { ArrowBendUpLeft, ArrowCounterClockwise, Bell, CalendarBlank, CaretRight, ChatCircle, Checks, Copy, DotsThree, Eye, MagnifyingGlass, Microphone, Moon, Newspaper, PaperPlaneRight, PencilSimple, Plus, PushPin, Share, Smiley, Sun, Trash, Users, X, CheckCircle } from '@phosphor-icons/react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ArrowCounterClockwise, Bell, CalendarBlank, ChatCircle, DotsThree, Eye, MagnifyingGlass, Microphone, Moon, Newspaper, PaperPlaneRight, PencilSimple, Plus, Smiley, Sun, Users } from '@phosphor-icons/react';
 import Message from '../../components/Message';
-import { REACTIONS } from '../../components/MessageMenu';
-import EmojiPicker from '../reaction-picker/EmojiPicker';
-import { formatTime, groupReactions, reactionFixtures, readers, scenarios, singleReader, toggleReaction, activityLabel, messageActivity, shortTime } from './reactionDetailsModel';
+import WebMessageMenu from '../publications-web/portal-v2/WebMessageMenu';
+import { DEMO_NOW, groupReactions, reactionFixtures, readers, scenarios, singleReader, toggleReaction } from './reactionDetailsModel';
 import '../../screens/ChatRoom.css';
 import '../reaction-picker/ReactionPickerReview.css';
 import './ReactionDetailsReview.css';
@@ -14,90 +13,6 @@ const messages = [
   { id: 'incoming', text: 'Посмотрела обновления. Всё выглядит отлично, спасибо команде!', time: '11:18' },
   { id: 'own', mine: true, text: 'Коллеги, макеты готовы. Посмотрите, пожалуйста, когда будет время.', time: '11:20', status: 'read' },
 ];
-
-function Avatar({ user }) {
-  const [failed, setFailed] = useState(false);
-  return <span className="rd-avatar">{user.avatar && !failed ? <img src={user.avatar} alt="" onError={() => setFailed(true)} /> : user.initials || '?'}</span>;
-}
-
-function ActivityPopover({ reactions, readEntries, mine, id, popoverRef, onClose }) {
-  const entries = messageActivity(reactions, readEntries, mine);
-  const title = reactions.length ? (mine && readEntries.length ? 'Реакции и просмотры' : 'Реакции') : 'Просмотры';
-  return <section className="rd-activity" id={id} ref={popoverRef} aria-label={title}>
-    <header className="rd-activity-head"><h2>{title}</h2><span>{entries.length}</span><button type="button" onClick={onClose} aria-label="Закрыть список"><X size={16} /></button></header>
-    <div className="rd-list-scroll" tabIndex={0} aria-label="Участники и время">
-      <ul className="rd-people">{entries.map(({ user, reactions: userReactions, readAt }) => <li key={user.id}>
-        <Avatar user={user} /><div className="rd-person-text"><strong title={user.name}>{user.name}</strong><div className="rd-person-times">
-          {userReactions.length > 0 && <span title={`Реакция: ${formatTime(userReactions[0].createdAt)}`}><Smiley size={12} /><time dateTime={userReactions[0].createdAt}>{shortTime(userReactions[0].createdAt)}</time></span>}
-          {readAt && <span title={`Прочитано: ${formatTime(readAt)}`}><Checks size={13} /><time dateTime={readAt}>{shortTime(readAt)}</time></span>}
-        </div></div>
-        {userReactions.length > 0 ? <span className="rd-person-emoji" aria-label={`Реакции: ${userReactions.map(item => item.emoji).join(' ')}`}>{userReactions.map(item => item.emoji).join('')}</span> : <Checks size={17} className="rd-read-check" />}
-      </li>)}</ul>
-    </div>
-  </section>;
-}
-
-function MessageMenu({ message, reactions, readEntries, personal, position, stage, onClose, onReact, onExpand, onAction, capture, initialDetails = false }) {
-  const stack = useRef(null), summary = useRef(null), popover = useRef(null), closeTimer = useRef(null);
-  const id = useId();
-  const [box, setBox] = useState(null), [details, setDetails] = useState(initialDetails), [flyout, setFlyout] = useState(null);
-  const availableReads = personal ? [] : readEntries;
-  const label = activityLabel(reactions, availableReads, message.mine);
-  const keepOpen = () => clearTimeout(closeTimer.current);
-  const hideSoon = () => { keepOpen(); closeTimer.current = setTimeout(() => setDetails(false), 180); };
-  const reveal = () => { keepOpen(); setDetails(true); };
-  const hide = () => { keepOpen(); setDetails(false); summary.current?.focus({ preventScroll: true }); };
-  useEffect(() => () => clearTimeout(closeTimer.current), []);
-  useLayoutEffect(() => {
-    const scene = stack.current.closest('.rd-stage');
-    setBox({ left: Math.max(12, Math.min(position.x, scene.offsetWidth - stack.current.offsetWidth - 12)), top: Math.max(12, Math.min(position.y, scene.offsetHeight - stack.current.offsetHeight - 12)) });
-  }, [position, stage, label]);
-  useLayoutEffect(() => {
-    if (!details || !box || !popover.current || !summary.current) return;
-    const scene = stack.current.closest('.rd-stage'), bounds = stack.current.getBoundingClientRect(), row = summary.current.getBoundingClientRect();
-    const scale = bounds.width / stack.current.offsetWidth;
-    const side = box.left + stack.current.offsetWidth + 6 + 288 <= scene.offsetWidth - 12 ? 'right' : 'left';
-    const top = Math.max(12 - box.top, Math.min((row.top - bounds.top) / scale, scene.offsetHeight - box.top - popover.current.offsetHeight - 12));
-    setFlyout({ side, top });
-  }, [details, box, stage, reactions.length, readEntries.length]);
-  useEffect(() => { if (!capture) stack.current?.querySelector('[role="menuitem"]')?.focus({ preventScroll: true }); }, [capture]);
-  const navigate = event => {
-    if (event.key === 'Escape' || (event.key === 'ArrowLeft' && details)) { event.preventDefault(); event.stopPropagation(); if (details) hide(); else onClose(); return; }
-    if (event.key === 'ArrowRight' && event.target === summary.current) { event.preventDefault(); reveal(); requestAnimationFrame(() => popover.current?.querySelector('[tabindex="0"]')?.focus()); return; }
-    if (event.target.closest('.rd-activity') && event.key !== 'Tab') return;
-    if (!['ArrowDown', 'ArrowUp', 'Home', 'End', 'Tab'].includes(event.key)) return;
-    event.preventDefault();
-    const items = [...stack.current.querySelectorAll('button, [tabindex="0"]')];
-    const current = items.indexOf(document.activeElement);
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (current + (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey) ? -1 : 1) + items.length) % items.length;
-    items[next]?.focus();
-  };
-  const actions = [
-    ['reply', 'Ответить', ArrowBendUpLeft], ['copy', 'Копировать', Copy],
-    ...(message.mine ? [['edit', 'Изменить', PencilSimple]] : []),
-    ['pin', 'Закрепить', PushPin], ['forward', 'Переслать', Share],
-    ...(message.mine ? [['delete', 'Удалить', Trash]] : []),
-    ['select', 'Выбрать', CheckCircle],
-  ];
-  return <div className="rd-menu-layer">
-    <button type="button" className="rd-dismiss" aria-label="Закрыть меню" tabIndex={-1} onClick={onClose} />
-    <div className="rd-menu-stack" ref={stack} style={box || { visibility: 'hidden' }} onKeyDown={navigate}>
-      <div className="msgmenu-reactions" aria-label="Быстрые реакции">{REACTIONS.map(emoji => <button type="button" className="msgmenu-reaction" key={emoji} aria-label={`Поставить реакцию ${emoji}`} aria-pressed={reactions.some(item => item.user.id === 'me' && item.emoji === emoji)} onClick={() => onReact(emoji)}>{emoji}</button>)}<button type="button" className="msgmenu-reaction rp-more" aria-label="Все эмодзи" onClick={onExpand}><Plus size={18} /></button></div>
-      <div className="rd-menu" role="menu" aria-label="Меню сообщения">
-        {personal && message.mine && readEntries.length > 0 && <div className="rd-personal-read" aria-label={`Прочитано ${formatTime(readEntries[0].createdAt)}`}><Checks size={16} /><time dateTime={readEntries[0].createdAt}>{shortTime(readEntries[0].createdAt)}</time></div>}
-        {label && <div className="rd-menu-meta" role="group" aria-label="Информация о сообщении">
-          <button type="button" className="rd-meta-row" role="menuitem" ref={summary} aria-haspopup="true" aria-expanded={details} aria-controls={details ? id : undefined} onMouseEnter={reveal} onMouseLeave={hideSoon} onClick={reveal}>
-            {reactions.length ? <Smiley size={16} /> : <Checks size={16} />}<span>{label}</span><CaretRight size={12} />
-          </button>
-        </div>}
-        {actions.map(([key, title, Icon]) => <button type="button" role="menuitem" className={`rd-action ${key === 'delete' ? 'rd-danger' : ''} ${key === 'select' ? 'rd-separated' : ''}`} key={key} onMouseEnter={() => setDetails(false)} onClick={() => onAction(key)}><Icon size={16} /><span>{title}</span></button>)}
-      </div>
-      {details && label && <div className={`rd-flyout rd-flyout--${flyout?.side || 'left'}`} style={{ top: flyout?.top ?? 44 }} onMouseEnter={keepOpen} onMouseLeave={hideSoon}>
-        <ActivityPopover reactions={reactions} readEntries={availableReads} mine={message.mine} id={id} popoverRef={popover} onClose={hide} />
-      </div>}
-    </div>
-  </div>;
-}
 
 function Scene({ scenario, theme, capture = false }) {
   const initial = scenario === 'incoming' ? 'incoming' : 'own';
@@ -166,8 +81,8 @@ function Scene({ scenario, theme, capture = false }) {
         </section>
       </div>
     </div>
-    {mode === 'menu' && <MessageMenu key={menuKey} message={message} reactions={entries} readEntries={readEntries} personal={personal} position={position} stage={stage} onClose={close} onReact={choose} onExpand={() => setMode('picker')} onAction={action} capture={capture} initialDetails={menuKey === 0 && initialDetails} />}
-    {mode === 'picker' && <div className="rd-modal-layer" onMouseDown={event => { if (event.target === event.currentTarget) close(); }} onKeyDown={event => { if (event.key === 'Escape') close(); }}><EmojiPicker platform="web" autoFocus selected={entries.find(item => item.user.id === 'me')?.emoji} onSelect={choose} onClose={close} messageText={message.text} /></div>}
+    {mode === 'menu' && <WebMessageMenu now={DEMO_NOW} allowDelete key={menuKey} message={message} reactions={entries} readEntries={readEntries} personal={personal} position={position} onClose={close} onReact={choose} onAction={action} capture={capture} initialDetails={menuKey === 0 && initialDetails} />}
+
     {notice && <div className="rd-toast" role="status">{notice}</div>}
   </div>;
 }

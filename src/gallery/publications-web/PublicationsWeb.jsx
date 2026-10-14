@@ -46,7 +46,8 @@ function WebReview() {
   const readerOrigin = useRef({ page: 'feed', query: '', scroll: 0, filter: null, channelId: OWN_CHANNEL_ID }), restoreScroll = useRef(null);
   const initialId = new URLSearchParams(window.location.hash.slice(1)).get('post');
   const initialChannelId = new URLSearchParams(window.location.hash.slice(1)).get('channel');
-  const [page, setPage] = useState(scenario?.page || (initialId ? 'reader' : initialChannelId ? 'channel' : 'feed'));
+  const initialSection = new URLSearchParams(window.location.search).get('section');
+  const [page, setPage] = useState(scenario?.page || (initialId ? 'reader' : initialChannelId ? 'channel' : initialSection === 'chats' ? 'portal' : 'feed'));
   const [feedChannelId, setFeedChannelId] = useState(scenario?.filter || null), [activeChannelId, setActiveChannelId] = useState(scenario?.channel || initialChannelId || OWN_CHANNEL_ID);
   const [feedSubscriptions, setFeedSubscriptions] = useState(scenario?.unsubscribed ? { [scenario.channel]: false } : {});
   const [channelNotifications, setChannelNotifications] = useState({});

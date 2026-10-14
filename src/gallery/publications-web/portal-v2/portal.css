@@ -2737,3 +2737,12 @@
 .pw-source-shell[data-theme="dark"] .post-menu-item.danger .post-menu-icon img { filter: none; }
 .pw-source-shell[data-theme="dark"] .post-menu-icon.pin-off::after { background: var(--text); box-shadow: 0 0 0 1px var(--surface); }
 .pw-source-shell[data-theme="dark"] .post-pin-mark { filter: brightness(0) invert(.68); }
+
+/* The shared web menu inherits portal tokens without importing mobile globals. */
+.pw-source-shell .pw-chat-actions-overlay { position: fixed; inset: 0; z-index: 240; display: block; padding: 0; }
+.pw-source-shell .pw-chat-actions-overlay[hidden] { display: none; }
+.pw-source-shell .qwm-layer { --qwm-surface: var(--surface); --qwm-text: var(--text); --qwm-muted: var(--muted); --qwm-background: var(--dark-control, #f5f5f5); --qwm-border: var(--border); --qwm-primary: var(--orange); --qwm-tint: var(--orange-soft); }
+.pw-source-shell .chat-reaction-chip { display: inline-flex; align-items: center; justify-content: center; gap: 4px; color: var(--text); }
+.pw-source-shell .chat-reaction-chip > span { font-size: 11px; line-height: 1; }
+.pw-source-shell .chat-reaction-chip.is-mine { border-color: var(--orange); background: var(--orange-soft); }
+.pw-source-shell .pw-chat-selected .chat-bubble, .pw-source-shell .pw-chat-selected .header-chat-internal-bubble { outline: 2px solid var(--orange); outline-offset: 3px; }

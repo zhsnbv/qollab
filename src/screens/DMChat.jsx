@@ -14,6 +14,7 @@ import { ergizPrompts, ergizAnswers } from '../data/ergiz';
 import Message from '../components/Message';
 import { describeLink } from '../utils/linkPreviewApi';
 import MobileMessageMenu from '../components/MobileMessageMenu';
+import { activityFixtureReaders } from '../components/messageActivityModel';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -214,7 +215,15 @@ export default function DMChat({ typingPreview } = {}) {
   const [attachOpen, setAttachOpen] = useState(false);
   const [history, setHistory] = useState(false);
   const [phase, setPhase] = useState(()=>typingPreview ? 'chat' : calls?.showcase?(isEmptyChat(chat)?'empty':'chat'):'connecting'); // connecting | empty | chat
-  const [messages, setMessages] = useState(() => typingPreview?.messages || (chat && !isEmptyChat(chat) ? buildHistory(chat) : []));
+  const [messages, setMessages] = useState(() => typingPreview?.messages || (chat && !isEmptyChat(chat) ? buildHistory(chat).map(message => {
+    if (!message.mine || message.status !== 'read') return message;
+    const readAt = new Date();
+    const historyDate = /^(\d{1,2})\.(\d{1,2})$/.exec(chat.time || '');
+    if (historyDate) readAt.setMonth(Number(historyDate[2]) - 1, Number(historyDate[1]));
+    const clock = /^(\d{1,2}):(\d{2})$/.exec(message.time || '');
+    if (clock) readAt.setHours(Number(clock[1]), Number(clock[2]), 0, 0);
+    return {...message, readReceipts:activityFixtureReaders([{userId:chat.profileId || chat.id || chat.title, name:chat.title, avatar:chat.avatar, initials:chat.initials}], readAt.toISOString())};
+  }) : []));
   const [typing, setTyping] = useState(false);
   const [input, setInput] = useState('');
   const scrollRef = useRef(null);
@@ -249,15 +258,13 @@ export default function DMChat({ typingPreview } = {}) {
     timersRef.current.push(setTimeout(() => navigate('/chats'), 260));
   };
 
-  // Прочтение отслеживаем только в личных чатах и с ботом — как только
-  // приходит ответ, все свои сообщения отмечаются прочитанными (оранжевые
-  // галочки). В групповых — стоп на «доставлено» (серые), как просили.
+  // Prototype read events arrive with the simulated reply; the first read timestamp stays unchanged.
   const addNotice = (text) => setNotice((n) => [...n, { id: `n${Date.now()}`, text }]);
   const onLongPress = (msg, rect, node) => setMenu({ msg, rect, node });
 
   // Один человек — одна реакция на сообщение. В личном чате их и будет
   // максимум две (моя и собеседника), но композиция та же, что в группе.
-  const ME = { id: 'me', initials: 'Я', tint: 'orange' };
+  const ME = { id: 'me', name: 'Вы', initials: 'Я', tint: 'orange' };
 
   const toggleReaction = (msgId, emoji) => {
     setReactions((all) => {
@@ -267,7 +274,7 @@ export default function DMChat({ typingPreview } = {}) {
         groups[key] = groups[key].filter((u) => u.id !== ME.id);
         if (groups[key].length === 0) delete groups[key];
       });
-      if (!alreadyMine) groups[emoji] = [...(groups[emoji] || []), ME];
+      if (!alreadyMine) groups[emoji] = [...(groups[emoji] || []), {...ME, reactedAt: new Date().toISOString()}];
       return { ...all, [msgId]: groups };
     });
   };
@@ -339,7 +346,13 @@ export default function DMChat({ typingPreview } = {}) {
       setTyping(false);
       const r = replyFor(chat, text);
       setMessages((m) => {
-        const withRead = chat.kind === 'group' ? m : m.map((msg) => (msg.mine ? { ...msg, status: 'read' } : msg));
+        const readAt = new Date().toISOString();
+        const reader = chat.kind === 'group' ? {userId:'group-' + r.author, name:r.author} : {userId:chat.profileId || chat.id || chat.title, name:chat.title, avatar:chat.avatar, initials:chat.initials};
+        const withRead = m.map(message => {
+          if (!message.mine || (chat.kind === 'group' && message.id !== id)) return message;
+          const readers = message.readReceipts?.length ? message.readReceipts : activityFixtureReaders([reader], readAt);
+          return {...message, status:'read', readReceipts:readers};
+        });
         return [...withRead, { id: ++uidRef.current, mine: false, author: r.author, text: r.text, time: now(), createdAt:Date.now() }];
       });
     }, delay));
@@ -520,6 +533,7 @@ export default function DMChat({ typingPreview } = {}) {
           key={menu.msg.id}
           selected={Object.entries(reactions[menu.msg.id] || {}).find(([, users]) => users.some(user => user.id === ME.id))?.[0]}
           msg={{ ...menu.msg, pinned: pinnedIds.includes(menu.msg.id) }}
+          activity={{personal:chat.kind !== 'group', readers:messages.find(message => message.id === menu.msg.id)?.readReceipts || [], reactions:reactions[menu.msg.id] || {}}}
           mine={!!menu.msg.mine}
           rect={menu.rect}
           node={menu.node}

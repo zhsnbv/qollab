@@ -172,3 +172,14 @@ html.reaction-picker-review #root { height: auto; }
 .rp-figma-board *, .rp-figma-board *::before, .rp-figma-board *::after { animation: none !important; transition: none !important; }
 .rp-figma-board .rp-context-menu--mobile:not([data-ready="yes"]) { visibility: hidden; }
 .rp-board-frame[data-theme="dark"] .msg-avatar--initials.tint-blue { background: #16283d; color: #6aaaf5; }
+
+/* The same compact quick menu is used in live chats and review scenes. */
+.rp-context-menu .msgmenu-reactions { width: 232px; padding: 5px; gap: 2px; }
+.rp-context-menu .msgmenu-reaction { width: 30px; height: 34px; flex: 0 0 30px; font-size: 21px; }
+.rp-context-menu .msgmenu-list { width: 232px; min-width: 0; border-radius: 10px; }
+.rp-context-menu .msgmenu-item { min-height: 40px; padding: 8px 10px; gap: 8px; font-size: 13px; line-height: 18px; }
+.rp-context-menu .msgmenu-item > svg { width: 18px; height: 18px; }
+.rp-context-menu--web .rp-menu-group { width: 232px; }
+.rp-context-menu--web .msgmenu-item { min-height: 32px; font-size: 12.5px; padding: 6px 10px; }
+.rp-context-menu--web .msgmenu-item > svg { width: 16px; height: 16px; }
+.rp-context-menu[data-capture="true"] *, .rp-context-menu[data-capture="true"] *::before { animation: none !important; transition: none !important; }

@@ -210,17 +210,35 @@ export default function App() {
   const notificationHandoff = window.location.pathname === '/handoff/notifications';
   const typingHandoff = window.location.pathname === '/handoff/typing';
   const callFlow = window.location.pathname === '/calls/one-to-one';
+  const chatInteractionFlow = window.location.pathname === '/handoff/chat-interactions';
   const widgetFigma = window.location.pathname === '/widgets-figma';
 
   return (
     window.location.pathname === '/handoff/publication-state' ? <Suspense fallback={null}><PublicationStateFrame /></Suspense> : publicationsMobile ? <Suspense fallback={null}><PublicationsMobile /></Suspense> : publicationsWeb ? <Suspense fallback={null}><PublicationsWeb /></Suspense> : reactionPickerReview ? <ReactionPickerReview /> : reactionUnreadReview ? <ReactionUnreadReview /> : authDeliveryReview ? <AuthDeliveryReview /> : <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><PublicationsProvider><WidgetsProvider>
-      {categoryHandoff ? <CategoryHandoff /> : typingHandoff ? <TypingHandoff /> : notificationHandoff ? <NotificationHandoff /> : gallery ? <AllScreens /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
+      {categoryHandoff ? <CategoryHandoff /> : typingHandoff ? <TypingHandoff /> : notificationHandoff ? <NotificationHandoff /> : gallery ? <AllScreens /> : chatInteractionFlow ? <ChatInteractionFlow /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
         <BrowserRouter>
           <CallsProvider><Device exiting={exiting} splashDone={splashDone} /></CallsProvider>
         </BrowserRouter>
       )}
     </WidgetsProvider></PublicationsProvider></ChannelsProvider></FavoritesProvider></AuthProvider></CompanyProvider>
   );
+}
+
+function ChatInteractionFlow() {
+  const params = new URLSearchParams(window.location.search);
+  const personal = params.get('chat') === 'personal';
+  const dark = params.get('theme') === 'dark';
+  const frame = params.get('view') === 'frame';
+  const [host, setHost] = useState(null);
+  const [entry] = useState(() => personal ? { pathname: '/chats/dm', state: { chat: { profileId: 'ayazhan', avatar: '/img/chats/ayazhan.png', title: 'Аяжан Сериккызы', preview: 'Салем, там задача', time: '13:21', online: true } } } : '/chats/prodev');
+  useEffect(() => { const before = document.documentElement.dataset.theme; document.documentElement.dataset.theme = dark ? 'dark' : 'light'; return () => { document.documentElement.dataset.theme = before; }; }, [dark]);
+  const link = (chat, theme = dark ? 'dark' : 'light') => `/handoff/chat-interactions?chat=${chat}&theme=${theme}`;
+  return <main style={{ height: '100dvh', overflow: 'auto', padding: frame ? 0 : 24, background: 'var(--color-background)', color: 'var(--color-text)' }}>
+    {!frame && <header style={{ maxWidth: 740, margin: '0 auto 20px', display: 'grid', gap: 12 }}><h1 style={{ fontSize: 22 }}>Чат · реакции и просмотры</h1><p>Удерживай своё или чужое сообщение. «+» открывает полный пикер; строка реакций и просмотров — общий список.</p><nav style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}><a href={link('group')}>Группа</a><a href={link('personal')}>Личный чат</a><a href={link(personal ? 'personal' : 'group', dark ? 'light' : 'dark')}>{dark ? 'Светлая тема' : 'Тёмная тема'}</a><a href="/handoff/reaction-picker">Пикер</a><a href="/handoff/read-receipts">Состояния просмотров</a></nav></header>}
+    <div className="device" ref={setHost} style={{ position: 'relative', width: 402, minWidth: 402, maxWidth: 402, height: 820, minHeight: 820, maxHeight: 820, margin: frame ? 0 : '0 auto', transform: 'none', '--vvh': '820px' }}>
+      {host && <DeviceHost.Provider value={host}><MemoryRouter initialEntries={[entry]}><CallsProvider mediaMode="scenario"><AppRoutes /></CallsProvider></MemoryRouter></DeviceHost.Provider>}
+    </div>
+  </main>;
 }
 
 function PersonalCallFlow(){

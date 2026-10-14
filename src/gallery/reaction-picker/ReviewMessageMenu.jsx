@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ArrowReply24Regular, Copy24Regular, Edit24Regular, Pin24Regular, PinOff24Regular,
   Share24Regular, Delete24Regular, CheckmarkCircle24Regular,
@@ -10,13 +10,13 @@ import { mobileMenuGeometry } from './menuGeometry';
 
 // Mobile moves a copy only as far as needed to fit both panels.
 // Desktop anchors the panels to the cursor and leaves the message in place.
-// Review-only copy of the current menu; the main chat flow is unchanged.
+// Shared by the live mobile chats and their handoff scenes.
 
 const GAP = 10;  // просвет между сообщением и панелями
 const EDGE = 12; // минимальный отступ от краёв экрана
 
 
-export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAction, onReact, onExpand, selected, platform, pointer, backdrop = true }) {
+export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAction, onReact, onExpand, selected, platform, pointer, backdrop = true, activitySlot, activityKey, capture = false }) {
   const wrapRef = useRef(null);
   const cloneRef = useRef(null);
   const reactRef = useRef(null);
@@ -29,7 +29,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
 
   const items = [
     { id: 'reply', label: 'Ответить', Icon: ArrowReply24Regular },
-    { id: 'copy', label: 'Скопировать', Icon: Copy24Regular },
+    { id: 'copy', label: 'Копировать', Icon: Copy24Regular },
     // Правим только текст: у своих отправленных сообщений kind === 'text',
     // поэтому проверка «нет kind» прятала «Изменить» как раз там, где оно нужно
     ...(mine && msg.kind !== 'photo' && msg.kind !== 'video'
@@ -44,48 +44,88 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
     { id: 'select', label: 'Выбрать', Icon: CheckmarkCircle24Regular, divided: true },
   ];
 
-  // Keep the original row geometry; its external margin is not part of its box.
   useLayoutEffect(() => {
-    if (platform === 'mobile' && node && cloneRef.current) {
-      cloneRef.current.replaceChildren(node.cloneNode(true));
+    if (platform !== 'mobile' || !node || !cloneRef.current) return;
+    const clone = node.cloneNode(true);
+    clone.style.visibility = 'visible';
+    clone.style.transform = 'none';
+    clone.style.margin = '0';
+    clone.inert = true;
+    // Preserve the actual text wrap when the copy leaves the chat's flex layout.
+    const column = node.querySelector('.msg-col');
+    const clonedColumn = clone.querySelector('.msg-col');
+    if (column && clonedColumn) {
+      clonedColumn.style.width = `${column.offsetWidth}px`;
+      clonedColumn.style.maxWidth = 'none';
+      clonedColumn.style.flex = '0 0 auto';
     }
+    cloneRef.current.replaceChildren(clone);
   }, [node, platform]);
 
   useLayoutEffect(() => {
     if (!rect || !wrapRef.current) return;
-    const stage = wrapRef.current.getBoundingClientRect();
-    const row = node ? node.getBoundingClientRect() : rect;
-    const bubbleNode = node?.querySelector('.msg-bubble, .msg-document');
-    const measured = bubbleNode?.getBoundingClientRect() || rect;
-    const bubble = bubbleNode ? { ...measured.toJSON(), top: row.top + (node.querySelector('.msg-col')?.offsetTop || 0) + bubbleNode.offsetTop, height: bubbleNode.offsetHeight } : measured;
-    const reactH = reactRef.current?.offsetHeight || 0;
-    const listH = listRef.current?.scrollHeight || 0;
-    const reactW = reactRef.current?.offsetWidth || 328;
-    if (platform === 'web') {
-      const x = pointer?.x ?? bubble.right - stage.left;
-      const y = pointer?.y ?? bubble.top - stage.top;
-      const height = reactH + GAP + listH;
-      const left = Math.max(EDGE, Math.min(stage.width - EDGE - reactW, x + 8));
-      const top = Math.max(EDGE, Math.min(stage.height - EDGE - height, y + 8));
-      setBox({ left, top, origin: x > left + reactW / 2 ? 'right top' : 'left top', listMax: Math.min(listH, stage.height - EDGE * 2 - reactH - GAP) });
-      return;
-    }
-    const originalTop = bubble.top - stage.top;
-    const geometry = mobileMenuGeometry({ originalTop, bubbleHeight: bubble.height, stageHeight: stage.height, reactionHeight: reactH, listHeight: listH });
-    setBox({
-      ...geometry,
-      left: Math.max(EDGE, Math.min(bubble.left - stage.left, stage.width - EDGE - reactW)),
-      rowTop: row.top - stage.top + geometry.shift,
-      rowLeft: row.left - stage.left,
-      rowWidth: row.width,
-    });
-  }, [rect, node, msg.id, platform, pointer]);
+    const measure = () => {
+      const root = wrapRef.current;
+      const stage = root.getBoundingClientRect();
+      const scaleX = stage.width / root.offsetWidth || 1;
+      const scaleY = stage.height / root.offsetHeight || 1;
+      const local = value => ({
+        top: (value.top - stage.top) / scaleY,
+        left: (value.left - stage.left) / scaleX,
+        right: (value.right - stage.left) / scaleX,
+        width: value.width / scaleX, height: value.height / scaleY,
+      });
+      const row = local(node?.getBoundingClientRect() || rect);
+      const content = local(node?.querySelector('.msg-col')?.getBoundingClientRect() || rect);
+      const bubble = local(node?.querySelector('.msg-bubble, .msg-document')?.getBoundingClientRect() || rect);
+      const reactH = reactRef.current?.offsetHeight || 0;
+      const listH = listRef.current?.scrollHeight || 0;
+      const reactW = reactRef.current?.offsetWidth || 232;
+      const width = root.clientWidth, height = root.clientHeight;
+      if (platform === 'web') {
+        const x = pointer?.x ?? bubble.right;
+        const y = pointer?.y ?? bubble.top;
+        const left = Math.max(EDGE, Math.min(width - EDGE - reactW, x + 8));
+        const top = Math.max(EDGE, Math.min(height - EDGE - reactH - GAP - listH, y + 8));
+        setBox({ left, top, origin: x > left + reactW / 2 ? 'right top' : 'left top', listMax: Math.max(0, Math.min(listH, height - EDGE * 2 - reactH - GAP)) });
+        return;
+      }
+      const geometry = mobileMenuGeometry({ originalTop: content.top, bubbleHeight: content.height, stageHeight: height, reactionHeight: reactH, listHeight: listH });
+      setBox({
+        ...geometry,
+        left: Math.max(EDGE, Math.min(mine ? bubble.right - reactW : bubble.left, width - EDGE - reactW)),
+        rowTop: row.top + geometry.shift,
+        rowLeft: row.left,
+        rowWidth: row.width,
+        rowMax: Math.max(0, geometry.visibleHeight + content.top - row.top),
+      });
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(wrapRef.current);
+    if (node) observer.observe(node);
+    window.visualViewport?.addEventListener('resize', measure);
+    return () => { observer.disconnect(); window.visualViewport?.removeEventListener('resize', measure); };
+  }, [rect, node, msg.id, mine, platform, pointer, activityKey]);
+
+  const ready = !!box;
+  useEffect(() => {
+    if (!capture && ready) reactRef.current?.querySelector('button')?.focus({ preventScroll: true });
+  }, [capture, ready]);
+
+  const keyDown = event => {
+    if (event.key !== 'Tab') return;
+    const controls = [...wrapRef.current.querySelectorAll('.msgmenu-reactions button, .msgmenu-list button')];
+    const first = controls[0], last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  };
 
   const mobile = platform === 'mobile';
   const offset = box ? { left: `${box.left}px` } : undefined;
 
   return (
-    <div className={`msgmenu-wrap rp-context-menu rp-context-menu--${platform}`} ref={wrapRef} data-ready={box ? 'yes' : 'no'} data-shift={box?.shift || 0} data-cursor-x={pointer?.x} data-cursor-y={pointer?.y}>
+    <div className={`msgmenu-wrap rp-context-menu rp-context-menu--${platform}`} ref={wrapRef} onKeyDown={keyDown} role={backdrop ? "dialog" : undefined} aria-modal={backdrop ? true : undefined} aria-label={backdrop ? "Меню сообщения" : undefined} data-capture={capture || undefined} data-ready={box ? 'yes' : 'no'} data-shift={box?.shift || 0} data-cursor-x={pointer?.x} data-cursor-y={pointer?.y}>
       {backdrop && <button className="msgmenu-scrim" onClick={onClose} aria-label="Закрыть" />}
 
       <div className="rp-menu-group" style={box ? mobile
@@ -96,7 +136,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
         className="msgmenu-source"
         ref={cloneRef}
         aria-hidden="true"
-        style={box ? { top: `${box.rowTop}px`, left: `${box.rowLeft}px`, width: `${box.rowWidth}px` } : undefined}
+        style={box ? { top: `${box.rowTop}px`, left: `${box.rowLeft}px`, width: `${box.rowWidth}px`, maxHeight: `${box.rowMax}px`, overflow: 'hidden' } : undefined}
       />}
 
       <div
@@ -110,7 +150,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
             <span>{r}</span>
           </button>
         ))}
-        <button className="msgmenu-reaction rp-more" onClick={onExpand} aria-label="Все реакции" title="Все реакции"><Plus size={24} /></button>
+        <button className="msgmenu-reaction rp-more" onClick={onExpand} aria-label="Все реакции" title="Все реакции"><Plus size={18} /></button>
       </div>
 
       <div
@@ -119,6 +159,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
         style={box ? { ...(mobile ? { top: `${box.listTop}px`, ...offset } : {}), maxHeight: `${box.listMax}px` } : undefined}
         data-ready={box ? 'yes' : 'no'}
       >
+        {activitySlot}
         {items.map(({ id, label, Icon, danger, divided }) => (
           <button
             className={`msgmenu-item ${danger ? 'danger' : ''} ${divided ? 'divided' : ''}`}

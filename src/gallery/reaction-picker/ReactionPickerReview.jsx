@@ -1,33 +1,37 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { CaretLeft, Plus, Microphone, PaperPlaneRight, MagnifyingGlass, PencilSimple, ChatCircle, Newspaper, Users, CalendarBlank, ArrowRight, ArrowCounterClockwise, Monitor, DeviceMobile, Sun, Moon } from '@phosphor-icons/react';
 import Message from '../../components/Message';
 import ComposeInput from '../../components/ComposeInput';
 import EmojiPicker from './EmojiPicker';
-import ReviewMessageMenu from './ReviewMessageMenu';
+import WebMessageMenu from '../publications-web/portal-v2/WebMessageMenu';
+import { DEMO_NOW, readers as demoWebReaders } from '../reaction-details/reactionDetailsModel';
+import MobileMessageMenu from '../../components/MobileMessageMenu';
 import '../../screens/ChatRoom.css';
 import './ReactionPickerReview.css';
 
 const scenarios = [
-  { id: 'quick', title: 'Быстрая капсула', note: 'Текущие 6 реакций и «+»', description: 'Нажми «+», чтобы открыть все реакции. Размеры кнопок и порядок быстрых эмодзи сохранены.' },
+  { id: 'quick', title: 'Быстрая капсула', note: 'Текущие 6 реакций и «+»', description: 'Нажми «+», чтобы открыть все реакции. Компактная панель 232 px использует тот же компонент, что и чат.' },
+  { id: 'quick-own', title: 'Своё сообщение', note: 'Долгое нажатие · правый край', description: 'Меню и реакции держатся за правый край своего сообщения; у чужого — за левый.' },
   { id: 'full', title: 'Все реакции', note: 'Сетка, поиск и 9 категорий', description: 'Выбери категорию или найди эмодзи по названию. Нажатие добавляет реакцию и закрывает пикер.' },
   { id: 'selected', title: 'Уже выбрано', note: 'Реакция вне быстрых шести', description: 'Ракета выделена круглой подложкой. Повторное нажатие снимает её; другой эмодзи заменяет текущую реакцию.' },
   { id: 'search', title: 'Поиск', note: 'Результаты во всех категориях', description: 'Поиск работает по русским и английским названиям, а также по самому эмодзи. «×» очищает запрос.' },
   { id: 'empty', title: 'Ничего не найдено', note: 'Пустой результат поиска', description: 'Можно очистить запрос или сразу перейти в категорию. Закрытие пикера не меняет реакцию.' },
   { id: 'result', title: 'Реакция в сообщении', note: 'Результат выбора', description: 'Новый эмодзи виден под сообщением. Открой пикер снова: выбранная реакция остаётся отмеченной.' },
 ];
-const target = { id: 3, text: 'Коллеги, макеты готовы. Посмотрите, пожалуйста, когда будет время.', time: '11:20' };
+const reviewTarget = { id: 3, text: 'Коллеги, макеты готовы. Посмотрите, пожалуйста, когда будет время.', time: '11:20' };
 const messages = [
   { id: 1, text: 'Всем привет! Как продвигаются макеты?', time: '11:15' },
   { id: 2, mine: true, text: 'Привет! Заканчиваем последние правки 👌', time: '11:18', status: 'read' },
-  target,
+  reviewTarget,
   { id: 4, mine: true, text: 'Спасибо! Посмотрю до обеда.', time: '11:21', status: 'read' },
 ];
 const me = { id: 'me', initials: 'Я' };
 const ayazhan = { id: 'ayazhan', avatar: '/img/chats/ayazhan.png' };
 
 function Scene({ scenario, platform, capture = false }) {
+  const target = scenario === 'quick-own' ? messages[3] : reviewTarget;
   const [selections, setSelections] = useState(['selected', 'result'].includes(scenario) ? { [target.id]: '🚀' } : {});
-  const [mode, setMode] = useState(scenario === 'result' ? 'chat' : scenario === 'quick' ? 'quick' : 'full');
+  const [mode, setMode] = useState(scenario === 'result' ? 'chat' : ['quick', 'quick-own'].includes(scenario) ? 'quick' : 'full');
   const [menu, setMenu] = useState(null);
   const [pickerClosing, setPickerClosing] = useState(false);
   const pendingChoice = useRef(null);
@@ -38,7 +42,7 @@ function Scene({ scenario, platform, capture = false }) {
   const targetRef = useRef(null);
   const [anchor, setAnchor] = useState({ left: 16, top: 150 });
   const open = (msg, rect, node, pointer) => { setMenu({ msg, rect, node, pointer }); setMode('quick'); };
-  const measure = () => {
+  const measure = useCallback(() => {
     const node = targetRef.current?.querySelector('.msg');
     const col = node?.querySelector('.msg-col');
     if (!col || !stage.current) return;
@@ -46,8 +50,8 @@ function Scene({ scenario, platform, capture = false }) {
     const bounds = stage.current.getBoundingClientRect();
     setMenu({ msg: target, rect, node, pointer: { x: rect.left - bounds.left + 60, y: rect.top - bounds.top + 28 } });
     setAnchor({ left: Math.min(bounds.width - 392, Math.max(16, rect.left - bounds.left)), top: Math.max(16, Math.min(bounds.height - 492, rect.bottom - bounds.top + 10)) });
-  };
-  useLayoutEffect(() => { measure(); }, []);
+  }, [target]);
+  useLayoutEffect(() => { measure(); }, [measure]);
   useEffect(() => {
     if (mode === 'chat') return;
     const escape = event => { if (event.key === 'Escape') { if (mode === 'full') setPickerClosing(true); else { setMode('chat'); setMenu(null); } } };
@@ -78,13 +82,6 @@ function Scene({ scenario, platform, capture = false }) {
   const close = () => { if (mode === 'full') setPickerClosing(true); else { setMode('chat'); setMenu(null); } };
   const send = () => { if (input.trim()) { setInput(''); setNotice('Демо отправки сообщения'); } };
   const reactionGroups = id => { const emoji = selections[id]; return { ...(id === target.id ? { '👍': [ayazhan] } : {}), ...(emoji ? { [emoji]: id === target.id && emoji === '👍' ? [ayazhan, me] : [me] } : {}) }; };
-  const expand = () => {
-    if (platform === 'web' && stage.current && menu) {
-      const bounds = stage.current.getBoundingClientRect();
-      setAnchor({ left: Math.max(12, Math.min(bounds.width - 388, (menu.pointer?.x || 16) + 8)), top: Math.max(12, Math.min(bounds.height - 488, (menu.pointer?.y || 16) + 8)) });
-    }
-    setMode('full');
-  };
   const conversation = <section className="chatroom rp-conversation" ref={stage}>
     <header className="cr-header">
       {platform === 'mobile' && <button className="cr-back" aria-label="Назад" onClick={() => { close(); setNotice('Демо чата для ревью'); }}><CaretLeft size={24} /></button>}
@@ -110,7 +107,9 @@ function Scene({ scenario, platform, capture = false }) {
       {input.trim() ? <button className="cr-write-btn cr-send" aria-label="Отправить" onClick={send}><PaperPlaneRight size={22} weight="fill" color="white" /></button> : <button className="cr-write-btn" aria-label="Голосовое" onClick={() => setNotice('Демо голосового сообщения')}><Microphone size={24} color="var(--color-text)" /></button>}
     </div>
     {notice && <div className="rp-toast" role="status">{notice}</div>}
-    {mode === 'quick' && menu && <ReviewMessageMenu {...menu} key={`${menu.msg.id}-${menu.pointer?.x}-${menu.pointer?.y}`} platform={platform} mine={!!menu.msg.mine} selected={selected} onClose={close} onReact={choose} onExpand={expand} onAction={() => { close(); setNotice('Демо меню сообщения'); }} />}
+    {mode === 'quick' && menu && (platform === 'web'
+      ? <WebMessageMenu now={DEMO_NOW} message={{ ...menu.msg, mine: !!menu.msg.mine }} position={menu.pointer || anchor} reactions={Object.entries(reactionGroups(menu.msg.id)).flatMap(([emoji, people]) => people.map(person => ({ user: { ...person, name: person.id === 'me' ? 'Вы' : 'Аяжан Сериккызы' }, emoji, createdAt: '2026-10-14T11:00:00+05:00' })))} readEntries={menu.msg.mine ? demoWebReaders : []} capture={capture} allowDelete onClose={close} onReact={choose} onAction={() => { close(); setNotice('Демо меню сообщения'); }} />
+      : <MobileMessageMenu {...menu} key={`${menu.msg.id}-${menu.pointer?.x}-${menu.pointer?.y}`} capture={capture} mine={!!menu.msg.mine} activity={{ readers: demoWebReaders.map(item => ({userId:item.user.id,name:item.user.name,avatar:item.user.avatar,readAt:item.createdAt})), reactions: Object.entries(reactionGroups(menu.msg.id)).flatMap(([emoji, people]) => people.map(person => ({...person,userId:person.id,name:person.id==='me'?'Вы':'Аяжан Сериккызы',emoji,reactedAt:DEMO_NOW.toISOString()}))), now:DEMO_NOW, timeZone:'Asia/Almaty' }} selected={selected} onClose={close} onReact={choose} onAction={() => { close(); setNotice('Демо меню сообщения'); }} />)}
     {mode === 'full' && <>
       <button className={`rp-picker-scrim ${pickerClosing ? 'is-closing' : ''}`} aria-label="Закрыть все реакции" onClick={close} />
       <div className="rp-picker-position" style={platform === 'web' ? anchor : undefined}>
@@ -119,7 +118,7 @@ function Scene({ scenario, platform, capture = false }) {
     </>}
   </section>;
 
-  return <div className={`rp-stage rp-${platform}`} data-testid="reaction-picker-stage">
+  return <div className={`rp-stage rp-${platform}`} data-testid="reaction-picker-stage" data-state={scenario} data-platform={platform}>
     {platform === 'mobile' ? conversation : <>
       <header className="rp-web-top"><img src="/img/common/qollab-logo.svg" alt="qollab" /><span><MagnifyingGlass size={16} /> Найти: сотрудника, канал, пост, мероприятие</span><ChatCircle size={20} /><div className="rp-web-user">РЖ</div></header>
       <nav className="rp-web-nav"><small>Главная</small>{[[Newspaper, 'Публикации'], [ChatCircle, 'Чаты'], [Users, 'Орг. структура'], [CalendarBlank, 'Мероприятия']].map(([Icon, title]) => <div key={title} className={title === 'Чаты' ? 'active' : ''}><Icon size={18} />{title}</div>)}<small>Сервисы</small><div><CalendarBlank size={18} />Мой календарь</div></nav>
@@ -134,7 +133,7 @@ export default function ReactionPickerReview() {
   const [theme, setTheme] = useState(params.get('theme') === 'dark' ? 'dark' : 'light');
   const [scenario, setScenario] = useState(scenarios.some(item => item.id === params.get('state')) ? params.get('state') : 'quick');
   const [revision, setRevision] = useState(0);
-  const board = params.get('view') === 'figma';
+  const board = params.get('view') === 'figma', frame = params.get('view') === 'frame';
   const current = scenarios.find(item => item.id === scenario);
   useEffect(() => {
     const previousTheme = document.documentElement.dataset.theme;
@@ -145,13 +144,14 @@ export default function ReactionPickerReview() {
   }, []);
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
   useEffect(() => {
-    if (board) return;
+    if (board || frame) return;
     const query = new URLSearchParams({ platform, theme, state: scenario });
     window.history.replaceState(null, '', `${window.location.pathname}?${query}`);
-  }, [platform, theme, scenario, board]);
+  }, [platform, theme, scenario, board, frame]);
+  if (frame) return <Scene key={`${platform}-${scenario}`} scenario={scenario} platform={platform} capture />;
   if (board) return <main className={`rp-figma-board rp-figma-board--${platform}`}>
     <h1>QM-2591 · {platform === 'mobile' ? 'Мобильные реакции · 402 × 820' : 'Веб · панели реакций'}</h1>
-    {(platform === 'mobile' ? ['light', 'dark'] : ['light']).map(boardTheme => <section key={boardTheme} className="rp-figma-row">
+    {['light', 'dark'].map(boardTheme => <section key={boardTheme} className="rp-figma-row">
       <h2>{boardTheme === 'light' ? 'Светлая тема' : 'Тёмная тема'}</h2>
       <div className="rp-figma-grid">{scenarios.map((item, i) => <article key={item.id}>
         <h3>{`0${i + 1} · ${item.title}`}</h3>

@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Chats from '../screens/Chats';
 import BottomNav from '../components/BottomNav';
 import Message from '../components/Message';
-import MessageMenu from '../components/MessageMenu';
+import MessageMenu from '../components/MobileMessageMenu';
 import AuthErrorView from '../components/AuthErrorView';
 import { normalizeAuthError, STAGE } from '../utils/authError';
 import { scenarioById } from '../data/authScenarios';
@@ -32,6 +32,7 @@ export function MessageMenuDemo({ mine = false }) {
       <Message msg={msg} mine={mine} firstOfGroup lastOfGroup withAvatarSlot={false} />
       {menu && (
         <MessageMenu
+          capture
           msg={msg}
           mine={mine}
           rect={menu.rect}
