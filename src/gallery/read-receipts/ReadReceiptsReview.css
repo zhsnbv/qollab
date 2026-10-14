@@ -44,7 +44,7 @@ html.read-receipts-review #root { height: auto; }
 .rr-home-indicator { position: absolute; z-index: 80; bottom: 8px; left: calc(50% - 67px); width: 134px; height: 5px; border-radius: 99px; background: var(--color-heading); pointer-events: none; }
 .rr-menu[data-ready="no"] { visibility: hidden; }
 .rr-menu-reactions, .rr-menu-list { right: 12px; transform-origin: right top; }
-.rr-menu-list { width: 316px; }
+.rr-menu-list { width: 280px; }
 .rr-menu .msgmenu-source .msg { margin: 0; }
 .rr-menu .msgmenu-source .msg-bubble { animation: none; }
 .rr-summary { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 10px 12px; background: var(--color-background); color: var(--color-text); text-align: left; border-bottom: 1px solid var(--color-border); }

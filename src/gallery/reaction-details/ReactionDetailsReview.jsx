@@ -112,7 +112,7 @@ function Scene({ scenario, theme, capture = false }) {
     const scale = bounds.width / stage.current.offsetWidth;
     trigger.current = event.currentTarget;
     setActive(msg.id);
-    setPosition({ x: event.type === 'contextmenu' ? (event.clientX - bounds.left) / scale : (target.right - bounds.left) / scale - 296, y: event.type === 'contextmenu' ? (event.clientY - bounds.top) / scale : (target.top - bounds.top) / scale + 30 });
+    setPosition({ x: event.type === 'contextmenu' ? (event.clientX - bounds.left) / scale : (target.right - bounds.left) / scale - 264, y: event.type === 'contextmenu' ? (event.clientY - bounds.top) / scale : (target.top - bounds.top) / scale + 30 });
     setMode('menu');
   };
   useLayoutEffect(() => {
@@ -120,7 +120,7 @@ function Scene({ scenario, theme, capture = false }) {
     const bounds = stage.current.getBoundingClientRect();
     const target = trigger.current.getBoundingClientRect();
     const scale = bounds.width / stage.current.offsetWidth;
-    setPosition({ x: (target.right - bounds.left) / scale - 296, y: (target.top - bounds.top) / scale + 30 });
+    setPosition({ x: (target.right - bounds.left) / scale - 264, y: (target.top - bounds.top) / scale + 30 });
   }, [initial]);
   useEffect(() => {
     if (!notice) return;

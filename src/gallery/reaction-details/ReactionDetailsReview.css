@@ -50,10 +50,10 @@ html.reaction-details-review #root > .rd-stage { border-radius: 0; box-shadow: n
 .rd-composer > span { flex: 1; font-size: 14px; }
 .rd-menu-layer { position: absolute; inset: 0; z-index: 10; }
 .rd-dismiss { position: absolute; inset: 0; cursor: default; }
-.rd-menu-stack { position: absolute; width: 296px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.rd-menu-stack { position: absolute; width: 264px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .rd-menu-stack .msgmenu-reactions { position: relative; flex-shrink: 0; animation: none; }
 .rd-menu-stack .msgmenu-reaction[aria-pressed="true"] { background: var(--color-primary-bg); }
-.rd-menu { width: 296px; padding: 4px 0; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 8px 30px #0002; overflow: hidden; animation: rd-enter .16s ease-out; }
+.rd-menu { width: 264px; padding: 4px 0; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 8px 30px #0002; overflow: hidden; animation: rd-enter .16s ease-out; }
 .rd-meta-row, .rd-action { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 36px; padding: 8px 12px; color: var(--color-text); font-size: 13px; text-align: left; line-height: 20px; }
 .rd-meta-row > span, .rd-action > span { flex: 1; }
 .rd-meta-row > svg, .rd-action > svg { flex-shrink: 0; color: var(--color-primary); }
@@ -106,7 +106,7 @@ html.reaction-details-review #root > .rd-stage { border-radius: 0; box-shadow: n
 @media (max-width: 900px) { .rd-review { padding: 24px 16px; } .rd-scenarios { grid-template-columns: repeat(4, minmax(0, 1fr)); } .rd-decision { flex-wrap: wrap; } }
 @media (prefers-reduced-motion: reduce) { .rd-stage *, .rd-stage *::before, .rd-stage *::after { animation: none !important; transition: none !important; } }
 
-.rd-menu-stack .msgmenu-reactions { width: 296px; gap: 2px; padding: 5px; }
-.rd-menu-stack .msgmenu-reaction { width: 39px; height: 38px; font-size: 24px; }
+.rd-menu-stack .msgmenu-reactions { width: 264px; gap: 2px; padding: 5px; }
+.rd-menu-stack .msgmenu-reaction { width: 34px; height: 36px; font-size: 22px; }
 .rd-meta-row > svg, .rd-action > svg { width: 18px; height: 18px; }
 .rd-meta-row > svg:last-child { width: 14px; height: 14px; }
