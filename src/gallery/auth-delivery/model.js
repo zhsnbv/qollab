@@ -1,6 +1,7 @@
 // Isolated QM-2557 demo. No calls to the production auth API or auth storage.
 export const COOLDOWN_MS = 60_000;
 export const SESSION_KEY = 'qollab.qm2557.review.v2';
+export const DEMO_DEVICE = 'iPhone 17 Ayazan';
 
 export function formatCountdown(seconds) {
   const value = Math.max(0, Math.ceil(seconds));
@@ -36,6 +37,8 @@ export const copy = {
   ru: {
     auth: 'Авторизация', back: 'Назад', title: 'Введите код подтверждения',
     qollab: 'Код отправлен в Qollab. Откройте приложение или веб-версию, где вы уже вошли, и перейдите в «Уведомления»',
+    deviceBefore: 'Код отправлен на ваше устройство ',
+    deviceAfter: '. Откройте qollab и перейдите в „Уведомления“',
     sms: 'Придёт в SMS на номер',
     qollabWait: 'Нет доступа? Отправить SMS через', qollabReady: 'Нет доступа? Отправить SMS',
     smsWait: 'Запросить новый код можно через', smsReady: 'Запросить новый код',
@@ -47,6 +50,8 @@ export const copy = {
   kk: {
     auth: 'Авторизация', back: 'Артқа', title: 'Растау кодын енгізіңіз',
     qollab: 'Qollab-қа код жіберілді. Сіз бұрын кірген қолданбаны немесе веб-нұсқаны ашып, «Хабарландырулар» бөліміне өтіңіз',
+    deviceBefore: 'Код ',
+    deviceAfter: ' құрылғысына жіберілді. qollab қолданбасын ашып, «Хабарландырулар» бөліміне өтіңіз',
     sms: 'Нөмірге SMS арқылы келеді',
     qollabWait: 'Кіру мүмкін емес пе? SMS жіберуге дейін', qollabReady: 'Кіру мүмкін емес пе? SMS жіберу',
     smsWait: 'Жаңа кодты сұрауға дейін', smsReady: 'Жаңа код сұрау',

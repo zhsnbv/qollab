@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { CaretLeft, ChatCircleDots, CheckCircle, ArrowRight } from '@phosphor-icons/react';
-import { copy, createDelivery, remainingSeconds, restoreDelivery, sendSms, formatCountdown, COOLDOWN_MS, SESSION_KEY } from './model';
+import { copy, createDelivery, remainingSeconds, restoreDelivery, sendSms, formatCountdown, COOLDOWN_MS, SESSION_KEY, DEMO_DEVICE } from './model';
 import { maskPhone } from '../../utils/phone';
 import { applyTheme } from '../../utils/theme';
 import bellSvg from '/public/img/auth/code-bell.svg?raw';
@@ -42,7 +42,7 @@ function initialDelivery() {
 
 // Reuses Auth.jsx's layout, six-cell single input, Auth.css and Qollab tokens.
 // Kept outside Auth so review does not alter the working login flow.
-function CodeScreen({ lang, setLang, delivery, left, onSendSms, onBack, sending = false, captcha = false, captchaStatus = 'passed', onCheckCaptcha }) {
+function CodeScreen({ lang, setLang, delivery, left, onSendSms, onBack, sending = false, captcha = false, captchaStatus = 'passed', onCheckCaptcha, deviceName }) {
   const [code, setCode] = useState('');
   const [invalid, setInvalid] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -96,7 +96,7 @@ function CodeScreen({ lang, setLang, delivery, left, onSendSms, onBack, sending 
       </div>
       <h2 className="auth-title">{t.title}</h2>
       <p className="auth-sub auth-sub--phone" data-testid="delivery-description">
-        {inQollab ? t.qollab : <>{t.sms} <b>{maskPhone(DEMO_PHONE)}</b></>}
+        {inQollab ? deviceName ? <>{t.deviceBefore}<b>{deviceName}</b>{t.deviceAfter}</> : t.qollab : <>{t.sms} <b>{maskPhone(DEMO_PHONE)}</b></>}
       </p>
       <div className="otp">
         <input ref={input} className="otp-input" inputMode="numeric" autoComplete="one-time-code"
@@ -134,9 +134,21 @@ function DeliveryBoard({ theme }) {
     <header className="ad-board-header">
       <p>QOLLAB · QM-2557</p>
       <h1>Авторизация · доставка кода</h1>
-      <p>32 экрана · 402 × 820 px · русский и казахский · обе темы · правки 12.10.2026</p>
-      <a href="?lang=ru">Открыть интерактивный прототип</a>
+      <p>36 экранов · 402 × 820 px · русский и казахский · обе темы · правки 15.10.2026</p>
+      <a href="?lang=ru&device=1&state=qollab-wait">Открыть интерактивный прототип</a>
     </header>
+    <section className="ad-board-group" id="auth-delivery-device-board">
+      <h2>Код отправлен на устройство · 15.10.2026</h2>
+      <div className="ad-board-grid">
+        {['light', 'dark'].flatMap(mode => ['ru', 'kk'].map(language => <figure key={`${mode}-${language}-device`}>
+          <figcaption><strong>{language === 'ru' ? 'Русский' : 'Қазақша'} · {mode === 'light' ? 'Светлая тема' : 'Тёмная тема'}</strong>
+            <p>{DEMO_DEVICE} · Таймер идёт</p></figcaption>
+          <div className={`ad-board-screen${mode !== theme ? ' ad-theme-override' : ''}`} data-theme={mode} data-export-screen={`${mode}-${language}-device-wait`} inert>
+            <CodeScreen lang={language} delivery={createDelivery('qollab', false, COOLDOWN_MS)} left={60} deviceName={DEMO_DEVICE} />
+          </div>
+        </figure>))}
+      </div>
+    </section>
     {['light', 'dark'].flatMap((mode) => ['ru', 'kk'].map(language => <section className="ad-board-group" key={`${mode}-${language}`}>
       <h2>{language === 'ru' ? 'Русский' : 'Қазақша'} · {mode === 'light' ? 'Светлая тема' : 'Тёмная тема'}</h2>
       <div className="ad-board-grid">
@@ -160,6 +172,7 @@ export default function AuthDeliveryReview() {
   const [screenVersion, setScreenVersion] = useState(0);
   const [theme, setTheme] = useState(() => new URLSearchParams(window.location.search).get('theme') === 'dark' ? 'dark' : 'light');
   const [captcha, setCaptcha] = useState(() => new URLSearchParams(window.location.search).get('captcha') === '1');
+  const [showDevice, setShowDevice] = useState(() => new URLSearchParams(window.location.search).get('device') === '1');
   const [captchaStatus, setCaptchaStatus] = useState('idle');
   const [sending, setSending] = useState(false);
   const pending = useRef(null);
@@ -243,12 +256,19 @@ export default function AuthDeliveryReview() {
     url.searchParams.set('lang', value);
     window.history.replaceState(null, '', url);
   };
+  const changeDevice = value => {
+    setShowDevice(value);
+    const url = new URL(window.location.href);
+    if (value) url.searchParams.set('device', '1');
+    else url.searchParams.delete('device');
+    window.history.replaceState(null, '', url);
+  };
 
   if (board) return <DeliveryBoard theme={theme} />;
 
   return <main className="ad-review">
     <header className="ad-review-header">
-      <div className="ad-review-brand"><img src="/img/auth/app-icon.svg" width="32" height="32" alt="" /><span>qollab <i>/</i> QM-2557</span><span className="ad-review-tag">Правки 12.10</span></div>
+      <div className="ad-review-brand"><img src="/img/auth/app-icon.svg" width="32" height="32" alt="" /><span>qollab <i>/</i> QM-2557</span><span className="ad-review-tag">Правки 15.10</span></div>
       <h1>Куда отправлен код</h1>
       <p>Авторизация с понятной подсказкой о доставке — в существующем дизайне Qollab.</p>
     </header>
@@ -271,6 +291,7 @@ export default function AuthDeliveryReview() {
               className={`auth-lang-btn${theme === value ? ' active' : ''}`} aria-pressed={theme === value} onClick={() => changeTheme(value)}>{title}</button>)}
           </div>
           <label><input type="checkbox" checked={captcha} onChange={event => { clearTimeout(captchaPending.current); setCaptcha(event.target.checked); setCaptchaStatus('idle'); }} disabled={sending} /> Показать капчу на экранах 2 и 4</label>
+          <label><input type="checkbox" checked={showDevice} onChange={event => changeDevice(event.target.checked)} /> Показать устройство {DEMO_DEVICE}</label>
         </div>
         <div className="ad-review-notes">
           <h3>Что проверить</h3>
@@ -286,6 +307,7 @@ export default function AuthDeliveryReview() {
         <div className="ad-preview-caption"><span>{lang === 'ru' ? 'Русский' : 'Қазақша'}</span><span>402 × 820</span></div>
         <div className="ad-phone" data-testid="delivery-phone">
           <CodeScreen key={`${screenVersion}-${delivery.sentAt}`} lang={lang} setLang={changeLanguage} delivery={delivery} left={left}
+            deviceName={showDevice ? DEMO_DEVICE : undefined}
             sending={sending} captcha={captcha} captchaStatus={captchaStatus} onCheckCaptcha={checkCaptcha}
             onSendSms={requestSms} onBack={() => document.querySelector('.ad-scenario.is-selected')?.focus()} />
         </div>
