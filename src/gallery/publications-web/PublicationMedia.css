@@ -25,6 +25,7 @@
 .pw-media-carousel.has-many .pw-carousel-image { cursor: grab; }
 .pw-swipe-rail.is-dragging .pw-carousel-image { cursor: grabbing; }
 .pw-carousel-image > .pw-media-photo, .pw-media-video .pw-media-photo { position: relative; width: 100%; height: 100%; display: block; object-fit: contain; }
+.pw-carousel-stage .pw-media-photo[data-media-fit="cover"] { object-fit: cover; }
 .pw-carousel-image > .pw-media-backdrop, .pw-media-video .pw-media-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(24px); transform: scale(1.12); opacity: .65; pointer-events: none; }
 .pw-media-video { position: relative; background: #13171d; }
 .pw-media-video > button { position: relative; cursor: pointer; }

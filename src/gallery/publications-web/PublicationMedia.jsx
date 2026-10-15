@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { ChevronLeft24Regular, ChevronRight24Regular, Dismiss24Regular, FullScreenMaximize20Regular, Play20Filled } from '@fluentui/react-icons';
 import { ASSET, PHOTO_STATUSES, videoEmbed } from './data';
 import { cardImages } from './cardAppearance';
+import { publicationMediaPosition } from './publicationMediaFraming';
 import './PublicationMedia.css';
 import useSwipeRail from './useSwipeRail';
 
@@ -16,7 +17,8 @@ function PhotoInfo({ photo, fallback, showStatus = true }) {
 }
 
 function MediaImage({ src, alt = '' }) {
-  return <><img className="pw-media-backdrop" src={src} alt="" aria-hidden="true" draggable={false} /><img className="pw-media-photo" src={src} alt={alt} draggable={false} /></>;
+  const position = publicationMediaPosition(src);
+  return <><img className="pw-media-backdrop" src={src} alt="" aria-hidden="true" draggable={false} /><img className="pw-media-photo" src={src} alt={alt} data-media-fit={position ? 'cover' : undefined} style={position ? { objectPosition: position } : undefined} draggable={false} /></>;
 }
 
 function Video({ item, title, active = true, onPlay }) {
