@@ -1,3 +1,4 @@
+import { EDITORIAL_CASE_POSTS } from '../publications-web/editorialSamples.js';
 // Explicit, reviewable state inventory; each frame uses the real application components.
 export const WEB_CASES = [
   {
@@ -781,9 +782,9 @@ export const frameUrl = (platform, id) => `/handoff/publication-state?platform=$
 // The same editorial examples exercise web and mobile at fixed frame sizes.
 for (const cases of [WEB_CASES, MOBILE_CASES]) {
   cases.push(...[
-    ['sport', 'Спорт · квадратное фото целиком'],
+    ['sport', 'Спорт · статья о ERG Run Fest'],
     ['safety', 'Безопасность · оранжевый акцент'],
     ['production', 'Про предприятие · серо-жёлтая полоса'],
     ['ecology', 'Экология · зелёный акцент'],
-  ].map(([rubric, title]) => ({ id: `rubric-${rubric}`, title, group: 'Рубрики', post: rubric === 'safety' ? 'prod-fire-drill' : 'news', rubric, only: true, scroll: '.pw-carousel-stage' })));
+  ].map(([rubric, title]) => ({ id: `rubric-${rubric}`, title, group: 'Рубрики', post: EDITORIAL_CASE_POSTS[rubric], rubric, only: true, scroll: '.pw-carousel-stage' })));
 }

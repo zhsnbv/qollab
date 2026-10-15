@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useMemo } from 'react';
-import { basePosts } from '../../data/feed';
 import { WEB_CASES, MOBILE_CASES } from './cases';
 import { PublicationScenarioContext } from './ScenarioContext';
 import { INITIAL_POSTS, emptyPost, PHOTO_STATUSES } from '../publications-web/data';
@@ -13,10 +12,6 @@ function makeScenario(spec, platform) {
   const all = structuredClone(INITIAL_POSTS);
   const selected = all.find(p => spec.video ? p.videos?.length : p.id === (spec.post || 'news')) || all[0];
   if (spec.rubric) selected.rubric = spec.rubric;
-  if (spec.rubric === 'sport') {
-    const sport = basePosts.find(post => post.channel === 'ERG Sport');
-    Object.assign(selected, { title: sport.title, lead: sport.excerpt, channel: sport.channel, channelId: 'erg-sport', channelAvatar: sport.avatar, date: sport.date, images: [{ id: 'sport-cover', src: sport.thumb, caption: '' }], description: { ops: [{ insert: '\n' }] } });
-  }
   const postId = spec.post === 'missing' ? 'missing' : selected.id;
   if (spec.negative && selected.images?.[1]) Object.assign(selected.images[1], { status: PHOTO_STATUSES[0], caption: 'Зона хранения требует дополнительной разметки. Обновить обозначения проходов и мест складирования.' });
   if (spec.comments === 'disabled') selected.comments = false;

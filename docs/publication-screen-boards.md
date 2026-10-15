@@ -58,3 +58,6 @@ Covers put the channel and title over media, with the lead on white below it. Tw
 All feed and article media stages share 8:5. Foreground photos and video posters use `contain`, with a blurred decorative copy filling unused space. Captioned audit slides retain their status and description; mobile descriptions are limited to four visible lines, with full text in the existing fullscreen view. Cover clicks, fullscreen, swipe and autoplay behavior are retained.
 
 New `rubric-sport`, `rubric-safety`, `rubric-production` and `rubric-ecology` gallery cases exist on web and mobile, bringing the galleries to 62 and 42 states. The sport case uses an existing square sports photo to verify no cropping.
+
+
+15 октября: рубрики используют полные статьи из общего набора, а не подмену заголовка одной карточки. Спорт — `erg-run-fest-2026`, экология — `erg-ssgpo-trees-2025`; безопасность и предприятие используют существующие материалы. Лента: `/handoff/publications-web`, мобильный флоу: `/posts`. Изолированные состояния предназначены для галереи. Источники новых материалов: https://erg.kz/ru/news/show/3871 и https://www.erg.kz/ru/news/show/3560. Для исходных статей стенда фон медиа однотонный; загрузки сохраняют стандартный blur fallback.

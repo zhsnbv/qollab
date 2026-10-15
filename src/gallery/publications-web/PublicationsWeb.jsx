@@ -1,3 +1,4 @@
+import { addEditorialSamples, EDITORIAL_POSTS, EDITORIAL_SAMPLE_BATCH, PUBLICATION_FEED_ORDER } from './editorialSamples';
 import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import '@ant-design/v5-patch-for-react-19';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -29,7 +30,7 @@ import './PublicationAppearance.css';
 
 const productionNav = [['Публикации', News20Regular, 'feed'], ['Руководство', People20Regular], ['Чаты', Chat20Regular], ['Орг. структура', Organization20Regular], ['Мероприятия', Calendar20Regular], ['Электронный вестник', News20Regular], ['Каналы', Megaphone20Regular, 'channel'], ['Подписки', TextBulletList20Regular]];
 const services = ['Мой календарь обучения', 'ОТиПБ', 'Dispatch', 'ERG Access', 'Sales Market', 'Эл.очередь', 'ERG Partners', 'qData', 'qDocs'];
-const feedExampleOrder = { news: 0, audit: 1, 'prod-project-aglo': 2 };
+const feedExampleOrder = PUBLICATION_FEED_ORDER;
 function Shell({ admin, onNavigate, onInfo, children, query, onQuery, locked }) {
   const navigate = page => locked ? onInfo('Сначала сохраните изменения или нажмите «Отмена» в форме') : onNavigate(page);
   return <div className={`pw-app ${admin ? 'pw-admin-shell' : 'pw-feed-shell'}`}>
@@ -54,26 +55,26 @@ function WebReview() {
   const [selectedId, setSelectedId] = useState(scenario?.post || initialId || 'news');
   const [editor, setEditor] = useState(scenario?.editor || null), [preview, setPreview] = useState(scenario?.preview ? scenario.editor : null);
   const [query, setQuery] = useState(scenario?.query || '');
-  const [deleting, setDeleting] = useState(null), [discussions, setDiscussions] = useState(() => scenario?.discussions || Object.fromEntries([PRODUCTION_IMPROVEMENT, ...MORE_FEED_POSTS].map(post => [post.id, []])));
-  const [sampleBatches, setSampleBatches] = useState([FEED_SAMPLE_BATCH, IMPROVEMENT_SAMPLE_BATCH]);
+  const [deleting, setDeleting] = useState(null), [discussions, setDiscussions] = useState(() => scenario?.discussions || Object.fromEntries([PRODUCTION_IMPROVEMENT, ...MORE_FEED_POSTS, ...EDITORIAL_POSTS].map(post => [post.id, []])));
+  const [sampleBatches, setSampleBatches] = useState([FEED_SAMPLE_BATCH, IMPROVEMENT_SAMPLE_BATCH, EDITORIAL_SAMPLE_BATCH]);
   const [messageApi, contextHolder] = message.useMessage();
   const [loaded, setLoaded] = useState(!!scenario);
   useEffect(() => {
     if (scenario) return;
     let active = true;
-    loadReview().then(saved => { if (active && saved?.posts) { const expanded = addProductionImprovement(addFeedSamples(saved)); setPosts(upgradePublicationExamples(expanded.posts)); setDiscussions(expanded.discussions || {}); setSampleBatches(expanded.sampleBatches); setChannel({ ...INITIAL_CHANNEL, ...saved.channel }); setFeedSubscriptions(saved.feedSubscriptions || {}); setChannelNotifications(saved.channelNotifications || {}); } }).catch(() => {}).finally(() => { if (active) setLoaded(true); });
+    loadReview().then(saved => { if (active && saved?.posts) { const expanded = addEditorialSamples(addProductionImprovement(addFeedSamples(saved))); setPosts(upgradePublicationExamples(expanded.posts).map(post => INITIAL_POSTS.some(sample => sample.id === post.id) ? { ...post, mediaBackdrop: 'solid' } : post)); setDiscussions(expanded.discussions || {}); setSampleBatches(expanded.sampleBatches); setChannel({ ...INITIAL_CHANNEL, ...saved.channel }); setFeedSubscriptions(saved.feedSubscriptions || {}); setChannelNotifications(saved.channelNotifications || {}); } }).catch(() => {}).finally(() => { if (active) setLoaded(true); });
     return () => { active = false; };
   }, [scenario]);
   useEffect(() => { if (!loaded || scenario) return; saveReview({ posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches }).catch(() => messageApi.warning('Не удалось сохранить изменения. Не закрывайте вкладку, чтобы не потерять данные.')); }, [posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches, loaded, messageApi, scenario]);
   const info = text => messageApi.info(text);
   useEffect(() => { document.documentElement.classList.add('publications-web-review'); const title = document.title; document.title = 'Публикации — Qollab'; return () => { document.documentElement.classList.remove('publications-web-review'); document.title = title; }; }, []);
-  const navigate = next => { setPage(next); setQuery(''); window.scrollTo(0, 0); window.history.replaceState(null, '', window.location.pathname); };
+  const navigate = next => { setPage(next); setQuery(''); window.scrollTo(0, 0); window.history.replaceState(null, '', window.location.pathname + (scenario ? window.location.search : '')); };
   const openChannel = id => { setActiveChannelId(id || OWN_CHANNEL_ID); navigate('channel'); window.history.replaceState(null, '', `#channel=${encodeURIComponent(id || OWN_CHANNEL_ID)}`); };
   const create = type => { setEditor({ ...emptyPost(type), assistantId: crypto.randomUUID(), channel: channel.name, channelId: OWN_CHANNEL_ID, channelAvatar: channel.avatar }); setPreview(null); navigate('editor'); };
   const edit = post => { setEditor(structuredClone(post)); setPreview(null); navigate('editor'); };
   const open = post => { readerOrigin.current = { page, query, scroll: window.scrollY, filter: feedChannelId, channelId: activeChannelId }; setSelectedId(post.id); setPage('reader'); window.scrollTo(0, 0); window.history.pushState({ pwReader: true }, '', `#post=${encodeURIComponent(post.id)}`); };
   const restoreFeed = () => { const origin = readerOrigin.current; restoreScroll.current = origin.scroll; setQuery(origin.query); setFeedChannelId(origin.filter); setActiveChannelId(origin.channelId); setPage(origin.page); };
-  const backToFeed = () => { if (window.history.state?.pwReader) window.history.back(); else { window.history.replaceState(null, '', window.location.pathname); restoreFeed(); } };
+  const backToFeed = () => { if (window.history.state?.pwReader) window.history.back(); else { window.history.replaceState(null, '', window.location.pathname + (scenario ? window.location.search : '')); restoreFeed(); } };
   useLayoutEffect(() => {
     if (page === 'reader' || restoreScroll.current === null) return;
     const top = restoreScroll.current;
@@ -108,7 +109,7 @@ function WebReview() {
   });
   const ordered = [...filtered].sort((a, b) => Number(hasCoverMedia(b)) - Number(hasCoverMedia(a))
     || Number(!!b.pinned) - Number(!!a.pinned)
-    || (page === 'feed' ? (feedExampleOrder[a.id] ?? 3) - (feedExampleOrder[b.id] ?? 3) : 0));
+    || (page === 'feed' ? (feedExampleOrder[a.id] ?? 6) - (feedExampleOrder[b.id] ?? 6) : 0));
   const selectFeedChannel = id => { setFeedChannelId(id); setQuery(''); if (page !== 'feed') navigate('feed'); };
   const toggleSubscription = item => {
     if (item.required) return;
@@ -122,7 +123,7 @@ function WebReview() {
     setChannelNotifications(values => ({ ...values, [item.id]: mode }));
     messageApi.success(mode === 'all' ? 'Уведомления о новых статьях включены' : 'Уведомления канала выключены');
   };
-  const shellNavigate = next => { if (next === 'portal') { setPage(next); window.history.replaceState(null, '', window.location.pathname); } else if (next === 'channel') openChannel(OWN_CHANNEL_ID); else { if (next === 'feed') setFeedChannelId(null); navigate(next); } };
+  const shellNavigate = next => { if (next === 'portal') { setPage(next); window.history.replaceState(null, '', window.location.pathname + (scenario ? window.location.search : '')); } else if (next === 'channel') openChannel(OWN_CHANNEL_ID); else { if (next === 'feed') setFeedChannelId(null); navigate(next); } };
   return <>{contextHolder}<PortalShell page={page} query={query} onSearch={value => { if (page === 'reader' || page === 'portal') navigate('feed'); setQuery(value); }} onNavigate={shellNavigate} channelsContent={<FeedChannels channels={channels} selectedId={feedChannelId} onSelect={selectFeedChannel} onToggle={toggleSubscription} />}>
     {page === 'reader' && loaded && !selected && <div className="pw-empty"><Empty description="Публикация недоступна" /><Button onClick={() => navigate('channel')}>Вернуться в канал</Button></div>}
     {page === 'reader' && selected && <div className="pw-reader-layout"><div className="pw-feed-column"><div className="pw-reader-nav"><Button type="text" shape="round" icon={<ArrowLeft20Regular />} onClick={backToFeed}>{readerOrigin.current.page === 'feed' ? 'К публикациям' : 'В канал'}</Button><Button shape="round" onClick={() => edit(selected)}>Редактировать</Button></div><PublicationReader key={selected.id} post={selected} onLike={() => like(selected)} onShare={() => share(selected)} comments={discussions[selected.id]} onComments={items => { setDiscussions(v => ({ ...v, [selected.id]: items })); const count = nodes => nodes.reduce((n, c) => n + 1 + count(c.replies), 0); update(selected.id, { commentCount: count(items) }); }} /></div></div>}

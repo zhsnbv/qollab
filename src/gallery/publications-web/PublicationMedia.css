@@ -111,3 +111,6 @@ html.publications-web-review.pw-lightbox-open { overflow-y: hidden; }
   .pw-lightbox-arrow { background: #111a; }.pw-lightbox-close { right: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .pw-media-actions button, .pw-media-play { transition: none; } .pw-media-play { --pw-play-scale: 1; } }
+
+/* Seed articles use a quiet solid backdrop; uploaded media retains the blur fallback. */
+.pw-media-carousel[data-media-backdrop="solid"] .pw-media-backdrop { display: none; }

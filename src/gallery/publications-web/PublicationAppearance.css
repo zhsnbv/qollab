@@ -55,7 +55,7 @@ button.pw-publication-identity:focus-visible { outline: 2px solid #ef7f1a; outli
 .pw-cover-stack > * { grid-area: 1 / 1; min-width: 0; visibility: hidden; }
 .pw-cover-stack > .is-active { visibility: visible; }
 .pw-cover-story { display: flex; flex-direction: column; gap: 12px; }
-.pw-app .pw-cover-title { display: block; padding: 0; margin: 0; border: 0; background: none; color: var(--pw-cover-title, #fff); text-transform: none; text-shadow: 0 2px 12px #0004; font: 600 24px/1.25 Inter, sans-serif; text-align: left; letter-spacing: -.4px; overflow-wrap: anywhere; text-wrap: pretty; pointer-events: auto; }
+.pw-app .pw-cover-title { display: block; padding: 0; margin: 0; border: 0; background: none; color: var(--pw-cover-title, #fff); text-transform: none; text-shadow: 0 2px 12px #0004; font: 600 26px/1.25 Inter, sans-serif; text-align: left; letter-spacing: -.4px; overflow-wrap: anywhere; text-wrap: pretty; pointer-events: auto; }
 button.pw-cover-title { cursor: pointer; }
 button.pw-cover-title:hover { color: var(--pw-cover-title, #fff); text-decoration: none; }
 button.pw-cover-title:focus-visible, .pw-cover-header button:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 5px; }
@@ -149,7 +149,7 @@ button.pw-cover-title:focus-visible, .pw-cover-header button:focus-visible { out
   .pw-media-actions { gap: 3px; }
   .pw-media-actions button { width: 30px; height: 30px; }
   .pw-app .pw-post-actions { gap: 4px; }
-  .pw-app .pw-cover-title { font-size: 21px; }
+  .pw-app .pw-cover-title { font-size: 23px; }
   .pw-app .pw-cover-lead { font-size: 14px; }
   .pw-cover-audit-note .pw-photo-info p { font-size: 14px; }
   .pw-appearance-option { padding: 10px; }

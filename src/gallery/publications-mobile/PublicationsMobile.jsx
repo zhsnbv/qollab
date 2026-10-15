@@ -1,3 +1,4 @@
+import { PUBLICATION_FEED_ORDER } from '../publications-web/editorialSamples';
 import { MobileCard, ChannelStrip, PublicationActions as Actions } from './MobilePublicationParts';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
@@ -30,7 +31,7 @@ import '../publications-web/PublicationPolish.css';
 import './PublicationsMobile.css';
 
 const STORAGE = 'qollab-publications-mobile-v1';
-const priority = { news: 0, audit: 1, 'prod-project-aglo': 2 };
+const priority = PUBLICATION_FEED_ORDER;
 const seedThreads = Object.fromEntries(INITIAL_POSTS.map(post => [post.id, post.commentCount ? structuredClone(initialComments) : []]));
 function loadState() {
   try { return JSON.parse(localStorage.getItem(STORAGE) || 'null') || {}; } catch { return {}; }
@@ -55,7 +56,7 @@ function MobileExperience() {
   const isFeed = location.pathname === '/posts', isEvent = location.pathname === '/event';
   const selectedChannel = channels.find(channel => channel.id === filter);
   const followed = new Set(channels.filter(channel => channel.subscribed).map(channel => channel.id));
-  const visiblePosts = posts.filter(post => hasCoverMedia(post) && followed.has(publicationChannelId(post, own)) && (!filter || publicationChannelId(post, own) === filter) && `${titleOf(post)} ${post.lead}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => (priority[a.id] ?? 3) - (priority[b.id] ?? 3));
+  const visiblePosts = posts.filter(post => hasCoverMedia(post) && followed.has(publicationChannelId(post, own)) && (!filter || publicationChannelId(post, own) === filter) && `${titleOf(post)} ${post.lead}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => (priority[a.id] ?? 6) - (priority[b.id] ?? 6));
   const sheetPost = posts.find(post => post.id === sheet?.postId);
   const notice = text => { clearTimeout(toastTimer.current); setToast(text); toastTimer.current = setTimeout(() => setToast(''), 2600); };
   const change = (key, id, value) => setSaved(current => ({ ...current, [key]: { ...current[key], [id]: value } }));
