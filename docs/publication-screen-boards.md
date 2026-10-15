@@ -48,3 +48,13 @@ His web is already built: transfer only publication feed/cards, reading/discussi
 Cloudflare exposed CSS order conflicts between the mobile application, old portal rules and shared publication styles. The web review and gallery frames now have isolated entry graphs in the source app. Gaziz should retain his own entrypoint and avoid importing the mobile application's global styles.
 
 The package includes corrected PortalShell.css, PublicationPolish.css, PublicationAppearance.css and PublicationsWeb.css: obsolete avatar/person/share sizing is removed, legacy portal selectors have lower specificity, and reaction line-height is explicit. PublicationIdentity uses 44px avatars; action buttons use 15px type, 21px icons and 8px gaps; cover menu icon stays white. Preserve these component-owned rules when integrating.
+
+## Editorial rubric refresh — 15 October 2026
+
+The four channel rubrics are Sport, Safety, About the enterprise and Ecology. Topic styling stays independent of news/audit/project structure. Existing saved `people`, `digital`, `appointments` and `events` choices resolve to `production`; explicit `none` stays unset. The editor and Quilli share this list.
+
+Covers put the channel and title over media, with the lead on white below it. Two transparent-edged radial scrims protect the text without a full-image dark overlay. Category-colored titles use normal case and left alignment. A 10–20px gradient band (roughly two-thirds the reference height) carries restrained category graphics.
+
+All feed and article media stages share 8:5. Foreground photos and video posters use `contain`, with a blurred decorative copy filling unused space. Captioned audit slides retain their status and description; mobile descriptions are limited to four visible lines, with full text in the existing fullscreen view. Cover clicks, fullscreen, swipe and autoplay behavior are retained.
+
+New `rubric-sport`, `rubric-safety`, `rubric-production` and `rubric-ecology` gallery cases exist on web and mobile, bringing the galleries to 62 and 42 states. The sport case uses an existing square sports photo to verify no cropping.

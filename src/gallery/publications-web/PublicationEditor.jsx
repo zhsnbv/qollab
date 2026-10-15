@@ -71,7 +71,7 @@ export default function PublicationEditor({ initial, onCancel, onSave, onPreview
   const savePhoto = () => { if (isAudit && !photoModal.caption.trim()) { setPhotoError('Добавьте описание фотографии'); return; } patch({ images: draft.images.map(p => p.id === photoModal.id ? photoModal : p) }); setPhotoModal(null); };
   const media = <>
     <div className="pw-media-heading">Медиафайлы</div>
-    <p className="pw-media-hint">Фото или видео станет обложкой карточки. Несколько медиафайлов объединятся в слайдер. {isAudit && 'На обложке будут заголовок и краткий текст, на следующих фотографиях — тип замечания и описание.'}</p>
+    <p className="pw-media-hint">Фото или видео станет обложкой карточки. Несколько медиафайлов объединятся в слайдер. {isAudit && 'На обложке будет заголовок, на следующих фотографиях — тип замечания и описание. Краткий текст останется под медиа.'}</p>
     <div className="pw-media-buttons">
       <Button icon={<Image20Regular />} onClick={() => imageInput.current.click()} loading={loading}>Добавить изображения</Button>
       <Button icon={<Video20Regular />} onClick={() => openVideo('youtube')}>Добавить ссылку youtube</Button>
@@ -120,8 +120,8 @@ export default function PublicationEditor({ initial, onCancel, onSave, onPreview
         <Divider />
         <section className="pw-card-appearance-section" aria-label="Оформление карточки">
           <h2 className="pw-section-title">Оформление карточки</h2>
-          <p className="pw-appearance-help">{ENABLE_STANDARD_CARD_APPEARANCE ? 'Выберите, как публикация будет выглядеть в ленте. Содержание статьи останется прежним.' : 'Фото или видео занимает всю верхнюю часть карточки. Канал, заголовок и краткий текст отображаются на обложке.'}</p>
-          <Form.Item label="Рубрика" name="rubric" extra={isAudit || isProject ? `В шапке будет тип «${isAudit ? 'Обход' : 'Проект-улучшение'}». Рубрика меняет цветовой акцент карточки.` : 'Рубрика отображается под названием канала рядом с датой, добавляет значок на аватарке и цветовой акцент.'}><Select aria-label="Рубрика" options={[{ value: 'none', label: 'Без рубрики' }, ...PUBLICATION_RUBRICS.map(rubric => ({ value: rubric.value, label: rubric.label, rubric }))]} optionRender={option => option.data.rubric ? <span className="pw-rubric-option" style={{ color: option.data.rubric.ink }}><RubricLabel rubric={option.data.rubric} /></span> : option.label} /></Form.Item>
+          <p className="pw-appearance-help">{ENABLE_STANDARD_CARD_APPEARANCE ? 'Выберите, как публикация будет выглядеть в ленте. Содержание статьи останется прежним.' : 'Фото или видео занимает всю верхнюю часть карточки. Канал и заголовок отображаются на обложке, краткий текст — под ней на белом фоне. Фото сохраняется целиком в формате 8:5.'}</p>
+          <Form.Item label="Рубрика" name="rubric" extra={isAudit || isProject ? `В шапке будет тип «${isAudit ? 'Обход' : 'Проект-улучшение'}». Рубрика задаёт цвет заголовка и градиентную полосу.` : 'Рубрика отображается под названием канала рядом с датой, задаёт значок, цвет заголовка и градиентную полосу.'}><Select aria-label="Рубрика" options={[{ value: 'none', label: 'Без рубрики' }, ...PUBLICATION_RUBRICS.map(rubric => ({ value: rubric.value, label: rubric.label, rubric }))]} optionRender={option => option.data.rubric ? <span className="pw-rubric-option" style={{ color: option.data.rubric.ink }}><RubricLabel rubric={option.data.rubric} /></span> : option.label} /></Form.Item>
           {/* Alternative layout temporarily disabled; its component and saved choice are retained. */}
           {ENABLE_STANDARD_CARD_APPEARANCE && <Form.Item name="cardAppearance"><CardAppearanceOptions hasMedia={hasCoverMedia(draft)} /></Form.Item>}
           {!hasCoverMedia(draft) && <p className="pw-appearance-empty">Добавьте фото или видео, чтобы публикация появилась в общей ленте. Без медиа она останется доступна в канале.</p>}

@@ -15,13 +15,17 @@ function PhotoInfo({ photo, fallback, showStatus = true }) {
   </div>;
 }
 
+function MediaImage({ src, alt = '' }) {
+  return <><img className="pw-media-backdrop" src={src} alt="" aria-hidden="true" draggable={false} /><img className="pw-media-photo" src={src} alt={alt} draggable={false} /></>;
+}
+
 function Video({ item, title, active = true, onPlay }) {
   const [playing, setPlaying] = useState(false);
   const embed = videoEmbed(item);
   useEffect(() => { if (!active) setPlaying(false); }, [active]);
   return <div className="pw-media-video">
     {playing && embed ? <iframe title={`${item.provider}: ${title}`} src={embed} allow="fullscreen; picture-in-picture" allowFullScreen /> : <button className="pw-video-preview" type="button" aria-label="Воспроизвести видео" tabIndex={active ? 0 : -1} onClick={() => onPlay ? onPlay() : setPlaying(true)} disabled={!embed}>
-      <img src={item.poster || ASSET + 'prod-furnace-01.webp'} alt="" draggable={false} /><span className="pw-media-play"><Play20Filled /></span><span className="pw-provider-badge">{item.provider === 'youtube' ? 'YouTube' : 'Vimeo'}</span>
+      <MediaImage src={item.poster || ASSET + 'prod-furnace-01.webp'} /><span className="pw-media-play"><Play20Filled /></span><span className="pw-provider-badge">{item.provider === 'youtube' ? 'YouTube' : 'Vimeo'}</span>
     </button>}
   </div>;
 }
@@ -131,7 +135,7 @@ export default function PublicationMedia({ post, cover, headerControls = false, 
     <div ref={carousel} className={`pw-media-carousel ${cover ? 'is-cover' : ''} ${post.type === 'audit' ? 'is-audit' : ''} ${items.length > 1 ? 'has-many' : ''}`} {...slideshow.handlers} data-autoplay-state={slideshow.state} role={items.length > 1 ? 'region' : undefined} aria-roledescription={items.length > 1 ? 'Карусель' : undefined} aria-label={items.length > 1 ? `Медиа: ${post.title}` : undefined}>
       <div className="pw-carousel-stage" onKeyDown={e => { if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); } }}>
         <div ref={rail.ref} className="pw-carousel-rail pw-swipe-rail" {...rail.handlers}>{items.map((media, i) => <div className="pw-carousel-slide" key={`${media.kind}-${media.id}-${i}`}>
-          {media.kind === 'image' ? <button className="pw-carousel-image" onClick={() => onImageClick ? onImageClick() : open(i)} aria-label={onImageClick ? `Открыть статью: ${post.title}` : `Открыть изображение ${i + 1} из ${items.length}`} tabIndex={i === index ? 0 : -1}><img src={media.src} alt={media.caption || post.title} draggable={false} /></button> : <Video item={media} title={post.title} active={i === index} onPlay={cover ? () => open(i) : undefined} />}
+          {media.kind === 'image' ? <button className="pw-carousel-image" onClick={() => onImageClick ? onImageClick() : open(i)} aria-label={onImageClick ? `Открыть статью: ${post.title}` : `Открыть изображение ${i + 1} из ${items.length}`} tabIndex={i === index ? 0 : -1}><MediaImage src={media.src} alt={media.caption || post.title} /></button> : <Video item={media} title={post.title} active={i === index} onPlay={cover ? () => open(i) : undefined} />}
           {!cover && media.kind === 'image' && (post.type === 'audit' || media.caption) && <div className="pw-photo-overlay"><PhotoInfo photo={media} fallback={post.title} showStatus={post.type === 'audit'} /></div>}
         </div>)}</div>
         {cover && <div className="pw-cover-editorial">
@@ -140,13 +144,13 @@ export default function PublicationMedia({ post, cover, headerControls = false, 
             <div className="pw-cover-stack">
               <div className={`pw-cover-story ${showingAuditNote ? '' : 'is-active'}`} inert={showingAuditNote} aria-hidden={showingAuditNote}>
                 {cover.onOpen ? <button type="button" className="pw-cover-title" onClick={cover.onOpen}>{cover.title}</button> : <h3 className="pw-cover-title">{cover.title}</h3>}
-                {cover.lead && <p className="pw-cover-lead">{cover.lead}</p>}
                 {post.type !== 'audit' && item.kind === 'image' && item.caption && <div className="pw-cover-photo-info"><PhotoInfo photo={item} fallback={post.title} showStatus={false} /></div>}
               </div>
               {/* Overlapping grid cells reserve the tallest copy before a slide changes. */}
               {items.map((media, i) => hasAuditNote(media, i) && <div key={`note-${media.id}-${i}`} className={`pw-cover-photo-info pw-cover-audit-note ${i === index ? 'is-active' : ''}`} inert={i !== index} aria-hidden={i !== index}><PhotoInfo photo={media} /></div>)}
             </div>
           </div>
+          <div className="pw-rubric-band" aria-hidden="true" />
         </div>}
         {!headerControls && <div className="pw-media-corner-actions">{mediaActions}</div>}
         {timeline}

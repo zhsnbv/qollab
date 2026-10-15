@@ -777,3 +777,13 @@ export const MOBILE_CASES = [
   }
 ];
 export const frameUrl = (platform, id) => `/handoff/publication-state?platform=${platform}&case=${encodeURIComponent(id)}`;
+
+// The same editorial examples exercise web and mobile at fixed frame sizes.
+for (const cases of [WEB_CASES, MOBILE_CASES]) {
+  cases.push(...[
+    ['sport', 'Спорт · квадратное фото целиком'],
+    ['safety', 'Безопасность · оранжевый акцент'],
+    ['production', 'Про предприятие · серо-жёлтая полоса'],
+    ['ecology', 'Экология · зелёный акцент'],
+  ].map(([rubric, title]) => ({ id: `rubric-${rubric}`, title, group: 'Рубрики', post: rubric === 'safety' ? 'prod-fire-drill' : 'news', rubric, only: true, scroll: '.pw-carousel-stage' })));
+}

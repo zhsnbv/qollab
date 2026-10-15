@@ -1,9 +1,10 @@
 import { documentText } from './blockDocument.js';
+import { PUBLICATION_RUBRICS, rubricValue } from './publicationRubrics.js';
 
 export const SOURCE_LIMIT = 12000;
 export const PROJECT_KEYS = ['problem', 'idea', 'body', 'difficulties', 'conclusion', 'contacts'];
 export const ARTICLE_FIELDS = ['title', 'lead', 'description', 'rubric', 'company', 'effect', 'rating', 'responsible', 'auditor', 'author', 'authors', 'dossiers', ...PROJECT_KEYS];
-const RUBRICS = ['none', 'production', 'people', 'digital', 'safety', 'appointments', 'events'];
+const RUBRICS = ['none', ...PUBLICATION_RUBRICS.map(rubric => rubric.value)];
 
 export function articleSnapshot(draft) {
   return Object.fromEntries(ARTICLE_FIELDS.filter(key => draft[key] !== undefined).map(key => [key, draft[key]]));
@@ -54,7 +55,7 @@ export function normalizeArticleResult(raw, { type, companies = [], people = [] 
     if (!patch.problem && !patch.idea && !patch.body) throw new Error('Помощник не заполнил структуру проекта. Исходник сохранён.');
     for (const key of PROJECT_KEYS.filter(key => key !== 'contacts')) if (!patch[key]) warnings.push(`В материалах не хватило сведений для раздела «${({ problem: 'Описание проблемы', idea: 'Главная идея', body: 'Основные шаги реализации', difficulties: 'Сложности и зоны роста', conclusion: 'Результаты' })[key]}».`);
   } else patch.description = markdownDocument(text(article.body));
-  if (RUBRICS.includes(article.rubric)) patch.rubric = article.rubric;
+  if (typeof article.rubric === 'string' && (article.rubric === 'none' || rubricValue({ rubric: article.rubric }) !== 'none')) patch.rubric = rubricValue({ rubric: article.rubric });
   if (companies.includes(article.company)) patch.company = article.company;
   for (const key of type === 'audit' ? ['responsible', 'auditor'] : type === 'project' ? ['author'] : []) if (people.includes(article[key])) patch[key] = article[key];
   if (type === 'project') {

@@ -106,9 +106,9 @@ export function PublicationCard({ post, preview = false, onOpen, onLike, onShare
   const lead = post.lead && <div className="pw-card-text"><p>{post.lead}</p></div>;
   const channelHeader = <div className="pw-card-channel"><PublicationIdentity post={post} onChannel={preview ? undefined : onChannel} />{post.anonymous && <span className="pw-anonymous">Анонимно</span>}{post.pinned && <Pin20Regular className="pw-pinned" />}<span className="pw-header-media-actions" ref={setMediaActions} />{preview ? <Button className="pw-more-button" shape="circle" disabled aria-label="Действия публикации" icon={<MoreVertical20Filled />} /> : <Dropdown menu={menu} trigger={['click']} placement="bottomRight"><Button className="pw-more-button" shape="circle" aria-label={`Действия: ${titleOf(post)}`} icon={<MoreVertical20Filled />} /></Dropdown>}</div>;
   return <article ref={card} className={`pw-publication-card pw-card-tile ${isCover ? 'pw-card-cover' : ''} ${expanded ? 'is-expanded' : ''}`} style={rubricStyle(post)} data-rubric={rubricValue(post)} data-source-node="7805:3193">
-    {isCover ? <Media key={`cover-${post.coverImageId || 'first'}`} post={post} onImageClick={preview ? undefined : onOpen} headerControls controlsTarget={mediaActions} cover={{ header: channelHeader, title: titleOf(post), lead: post.lead, onOpen: preview ? undefined : onOpen }} /> : channelHeader}
+    {isCover ? <Media key={`cover-${post.coverImageId || 'first'}`} post={post} onImageClick={preview ? undefined : onOpen} headerControls controlsTarget={mediaActions} cover={{ header: channelHeader, title: titleOf(post), onOpen: preview ? undefined : onOpen }} /> : channelHeader}
     <div className="pw-card-inner">
-      {isCover ? <PublicationDetails post={post} /> : <>
+      {isCover ? <>{lead}<PublicationDetails post={post} /></> : <>
         {preview ? <h3 className="pw-title-link">{titleOf(post)}</h3> : <button className="pw-title-link" onClick={onOpen}>{titleOf(post)}</button>}
         <PublicationDetails post={post} />
         {lead}

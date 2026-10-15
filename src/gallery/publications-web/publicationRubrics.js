@@ -1,25 +1,27 @@
-// Proposed editorial taxonomy based on topics in the live Qollab feed, 12 Oct 2026.
-// Rubrics describe the topic; news/audit/project continue to define the post structure.
+// Four editorial rubrics from the channel's Canva templates (15 Oct 2026).
+// Rubrics style the cover; news/audit/project remain independent post types.
 export const PUBLICATION_RUBRICS = [
-  { value: 'production', label: 'Производство', icon: 'factory', accent: '#d99735', ink: '#8b5311', tint: '#fff3df', shade: '32 23 12' },
-  { value: 'people', label: 'Люди ERG', icon: 'people', accent: '#b48bcc', ink: '#75468f', tint: '#f5edfa', shade: '31 17 41' },
-  { value: 'digital', label: 'Технологии', icon: 'digital', accent: '#75b2e8', ink: '#246296', tint: '#eaf4fd', shade: '9 28 48' },
-  { value: 'safety', label: 'Безопасность', icon: 'shield', accent: '#efc45c', ink: '#886313', tint: '#fff7df', shade: '36 28 10' },
-  { value: 'appointments', label: 'Назначения', icon: 'person', accent: '#93accf', ink: '#445f88', tint: '#eef2f9', shade: '19 30 48' },
-  { value: 'events', label: 'События', icon: 'calendar', accent: '#e5a091', ink: '#a34e3b', tint: '#fff0eb', shade: '45 20 23' },
+  { value: 'sport', label: 'Спорт', icon: 'sport', accent: '#53b7dc', ink: '#206a8b', tint: '#eaf7fc', title: '#75d1f3', band: 'linear-gradient(105deg, #78cce4 0%, #348bbd 48%, #df8b44 100%)' },
+  { value: 'safety', label: 'Безопасность', icon: 'shield', accent: '#f29a52', ink: '#9c5019', tint: '#fff1e6', title: '#ffb375', band: 'linear-gradient(105deg, #b7b3ac 0%, #f8c59a 38%, #e7752a 100%)' },
+  { value: 'production', label: 'Про предприятие', icon: 'factory', accent: '#e6b94a', ink: '#60656b', tint: '#f0f1f2', title: '#e2e4e7', band: 'linear-gradient(105deg, #d7d9db 0%, #a9abad 38%, #eebd45 100%)' },
+  { value: 'ecology', label: 'Экологические новости', icon: 'leaf', accent: '#84bc51', ink: '#3d7133', tint: '#eef7e7', title: '#b2e78b', band: 'linear-gradient(105deg, #c4e98d 0%, #82bd51 44%, #386a35 100%)' },
 ];
-
+// Old saved drafts continue to resolve to the new taxonomy without altering content.
+const legacyRubrics = { people: 'production', digital: 'production', appointments: 'production', events: 'production' };
 const exampleRubrics = {
-  news: 'production', gallery: 'production', text: 'digital', video: 'digital', file: 'safety',
-  'prod-union-award': 'events', 'prod-jig-machine': 'production',
-  'prod-fire-drill': 'safety', 'prod-bts-developer': 'people',
+  news: 'production', gallery: 'production', text: 'production', video: 'production', file: 'safety',
+  'prod-union-award': 'production', 'prod-jig-machine': 'production',
+  'prod-fire-drill': 'safety', 'prod-bts-developer': 'production',
 };
 export function rubricValue(post) {
-  const value = post.rubric ?? exampleRubrics[post.id] ?? 'none';
+  const inferred = /sport|спорт/i.test(`${post.channelId || ''} ${post.channel || ''}`) ? 'sport'
+    : /eco|эко/i.test(`${post.channelId || ''} ${post.channel || ''}`) ? 'ecology' : 'none';
+  const saved = post.rubric ?? exampleRubrics[post.id] ?? inferred;
+  const value = legacyRubrics[saved] || saved;
   return PUBLICATION_RUBRICS.some(rubric => rubric.value === value) ? value : 'none';
 }
 export function publicationRubric(post) { return PUBLICATION_RUBRICS.find(rubric => rubric.value === rubricValue(post)); }
 export function rubricStyle(post) {
   const rubric = publicationRubric(post);
-  return rubric ? { '--pw-rubric-accent': rubric.accent, '--pw-rubric-ink': rubric.ink, '--pw-rubric-tint': rubric.tint, '--pw-cover-shade': rubric.shade } : {};
+  return rubric ? { '--pw-rubric-accent': rubric.accent, '--pw-rubric-ink': rubric.ink, '--pw-rubric-tint': rubric.tint, '--pw-cover-title': rubric.title, '--pw-rubric-band': rubric.band } : {};
 }
