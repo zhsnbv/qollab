@@ -1,3 +1,4 @@
+import { refreshPublicationMedia } from './publicationMediaRefresh';
 import { addEditorialSamples, EDITORIAL_POSTS, EDITORIAL_SAMPLE_BATCH, PUBLICATION_FEED_ORDER } from './editorialSamples';
 import { usePublicationScenario } from '../publication-screens/ScenarioContext';
 import '@ant-design/v5-patch-for-react-19';
@@ -62,7 +63,7 @@ function WebReview() {
   useEffect(() => {
     if (scenario) return;
     let active = true;
-    loadReview().then(saved => { if (active && saved?.posts) { const expanded = addEditorialSamples(addProductionImprovement(addFeedSamples(saved))); setPosts(upgradePublicationExamples(expanded.posts).map(post => INITIAL_POSTS.some(sample => sample.id === post.id) ? { ...post, mediaBackdrop: 'solid' } : post)); setDiscussions(expanded.discussions || {}); setSampleBatches(expanded.sampleBatches); setChannel({ ...INITIAL_CHANNEL, ...saved.channel }); setFeedSubscriptions(saved.feedSubscriptions || {}); setChannelNotifications(saved.channelNotifications || {}); } }).catch(() => {}).finally(() => { if (active) setLoaded(true); });
+    loadReview().then(saved => { if (active && saved?.posts) { const expanded = addEditorialSamples(addProductionImprovement(addFeedSamples(saved))); setPosts(upgradePublicationExamples(expanded.posts).map(refreshPublicationMedia).map(post => INITIAL_POSTS.some(sample => sample.id === post.id) ? { ...post, mediaBackdrop: 'solid' } : post)); setDiscussions(expanded.discussions || {}); setSampleBatches(expanded.sampleBatches); setChannel({ ...INITIAL_CHANNEL, ...saved.channel }); setFeedSubscriptions(saved.feedSubscriptions || {}); setChannelNotifications(saved.channelNotifications || {}); } }).catch(() => {}).finally(() => { if (active) setLoaded(true); });
     return () => { active = false; };
   }, [scenario]);
   useEffect(() => { if (!loaded || scenario) return; saveReview({ posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches }).catch(() => messageApi.warning('Не удалось сохранить изменения. Не закрывайте вкладку, чтобы не потерять данные.')); }, [posts, discussions, channel, feedSubscriptions, channelNotifications, sampleBatches, loaded, messageApi, scenario]);

@@ -1,0 +1,62 @@
+{
+  "updated": "2026-10-15",
+  "purpose": "Clean publication photography without baked-in editorial headlines. Existing article text and people are unchanged.",
+  "photos": [
+    {
+      "file": "prod-power-plant-02.webp",
+      "source": "https://qollab.kz/",
+      "context": "Original clean second photo of Aktobe power-plant construction."
+    },
+    {
+      "file": "prod-furnace-02.webp",
+      "source": "https://qollab.kz/",
+      "context": "Original clean second photo of furnace maintenance; also used as equipment-video fallback poster."
+    },
+    {
+      "file": "prod-jig-machine-02.webp",
+      "source": "https://qollab.kz/channel/post/link/113782",
+      "context": "Original clean second photo of the Donskoy processing machine."
+    },
+    {
+      "file": "prod-balance-02.webp",
+      "source": "https://qollab.kz/channel/post/link/113191",
+      "context": "Original clean second photo of the upgraded scales."
+    },
+    {
+      "file": "clean-aksu-conveyors.webp",
+      "source": "https://www.kazchrome.com/ru/media/gallery/aksu-ferroalloy-plant/",
+      "image": "https://www.kazchrome.com/upload/iblock/9f1/h9x8gn6osy2s3fey6dd62jzo4g6yk10v.jpg",
+      "credit": "Kazchrome",
+      "context": "Aksu plant conveyor infrastructure. Contextual plant photo, not evidence of the specific rail modification."
+    },
+    {
+      "file": "clean-aksu-agglomeration.webp",
+      "source": "https://giproprom.com/en/project/kazahstan-ao-tnk-kazahrom-aksuskij-zavod-ferrosplavov-aglomeratsionnaya-fabrika",
+      "image": "https://giproprom.com/images/2018/08/DSC02740.jpg",
+      "credit": "Giproprom",
+      "context": "Aksu agglomeration factory. Archive context photo; not a portrait of the project team."
+    },
+    {
+      "file": "clean-aktobe-fire-drill.webp",
+      "source": "https://www.gov.kz/memleket/entities/emer/press/news/details/611877",
+      "image": "https://www.gov.kz/uploads/2023/8/31/229d303a1e2fcec16375281fa6d019b9_original.106984.jpeg",
+      "credit": "Ministry of Emergency Situations of Kazakhstan",
+      "context": "Archive fire drill at Aktobe ferroalloy plant, 2023. Illustration of the same facility and activity, not a photograph of the 2026 event."
+    },
+    {
+      "file": "clean-developer-workspace.webp",
+      "source": "https://unsplash.com/photos/woman-typing-code-on-a-laptop-computer-q4xnrxKGSq0",
+      "image": "https://images.unsplash.com/photo-1595644101020-4d83b3d355f7",
+      "credit": "Bluestonex / Unsplash",
+      "context": "Illustrative coding workspace with hands; not a portrait of Marzhan or a BTS office."
+    },
+    {
+      "file": "clean-award-trophy.webp",
+      "source": "https://unsplash.com/photos/Lu0oB7yoGV0",
+      "download": "https://images.squarespace-cdn.com/content/v1/63ed6cad4c91011d05af11de/96389199-208b-4e2e-9340-15b5b39fc0ec/unsplash-image-Lu0oB7yoGV0.jpg?format=1500w",
+      "credit": "Robin Edqvist / Unsplash",
+      "context": "Illustrative award still life, not the actual KBRU award or ceremony."
+    }
+  ],
+  "processing": "WebP conversion and proportional downscaling only; no crop, retouching, invented people or text removal."
+}

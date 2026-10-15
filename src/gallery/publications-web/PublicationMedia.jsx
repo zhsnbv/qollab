@@ -25,7 +25,7 @@ function Video({ item, title, active = true, onPlay }) {
   useEffect(() => { if (!active) setPlaying(false); }, [active]);
   return <div className="pw-media-video">
     {playing && embed ? <iframe title={`${item.provider}: ${title}`} src={embed} allow="fullscreen; picture-in-picture" allowFullScreen /> : <button className="pw-video-preview" type="button" aria-label="Воспроизвести видео" tabIndex={active ? 0 : -1} onClick={() => onPlay ? onPlay() : setPlaying(true)} disabled={!embed}>
-      <MediaImage src={item.poster || ASSET + 'prod-furnace-01.webp'} /><span className="pw-media-play"><Play20Filled /></span><span className="pw-provider-badge">{item.provider === 'youtube' ? 'YouTube' : 'Vimeo'}</span>
+      <MediaImage src={item.poster || ASSET + 'prod-furnace-02.webp'} /><span className="pw-media-play"><Play20Filled /></span><span className="pw-provider-badge">{item.provider === 'youtube' ? 'YouTube' : 'Vimeo'}</span>
     </button>}
   </div>;
 }

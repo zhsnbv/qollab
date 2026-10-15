@@ -1,3 +1,4 @@
+import { refreshPublicationMedia } from './publicationMediaRefresh';
 import { EDITORIAL_POSTS } from './editorialSamples';
 import { PRODUCTION_EXAMPLES } from './productionExamples';
 import { MORE_FEED_POSTS } from './feedSamples';
@@ -36,7 +37,7 @@ export const INITIAL_POSTS = [
   { ...base, id: 'file', title: 'Новая памятка по промышленной безопасности', lead: 'Правила подготовки рабочего места и чек-лист перед началом смены — в приложенном документе.', files: [{ id: 'file1', name: 'Памятка по безопасности.pdf', url: '/publications-demo.pdf', size: 'PDF' }] },
   { ...base, id: 'audit', type: 'audit', likes: 35, commentCount: 4, ...PRODUCTION_EXAMPLES.audit },
   { ...base, id: 'project', type: 'project', title: 'Сокращение времени обслуживания', lead: 'Команда предложила новый порядок подготовки оборудования и сократила время плановых работ.', author: 'demo', authors: ['ivan', 'aliya'], company: 'АО «ЕЭК»', effect: 12, likes: 35, commentCount: 4, dossiers: { ivan: 'Руководит производственным участком. Участвует в проектах повышения эффективности.', aliya: 'Инженер проекта. Отвечает за анализ процессов и внедрение улучшений.' }, problem: 'Подготовка оборудования занимала слишком много времени.', idea: 'Стандартизировать подготовку и выполнять часть работ параллельно.', body: 'Команда проанализировала процесс, подготовила чек-листы и провела пилот на одном участке.', difficulties: 'Согласовать новый порядок работы со всеми участниками.', conclusion: 'Сокращено время обслуживания. Экономический эффект — 12 млн тенге.', contacts: 'Команда проекта в Qollab', images: [photo()] },
-].map(post => ({ ...post, mediaBackdrop: 'solid' }));
+].map(post => ({ ...refreshPublicationMedia(post), mediaBackdrop: 'solid' }));
 export function emptyPost(type) {
   return { type, title: '', lead: '', cardAppearance: 'cover', description: { ops: [{ insert: '\n' }] }, images: [], videos: [], files: [], comments: true, anonymous: false, rating: 0, author: 'demo', authors: [], dossiers: {} };
 }
