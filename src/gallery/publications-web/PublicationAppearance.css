@@ -35,8 +35,13 @@ button.pw-publication-identity:focus-visible { outline: 2px solid #ef7f1a; outli
 .pw-rubric-band { position: relative; flex: 0 0 auto; height: clamp(10px, 2.7cqw, 20px); background: var(--pw-rubric-band, linear-gradient(100deg, #ffd9b7, #ef7f1a)); overflow: hidden; }
 .pw-rubric-band::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(118deg, transparent 0 34px, #ffffff26 34px 35px, transparent 35px 76px); opacity: .75; }
 [data-rubric="sport"] .pw-rubric-band::after { background: repeating-linear-gradient(118deg, transparent 0 44px, #ffffff26 44px 52px, transparent 52px 58px, #ffffff1a 58px 60px, transparent 60px 100px); }
-[data-rubric="safety"] .pw-rubric-band::after { background: repeating-linear-gradient(125deg, transparent 0 24px, #52565b30 24px 36px, transparent 36px 60px); }
+[data-rubric="safety"] .pw-rubric-band::after { background: repeating-linear-gradient(125deg, transparent 0 24px, #62676b 24px 44px, transparent 44px 68px); opacity: 1; }
 [data-rubric="ecology"] .pw-rubric-band::after { background: repeating-radial-gradient(ellipse at 12% 180%, transparent 0 18px, #ffffff29 19px 20px, transparent 21px 36px); }
+/* Post types have their own visual language; these are not editorial rubrics. */
+.pw-media-carousel[data-post-type="audit"] .pw-rubric-band::after { background: repeating-linear-gradient(90deg, transparent 0 25px, #d9edfc 25px 28px, transparent 28px 60px); opacity: 1; }
+.pw-media-carousel[data-post-type="project"] .pw-rubric-band::after { background: repeating-linear-gradient(135deg, transparent 0 40px, #d6eedf 40px 43px, transparent 43px 53px, #d6eedf 53px 56px, transparent 56px 96px); opacity: 1; }
+.pw-app .pw-identity-meta .pw-identity-type { display: inline-flex; align-items: center; gap: 4px; max-width: none; padding: 2px 7px; border-radius: 6px; color: var(--pw-rubric-ink); background: var(--pw-rubric-tint); font-size: inherit; font-weight: 650; line-height: 16px; }
+.pw-identity-type svg { width: 12px; height: 12px; flex: 0 0 12px; }
 .pw-media-carousel { container-type: inline-size; }
 
 .pw-cover-header { padding: 20px 24px 0; }

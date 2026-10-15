@@ -1,7 +1,7 @@
-import { BuildingFactory20Filled, People20Filled, Code20Filled, ShieldCheckmark20Filled, Person20Filled, Calendar20Filled, SportSoccer20Filled, LeafTwo20Filled, ClipboardTask20Filled, Lightbulb20Filled } from '@fluentui/react-icons';
+import { BuildingFactory20Filled, ShieldCheckmark20Filled, SportSoccer20Filled, LeafTwo20Filled, ClipboardTask20Filled, Lightbulb20Filled } from '@fluentui/react-icons';
 import { publicationRubric } from './publicationRubrics';
 
-const icons = { sport: SportSoccer20Filled, leaf: LeafTwo20Filled, factory: BuildingFactory20Filled, people: People20Filled, digital: Code20Filled, shield: ShieldCheckmark20Filled, person: Person20Filled, calendar: Calendar20Filled, audit: ClipboardTask20Filled, project: Lightbulb20Filled };
+const icons = { sport: SportSoccer20Filled, leaf: LeafTwo20Filled, factory: BuildingFactory20Filled, shield: ShieldCheckmark20Filled, audit: ClipboardTask20Filled, project: Lightbulb20Filled };
 export function RubricIcon({ rubric }) {
   const Icon = icons[rubric.icon];
   return <Icon aria-hidden="true" />;

@@ -5,6 +5,7 @@ import { ChevronLeft24Regular, ChevronRight24Regular, Dismiss24Regular, FullScre
 import { ASSET, PHOTO_STATUSES, videoEmbed } from './data';
 import { cardImages } from './cardAppearance';
 import { publicationMediaPosition } from './publicationMediaFraming';
+import { PUBLICATION_TYPES, publicationRubric } from './publicationRubrics';
 import './PublicationMedia.css';
 import useSwipeRail from './useSwipeRail';
 
@@ -134,7 +135,7 @@ export default function PublicationMedia({ post, cover, headerControls = false, 
     <button className="pw-media-expand" aria-label="Открыть медиа на весь экран" onClick={() => open()}><FullScreenMaximize20Regular /></button>
   </div>;
   return <>
-    <div ref={carousel} className={`pw-media-carousel ${cover ? 'is-cover' : ''} ${post.type === 'audit' ? 'is-audit' : ''} ${items.length > 1 ? 'has-many' : ''}`} {...slideshow.handlers} data-media-backdrop={post.mediaBackdrop} data-autoplay-state={slideshow.state} role={items.length > 1 ? 'region' : undefined} aria-roledescription={items.length > 1 ? 'Карусель' : undefined} aria-label={items.length > 1 ? `Медиа: ${post.title}` : undefined}>
+    <div ref={carousel} className={`pw-media-carousel ${cover ? 'is-cover' : ''} ${post.type === 'audit' ? 'is-audit' : ''} ${items.length > 1 ? 'has-many' : ''}`} {...slideshow.handlers} data-post-type={post.type} data-media-backdrop={post.mediaBackdrop} data-autoplay-state={slideshow.state} role={items.length > 1 ? 'region' : undefined} aria-roledescription={items.length > 1 ? 'Карусель' : undefined} aria-label={items.length > 1 ? `Медиа: ${post.title}` : undefined}>
       <div className="pw-carousel-stage" onKeyDown={e => { if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); } }}>
         <div ref={rail.ref} className="pw-carousel-rail pw-swipe-rail" {...rail.handlers}>{items.map((media, i) => <div className="pw-carousel-slide" key={`${media.kind}-${media.id}-${i}`}>
           {media.kind === 'image' ? <button className="pw-carousel-image" onClick={() => onImageClick ? onImageClick() : open(i)} aria-label={onImageClick ? `Открыть статью: ${post.title}` : `Открыть изображение ${i + 1} из ${items.length}`} tabIndex={i === index ? 0 : -1}><MediaImage src={media.src} alt={media.caption || post.title} /></button> : <Video item={media} title={post.title} active={i === index} onPlay={cover ? () => open(i) : undefined} />}
@@ -152,7 +153,7 @@ export default function PublicationMedia({ post, cover, headerControls = false, 
               {items.map((media, i) => hasAuditNote(media, i) && <div key={`note-${media.id}-${i}`} className={`pw-cover-photo-info pw-cover-audit-note ${i === index ? 'is-active' : ''}`} inert={i !== index} aria-hidden={i !== index}><PhotoInfo photo={media} /></div>)}
             </div>
           </div>
-          <div className="pw-rubric-band" aria-hidden="true" />
+          {(PUBLICATION_TYPES[post.type] || publicationRubric(post)) && <div className="pw-rubric-band" aria-hidden="true" />}
         </div>}
         {!headerControls && <div className="pw-media-corner-actions">{mediaActions}</div>}
         {timeline}
