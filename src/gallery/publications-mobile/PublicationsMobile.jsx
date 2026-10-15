@@ -19,7 +19,7 @@ import { initialComments } from '../publications-web/publicationContent';
 import { INITIAL_POSTS, titleOf } from '../publications-web/data';
 import { INITIAL_CHANNEL } from '../publications-web/channelData';
 import { publicationChannels, publicationChannelId } from '../publications-web/publicationChannelsData';
-import { hasCoverMedia } from '../publications-web/cardAppearance';
+import { hasCoverMedia, isFeedPublication } from '../publications-web/cardAppearance';
 import { rubricStyle } from '../publications-web/publicationRubrics';
 import { commentCount } from './mobileDiscussion';
 import MobileSheet from './MobileSheet';
@@ -56,7 +56,7 @@ function MobileExperience() {
   const isFeed = location.pathname === '/posts', isEvent = location.pathname === '/event';
   const selectedChannel = channels.find(channel => channel.id === filter);
   const followed = new Set(channels.filter(channel => channel.subscribed).map(channel => channel.id));
-  const visiblePosts = posts.filter(post => hasCoverMedia(post) && followed.has(publicationChannelId(post, own)) && (!filter || publicationChannelId(post, own) === filter) && `${titleOf(post)} ${post.lead}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => (priority[a.id] ?? 6) - (priority[b.id] ?? 6));
+  const visiblePosts = posts.filter(post => isFeedPublication(post) && followed.has(publicationChannelId(post, own)) && (!filter || publicationChannelId(post, own) === filter) && `${titleOf(post)} ${post.lead}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => (priority[a.id] ?? 6) - (priority[b.id] ?? 6));
   const sheetPost = posts.find(post => post.id === sheet?.postId);
   const notice = text => { clearTimeout(toastTimer.current); setToast(text); toastTimer.current = setTimeout(() => setToast(''), 2600); };
   const change = (key, id, value) => setSaved(current => ({ ...current, [key]: { ...current[key], [id]: value } }));

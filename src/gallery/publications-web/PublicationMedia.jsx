@@ -5,7 +5,7 @@ import { ChevronLeft24Regular, ChevronRight24Regular, Dismiss24Regular, FullScre
 import { ASSET, PHOTO_STATUSES, videoEmbed } from './data';
 import { cardImages } from './cardAppearance';
 import { publicationMediaPosition } from './publicationMediaFraming';
-import { PUBLICATION_TYPES, publicationRubric } from './publicationRubrics';
+import { publicationRubric } from './publicationRubrics';
 import './PublicationMedia.css';
 import useSwipeRail from './useSwipeRail';
 
@@ -153,7 +153,7 @@ export default function PublicationMedia({ post, cover, headerControls = false, 
               {items.map((media, i) => hasAuditNote(media, i) && <div key={`note-${media.id}-${i}`} className={`pw-cover-photo-info pw-cover-audit-note ${i === index ? 'is-active' : ''}`} inert={i !== index} aria-hidden={i !== index}><PhotoInfo photo={media} /></div>)}
             </div>
           </div>
-          {(PUBLICATION_TYPES[post.type] || publicationRubric(post)) && <div className="pw-rubric-band" aria-hidden="true" />}
+          {publicationRubric(post) && <div className="pw-rubric-band" aria-hidden="true" />}
         </div>}
         {!headerControls && <div className="pw-media-corner-actions">{mediaActions}</div>}
         {timeline}

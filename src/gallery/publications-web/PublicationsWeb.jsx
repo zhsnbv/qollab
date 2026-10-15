@@ -21,7 +21,7 @@ import { addFeedSamples, FEED_SAMPLE_BATCH, MORE_FEED_POSTS } from './feedSample
 import { addProductionImprovement, IMPROVEMENT_SAMPLE_BATCH, PRODUCTION_IMPROVEMENT } from './productionImprovement';
 import { loadReview, saveReview } from './storage';
 import { documentText } from './blockDocument';
-import { hasCoverMedia } from './cardAppearance';
+import { hasCoverMedia, isFeedPublication } from './cardAppearance';
 import './PublicationsWeb.css';
 import './PublicationDocument.css';
 import './PublicationPolish.css';
@@ -102,8 +102,8 @@ function WebReview() {
   const channelHeader = canManageChannel ? { ...channel, id: OWN_CHANNEL_ID } : { ...INITIAL_CHANNEL, ...activeChannel, description: activeChannel.about || '', members: [], archived: false };
   const followedIds = new Set(channels.filter(item => item.subscribed).map(item => item.id));
   const filtered = posts.filter(post => {
-    // Hide media-free examples only in the main feed; keep them editable in channels.
-    if (page === 'feed' && !hasCoverMedia(post)) return false;
+    // Temporarily show only regular media articles in the feed; keep all types in channels.
+    if (page === 'feed' && !isFeedPublication(post)) return false;
     const id = publicationChannelId(post, channel);
     const inChannel = page === 'channel' ? id === activeChannel.id : followedIds.has(id) && (!feedChannelId || id === feedChannelId);
     return inChannel && `${titleOf(post)} ${post.lead || ''}`.toLowerCase().includes(query.toLowerCase());

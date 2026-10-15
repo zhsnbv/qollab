@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PUBLICATION_RUBRICS, publicationRubric, rubricStyle, rubricValue } from './publicationRubrics.js';
+import { isFeedPublication } from './cardAppearance.js';
 import { normalizeArticleResult } from './assistantArticle.js';
 
 test('historical invented labels are hidden without mutating saved posts', () => {
@@ -29,12 +30,22 @@ test('Canva taxonomy contains exactly the four agreed editorial rubrics', () => 
   assert.deepEqual(PUBLICATION_RUBRICS.map(item => item.value), ['sport', 'safety', 'production', 'ecology']);
 });
 
-test('post type styling takes precedence over saved rubric without relabeling the article', () => {
+test('paused publication types retain their content without special cover styling', () => {
   const audit = Object.freeze({ type: 'audit', rubric: 'safety' });
   const project = Object.freeze({ type: 'project', rubric: 'safety' });
   assert.equal(publicationRubric(audit), undefined);
   assert.equal(publicationRubric(project), undefined);
-  assert.notEqual(rubricStyle(audit)['--pw-rubric-band'], rubricStyle(project)['--pw-rubric-band']);
-  assert.equal(rubricStyle(audit)['--pw-cover-title'], '#fff');
+  assert.deepEqual(rubricStyle(audit), {});
+  assert.deepEqual(rubricStyle(project), {});
   assert.equal(audit.rubric, 'safety');
+});
+
+test('feed temporarily excludes audit and project types without deleting or changing them', () => {
+  const image = { id: 'photo', src: '/image.webp' };
+  const posts = ['news', 'audit', 'project'].map(type => Object.freeze({ type, images: [image] }));
+  assert.deepEqual(posts.filter(isFeedPublication).map(post => post.type), ['news']);
+  assert.equal(posts.length, 3);
+  assert.equal(posts[1].images[0], image);
+  assert.equal(isFeedPublication({ type: 'news', images: [] }), false);
+  assert.equal(isFeedPublication({ type: 'news', videos: [{ url: 'https://youtu.be/video' }] }), true);
 });

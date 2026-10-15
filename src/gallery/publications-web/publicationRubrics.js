@@ -9,8 +9,8 @@ export const PUBLICATION_RUBRICS = [
 // Historical labels are not editorial rubrics. Keep the saved content intact,
 // but never invent a Canva rubric on behalf of the editor.
 export const PUBLICATION_TYPES = {
-  audit: { label: 'Обход', icon: 'audit', accent: '#5d9edb', ink: '#225b94', tint: '#e9f3ff', title: '#fff', band: 'linear-gradient(105deg, #a7d5f4 0%, #4b91cb 55%, #24639c 100%)' },
-  project: { label: 'Проект-улучшение', icon: 'project', accent: '#60ad87', ink: '#26704d', tint: '#e6f5ed', title: '#fff', band: 'linear-gradient(105deg, #b3ddc4 0%, #58a77d 55%, #2b7753 100%)' },
+  audit: { label: 'Обход', icon: 'audit' },
+  project: { label: 'Проект-улучшение', icon: 'project' },
 };
 const exampleRubrics = {
   news: 'production', gallery: 'production', text: 'production', video: 'production', file: 'safety',
@@ -25,6 +25,6 @@ export function rubricValue(post) {
 }
 export function publicationRubric(post) { return !PUBLICATION_TYPES[post.type] ? PUBLICATION_RUBRICS.find(rubric => rubric.value === rubricValue(post)) : undefined; }
 export function rubricStyle(post) {
-  const rubric = PUBLICATION_TYPES[post.type] || publicationRubric(post);
+  const rubric = publicationRubric(post);
   return rubric ? { '--pw-rubric-accent': rubric.accent, '--pw-rubric-ink': rubric.ink, '--pw-rubric-tint': rubric.tint, '--pw-cover-title': rubric.title, '--pw-rubric-band': rubric.band } : {};
 }

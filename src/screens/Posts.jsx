@@ -11,6 +11,7 @@ import { channelScopes } from '../data/channels';
 import { useChannels } from '../context/ChannelsContext';
 import ScreenMenu from '../components/ScreenMenu';
 import { usePublications } from '../components/publications/usePublications';
+import { isFeedPublication } from '../gallery/publications-web/cardAppearance';
 import './Posts.css';
 
 const BATCH = 8;
@@ -52,7 +53,7 @@ export default function Posts() {
     ...subscribed.map(c => ({ id: c.id, name: c.name, img: c.avatar, fit: c.fit })),
   ];
   const selectedChannel = subscribed.find(c => c.id === channel);
-  const myPosts = allPosts.filter(p => subscribed.some(c => c.id === p.channelId) && (p.images.length || p.videos.length));
+  const myPosts = allPosts.filter(p => subscribed.some(c => c.id === p.channelId) && isFeedPublication(p));
   const filteredPosts = selectedChannel ? myPosts.filter(p => p.channelId === selectedChannel.id) : myPosts;
   const posts = filteredPosts.slice(0, extraCount);
   const postsDone = extraCount >= filteredPosts.length;

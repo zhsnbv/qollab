@@ -21,3 +21,9 @@ export function cardImages(post, cover = false) {
   const selected = cover ? coverImage(post) : null;
   return selected ? [selected, ...images.filter(image => image !== selected)] : images;
 }
+
+// Temporarily show regular articles only. Keep other types in channels and
+// addressable readers/editors; filtering must never delete saved publications.
+export function isFeedPublication(post) {
+  return !['audit', 'project'].includes(post.type) && hasCoverMedia(post);
+}
