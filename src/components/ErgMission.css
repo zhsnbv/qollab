@@ -1,16 +1,42 @@
-/* WidgetCard owns the shared 341px height; reserve art space before loading. */
-.erg-mission {
-  height: 100%; min-height: 0; container-type: inline-size;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 8px; padding: 8px 12px;
+/* The shared WidgetCard keeps every mobile card exactly 341px high. */
+.erg-mission { height: 100%; min-height: 0; container-type: inline-size; display: flex; flex-direction: column; gap: 8px; padding: 8px 12px; }
+.erg-values-slot { flex: none; width: 100%; }
+.erg-values { position: relative; width: 100%; height: 230px; isolation: isolate; }
+.erg-values-logo { position: absolute; z-index: -1; width: 255px; height: 230px; left: 50%; top: 0; transform: translateX(-50%); object-fit: contain; }
+.erg-value { position: absolute; display: flex; flex-direction: column; align-items: center; }
+.erg-value-icon { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex: none; }
+.erg-value-icon > img { position: absolute; max-width: none; }
+.erg-value-icon--inner { border-radius: 50%; background: #ef7f1a; box-shadow: inset 0 0 0 1px #ffffff80, inset 0 0 8px #f2f2f2, 0 1px 8px #0000001a; }
+.erg-value-label { position: relative; margin-top: -4px; padding: 8px 12px; border-radius: 100px; background: var(--color-white, var(--surface, white)); color: var(--color-text, var(--text, #333)); box-shadow: 0 1px 8px #0000001a, 0 0 2px #0000001a; font-size: 12px; line-height: 1; white-space: nowrap; }
+.erg-value--safety { top: 0; left: 50%; transform: translateX(-50%); }
+.erg-value--efficiency { top: 69px; left: 0; }
+.erg-value--unity { top: 66px; right: 0; }
+.erg-value--development { top: 156px; left: 15%; }
+.erg-value--responsibility { top: 150px; right: 0; }
+.erg-mission .erg-values { height: 158px; }
+.erg-mission .erg-values-logo { width: 190px; height: 171px; top: -4px; }
+.erg-mission .erg-value-icon { width: 32px; height: 32px; }
+.erg-mission .erg-value-icon > img { transform: scale(.76); }
+.erg-mission .erg-value-label { font-size: 11px; padding: 6px 8px; margin-top: -2px; }
+.erg-mission .erg-value--efficiency, .erg-mission .erg-value--unity { top: 45px; }
+.erg-mission .erg-value--development, .erg-mission .erg-value--responsibility { top: 102px; }
+.erg-mission .erg-value--development { left: 12%; }
+.erg-mission-copy { margin: 0; color: var(--color-text); opacity: .75; font-size: 12px; line-height: 1.4; text-align: center; }
+@container (max-width: 270px) {
+  .erg-mission .erg-values { height: 140px; }
+  .erg-mission .erg-value--development, .erg-mission .erg-value--responsibility { top: 86px; }
+  .erg-mission .erg-value--efficiency, .erg-mission .erg-value--unity { top: 36px; }
+  .erg-mission .erg-value-label { font-size: 10.5px; padding: 5px 6px; }
+  .erg-mission .erg-values-logo { width: 160px; height: 144px; }
+  .erg-mission-copy { font-size: 11.5px; }
 }
-.erg-mission-art {
-  display: block; flex: none; width: 100%; height: clamp(112px, 52cqi, 166px);
-  object-fit: contain;
-}
-.erg-mission-copy {
-  margin: 0; flex: none; color: var(--color-text); opacity: .75;
-  font-size: 12px; line-height: 1.4; text-align: center;
-}
-
-html[data-theme='dark'] .erg-mission-art { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
+/* Separate transparent mark keeps original icon colors in dark mode. */
+.erg-values-mark { display: none; position: absolute; z-index: -1; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 80px; height: 69px; object-fit: contain; }
+html[data-theme='dark'] .erg-values-logo, .pw-source-shell[data-theme='dark'] .erg-values-logo { display: none; }
+html[data-theme='dark'] .erg-values-mark, .pw-source-shell[data-theme='dark'] .erg-values-mark { display: block; }
+html[data-theme='dark'] .erg-values, .pw-source-shell[data-theme='dark'] .erg-values { background: radial-gradient(ellipse 32% 35% at center, #ef7f1a22, transparent); }
+.erg-mission .erg-values-mark { width: 65px; height: 56px; }
+.pw-source-shell .erg-values { max-width: 316px; }
+.pw-source-shell .erg-value-label { background: var(--surface, white); color: var(--text, #333); }
+/* Figma's logo fill includes white; screen removes it after dark adaptation. */
+html[data-theme='dark'] .erg-values-mark, .pw-source-shell[data-theme='dark'] .erg-values-mark { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }

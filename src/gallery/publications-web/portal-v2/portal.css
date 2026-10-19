@@ -2750,10 +2750,7 @@
 /* ERG mission, Figma 7241:2511. Also used by cloned widget previews/drawer. */
 .pw-source-shell .mission-card { height: auto; padding-bottom: 16px; }
 .pw-source-shell .erg-mission-web { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 11px 0; }
-.pw-source-shell .erg-mission-web > img { display: block; width: 100%; max-width: 316px; height: auto; aspect-ratio: 316 / 231; object-fit: contain; }
-.pw-source-shell .erg-mission-web > h3 { margin: 4px 0 0; color: var(--text, #333); font-size: 16px; line-height: 1.2; font-weight: 600; }
 .pw-source-shell .erg-mission-web > p { position: static; margin: 0; font-size: 13px; line-height: 1.4; color: var(--muted, rgba(0,0,0,.65)); }
 .pw-source-shell[data-theme="dark"] .mission-card::after { content: none; }
 
 .pw-source-shell .erg-mission-web > p { color: var(--text, #333); opacity: .75; }
-.pw-source-shell[data-theme="dark"] .erg-mission-web > img { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }

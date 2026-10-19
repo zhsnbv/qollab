@@ -5,6 +5,7 @@ import markup from './portal-v2/shell.html?raw';
 import { initializePortal } from './portal-v2/portalRuntime';
 import './portal-v2/portal.css';
 import './PortalShell.css';
+import '../../components/ErgMission.css';
 
 export default function PortalShell({ page, query, onSearch, onNavigate, channelsContent, children }) {
   const root = useRef(null), runtime = useRef(null), callbacks = useRef({ onSearch, onNavigate });
