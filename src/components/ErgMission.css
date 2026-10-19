@@ -6,7 +6,7 @@
 .erg-value { position: absolute; display: flex; flex-direction: column; align-items: center; }
 .erg-value-icon { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex: none; }
 .erg-value-icon > img { position: absolute; max-width: none; }
-.erg-value-icon--inner { border-radius: 50%; background: #ef7f1a; box-shadow: inset 0 0 0 1px #ffffff80, inset 0 0 8px #f2f2f2, 0 1px 8px #0000001a; }
+.erg-value-icon--inner { border-radius: 50%; background: #ef7f1a; box-shadow: none; }
 .erg-value-label { position: relative; margin-top: -4px; padding: 8px 12px; border-radius: 100px; background: var(--color-white, var(--surface, white)); color: var(--color-text, var(--text, #333)); box-shadow: 0 1px 8px #0000001a, 0 0 2px #0000001a; font-size: 12px; line-height: 1; white-space: nowrap; }
 .erg-value--safety { top: 0; left: 50%; transform: translateX(-50%); }
 .erg-value--efficiency { top: 69px; left: 0; }
@@ -30,17 +30,12 @@
   .erg-mission .erg-values-logo { width: 160px; height: 144px; }
   .erg-mission-copy { font-size: 11.5px; }
 }
-/* Separate transparent mark keeps original icon colors in dark mode. */
-.erg-values-mark { display: none; position: absolute; z-index: -1; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 80px; height: 69px; object-fit: contain; }
-html[data-theme='dark'] .erg-values-logo, .pw-source-shell[data-theme='dark'] .erg-values-logo { display: none; }
-html[data-theme='dark'] .erg-values-mark, .pw-source-shell[data-theme='dark'] .erg-values-mark { display: block; }
-html[data-theme='dark'] .erg-values, .pw-source-shell[data-theme='dark'] .erg-values { background: radial-gradient(ellipse 32% 35% at center, #ef7f1a22, transparent); }
-.erg-mission .erg-values-mark { width: 65px; height: 56px; }
+/* One logo image only. Scope themes to the actual mobile/web surface. */
 .pw-source-shell .erg-values { max-width: 316px; }
 .pw-source-shell .erg-value-label { background: var(--surface, white); color: var(--text, #333); }
-/* Figma's logo fill includes white; screen removes it after dark adaptation. */
-html[data-theme='dark'] .erg-values-mark, .pw-source-shell[data-theme='dark'] .erg-values-mark { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
-html[data-theme='dark'] .erg-values { background-color: var(--color-white); }
+html[data-theme='dark'] .erg-mission .erg-values { background-color: var(--color-white); }
+html[data-theme='dark'] .erg-mission .erg-values-logo { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
 .pw-source-shell[data-theme='dark'] .erg-values { background-color: var(--surface); }
-.erg-values-mark { z-index: 0; }
+.pw-source-shell[data-theme='dark'] .erg-values-logo { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
+.erg-values-logo { z-index: 0; }
 .erg-value { z-index: 1; }

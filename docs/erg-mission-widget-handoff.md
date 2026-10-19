@@ -13,6 +13,8 @@
 
 ## Веб
 
+Боковые отступы содержимого — 22 px. У оранжевых окружностей удалены составные SVG-фильтры и внутренние обводки.
+
 - Правая колонка главной /handoff/publications-web, постоянный виджет mission.
 - Композиция до 316 px шириной и 230 px высотой. Иконки 42 px, подписи 12 px. Текст миссии 13 px / 1.4.
 - Высота карточки по содержимому, примерно 415 px при ширине 340 px.
@@ -24,7 +26,7 @@
 - src/components/ErgValues.html — разметка композиции; такая же разметка в веб-shell.html.
 - src/gallery/publications-web/portal-v2/shell.html, portal.css — веб-версия.
 - src/gallery/publications-web/PortalShell.jsx подключает общие стили.
-- public/img/erg/: safety.svg, unity.svg, efficiency.svg, development.svg, responsibility.svg; logo.png — светлый логотип с декором; logo-mark.png — отдельный логотип для тёмной темы.
+- public/img/erg/: safety.svg, unity.svg, efficiency.svg, development.svg, responsibility.svg; logo.png — единственный логотип с декором; второй логотип из разметки удалён.
 - Подписи — живой текст. Ценности информационные, не кнопки. Оригинальные цвета иконок сохраняются в обеих темах. Временных Figma URL нет.
 
 ## Приёмка
