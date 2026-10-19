@@ -39,3 +39,4 @@ html[data-theme='dark'] .erg-mission .erg-values-logo { filter: invert(1) hue-ro
 .pw-source-shell[data-theme='dark'] .erg-values-logo { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
 .erg-values-logo { z-index: 0; }
 .erg-value { z-index: 1; }
+.pw-source-shell .erg-value-label { padding-inline: 8px; }
