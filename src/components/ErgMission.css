@@ -40,3 +40,7 @@ html[data-theme='dark'] .erg-values, .pw-source-shell[data-theme='dark'] .erg-va
 .pw-source-shell .erg-value-label { background: var(--surface, white); color: var(--text, #333); }
 /* Figma's logo fill includes white; screen removes it after dark adaptation. */
 html[data-theme='dark'] .erg-values-mark, .pw-source-shell[data-theme='dark'] .erg-values-mark { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
+html[data-theme='dark'] .erg-values { background-color: var(--color-white); }
+.pw-source-shell[data-theme='dark'] .erg-values { background-color: var(--surface); }
+.erg-values-mark { z-index: 0; }
+.erg-value { z-index: 1; }
