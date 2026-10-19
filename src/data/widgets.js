@@ -11,7 +11,7 @@ export const widgetList = [
     title: 'Миссия и ценности',
     icon: 'Book',
     user: false,
-    companies: ['integra'],
+    companies: ['integra', 'erg'],
   },
   {
     id: 'mail',

@@ -1,0 +1,16 @@
+/* WidgetCard owns the shared 341px height; reserve art space before loading. */
+.erg-mission {
+  height: 100%; min-height: 0; container-type: inline-size;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; padding: 8px 12px;
+}
+.erg-mission-art {
+  display: block; flex: none; width: 100%; height: clamp(112px, 52cqi, 166px);
+  object-fit: contain;
+}
+.erg-mission-copy {
+  margin: 0; flex: none; color: var(--color-text); opacity: .75;
+  font-size: 12px; line-height: 1.4; text-align: center;
+}
+
+html[data-theme='dark'] .erg-mission-art { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }

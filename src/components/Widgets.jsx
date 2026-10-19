@@ -13,6 +13,8 @@ import { Headset, UserFocus } from '@phosphor-icons/react';
 import { useWidgets } from '../context/WidgetsContext';
 import Toast from './Toast';
 import IntegraMission from './IntegraMission';
+import ErgMission from './ErgMission';
+import { useCompany } from '../context/CompanyContext';
 import { widgetData, usefulLinks } from '../data/widgets';
 import './Widgets.css';
 
@@ -161,7 +163,8 @@ export function Timeline({ list, now, onRow }) {
 // Тело каждого виджета своё: виджет тем и полезен, что показывает суть сервиса,
 // а не одинаковую плашку со счётчиком.
 function Body({ id, now, onRow }) {
-  if (id === 'mission') return <IntegraMission />;
+  const { companyId } = useCompany();
+  if (id === 'mission') return companyId === 'erg' ? <ErgMission /> : <IntegraMission />;
   if (id === 'meet') {
     const list = widgetData.meetings;
     if (!list.length) return <div className="wg-msg"><b>На сегодня встреч нет</b></div>;
