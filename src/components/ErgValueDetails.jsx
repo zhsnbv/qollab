@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { Dismiss20Regular } from '@fluentui/react-icons';
 import Portal from './Portal';
 import useSheetSwipe from '../utils/useSheetSwipe';
 import './ErgValueDetails.css';
@@ -82,7 +83,7 @@ export default function ErgValueDetails({ valueId, trigger, onClose, web = false
         <img className={`erg-detail-glyph ${glyph ? '' : 'erg-detail-glyph--small'}`} src={`/img/erg/${valueId}${glyph ? '-glyph' : ''}.svg`} alt="" />
         {!web && <span className="erg-detail-grab" />}
       </div>
-      <button type="button" className="erg-detail-close" onClick={onClose} aria-label="Закрыть">×</button>
+      <button type="button" className="erg-detail-close" onClick={onClose} aria-label="Закрыть">{web ? <Dismiss20Regular aria-hidden="true" /> : '×'}</button>
       <div className="erg-detail-copy">
         <h2 id={titleId}>{value.title}</h2>
         <p id={textId}>{value.text}</p>
