@@ -2747,7 +2747,7 @@
 .pw-source-shell .chat-reaction-chip.is-mine { border-color: var(--orange); background: var(--orange-soft); }
 .pw-source-shell .pw-chat-selected .chat-bubble, .pw-source-shell .pw-chat-selected .header-chat-internal-bubble { outline: 2px solid var(--orange); outline-offset: 3px; }
 
-/* ERG orbital widget; cloned previews and the drawer share this markup. */
+/* ERG Figma widget; cloned previews and the drawer share this markup. */
 .pw-source-shell .mission-card { height: auto; padding-bottom: 0; }
-.pw-source-shell .erg-mission-web { display: grid; place-items: center; padding: 8px 22px 10px; }
+.pw-source-shell .erg-mission-web { display: grid; place-items: center; padding: 16px 22px; }
 .pw-source-shell[data-theme="dark"] .mission-card::after { content: none; }

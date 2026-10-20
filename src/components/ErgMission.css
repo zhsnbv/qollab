@@ -1,124 +1,83 @@
-/* WidgetCard stays 341px tall. The illustration fills its existing body. */
-.erg-mission { height: 100%; min-height: 0; padding: 8px 12px; }
-.erg-values-slot { height: 100%; width: 100%; }
+/* Shared Figma composition 8106:41088. Mobile WidgetCard remains 341px. */
+.erg-mission { height: 100%; min-height: 0; display: grid; align-items: center; padding: 12px; }
+.erg-values-slot { width: 100%; container-type: inline-size; }
 .erg-values {
-  --erg-ink: #413a35;
-  --erg-card: #fff;
-  --erg-line: #ef7f1a26;
-  --erg-edge: #eddfd34d;
-  --erg-shadow: #7848200d;
+  --erg-label: #fff;
+  --erg-text: #000;
   position: relative;
   isolation: isolate;
   width: 100%;
-  height: 272px;
-  max-width: 340px;
+  max-width: 316px;
+  height: 230.152px;
   margin-inline: auto;
-  color: var(--erg-ink);
 }
-.erg-values::before {
-  content: '';
-  position: absolute;
-  inset: 48px 18px 16px;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, #ef7f1a0d, #ef7f1a00 70%);
-  pointer-events: none;
-}
-.erg-orbits { position: absolute; inset: 0; pointer-events: none; }
-.erg-orbit { position: absolute; border: 1px solid var(--erg-line); border-radius: 50%; }
-.erg-orbit--outer { width: 76%; height: 224px; left: 12%; top: 24px; transform: rotate(-24deg); }
-.erg-orbit--inner { width: 87%; height: 166px; left: 6.5%; top: 66px; transform: rotate(24deg); opacity: .65; }
-.erg-orbit-spark {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #ef7f1a;
-  opacity: .65;
-  offset-path: ellipse(39% 39% at 50% 50%);
-  animation: erg-orbit-travel 42s linear infinite;
-}
-.erg-orbit-spark--two { width: 3px; height: 3px; opacity: .4; animation-delay: -21s; }
-.erg-values-core {
-  position: absolute;
-  left: 50%;
-  top: 162px;
-  transform: translate(-50%, -50%);
-  display: grid;
-  place-items: center;
-  width: 90px;
-  height: 72px;
-  pointer-events: none;
-}
-.erg-values-logo { display: block; width: 72px; height: 55px; overflow: visible; }
-/* Each badge follows a short orbital arc. Their lanes never exchange or
-   cross: long labels stay readable and touch targets stay predictable. */
-.erg-satellite { position: absolute; transform: translate(-50%, -50%); z-index: 1; }
-.erg-satellite--safety { left: 50%; top: 35px; --erg-phase: -2s; --erg-drift-x: 5px; --erg-drift-y: 3px; }
-.erg-satellite--efficiency { left: max(21%, 64px); top: 100px; --erg-phase: -5s; --erg-drift-x: 3px; --erg-drift-y: 4px; }
-.erg-satellite--unity { left: min(83%, calc(100% - 46px)); top: 100px; --erg-phase: -8s; --erg-drift-x: -4px; --erg-drift-y: 4px; }
-.erg-satellite--development { left: 23%; top: 222px; --erg-phase: -11s; --erg-drift-x: 4px; --erg-drift-y: -3px; }
-.erg-satellite--responsibility { left: min(74%, calc(100% - 66px)); top: 232px; --erg-phase: -14s; --erg-drift-x: -4px; --erg-drift-y: -3px; }
+/* Original color logo and its individual Figma effects, not a widget screenshot.
+   SVG images retain their intrinsic export dimensions. */
+.erg-values-logo { position: absolute; left: 50%; top: 82px; width: 67.755px; height: 66.152px; transform: translateX(-50%); pointer-events: none; }
+.erg-values-logo img { display: block; max-width: none; }
+.erg-logo-rings { position: absolute; left: -29.51px; top: .04px; width: 124.783px; height: 66.061px; }
+.erg-logo-rings img { position: absolute; left: -65.103px; top: -81.773px; }
+.erg-logo-rays { position: absolute; left: 2.36px; top: -4px; width: 43.093px; height: 43.093px; display: grid; place-items: center; }
+.erg-logo-rays img { width: 38.068px; height: 38.068px; object-fit: cover; transform: rotate(-8.17deg); opacity: .7; }
+.erg-logo-color { position: absolute; left: 14.547px; top: 7.743px; width: 49.501px; height: 50.366px; overflow: hidden; filter: blur(.587px); mask: url('/img/erg/figma/logo-mask.png') 0 0 / 49.501px 50.365px no-repeat; }
+.erg-logo-color img { position: absolute; width: 107.38%; height: 105.54%; left: -4.3%; top: -1.43%; }
+.erg-logo-highlight { position: absolute; display: grid; place-items: center; transform: translate(-50%, -50%); mix-blend-mode: hard-light; }
+.erg-logo-highlight > div { position: relative; transform: rotate(-12.48deg); mask-image: url('/img/erg/figma/logo-mask.png'); mask-repeat: no-repeat; mask-size: 49.501px 50.365px; }
+.erg-logo-highlight img { position: absolute; left: -9.124px; top: -9.124px; }
+.erg-logo-highlight--top { left: calc(50% - 1.72px); top: calc(50% - 14.81px); width: 30.113px; height: 15.043px; }
+.erg-logo-highlight--top > div { width: 28.845px; height: 9.023px; mask-position: -2.552px -3.004px; }
+.erg-logo-highlight--small { left: calc(50% - 1.58px); top: calc(50% - 13.33px); width: 12.329px; height: 6.159px; }
+.erg-logo-highlight--small > div { width: 11.81px; height: 3.694px; mask-position: -11.583px -8.924px; }
+.erg-logo-highlight--small img { left: -3.55px; top: -3.55px; }
+.erg-logo-highlight--bottom { left: calc(50% + 10.23px); top: calc(50% + 11.76px); width: 25.786px; height: 11.776px; }
+.erg-logo-highlight--bottom > div { width: 24.863px; height: 8.463px; transform: rotate(-7.84deg); mask-position: -16.668px -31.207px; }
+.erg-logo-wordmark { position: absolute; left: 5.7px; top: 31.66px; }
+.erg-satellite { position: absolute; z-index: 1; }
+.erg-satellite--safety { left: 50%; top: 0; transform: translateX(-50%); --erg-phase: -2s; }
+.erg-satellite--efficiency { left: 0; top: 69px; --erg-phase: -5s; }
+.erg-satellite--unity { right: 4.48%; top: 65.9px; --erg-phase: -8s; }
+.erg-satellite--development { left: 15.22%; top: 156.34px; --erg-phase: -11s; }
+.erg-satellite--responsibility { right: 6.08%; top: 149.76px; --erg-phase: -14s; }
 .erg-values .erg-value, .pw-source-shell .erg-values .erg-value {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  width: max-content;
-  padding: 5px 11px 6px;
-  margin: 0;
-  border: 1px solid var(--erg-edge);
-  border-radius: 19px;
-  background: var(--erg-card);
-  color: var(--erg-ink);
-  box-shadow: 0 4px 12px var(--erg-shadow);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  animation: erg-badge-float 16s linear var(--erg-phase) infinite;
-  transition: border-color .2s, box-shadow .2s, background .2s;
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none;
+  color: var(--erg-text); font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  animation: erg-value-float 16s ease-in-out var(--erg-phase) infinite;
 }
-.erg-values .erg-value-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 10px;
-  background: #ef7f1a;
+.erg-value-icon { position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex: none; border-radius: 50%; background: #ef7f1a; box-shadow: 0 1px 6px #0000001a; }
+.erg-value-icon::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px #ffe6cd99, inset 0 0 6px #ffddb580; pointer-events: none; }
+.erg-value-icon > img { position: absolute; max-width: none; }
+.erg-value-icon:not(.erg-value-icon--inner) > img { left: -8px; top: -7px; }
+.erg-value-label {
+  position: relative; margin-top: -4px; padding: 8px 12px; border-radius: 100px;
+  background: var(--erg-label); color: var(--erg-text);
+  box-shadow: 0 0 2px #0000001a, 0 1px 8px #0000001a;
+  font-family: var(--font-base, Inter, sans-serif); font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap;
+  transition: box-shadow .18s;
 }
-.erg-values .erg-value-icon > img { display: block; position: static; width: 30px; height: 30px; max-width: none; object-fit: contain; }
-.erg-satellite--development .erg-value-icon > img, .erg-satellite--responsibility .erg-value-icon > img { width: 17px; height: 17px; }
-.erg-values .erg-value-label { display: block; font: 500 12px/15px Inter, sans-serif; letter-spacing: -.15px; white-space: nowrap; }
-.erg-values .erg-value:hover { border-color: #ef7f1a70; box-shadow: 0 5px 16px #c1792420; }
-.erg-values .erg-value:focus-visible { outline: 2px solid #ef7f1a; outline-offset: 3px; }
-.erg-values .erg-value:active { background: #fff5eb; }
-.erg-values:focus-within .erg-value, .erg-values:focus-within .erg-orbit-spark,
-[inert] .erg-values .erg-value, [inert] .erg-values .erg-orbit-spark,
-.widget-preview .erg-values .erg-value, .widget-preview .erg-values .erg-orbit-spark { animation-play-state: paused; }
-@media (hover: hover) {
-  .erg-values:hover .erg-value, .erg-values:hover .erg-orbit-spark { animation-play-state: paused; }
+.pw-source-shell .erg-value-label { padding-inline: 8px; }
+.erg-values .erg-value:hover .erg-value-label { box-shadow: 0 0 2px #0000001a, 0 2px 10px #00000020; }
+.erg-values .erg-value:focus-visible { outline: 2px solid #ef7f1a; outline-offset: 4px; border-radius: 22px; }
+.erg-values:focus-within .erg-value, .widget-preview .erg-values .erg-value, [inert] .erg-values .erg-value { animation-play-state: paused; }
+@media (hover: hover) { .erg-values:hover .erg-value { animation-play-state: paused; } }
+/* Only a gentle drift; the Figma arrangement and silhouettes remain intact. */
+@keyframes erg-value-float { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(1px, 1.5px); } 50% { transform: translate(2px, 0); } 75% { transform: translate(1px, -1.5px); } }
+@container (max-width: 300px) {
+  .erg-satellite--unity { top: 71px; }
 }
-@keyframes erg-badge-float {
-  0%, 100% { transform: translate(var(--erg-drift-x), 0); }
-  12.5% { transform: translate(calc(var(--erg-drift-x) * .707), calc(var(--erg-drift-y) * .707)); }
-  25% { transform: translate(0, var(--erg-drift-y)); }
-  37.5% { transform: translate(calc(var(--erg-drift-x) * -.707), calc(var(--erg-drift-y) * .707)); }
-  50% { transform: translate(calc(-1 * var(--erg-drift-x)), 0); }
-  62.5% { transform: translate(calc(var(--erg-drift-x) * -.707), calc(var(--erg-drift-y) * -.707)); }
-  75% { transform: translate(0, calc(-1 * var(--erg-drift-y))); }
-  87.5% { transform: translate(calc(var(--erg-drift-x) * .707), calc(var(--erg-drift-y) * -.707)); }
+@container (max-width: 270px) {
+  .erg-value-label { padding-inline: 8px; font-size: 11px; }
+  .erg-satellite--safety { top: 2px; }
+  .erg-satellite--efficiency { top: 71px; }
+  .erg-satellite--unity { top: 72px; right: 2px; }
+  .erg-satellite--development { left: 6%; }
+  .erg-satellite--responsibility { right: 2px; }
+  .erg-values-logo { top: 108px; }
 }
-@keyframes erg-orbit-travel { to { offset-distance: 100%; } }
-html[data-theme='dark'] .erg-mission .erg-values,
-.pw-source-shell[data-theme='dark'] .erg-values {
-  --erg-ink: #f0e7de;
-  --erg-card: #302a25;
-  --erg-line: #ef7f1a30;
-  --erg-edge: #e9b5881a;
-  --erg-shadow: #0000001a;
-}
-html[data-theme='dark'] .erg-mission .erg-value:active,
-.pw-source-shell[data-theme='dark'] .erg-value:active { background: #423025; }
+html[data-theme='dark'] .erg-mission .erg-values, .pw-source-shell[data-theme='dark'] .erg-values { --erg-label: #302f2b; --erg-text: #f1eee8; }
+html[data-theme='dark'] .erg-mission .erg-logo-rings, .pw-source-shell[data-theme='dark'] .erg-logo-rings { opacity: .2; }
+html[data-theme='dark'] .erg-mission .erg-logo-wordmark, .pw-source-shell[data-theme='dark'] .erg-logo-wordmark { filter: invert(1); }
 @media (prefers-reduced-motion: reduce) {
-  .erg-values .erg-value, .pw-source-shell .erg-values .erg-value, .erg-values .erg-orbit-spark { animation: none; transition: none; }
+  .erg-values .erg-value, .pw-source-shell .erg-values .erg-value { animation: none; }
+  .erg-value-label { transition: none; }
 }
