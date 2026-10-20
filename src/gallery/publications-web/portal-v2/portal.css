@@ -2747,10 +2747,7 @@
 .pw-source-shell .chat-reaction-chip.is-mine { border-color: var(--orange); background: var(--orange-soft); }
 .pw-source-shell .pw-chat-selected .chat-bubble, .pw-source-shell .pw-chat-selected .header-chat-internal-bubble { outline: 2px solid var(--orange); outline-offset: 3px; }
 
-/* ERG mission, Figma 7241:2511. Also used by cloned widget previews/drawer. */
-.pw-source-shell .mission-card { height: auto; padding-bottom: 16px; }
-.pw-source-shell .erg-mission-web { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 22px 0; }
-.pw-source-shell .erg-mission-web > p { position: static; margin: 0; font-size: 13px; line-height: 1.4; color: var(--muted, rgba(0,0,0,.65)); }
+/* ERG orbital widget; cloned previews and the drawer share this markup. */
+.pw-source-shell .mission-card { height: auto; padding-bottom: 0; }
+.pw-source-shell .erg-mission-web { display: grid; place-items: center; padding: 8px 22px 10px; }
 .pw-source-shell[data-theme="dark"] .mission-card::after { content: none; }
-
-.pw-source-shell .erg-mission-web > p { color: var(--text, #333); opacity: .75; }

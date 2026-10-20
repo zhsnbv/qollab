@@ -1,4 +1,5 @@
 import ErgValueDetails from '../../components/ErgValueDetails';
+import ergValuesMarkup from '../../components/ErgValues.html?raw';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ConfigProvider, theme } from 'antd';
@@ -16,6 +17,7 @@ export default function PortalShell({ page, query, onSearch, onNavigate, channel
   useLayoutEffect(() => {
     const element = root.current;
     element.innerHTML = markup;
+    element.querySelectorAll('[data-erg-values-slot]').forEach(slot => { slot.innerHTML = ergValuesMarkup; });
     runtime.current = initializePortal(element, {
       onPage: next => callbacks.current.onNavigate(next),
       onSearch: value => callbacks.current.onSearch(value),
