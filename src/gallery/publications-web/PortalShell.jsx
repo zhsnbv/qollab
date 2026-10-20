@@ -1,3 +1,4 @@
+import ErgValueDetails from '../../components/ErgValueDetails';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ConfigProvider, theme } from 'antd';
@@ -8,6 +9,7 @@ import './PortalShell.css';
 import '../../components/ErgMission.css';
 
 export default function PortalShell({ page, query, onSearch, onNavigate, channelsContent, children }) {
+  const [selectedValue, setSelectedValue] = useState(null);
   const root = useRef(null), runtime = useRef(null), callbacks = useRef({ onSearch, onNavigate });
   const [slots, setSlots] = useState(null), [dark, setDark] = useState(false);
   useLayoutEffect(() => { callbacks.current = { onSearch, onNavigate }; });
@@ -30,7 +32,8 @@ export default function PortalShell({ page, query, onSearch, onNavigate, channel
   useLayoutEffect(() => { if (page !== 'editor') runtime.current?.selectPage(page); }, [page]);
   useLayoutEffect(() => { runtime.current?.setSearch(query); }, [query]);
   return <>
-    <div ref={root} className="pw-source-shell concept-v2" hidden={page === 'editor'} />
+    {selectedValue && <ErgValueDetails valueId={selectedValue.id} trigger={selectedValue.trigger} onClose={() => setSelectedValue(null)} web dark={dark} />}
+    <div onClick={e => { const button = e.target.closest("[data-erg-value]"); if (button) setSelectedValue({ id: button.dataset.ergValue, trigger: button }); }} ref={root} className="pw-source-shell concept-v2" hidden={page === 'editor'} />
     {slots && page !== 'editor' && createPortal(<ConfigProvider theme={{ algorithm: dark ? theme.darkAlgorithm : theme.defaultAlgorithm }}><div className={`pw-app pw-embedded pw-feed-channels-surface ${dark ? 'pw-dark' : ''}`}>{channelsContent}</div></ConfigProvider>, slots.stories)}
     {slots && page !== 'editor' && createPortal(<ConfigProvider theme={{ algorithm: dark ? theme.darkAlgorithm : theme.defaultAlgorithm }}><div className={`pw-app pw-embedded ${dark ? 'pw-dark' : ''}`}>{children}</div></ConfigProvider>, page === 'reader' ? slots.reader : slots.feed)}
   </>;
