@@ -1,0 +1,623 @@
+{
+  "task": "QM-1947",
+  "approvedAt": "2026-10-30",
+  "frame": {
+    "width": 402,
+    "height": 820
+  },
+  "section": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26338-74935",
+  "frames": [
+    {
+      "id": "01-chats-light",
+      "state": "chats",
+      "title": "Чаты · непрочитанные ветки",
+      "flow": "Вход и создание",
+      "theme": "light",
+      "nodeId": "26343:76218",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-76218"
+    },
+    {
+      "id": "01-chats-dark",
+      "state": "chats",
+      "title": "Чаты · непрочитанные ветки",
+      "flow": "Вход и создание",
+      "theme": "dark",
+      "nodeId": "26343:76372",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-76372"
+    },
+    {
+      "id": "02-group-light",
+      "state": "group",
+      "title": "Группа · корневое сообщение",
+      "flow": "Вход и создание",
+      "theme": "light",
+      "nodeId": "26343:76528",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-76528"
+    },
+    {
+      "id": "02-group-dark",
+      "state": "group",
+      "title": "Группа · корневое сообщение",
+      "flow": "Вход и создание",
+      "theme": "dark",
+      "nodeId": "26343:76618",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-76618"
+    },
+    {
+      "id": "03-create-menu-light",
+      "state": "create-menu",
+      "title": "Ответить в ветке",
+      "flow": "Вход и создание",
+      "theme": "light",
+      "nodeId": "26343:76710",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-76710"
+    },
+    {
+      "id": "03-create-menu-dark",
+      "state": "create-menu",
+      "title": "Ответить в ветке",
+      "flow": "Вход и создание",
+      "theme": "dark",
+      "nodeId": "26343:76871",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-76871"
+    },
+    {
+      "id": "04-thread-empty-light",
+      "state": "thread-empty",
+      "title": "Новая ветка",
+      "flow": "Вход и создание",
+      "theme": "light",
+      "nodeId": "26343:77034",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77034"
+    },
+    {
+      "id": "04-thread-empty-dark",
+      "state": "thread-empty",
+      "title": "Новая ветка",
+      "flow": "Вход и создание",
+      "theme": "dark",
+      "nodeId": "26343:77111",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77111"
+    },
+    {
+      "id": "05-compose-empty-light",
+      "state": "compose-empty",
+      "title": "Ввод · пустое поле",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:77190",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77190"
+    },
+    {
+      "id": "05-compose-empty-dark",
+      "state": "compose-empty",
+      "title": "Ввод · пустое поле",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:77267",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77267"
+    },
+    {
+      "id": "06-compose-light",
+      "state": "compose",
+      "title": "Ответ только в ветку",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:77346",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77346"
+    },
+    {
+      "id": "06-compose-dark",
+      "state": "compose",
+      "title": "Ответ только в ветку",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:77423",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77423"
+    },
+    {
+      "id": "07-compose-group-light",
+      "state": "compose-group",
+      "title": "Ответ в ветку и группу",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:77502",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77502"
+    },
+    {
+      "id": "07-compose-group-dark",
+      "state": "compose-group",
+      "title": "Ответ в ветку и группу",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:77581",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77581"
+    },
+    {
+      "id": "08-sending-light",
+      "state": "sending",
+      "title": "Ответ отправляется",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:77662",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77662"
+    },
+    {
+      "id": "08-sending-dark",
+      "state": "sending",
+      "title": "Ответ отправляется",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:77750",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77750"
+    },
+    {
+      "id": "09-sent-private-light",
+      "state": "sent-private",
+      "title": "Отправлено только в ветку",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:77840",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77840"
+    },
+    {
+      "id": "09-sent-private-dark",
+      "state": "sent-private",
+      "title": "Отправлено только в ветку",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:77928",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-77928"
+    },
+    {
+      "id": "10-sent-group-light",
+      "state": "sent-group",
+      "title": "Отправлено также в группу",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:78018",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78018"
+    },
+    {
+      "id": "10-sent-group-dark",
+      "state": "sent-group",
+      "title": "Отправлено также в группу",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:78111",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78111"
+    },
+    {
+      "id": "11-incoming-light",
+      "state": "incoming",
+      "title": "Новый ответ участника",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:78206",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78206"
+    },
+    {
+      "id": "11-incoming-dark",
+      "state": "incoming",
+      "title": "Новый ответ участника",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:78314",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78314"
+    },
+    {
+      "id": "12-thread-light",
+      "state": "thread",
+      "title": "Ветка · полная история",
+      "flow": "Ответы и отправка",
+      "theme": "light",
+      "nodeId": "26343:78424",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78424"
+    },
+    {
+      "id": "12-thread-dark",
+      "state": "thread",
+      "title": "Ветка · полная история",
+      "flow": "Ответы и отправка",
+      "theme": "dark",
+      "nodeId": "26343:78547",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78547"
+    },
+    {
+      "id": "13-group-replies-light",
+      "state": "group-replies",
+      "title": "Ответы в общей ленте",
+      "flow": "Возврат в группу",
+      "theme": "light",
+      "nodeId": "26343:78672",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78672"
+    },
+    {
+      "id": "13-group-replies-dark",
+      "state": "group-replies",
+      "title": "Ответы в общей ленте",
+      "flow": "Возврат в группу",
+      "theme": "dark",
+      "nodeId": "26343:78827",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78827"
+    },
+    {
+      "id": "14-view-menu-light",
+      "state": "view-menu",
+      "title": "Просмотр ветки",
+      "flow": "Возврат в группу",
+      "theme": "light",
+      "nodeId": "26343:78984",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-78984"
+    },
+    {
+      "id": "14-view-menu-dark",
+      "state": "view-menu",
+      "title": "Просмотр ветки",
+      "flow": "Возврат в группу",
+      "theme": "dark",
+      "nodeId": "26343:79210",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-79210"
+    },
+    {
+      "id": "15-group-unread-light",
+      "state": "group-unread",
+      "title": "Новые ответы в группе",
+      "flow": "Возврат в группу",
+      "theme": "light",
+      "nodeId": "26343:79438",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-79438"
+    },
+    {
+      "id": "15-group-unread-dark",
+      "state": "group-unread",
+      "title": "Новые ответы в группе",
+      "flow": "Возврат в группу",
+      "theme": "dark",
+      "nodeId": "26343:79593",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-79593"
+    },
+    {
+      "id": "16-group-read-light",
+      "state": "group-read",
+      "title": "Ответы прочитаны",
+      "flow": "Возврат в группу",
+      "theme": "light",
+      "nodeId": "26343:79750",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-79750"
+    },
+    {
+      "id": "16-group-read-dark",
+      "state": "group-read",
+      "title": "Ответы прочитаны",
+      "flow": "Возврат в группу",
+      "theme": "dark",
+      "nodeId": "26343:79903",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-79903"
+    },
+    {
+      "id": "17-threads-light",
+      "state": "threads",
+      "title": "Ветки · все мои обсуждения",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:80058",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80058"
+    },
+    {
+      "id": "17-threads-dark",
+      "state": "threads",
+      "title": "Ветки · все мои обсуждения",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:80199",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80199"
+    },
+    {
+      "id": "18-list-menu-light",
+      "state": "list-menu",
+      "title": "Меню превью ветки",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:80342",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80342"
+    },
+    {
+      "id": "18-list-menu-dark",
+      "state": "list-menu",
+      "title": "Меню превью ветки",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:80530",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80530"
+    },
+    {
+      "id": "19-list-empty-light",
+      "state": "list-empty",
+      "title": "Пока нет веток",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:80720",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80720"
+    },
+    {
+      "id": "19-list-empty-dark",
+      "state": "list-empty",
+      "title": "Пока нет веток",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:80744",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80744"
+    },
+    {
+      "id": "20-participant-author-light",
+      "state": "participant-author",
+      "title": "Участие · автор корня",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:80770",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80770"
+    },
+    {
+      "id": "20-participant-author-dark",
+      "state": "participant-author",
+      "title": "Участие · автор корня",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:80826",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80826"
+    },
+    {
+      "id": "21-participant-reply-light",
+      "state": "participant-reply",
+      "title": "Участие · мой ответ",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:80884",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80884"
+    },
+    {
+      "id": "21-participant-reply-dark",
+      "state": "participant-reply",
+      "title": "Участие · мой ответ",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:80941",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-80941"
+    },
+    {
+      "id": "22-participant-mention-light",
+      "state": "participant-mention",
+      "title": "Участие · упоминание",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:81000",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81000"
+    },
+    {
+      "id": "22-participant-mention-dark",
+      "state": "participant-mention",
+      "title": "Участие · упоминание",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:81056",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81056"
+    },
+    {
+      "id": "23-visitor-light",
+      "state": "visitor",
+      "title": "Чужая ветка · просмотр",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:81114",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81114"
+    },
+    {
+      "id": "23-visitor-dark",
+      "state": "visitor",
+      "title": "Чужая ветка · просмотр",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:81219",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81219"
+    },
+    {
+      "id": "24-list-read-light",
+      "state": "list-read",
+      "title": "Ветки · всё прочитано",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:81326",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81326"
+    },
+    {
+      "id": "24-list-read-dark",
+      "state": "list-read",
+      "title": "Ветки · всё прочитано",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:81463",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81463"
+    },
+    {
+      "id": "25-forward-light",
+      "state": "forward",
+      "title": "Переслать ветку",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:81602",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81602"
+    },
+    {
+      "id": "25-forward-dark",
+      "state": "forward",
+      "title": "Переслать ветку",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:81802",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-81802"
+    },
+    {
+      "id": "26-select-light",
+      "state": "select",
+      "title": "Выбор обсуждений",
+      "flow": "Мои ветки",
+      "theme": "light",
+      "nodeId": "26343:82004",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82004"
+    },
+    {
+      "id": "26-select-dark",
+      "state": "select",
+      "title": "Выбор обсуждений",
+      "flow": "Мои ветки",
+      "theme": "dark",
+      "nodeId": "26343:82159",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82159"
+    },
+    {
+      "id": "27-long-title-light",
+      "state": "long-title",
+      "title": "Длинный корень и название",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:82316",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82316"
+    },
+    {
+      "id": "27-long-title-dark",
+      "state": "long-title",
+      "title": "Длинный корень и название",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:82441",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82441"
+    },
+    {
+      "id": "28-loading-light",
+      "state": "loading",
+      "title": "Загрузка веток",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:82568",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82568"
+    },
+    {
+      "id": "28-loading-dark",
+      "state": "loading",
+      "title": "Загрузка веток",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:82661",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82661"
+    },
+    {
+      "id": "29-error-light",
+      "state": "error",
+      "title": "Не удалось загрузить",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:82756",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82756"
+    },
+    {
+      "id": "29-error-dark",
+      "state": "error",
+      "title": "Не удалось загрузить",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:82778",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82778"
+    },
+    {
+      "id": "30-send-error-light",
+      "state": "send-error",
+      "title": "Не удалось отправить",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:82802",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82802"
+    },
+    {
+      "id": "30-send-error-dark",
+      "state": "send-error",
+      "title": "Не удалось отправить",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:82939",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-82939"
+    },
+    {
+      "id": "31-send-error-dialog-light",
+      "state": "send-error-dialog",
+      "title": "Ошибка · повторить или удалить",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:83078",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-83078"
+    },
+    {
+      "id": "31-send-error-dialog-dark",
+      "state": "send-error-dialog",
+      "title": "Ошибка · повторить или удалить",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:83237",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-83237"
+    },
+    {
+      "id": "32-direct-menu-light",
+      "state": "direct-menu",
+      "title": "Личный чат · без веток",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:83398",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-83398"
+    },
+    {
+      "id": "32-direct-menu-dark",
+      "state": "direct-menu",
+      "title": "Личный чат · без веток",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:83534",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-83534"
+    },
+    {
+      "id": "33-bot-menu-light",
+      "state": "bot-menu",
+      "title": "Бот · без веток",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:83672",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-83672"
+    },
+    {
+      "id": "33-bot-menu-dark",
+      "state": "bot-menu",
+      "title": "Бот · без веток",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:83813",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-83813"
+    },
+    {
+      "id": "34-private-group-light",
+      "state": "private-group",
+      "title": "Закрытая группа · ветки доступны",
+      "flow": "Дополнительные состояния",
+      "theme": "light",
+      "nodeId": "26343:83956",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-83956"
+    },
+    {
+      "id": "34-private-group-dark",
+      "state": "private-group",
+      "title": "Закрытая группа · ветки доступны",
+      "flow": "Дополнительные состояния",
+      "theme": "dark",
+      "nodeId": "26343:84046",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-84046"
+    }
+  ]
+}
