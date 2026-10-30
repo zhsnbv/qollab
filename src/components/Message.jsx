@@ -115,8 +115,9 @@ function renderText(text, onLink) {
 // (отправлено) → две серые (доставлено) → две оранжевые (прочитано, только
 // личные чаты — в групповых прочтение не отслеживаем, максимум серые).
 function StatusTicks({ status }) {
-  if (status === 'sending') return <Clock size={12} color="var(--color-weak)" />;
-  if (status === 'sent') return <Check size={13} color="var(--color-weak)" />;
+  if (status === 'failed') return null;
+  if (status === 'sending') return <Clock size={12} color="var(--color-weak)" aria-label="Отправляется" />;
+  if (status === 'sent') return <Check size={13} color="var(--color-weak)" aria-label="Отправлено" />;
   if (status === 'read') return <Checks size={15} color="var(--color-primary)" />;
   return <Checks size={15} color="var(--color-weak)" />; // delivered — дефолт
 }
@@ -133,9 +134,9 @@ export function TimeRow({ time, mine, status, variant = 'overlay' }) {
 // Низ бабла: реакции и время в одной строке. Пока реакций нет, время
 // остаётся на своём месте — в правом нижнем углу поверх паддинга, чтобы
 // короткие сообщения не растягивались.
-function BubbleFooter({ reactions, mine, msg, onToggleReaction }) {
+function BubbleFooter({ reactions, mine, msg, onToggleReaction, inFlow = false }) {
   const hasReactions = Object.values(reactions || {}).some((u) => u.length > 0);
-  if (!hasReactions) return <TimeRow time={msg.time} mine={mine} status={msg.status} />;
+  if (!hasReactions && !inFlow) return <TimeRow time={msg.time} mine={mine} status={msg.status} />;
   return (
     <div className="msg-footer">
       <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
@@ -244,7 +245,7 @@ function useSwipeReply(onReply, msg) {
 export default function Message({
   msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor,
   reactions, onToggleReaction, onLongPress, onSwipeReply, onOpenLink,
-  withAvatarSlot = true,
+  withAvatarSlot = true, bubbleHeader, bubbleFooter,
 }) {
   const showAuthor = firstOfGroup && !mine && authorLabel;
   const press = useLongPress(onLongPress, msg);
@@ -255,6 +256,8 @@ export default function Message({
   return (
     <div
       className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''} ${swipe.snap ? 'msg--snap' : ''}`}
+      data-message-id={msg.id}
+      data-status={mine ? (msg.status || 'delivered') : undefined}
       style={swipe.dx ? { transform: `translateX(${swipe.dx}px)` } : undefined}
       tabIndex={onLongPress ? 0 : undefined}
       onKeyDown={event => {
@@ -300,7 +303,8 @@ export default function Message({
             <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
           </>
         ) : (
-          <div className="msg-bubble">
+          <div className={`msg-bubble ${bubbleFooter ? 'msg-bubble--with-footer' : ''}`}>
+            {bubbleHeader}
             {showAuthor && <div className="msg-author-inline" style={{ color: authorColor }}>{authorLabel}</div>}
             {msg.quote && (
               <div className="msg-quote" style={{ borderLeftColor: msg.quote.color || 'var(--color-primary)' }}>
@@ -322,7 +326,8 @@ export default function Message({
             {/* Карточка — отдельным блоком под текстом, а не внутри строки:
                 внутри текстового потока она не может держать ширину и отступы */}
             {preview && <LinkPreview link={preview} onOpen={(l) => onOpenLink && onOpenLink(l.url)} />}
-            <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} />
+            <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} inFlow={!!bubbleFooter} />
+            {bubbleFooter}
           </div>
         )}
       </div>

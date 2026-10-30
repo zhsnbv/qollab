@@ -1,3 +1,5 @@
+import ThreadScene from './threads/ThreadScene';
+import { THREAD_CASES } from './threads/threadModel';
 import { MOBILE_CASES } from './publication-screens/cases';
 import { NOTIFICATION_MODES } from '../data/chatNotificationModes';
 import { CALLS_GROUP } from './calls';
@@ -195,6 +197,11 @@ export const SCREEN_GROUPS = [
     title: 'Чаты',
     hint: 'От списка к переписке. Групповой чат рисует ChatRoom, всё остальное — DMChat: личные, ассистент, архив уволенного.',
     items: [
+      ...THREAD_CASES.map(item => ({
+        id: `thread-${item.id}`, title: `Ветки · ${item.title}`,
+        note: item.note, route: '/chats',
+        render: () => <ThreadScene scenario={item.id} capture />,
+      })),
       { id: 'chats', title: 'Список чатов', route: '/chats', render: tab(Chats) },
       {
         id: 'chats-select', title: 'Режим выбора', note: 'Карандаш в шапке; таб-бар уступает место действиям',

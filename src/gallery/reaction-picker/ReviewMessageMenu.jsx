@@ -16,7 +16,7 @@ const GAP = 10;  // просвет между сообщением и панел
 const EDGE = 12; // минимальный отступ от краёв экрана
 
 
-export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAction, onReact, onExpand, selected, platform, pointer, backdrop = true, activitySlot, activityKey, capture = false }) {
+export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAction, onReact, onExpand, selected, platform, pointer, backdrop = true, activitySlot, activityKey, capture = false, extraItems = [], actionItems, sourceClassName = '' }) {
   const wrapRef = useRef(null);
   const cloneRef = useRef(null);
   const reactRef = useRef(null);
@@ -27,7 +27,8 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
 
   const side = mine ? 'right' : 'left';
 
-  const items = [
+  const items = actionItems ?? [
+    ...extraItems,
     { id: 'reply', label: 'Ответить', Icon: ArrowReply24Regular },
     { id: 'copy', label: 'Копировать', Icon: Copy24Regular },
     // Правим только текст: у своих отправленных сообщений kind === 'text',
@@ -136,7 +137,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
         : { left: `${box.left}px`, top: `${box.top}px`, '--rp-origin': box.origin } : undefined}>
       {/* Mobile lifts an exact copy; desktop keeps the original bubble in place. */}
       {mobile && <div
-        className="msgmenu-source"
+        className={`msgmenu-source ${sourceClassName}`}
         ref={cloneRef}
         aria-hidden="true"
         style={box ? { top: `${box.rowTop}px`, left: `${box.rowLeft}px`, width: `${box.rowWidth}px`, maxHeight: `${box.rowMax}px`, overflow: 'hidden' } : undefined}
