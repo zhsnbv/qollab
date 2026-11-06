@@ -244,7 +244,7 @@ export const SCREEN_GROUPS = [
         id, title, note, interactive: true, kind: preview.list || preview.menuId ? 'overlay' : undefined,
         route: '/chats/prodev', render: () => <ChatRoom pinPreview={preview} />,
       })),
-      { id: 'chat-search', title: 'Поиск в чате', route: '/chat-search', render: () => <ChatSearch /> },
+      { id: 'chat-search', title: 'Поиск в чате', route: '/chat-search', render: () => <ChatSearch autoFocus={false} /> },
     ],
   },
   {

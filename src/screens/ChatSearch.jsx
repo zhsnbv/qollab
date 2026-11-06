@@ -30,7 +30,7 @@ function Avatar({ item, size = 40 }) {
   );
 }
 
-export default function ChatSearch() {
+export default function ChatSearch({ autoFocus = true }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, onScroll] = useScrolled();
@@ -103,7 +103,7 @@ export default function ChatSearch() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Поиск по ФИ, Тел, Должность"
             enterKeyHint="search"
-            autoFocus
+            autoFocus={autoFocus}
           />
           {query && (
             <button className="cs-clear" onClick={() => setQuery('')} aria-label="Очистить">
