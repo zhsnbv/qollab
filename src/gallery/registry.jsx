@@ -46,7 +46,7 @@ import ActionSheet from '../components/ActionSheet';
 import ConfirmDialog from '../components/ConfirmDialog';
 import AttachSheet from '../components/AttachSheet';
 import ForwardSheet from '../components/ForwardSheet';
-import { PinnedList } from '../components/PinnedBar';
+import { PIN_CASES } from './pinned-messages/cases';
 import ErgizHistory from '../components/ErgizHistory';
 import Toast from '../components/Toast';
 import { MessageMenuDemo, ChatsSelecting, AuthErrorScreen, LinkPreviewMessages } from './overlays';
@@ -240,19 +240,10 @@ export const SCREEN_GROUPS = [
         id: 'forward', title: 'Переслать', note: '«Избранное» первым — туда пересылают чаще',
         route: '/chats/prodev', render: over(ChatRoom, () => <ForwardSheet onClose={noop} onPick={noop} />),
       }),
-      sheet({
-        id: 'pinned', title: 'Закреплённые', note: 'Из полосы под шапкой чата',
-        route: '/chats/prodev',
-        render: over(ChatRoom, () => (
-          <PinnedList
-            items={[
-              { id: 1, author: 'Нурлан Б.', text: 'Релиз переносим на пятницу', time: '10:12' },
-              { id: 2, author: 'Динара Т.', text: 'Ссылка на макеты в закрепе', time: '11:40' },
-            ]}
-            onClose={noop} onUnpin={noop} onUnpinAll={noop}
-          />
-        )),
-      }),
+      ...PIN_CASES.map(({ id, title, note, preview }) => ({
+        id, title, note, interactive: true, kind: preview.list || preview.menuId ? 'overlay' : undefined,
+        route: '/chats/prodev', render: () => <ChatRoom pinPreview={preview} />,
+      })),
       { id: 'chat-search', title: 'Поиск в чате', route: '/chat-search', render: () => <ChatSearch /> },
     ],
   },

@@ -314,7 +314,7 @@ export default function DMChat({ typingPreview } = {}) {
     }
   };
 
-  const pinnedMessages = messages.filter((m) => pinnedIds.includes(m.id));
+  const pinnedMessages = pinnedIds.map(id => messages.find(m => m.id === id)).filter(Boolean);
 
   // preset — текст подсказки ассистента. Проверяем тип, а не просто наличие:
   // onClick передаёт сюда событие клика, и оно уходило вместо сообщения.

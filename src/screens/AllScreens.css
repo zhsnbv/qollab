@@ -68,6 +68,7 @@ html.gallery #root { height: auto; }
 .gal-call-settings a{text-decoration:none}
 .gal-call-settings [aria-pressed=true]{background:var(--color-primary-bg);border-color:var(--color-primary-border);color:var(--color-primary)}
 .gal-frame{width:402px;height:820px;overflow:clip;background:var(--color-white);outline:1px solid var(--color-border);box-shadow:0 8px 24px #0000000f;pointer-events:none}
+.gal-frame.gal-frame--interactive { pointer-events: auto; }
 html.gallery .device.gal-device{width:402px!important;min-width:402px!important;max-width:402px!important;height:820px!important;min-height:820px!important;max-height:820px!important;transform:none!important;margin:0;border-radius:0;--vvh:820px;--vvtop:0px;flex-shrink:0}
 .gal-device .call-screen,.gal-device .call-puck-enter{animation:none}
 .gal-device .call-dots i,.gal-device .call-voice i,.gal-device .call-puck-badge{animation-play-state:paused}

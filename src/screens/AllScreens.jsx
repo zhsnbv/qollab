@@ -33,8 +33,8 @@ function Cell({ item, animateWaves }) {
   const entry = typeof route === 'string' ? route : route || '/';
 
   return (
-    <figure className="gal-cell" ref={boxRef} data-case={item.id}>
-      <div className="gal-frame">
+    <figure className="gal-cell" ref={boxRef} data-case={item.id} id={item.interactive ? item.id : undefined}>
+      <div className={item.interactive ? 'gal-frame gal-frame--interactive' : 'gal-frame'}>
         <div className="device gal-device" ref={setHost}>
           {live && host && (
             <DeviceHost.Provider value={host}>
@@ -104,6 +104,19 @@ export default function AllScreens() {
     set('lang', lang, null);
     window.history.replaceState(null, '', url);
   }, [group, theme, company, lang]);
+  // Cards mount after the document loads, so native fragment scrolling can run too early.
+  useEffect(() => {
+    const target = document.getElementById(window.location.hash.slice(1));
+    if (!target) return;
+    let cancelled = false;
+    document.fonts.ready.then(() => {
+      if (cancelled) return;
+      const header = target.closest('.gal')?.querySelector('.gal-top');
+      const top = window.scrollY + target.getBoundingClientRect().top - (header?.offsetHeight || 0) - 12;
+      window.scrollTo({ top });
+    });
+    return () => { cancelled = true; };
+  }, [group]);
   const groups = group === 'all' ? SCREEN_GROUPS : SCREEN_GROUPS.filter((g) => g.id === group);
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Plus, Microphone, PaperPlaneRight } from '@phosphor-icons/react';
 import { dayLabel } from '../utils/chatDate';
@@ -89,7 +89,7 @@ function AuthorAvatar({ author, onOpen }) {
   );
 }
 
-export default function ChatRoom({ typingPreview } = {}) {
+export default function ChatRoom({ typingPreview, pinPreview } = {}) {
   const navigate = useNavigate();
   const location = useLocation();
   // Профили открываем поверх чата: он остаётся под ними смонтированным
@@ -106,8 +106,8 @@ export default function ChatRoom({ typingPreview } = {}) {
   // Реакции: id сообщения → { эмодзи: [кто поставил] }. Один человек держит
   // одну реакцию на сообщение, поэтому при выборе новой снимаем прежнюю.
   const [reactions, setReactions] = useState({});
-  const [pinnedIds, setPinnedIds] = useState([]);
-  const [pinListOpen, setPinListOpen] = useState(false);
+  const [pinnedIds, setPinnedIds] = useState(() => pinPreview?.ids || []);
+  const [pinListOpen, setPinListOpen] = useState(!!pinPreview?.list);
   const [reply, setReply] = useState(null);
   const [editing, setEditing] = useState(null);
   const [forward, setForward] = useState(null);
@@ -115,7 +115,7 @@ export default function ChatRoom({ typingPreview } = {}) {
   // В ленте остаются только события самого чата (закрепы) — их видят все
   // участники. Результат моего действия показываем тостом: он не засоряет
   // переписку.
-  const [notice, setNotice] = useState([]);
+  const [notice, setNotice] = useState(() => pinPreview?.notice ? [{ id: 'initial', text: pinPreview.notice }] : []);
   const [toast, setToast] = useState('');
   const [attachOpen, setAttachOpen] = useState(false);
 
@@ -175,8 +175,8 @@ export default function ChatRoom({ typingPreview } = {}) {
   };
 
   const [closing, setClosing] = useState(false);
-  const [phase, setPhase] = useState(typingPreview ? 'chat' : 'connecting'); // connecting | chat
-  const [messages, setMessages] = useState(() => typingPreview ? [{ id: 'preview-1', author: {short:'Участник А',initials:'УА',tint:'green',color:'#52c41a'}, kind: 'text', day: 'Сегодня', text: 'Тестовое сообщение в группе.', time: '11:24' }] : []);
+  const [phase, setPhase] = useState(typingPreview || pinPreview ? 'chat' : 'connecting'); // connecting | chat
+  const [messages, setMessages] = useState(() => pinPreview?.messages ?? (typingPreview ? [{ id: 'preview-1', author: {short:'Участник А',initials:'УА',tint:'green',color:'#52c41a'}, kind: 'text', day: 'Сегодня', text: 'Тестовое сообщение в группе.', time: '11:24' }] : []));
   const [typing, setTyping] = useState(null);
   const [input, setInput] = useState('');
   const startedRef = useRef(false);
@@ -184,19 +184,26 @@ export default function ChatRoom({ typingPreview } = {}) {
   const timersRef = useRef([]);
 
   useEffect(() => {
-    if (typingPreview) return;
+    if (typingPreview || pinPreview) return;
     const t = setTimeout(() => setPhase('chat'), 900);
     return () => clearTimeout(t);
-  }, [typingPreview]);
+  }, [typingPreview, pinPreview]);
 
   // История отыгрывает сама один раз, как только чат подключился —
   // без ожидания первого сообщения от пользователя.
   useEffect(() => {
-    if (typingPreview || phase !== 'chat' || startedRef.current) return;
+    if (typingPreview || pinPreview || phase !== 'chat' || startedRef.current) return;
     startedRef.current = true;
     runScript();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, typingPreview]);
+  }, [phase, typingPreview, pinPreview]);
+
+  useLayoutEffect(() => {
+    if (!pinPreview?.menuId) return;
+    const msg = pinPreview.messages.find(item => item.id === pinPreview.menuId);
+    const node = scrollRef.current?.querySelector(`[data-message-id="${pinPreview.menuId}"]`);
+    if (node && msg) setMenu({ msg, node, rect: node.getBoundingClientRect() });
+  }, [pinPreview]);
 
   useKeyboardInset(scrollRef);
 
@@ -282,7 +289,7 @@ export default function ChatRoom({ typingPreview } = {}) {
     ? 'Подключение…'
     : (typingSubtitle(activeTypists, true) || '73 участника');
 
-  const pinnedMessages = messages.filter((m) => pinnedIds.includes(m.id));
+  const pinnedMessages = pinnedIds.map(id => messages.find(m => m.id === id)).filter(Boolean);
   const lastPinned = pinnedMessages[pinnedMessages.length - 1];
 
   // Группировка: имя — на первом сообщении серии одного автора, аватар и

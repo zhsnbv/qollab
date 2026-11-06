@@ -179,7 +179,7 @@ export default function App() {
   // Режим оформления уже применён инлайн-скриптом; здесь только подписка на
   // системную тему — она нужна, пока выбран режим «автоматически».
   useEffect(() => {
-    if (window.location.pathname.startsWith('/handoff/')) return;
+    if (window.location.pathname === '/all' || window.location.pathname.startsWith('/handoff/')) return;
     applyTheme(getThemeMode());
     return watchSystemTheme(getThemeMode);
   }, []);
