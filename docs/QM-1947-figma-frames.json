@@ -1,6 +1,6 @@
 {
   "task": "QM-1947",
-  "approvedAt": "2026-10-30",
+  "approvedAt": "2026-11-06",
   "frame": {
     "width": 402,
     "height": 820
@@ -618,6 +618,132 @@
       "theme": "dark",
       "nodeId": "26343:84046",
       "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26343-84046"
+    },
+    {
+      "id": "35-delete-root-light",
+      "state": "delete-root",
+      "title": "Удаление корневого сообщения",
+      "flow": "Удаление сообщений",
+      "theme": "light",
+      "nodeId": "26453:83778",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26453-83778"
+    },
+    {
+      "id": "35-delete-root-dark",
+      "state": "delete-root",
+      "title": "Удаление корневого сообщения",
+      "flow": "Удаление сообщений",
+      "theme": "dark",
+      "nodeId": "26453:83901",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26453-83901"
+    },
+    {
+      "id": "36-deleted-root-group-light",
+      "state": "deleted-root-group",
+      "title": "Удалённый корень в группе",
+      "flow": "Удаление сообщений",
+      "theme": "light",
+      "nodeId": "26453:84026",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26453-84026"
+    },
+    {
+      "id": "36-deleted-root-group-dark",
+      "state": "deleted-root-group",
+      "title": "Удалённый корень в группе",
+      "flow": "Удаление сообщений",
+      "theme": "dark",
+      "nodeId": "26453:84136",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26453-84136"
+    },
+    {
+      "id": "37-deleted-root-list-light",
+      "state": "deleted-root-list",
+      "title": "Ветка в списке после удаления корня",
+      "flow": "Удаление сообщений",
+      "theme": "light",
+      "nodeId": "26454:83932",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26454-83932"
+    },
+    {
+      "id": "37-deleted-root-list-dark",
+      "state": "deleted-root-list",
+      "title": "Ветка в списке после удаления корня",
+      "flow": "Удаление сообщений",
+      "theme": "dark",
+      "nodeId": "26454:84068",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26454-84068"
+    },
+    {
+      "id": "38-deleted-root-thread-light",
+      "state": "deleted-root-thread",
+      "title": "Удаление последнего ответа",
+      "flow": "Удаление сообщений",
+      "theme": "light",
+      "nodeId": "26454:84206",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26454-84206"
+    },
+    {
+      "id": "38-deleted-root-thread-dark",
+      "state": "deleted-root-thread",
+      "title": "Удаление последнего ответа",
+      "flow": "Удаление сообщений",
+      "theme": "dark",
+      "nodeId": "26454:84284",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26454-84284"
+    },
+    {
+      "id": "39-closed-thread-light",
+      "state": "closed-thread",
+      "title": "Группа после закрытия ветки",
+      "flow": "Удаление сообщений",
+      "theme": "light",
+      "nodeId": "26455:84052",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26455-84052"
+    },
+    {
+      "id": "39-closed-thread-dark",
+      "state": "closed-thread",
+      "title": "Группа после закрытия ветки",
+      "flow": "Удаление сообщений",
+      "theme": "dark",
+      "nodeId": "26455:84127",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26455-84127"
+    },
+    {
+      "id": "40-deleted-root-other-group-light",
+      "state": "deleted-root-other-group",
+      "title": "Чужой удалённый корень в группе",
+      "flow": "Удаление сообщений",
+      "theme": "light",
+      "nodeId": "26455:84204",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26455-84204"
+    },
+    {
+      "id": "40-deleted-root-other-group-dark",
+      "state": "deleted-root-other-group",
+      "title": "Чужой удалённый корень в группе",
+      "flow": "Удаление сообщений",
+      "theme": "dark",
+      "nodeId": "26455:84343",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26455-84343"
+    },
+    {
+      "id": "41-deleted-root-other-thread-light",
+      "state": "deleted-root-other-thread",
+      "title": "Ветка Айдара после удаления корня",
+      "flow": "Удаление сообщений",
+      "theme": "light",
+      "nodeId": "26455:84484",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26455-84484"
+    },
+    {
+      "id": "41-deleted-root-other-thread-dark",
+      "state": "deleted-root-other-thread",
+      "title": "Ветка Айдара после удаления корня",
+      "flow": "Удаление сообщений",
+      "theme": "dark",
+      "nodeId": "26455:84578",
+      "url": "https://www.figma.com/design/TWZXMxkjeSINavEVUYbxxG?node-id=26455-84578"
     }
   ]
 }

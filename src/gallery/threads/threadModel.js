@@ -7,7 +7,7 @@ export const PEOPLE = {
   arman: { id: 'arman', name: 'Арман А.', avatar: '/img/threads/replier-a.png' },
 };
 
-export const THREAD_STAGES = ['Вход и создание', 'Ответы и отправка', 'Возврат в группу', 'Мои ветки', 'Дополнительные состояния'];
+export const THREAD_STAGES = ['Вход и создание', 'Ответы и отправка', 'Возврат в группу', 'Мои ветки', 'Дополнительные состояния', 'Удаление сообщений'];
 // Every state is a distinct frame in both the review board and /all.
 export const THREAD_CASES = [
   ['chats', 'Чаты · непрочитанные ветки', 0, 'Закреплённая строка «Ветки», бейдж считает обсуждения, а не ответы.', '21267:70055'],
@@ -44,20 +44,31 @@ export const THREAD_CASES = [
   ['direct-menu', 'Личный чат · без веток', 4, 'У direct-канала нет пункта ветки.'],
   ['bot-menu', 'Бот · без веток', 4, 'У bot-канала нет пункта ветки.'],
   ['private-group', 'Закрытая группа · ветки доступны', 4, 'Те же действия, что в открытой группе.'],
+  ['delete-root', 'Удаление корневого сообщения', 5, 'Зажмите своё исходное сообщение с ответом и выберите «Удалить».'],
+  ['deleted-root-group', 'Удалённый корень в группе', 5, 'На месте корня остаётся отметка «Сообщение удалено». Строка ответов открывает обсуждение.'],
+  ['deleted-root-list', 'Ветка в списке после удаления корня', 5, 'В превью виден последний ответ. Цитата корня показывает отметку об удалении.'],
+  ['deleted-root-thread', 'Удаление последнего ответа', 5, 'Зажмите последний ответ и подтвердите удаление. Ветка закроется.'],
+  ['closed-thread', 'Группа после закрытия ветки', 5, 'В истории группы остаётся отметка об удалении. Обсуждение исчезает из списка веток.'],
+  ['deleted-root-other-group', 'Чужой удалённый корень в группе', 5, 'Айдар удалил своё сообщение. Из серого бабла и из цитат в обоих ответах можно открыть ветку.'],
+  ['deleted-root-other-thread', 'Ветка Айдара после удаления корня', 5, 'На месте корня видны имя Айдара и отметка об удалении. Свой ответ и ответ Аяжан остаются в обсуждении.'],
 ].map(([id, title, stage, note, figmaNode]) => ({ id, title, stage, note, figmaNode }));
 
+export const DELETED_MESSAGE = 'Сообщение удалено';
+export function rootLabel(thread) { return thread.rootDeleted ? DELETED_MESSAGE : thread.title; }
 export function canThread(type) { return type === 'open_group' || type === 'private_group'; }
-export function confirmedReplies(thread) { return thread.replies.filter(r => r.status !== 'sending' && r.status !== 'failed'); }
+export function confirmedReplies(thread) {
+  return thread.status === 'closed' ? [] : thread.replies.filter(r => r.status !== 'sending' && r.status !== 'failed');
+}
 export function participates(thread, userId = ME) {
   const replies = confirmedReplies(thread);
-  return replies.length > 0 && (thread.author === userId || replies.some(r => r.author === userId || r.mentions?.includes(userId)));
+  return replies.length > 0 && (thread.author === userId || thread.pastParticipants?.includes(userId) || replies.some(r => r.author === userId || r.mentions?.includes(userId)));
 }
 export function myThreads(threads) { return threads.filter(t => participates(t)).sort((a, b) => b.updated - a.updated); }
 export function unreadThreads(threads) { return myThreads(threads).filter(t => t.unread > 0).length; }
 export function channelReplies(thread) { return confirmedReplies(thread).filter(r => r.showInChannel); }
 export function markRead(thread) { return { ...thread, unread: 0 }; }
 export function addReply(thread, { id, text, showInChannel = false, author = ME, mentions = [], time = '12:49', updated = Date.now(), status = 'sent' }) {
-  if (!canThread(thread.channelType) || !text.trim() || thread.replies.some(r => r.id === id)) return thread;
+  if (thread.status === 'closed' || !canThread(thread.channelType) || !text.trim() || thread.replies.some(r => r.id === id)) return thread;
   const confirmed = status !== 'sending' && status !== 'failed';
   return { ...thread, updated: confirmed ? Math.max(thread.updated + 1, updated) : thread.updated, unread: confirmed ? (author === ME ? 0 : thread.unread + 1) : thread.unread,
     replies: [...thread.replies, { id, text: text.trim(), author, mentions, showInChannel, time, status }] };
@@ -67,13 +78,44 @@ export function addReply(thread, { id, text, showInChannel = false, author = ME,
 export function setReplyStatus(thread, id, status, updated = Date.now()) {
   const reply = thread.replies.find(r => r.id === id);
   const allowed = { sending: ['sent', 'failed'], failed: ['sending'] };
-  if (!reply || !allowed[reply.status]?.includes(status)) return thread;
+  if (thread.status === 'closed' || !reply || !allowed[reply.status]?.includes(status)) return thread;
   return { ...thread, updated: status === 'sent' ? Math.max(thread.updated + 1, updated) : thread.updated,
     unread: status === 'sent' && reply.author === ME ? 0 : thread.unread,
     replies: thread.replies.map(r => r.id === id ? { ...r, status } : r) };
 }
 export function deleteFailedReply(thread, id) {
   return { ...thread, replies: thread.replies.filter(r => r.id !== id || r.status !== 'failed') };
+}
+
+function closeIfEmpty(thread) {
+  if (thread.rootDeleted && confirmedReplies(thread).length === 0) {
+    return { ...thread, status: 'closed', replies: [], unread: 0 };
+  }
+  return thread;
+}
+
+export function deleteThreadMessage(thread, messageId) {
+  if (thread.status === 'closed') return thread;
+  if (messageId === thread.id) {
+    if (thread.rootDeleted) return thread;
+    return closeIfEmpty({ ...thread, rootDeleted: true, title: '' });
+  }
+  const reply = thread.replies.find(item => item.id === messageId);
+  if (!reply) return thread;
+  const confirmed = confirmedReplies(thread);
+  const index = confirmed.findIndex(item => item.id === messageId);
+  const wasUnread = index >= 0 && index >= confirmed.length - thread.unread;
+  const pastParticipants = new Set(thread.pastParticipants);
+  if (index >= 0) {
+    pastParticipants.add(reply.author);
+    for (const user of reply.mentions || []) pastParticipants.add(user);
+  }
+  return closeIfEmpty({
+    ...thread,
+    replies: thread.replies.filter(item => item.id !== messageId),
+    unread: thread.unread - Number(wasUnread),
+    pastParticipants: [...pastParticipants],
+  });
 }
 
 export function initialThreads(caseId) {
@@ -104,6 +146,13 @@ export function initialThreads(caseId) {
   const other = { id: 'design', title: '🎨 Макеты нового релиза', author: ME, group: 'Дизайн-команда', channelType: 'private_group', unread: 1, updated: 20, replies: [{ id: 'd1', author: 'ayazhan', text: 'Посмотрела, можно передавать в разработку', showInChannel: false, time: '09:42' }] };
   const third = { id: 'release', title: '🚀 План релиза на пятницу', author: 'arman', group: 'Qollab · Продукт', channelType: 'open_group', unread: 0, updated: 10, replies: [{ id: 'p1', author: 'ayazhan', text: '@Руслан Ж. нужен финальный макет', mentions: [ME], showInChannel: false, time: 'Вчера' }] };
   const all = [t, other, third];
+  if (THREAD_CASES.some(item => item.id === caseId && item.stage === 5)) {
+    const otherAuthor = ['deleted-root-other-group', 'deleted-root-other-thread'].includes(caseId);
+    const original = { ...t, author: otherAuthor ? t.author : ME, unread: 0, replies: t.replies.slice(0, otherAuthor ? 2 : 1) };
+    let example = caseId === 'delete-root' ? original : deleteThreadMessage(original, original.id);
+    if (caseId === 'closed-thread') example = deleteThreadMessage(example, 'r1');
+    return [example, other, third];
+  }
   if (['group-read', 'list-read'].includes(caseId)) return all.map(markRead);
   if (caseId.startsWith('participant-')) return [t];
   if (caseId === 'list-empty') return [{ ...t, author: 'aidar', replies: t.replies.filter(r => r.author !== ME).map(r => ({ ...r, mentions: [] })) }];

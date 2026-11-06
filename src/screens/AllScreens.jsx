@@ -33,7 +33,7 @@ function Cell({ item, animateWaves }) {
   const entry = typeof route === 'string' ? route : route || '/';
 
   return (
-    <figure className="gal-cell" ref={boxRef} data-case={item.id} id={item.interactive ? item.id : undefined}>
+    <figure className="gal-cell" ref={boxRef} data-case={item.id} id={item.interactive || item.linkable ? item.id : undefined}>
       <div className={item.interactive ? 'gal-frame gal-frame--interactive' : 'gal-frame'}>
         <div className="device gal-device" ref={setHost}>
           {live && host && (

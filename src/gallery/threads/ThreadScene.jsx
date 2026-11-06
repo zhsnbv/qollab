@@ -7,15 +7,16 @@ import ErgizAvatar from '../../components/ErgizAvatar';
 import { NavIcon } from '../../components/NavIcons';
 import MobileMessageMenu from '../../components/MobileMessageMenu';
 import ForwardSheet from '../../components/ForwardSheet';
+import ConfirmDialog from '../../components/ConfirmDialog';
 import ThreadsSkeleton from './ThreadsSkeleton';
 import '../../components/BottomNav.css';
 import '../../components/ConfirmDialog.css';
-import { ME, PEOPLE, GROUP, canThread, myThreads, unreadThreads, channelReplies, confirmedReplies, markRead, addReply, setReplyStatus, deleteFailedReply, initialThreads } from './threadModel';
+import { ME, PEOPLE, GROUP, canThread, myThreads, unreadThreads, channelReplies, confirmedReplies, markRead, addReply, setReplyStatus, deleteFailedReply, deleteThreadMessage, rootLabel, initialThreads } from './threadModel';
 import '../../screens/ChatRoom.css';
 import './Threads.css';
 
-const LIST_CASES = ['threads', 'list-menu', 'list-empty', 'participant-author', 'participant-reply', 'participant-mention', 'list-read', 'forward', 'select', 'loading', 'error'];
-const GROUP_CASES = ['group', 'create-menu', 'group-replies', 'view-menu', 'group-unread', 'group-read', 'direct-menu', 'bot-menu', 'private-group'];
+const LIST_CASES = ['threads', 'list-menu', 'list-empty', 'participant-author', 'participant-reply', 'participant-mention', 'list-read', 'forward', 'select', 'loading', 'error', 'deleted-root-list'];
+const GROUP_CASES = ['group', 'create-menu', 'group-replies', 'view-menu', 'group-unread', 'group-read', 'direct-menu', 'bot-menu', 'private-group', 'delete-root', 'deleted-root-group', 'closed-thread', 'deleted-root-other-group'];
 const DEFAULT_DRAFT = 'Да ты чё! Базару нет!';
 
 function Avatar({ id = 'aidar', size = 32 }) {
@@ -38,16 +39,21 @@ function ReplyFooter({ thread, onOpen }) {
 }
 
 function ThreadReference({ thread, onOpen }) {
-  return <button className="qt-thread-reference" onClick={event => { event.stopPropagation(); onOpen(); }} aria-label={`Открыть ветку: ${thread.title}`} title={thread.title}>
-    <Chats size={18} /><span><small>Ответ в ветке</small><strong>{thread.title}</strong></span><CaretRight size={15} />
+  const label = rootLabel(thread);
+  return <button className="qt-thread-reference" onClick={event => { event.stopPropagation(); onOpen(); }} aria-label={`Открыть ветку: ${label}`} title={label}>
+    <Chats size={18} />
+    <span><small>Ответ в ветке</small>{thread.rootDeleted ? <em className="qt-deleted-text">{label}</em> : <strong>{label}</strong>}</span>
+    <CaretRight size={15} />
   </button>;
 }
 
 function RootBubble({ thread, footer, onOpen, onMenu, reactions, onReact }) {
-  return <div className="qt-root" data-testid="thread-root">
-    <Message msg={{ id: thread.id, text: thread.title, time: '09:19' }} firstOfGroup lastOfGroup
+  const mine = thread.author === ME;
+  return <div className={`qt-root${thread.rootDeleted ? ' qt-root-deleted' : ''}`} data-testid="thread-root">
+    <Message msg={{ id: thread.id, text: rootLabel(thread), time: '09:19' }} mine={mine} firstOfGroup lastOfGroup
       avatar={<Avatar id={thread.author} size={40} />} authorLabel={PEOPLE[thread.author].name}
-      authorColor="var(--color-primary)" reactions={reactions} onToggleReaction={onReact} onLongPress={onMenu}
+      authorColor="var(--color-primary)" reactions={thread.rootDeleted ? undefined : reactions} onToggleReaction={thread.rootDeleted ? undefined : onReact}
+      onLongPress={thread.rootDeleted ? undefined : (msg, rect, node) => onMenu(msg, rect, node, mine)}
       bubbleFooter={footer && confirmedReplies(thread).length > 0 ? <ReplyFooter thread={thread} onOpen={onOpen} /> : null} />
   </div>;
 }
@@ -143,6 +149,8 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
   const latest = list[0], latestReply = latest ? confirmedReplies(latest).at(-1) : null;
   const failedReply = thread.replies.find(r => r.id === failedId && r.status === 'failed');
   const latestPreview = latestReply ? `${latestReply.author === ME ? 'Вы' : PEOPLE[latestReply.author].name.split(' ')[0]}: ${latestReply.text}` : 'Ваши обсуждения из всех групп';
+  const deletingRoot = menuMessageId === thread.id;
+  const closingOnDelete = !deletingRoot && thread.rootDeleted && confirmedReplies(thread).length === 1 && confirmedReplies(thread)[0].id === menuMessageId;
 
   useEffect(() => { if (!notice) return undefined; const timer = setTimeout(() => setNotice(''), 2800); return () => clearTimeout(timer); }, [notice]);
   useEffect(() => () => { clearTimeout(listPress.current); deliveryTimers.current.forEach(clearTimeout); }, []);
@@ -162,6 +170,7 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
   }, [capture]);
 
   function openThread(id = thread.id) {
+    if (!threads.some(t => t.id === id && t.status !== 'closed')) return;
     setOrigin(screen === 'list' ? 'list' : 'group'); setActive(id); setScreen('thread'); setMenu('');
     setThreads(items => items.map(t => t.id === id ? markRead(t) : t));
   }
@@ -180,7 +189,7 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
     }, 1200));
   }
   function send() {
-    if (!draft.trim()) return;
+    if (!draft.trim() || thread.status === 'closed') return;
     const id = `local-${++sequence.current}`;
     setThreads(items => items.map(t => t.id === active ? addReply(t, { id, text: draft, showInChannel: showInGroup, status: 'sending' }) : t));
     setDraft(''); setShowInGroup(false);
@@ -196,6 +205,19 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
     setThreads(items => items.map(t => t.id === active ? deleteFailedReply(t, failedId) : t));
     setMenu('');
   }
+  function confirmDelete() {
+    const messageId = menuMessageId;
+    setThreads(items => items.map(item => item.id === thread.id ? deleteThreadMessage(item, messageId) : item));
+    setMenu('');
+    setMenuTarget(null);
+  }
+  useEffect(() => {
+    if (isThread && thread.status === 'closed') {
+      setScreen(origin);
+      setShowInGroup(false);
+      setNotice('Ветка закрыта');
+    }
+  }, [isThread, thread.status, origin]);
   function toggleReaction(emoji, messageId = thread.id) {
     setMessageReactions(current => {
       const groups = current[messageId] || {}, users = groups[emoji] || [];
@@ -206,10 +228,17 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
   function openMessageMenu(msg, rect, node, mine = false) {
     setMenuTarget({ msg, rect, node, mine }); setMenu('message');
   }
+  function chatPreview(item) {
+    if (!item.group) return item.text;
+    const discussion = threads.find(entry => entry.id === (item.id || 'memes'));
+    if (!discussion || (!discussion.rootDeleted && !discussion.pastParticipants?.length)) return item.text;
+    const last = channelReplies(discussion).at(-1);
+    return last ? `${last.author === ME ? 'Вы' : PEOPLE[last.author].name}: ${last.text}` : rootLabel(discussion);
+  }
   function toggleSelection(id) { setSelection(current => current?.includes(id) ? current.filter(i => i !== id) : [...(current || []), id]); }
   const threadMenuLabel = confirmedReplies(thread).length ? 'Просмотр ветки' : 'Ответить в ветке';
 
-  const headerTitle = screen === 'chats' ? 'Чаты' : screen === 'list' ? (selection ? `Выбрано: ${selection.length}` : 'Ветки') : isThread ? `Ветка: ${thread.title}` : restricted ? thread.channelType === 'bot' ? 'Ергиз · ассистент' : 'Аяжан Даркеева' : thread.group;
+  const headerTitle = screen === 'chats' ? 'Чаты' : screen === 'list' ? (selection ? `Выбрано: ${selection.length}` : 'Ветки') : isThread ? `Ветка: ${rootLabel(thread)}` : restricted ? thread.channelType === 'bot' ? 'Ергиз · ассистент' : 'Аяжан Даркеева' : thread.group;
   const headerSubtitle = isThread ? thread.group : isGroup ? restricted ? 'в сети' : thread.channelType === 'private_group' ? 'Закрытая группа · 12 участников' : '99 участников' : null;
   return <div ref={sceneRef} className="qt-phone" data-theme={theme} data-state={scenario} data-capture={capture || undefined} data-testid="thread-phone">
     <div className="qt-screen" inert={menu ? true : undefined} aria-hidden={menu ? true : undefined}>
@@ -225,7 +254,7 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
         <div className="qt-chat-list">
           {!search && <button className="qt-chat-row qt-pinned" onClick={() => { setScreen('list'); setListState('ready'); }}><span className="qt-system-avatar"><ChatCircleDots size={29} weight="fill" /></span><span className="qt-chat-copy"><strong>Ветки <PushPin size={12} weight="fill" /></strong><span>{latestPreview}</span></span><span className="qt-row-end"><time>{latestReply?.time}</time><Badge count={totalUnread} label="Непрочитанных веток" /></span></button>}
           {!search && <div className="qt-chat-row"><span className="qt-system-avatar qt-system-muted"><Bell size={27} weight="fill" /></span><span className="qt-chat-copy"><strong>Уведомления</strong><span>Все рабочие события в одном месте</span></span><time>12:38</time></div>}
-          {[{ title: GROUP, avatar: '/img/chats/bts-pr.png', text: 'Арман: Зажми сообщение и выбери...', group: true }, { title: 'Дизайн-команда', avatar: '/img/chats/qollab-group.png', text: 'Аяжан: Можно передавать в разработку', id: 'design', group: true }, { title: 'Qollab · Продукт', avatar: '/img/chats/qollab-group.png', text: 'План релиза на пятницу', id: 'release', group: true }, { title: 'Аяжан Даркеева', avatar: PEOPLE.ayazhan.avatar, text: 'Спасибо, посмотрю сегодня' }, { title: 'Арман А.', avatar: PEOPLE.arman.avatar, text: 'Да, всё готово 👌' }, { title: 'Айдар Султабек', avatar: PEOPLE.aidar.avatar, text: 'Договорились!' }].filter(item => item.title.toLowerCase().includes(search.toLowerCase())).map((item, i) => <button className="qt-chat-row" key={item.title} onClick={() => item.group ? openGroup(item.id || 'memes') : setNotice('Личные чаты не поддерживают ветки')}><img className="qt-list-avatar" src={item.avatar} alt="" /><span className="qt-chat-copy"><strong>{item.title}</strong><span>{item.text}</span></span><span className="qt-row-end"><time>{['12:48', '09:42', 'Вчера', '11:32', '10:20', 'Вчера'][i]}</time>{i === 0 && <span className="qt-muted-count">3</span>}</span></button>)}
+          {[{ title: GROUP, avatar: '/img/chats/bts-pr.png', text: 'Арман: Зажми сообщение и выбери...', group: true }, { title: 'Дизайн-команда', avatar: '/img/chats/qollab-group.png', text: 'Аяжан: Можно передавать в разработку', id: 'design', group: true }, { title: 'Qollab · Продукт', avatar: '/img/chats/qollab-group.png', text: 'План релиза на пятницу', id: 'release', group: true }, { title: 'Аяжан Даркеева', avatar: PEOPLE.ayazhan.avatar, text: 'Спасибо, посмотрю сегодня' }, { title: 'Арман А.', avatar: PEOPLE.arman.avatar, text: 'Да, всё готово 👌' }, { title: 'Айдар Султабек', avatar: PEOPLE.aidar.avatar, text: 'Договорились!' }].filter(item => item.title.toLowerCase().includes(search.toLowerCase())).map((item, i) => <button className="qt-chat-row" key={item.title} onClick={() => item.group ? openGroup(item.id || 'memes') : setNotice('Личные чаты не поддерживают ветки')}><img className="qt-list-avatar" src={item.avatar} alt="" /><span className="qt-chat-copy"><strong>{item.title}</strong><span>{chatPreview(item)}</span></span><span className="qt-row-end"><time>{['12:48', '09:42', 'Вчера', '11:32', '10:20', 'Вчера'][i]}</time>{i === 0 && <span className="qt-muted-count">3</span>}</span></button>)}
           {search && ![GROUP, 'Дизайн-команда', 'Qollab · Продукт', 'Аяжан Даркеева', 'Арман А.', 'Айдар Султабек'].some(name => name.toLowerCase().includes(search.toLowerCase())) && <p className="qt-no-results">Чаты не найдены</p>}
         </div>
         <nav className="bottomnav" aria-label="Разделы приложения"><div className="bottomnav-row qt-nav-row"><span className="navtab-pill qt-nav-pill" aria-hidden="true" />{[['home', 'Главная'], ['news', 'Лента'], ['grid', 'Сервисы'], ['chat', 'Чаты'], ['person', 'Профиль']].map(([icon, label]) => <button key={label} className={`navtab ${label === 'Чаты' ? 'active' : ''}`} onClick={() => label === 'Чаты' ? setSearch('') : setNotice('Демо посвящено веткам в чатах')}><span className="navtab-icon-wrap"><NavIcon name={icon} active={label === 'Чаты'} />{label === 'Чаты' && <span className="navtab-badge">3</span>}</span><span className="navtab-label">{label}</span></button>)}</div></nav>
@@ -237,8 +266,8 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
           onPointerUp={() => clearTimeout(listPress.current)} onPointerCancel={() => clearTimeout(listPress.current)} onPointerLeave={() => clearTimeout(listPress.current)}
           onPointerMove={e => { if (listPressStart.current && Math.hypot(e.clientX - listPressStart.current[0], e.clientY - listPressStart.current[1]) > 10) clearTimeout(listPress.current); }}
           onClickCapture={e => { if (suppressListClick.current) { e.preventDefault(); e.stopPropagation(); suppressListClick.current = false; } }}>
-          <div className="qt-preview-source">{selection && <input type="checkbox" aria-label={`Выбрать ${t.title}`} checked={selection.includes(t.id)} onChange={() => toggleSelection(t.id)} />}<span>{t.group}</span></div>
-          <div className="qt-preview-message" role="group" aria-label={`Ветка ${t.title}`} onClick={event => { if (!event.target.closest('.rx-pill')) { if (selection) toggleSelection(t.id); else openThread(t.id); } }}>
+          <div className="qt-preview-source">{selection && <input type="checkbox" aria-label={`Выбрать ${rootLabel(t)}`} checked={selection.includes(t.id)} onChange={() => toggleSelection(t.id)} />}<span>{t.group}</span></div>
+          <div className="qt-preview-message" role="group" aria-label={`Ветка ${rootLabel(t)}`} onClick={event => { if (!event.target.closest('.rx-pill')) { if (selection) toggleSelection(t.id); else openThread(t.id); } }}>
             <Message msg={{ ...confirmedReplies(t).at(-1), status: 'delivered' }} mine={confirmedReplies(t).at(-1)?.author === ME} firstOfGroup lastOfGroup
               reactions={messageReactions[confirmedReplies(t).at(-1)?.id]} onToggleReaction={emoji => toggleReaction(emoji, confirmedReplies(t).at(-1)?.id)}
               authorLabel={PEOPLE[confirmedReplies(t).at(-1)?.author]?.name} authorColor="var(--color-primary)" avatar={<Avatar id={confirmedReplies(t).at(-1)?.author} size={40} />}
@@ -274,9 +303,15 @@ export default function ThreadScene({ scenario = 'chats', theme, capture = false
     {menu === 'message' && <ThreadMessageMenu sceneRef={sceneRef} thread={thread} restricted={restricted} label={isThread ? 'Просмотр ветки' : threadMenuLabel} target={menuTarget} reactions={messageReactions[menuMessageId] || {}} onClose={() => setMenu('')} onReact={emoji => toggleReaction(emoji, menuMessageId)} onAction={action => {
       if (action === 'thread') { if (isThread) setMenu(''); else openThread(); }
       else if (action === 'forward') { setMenu('forward'); }
+      else if (action === 'delete' && !restricted) { setMenu('delete-message'); }
       else if (action === 'copy') { navigator.clipboard?.writeText(menuTarget?.msg.text || thread.title).then(() => setNotice('Текст скопирован')).catch(() => setNotice('Копирование недоступно')); setMenu(''); }
       else { setMenu(''); setNotice('Обычное действие с сообщением · демо'); }
     }} />}
+    {menu === 'delete-message' && <ConfirmDialog title="Удалить сообщение?" danger
+      text={deletingRoot && confirmedReplies(thread).length > 0
+        ? 'Вместо сообщения появится отметка об удалении. Ответы останутся в ветке.'
+        : closingOnDelete ? 'Это последний ответ. После его удаления ветка закроется.' : 'Сообщение будет удалено у всех участников.'}
+      confirmLabel="Удалить" onCancel={() => setMenu('')} onConfirm={confirmDelete} />}
     {menu === 'delivery' && failedReply && <DeliveryDialog reply={failedReply} onClose={() => setMenu('')} onRetry={retryFailed} onDelete={deleteFailed} capture={capture} />}
     {menu === 'list' && <ThreadMessageMenu sceneRef={sceneRef} thread={thread} preview reactions={messageReactions[menuMessageId] || {}} onClose={() => setMenu('')} onReact={emoji => toggleReaction(emoji, menuMessageId)} onAction={action => {
       if (action === 'group') openGroup();

@@ -198,7 +198,7 @@ export const SCREEN_GROUPS = [
     hint: 'От списка к переписке. Групповой чат рисует ChatRoom, всё остальное — DMChat: личные, ассистент, архив уволенного.',
     items: [
       ...THREAD_CASES.map(item => ({
-        id: `thread-${item.id}`, title: `Ветки · ${item.title}`,
+        id: `thread-${item.id}`, linkable: true, title: `Ветки · ${item.title}`,
         note: item.note, route: '/chats',
         render: () => <ThreadScene scenario={item.id} capture />,
       })),

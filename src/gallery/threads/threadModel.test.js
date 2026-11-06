@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addReply, canThread, channelReplies, initialThreads, markRead, myThreads, participates, unreadThreads, THREAD_CASES, confirmedReplies, setReplyStatus, deleteFailedReply } from './threadModel.js';
+import { addReply, canThread, channelReplies, initialThreads, markRead, myThreads, participates, unreadThreads, THREAD_CASES, confirmedReplies, setReplyStatus, deleteFailedReply, deleteThreadMessage, rootLabel } from './threadModel.js';
 
 test('thread eligibility is limited to open and private groups', () => {
   for (const type of ['direct', 'bot', 'threads', 'notifications', undefined]) assert.equal(canThread(type), false);
@@ -55,13 +55,62 @@ test('latest activity reorders across groups and empty participation is empty', 
   const replied = addReply(list[2], { id: 'latest', text: 'Новый ответ', updated: 100 });
   assert.equal(myThreads([list[0], list[1], replied])[0].id, replied.id);
 });
-test('review has 34 unique states and covers every original Figma frame', () => {
-  assert.equal(new Set(THREAD_CASES.map(c => c.id)).size, 34);
+test('review cases have unique routes and cover every original Figma frame', () => {
+  assert.equal(new Set(THREAD_CASES.map(c => c.id)).size, THREAD_CASES.length);
   assert.equal(new Set(THREAD_CASES.filter(c => c.figmaNode).map(c => c.figmaNode)).size, 14);
   for (const c of THREAD_CASES) {
     assert.ok(initialThreads(c.id).length);
     for (const t of initialThreads(c.id)) assert.ok(t.unread <= t.replies.length);
   }
+});
+
+test('deleting a root redacts its title while preserving the thread, its replies and unread count', () => {
+  const [original] = initialThreads('threads');
+  const deleted = deleteThreadMessage(original, original.id);
+  assert.equal(deleted.id, original.id);
+  assert.equal(deleted.title, '');
+  assert.equal(rootLabel(deleted), 'Сообщение удалено');
+  assert.deepEqual(channelReplies(deleted), channelReplies(original));
+  assert.deepEqual(myThreads([deleted]), [deleted]);
+  assert.equal(deleted.unread, original.unread);
+  assert.equal(deleteThreadMessage(deleted, deleted.id), deleted);
+  assert.equal(confirmedReplies(addReply(deleted, { id: 'another', text: 'Ещё ответ' })).length, 4);
+});
+
+test('removing a cross-post updates both feeds and keeps previous participation while replies remain', () => {
+  const [original] = initialThreads('threads');
+  const partial = deleteThreadMessage(deleteThreadMessage(original, original.id), 'r1');
+  assert.equal(partial.unread, 2);
+  assert.equal(confirmedReplies(partial).length, 2);
+  assert.deepEqual(channelReplies(partial).map(r => r.id), ['r2']);
+  assert.ok(participates(partial));
+  assert.equal(deleteThreadMessage(partial, 'r1'), partial);
+  assert.equal(deleteThreadMessage(partial, 'r2').unread, 1);
+});
+
+test('only a deleted root with no surviving confirmed replies closes, in either deletion order', () => {
+  const [original, other] = initialThreads('delete-root');
+  const live = deleteThreadMessage(original, 'r1');
+  assert.notEqual(live.status, 'closed');
+  assert.equal(addReply(live, { id: 'fresh', text: 'Снова' }).replies.length, 1);
+  const rootFirst = deleteThreadMessage(deleteThreadMessage(original, original.id), 'r1');
+  const repliesFirst = deleteThreadMessage(live, live.id);
+  assert.deepEqual(rootFirst, repliesFirst);
+  assert.equal(rootFirst.id, original.id);
+  assert.equal(rootFirst.status, 'closed');
+  assert.deepEqual(myThreads([rootFirst, other]), [other]);
+  assert.equal(unreadThreads([rootFirst, other]), unreadThreads([other]));
+  assert.equal(addReply(rootFirst, { id: 'late', text: 'Опоздал' }), rootFirst);
+  assert.equal(deleteThreadMessage(rootFirst, 'r1'), rootFirst);
+});
+
+test('a pending delivery cannot resurrect a thread closed by deleting the last sent reply', () => {
+  const [original] = initialThreads('deleted-root-thread');
+  const pending = addReply(original, { id: 'pending', text: 'Текст', status: 'sending', showInChannel: true });
+  const closed = deleteThreadMessage(pending, 'r1');
+  assert.equal(closed.status, 'closed');
+  assert.equal(setReplyStatus(closed, 'pending', 'sent'), closed);
+  assert.deepEqual(channelReplies(closed), []);
 });
 
 
