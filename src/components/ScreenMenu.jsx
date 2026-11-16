@@ -15,7 +15,7 @@ export const SCREEN_MENU_ITEMS = [
   { id: 'settings', label: 'Настройки', Icon: Settings24Regular },
 ];
 
-export default function ScreenMenu({ open, onClose, onRefresh }) {
+export default function ScreenMenu({ open, onClose, onRefresh, onShare }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [toast, setToast] = useState('');
@@ -23,7 +23,7 @@ export default function ScreenMenu({ open, onClose, onRefresh }) {
   const pick = (id) => {
     onClose();
     if (id === 'refresh') { onRefresh?.(); setToast('Страница обновлена'); }
-    if (id === 'share') setToast('Ссылка скопирована');
+    if (id === 'share') { if (onShare) onShare(); else setToast('Ссылка скопирована'); }
     if (id === 'cache') setToast('Кэш мини-приложений очищен');
     // Настройки открываем поверх текущего экрана — как из профиля
     if (id === 'settings') navigate('/settings', { state: { background: location } });
@@ -31,7 +31,7 @@ export default function ScreenMenu({ open, onClose, onRefresh }) {
 
   return (
     <>
-      {open && <ActionSheet items={SCREEN_MENU_ITEMS} onClose={onClose} onPick={pick} />}
+      {open && <ActionSheet items={onShare ? SCREEN_MENU_ITEMS.map(item => item.id === 'share' ? { ...item, label: 'Поделиться профилем' } : item) : SCREEN_MENU_ITEMS} onClose={onClose} onPick={pick} />}
       <Toast text={toast} onDone={() => setToast('')} />
     </>
   );

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900" fill="none">
+<defs><linearGradient id="sky" x2="600" y2="900" gradientUnits="userSpaceOnUse"><stop stop-color="#f3e9dc"/><stop offset="1" stop-color="#f8eee3"/></linearGradient><linearGradient id="front" x1="0" y1="600" x2="600" y2="900" gradientUnits="userSpaceOnUse"><stop stop-color="#dcb89e"/><stop offset="1" stop-color="#efdbbd"/></linearGradient></defs>
+<path fill="url(#sky)" d="M0 0h600v900H0z"/><circle cx="452" cy="187" r="64" fill="#eac69d" opacity=".65"/><circle cx="452" cy="187" r="83" stroke="#dec9ae" opacity=".55"/>
+<path d="M-50 545C95 391 180 406 319 480S537 564 650 379V900H-50Z" fill="#e8d4ba"/><path d="M-60 644C106 641 139 482 270 509S414 737 659 572V900H-60Z" fill="#ddc2a9"/><path d="M-40 713C159 548 264 653 372 727S555 774 647 688V900H-40Z" fill="url(#front)"/><path d="M-10 757C139 629 232 673 358 758S526 818 625 765" stroke="#f9ecdb" stroke-width="2" opacity=".65"/><path d="M-15 782C139 654 222 698 348 783S516 843 625 790M-15 810C139 682 212 726 338 811S506 871 625 818" stroke="#f7e8d5" stroke-width="1.3" opacity=".55"/>
+<path d="m88 185 7-14 7 14-7 14ZM135 323h16m-8-8v16M492 359h12m-6-6v12" stroke="#c1a585" stroke-width="1.4" opacity=".45"/>
+</svg>

@@ -1,3 +1,6 @@
+import { useChatAppearance, appearanceClass, appearanceStyle } from '../utils/chatAppearance';
+import ChatWallpaper from '../components/ChatWallpaper';
+import './ChatAppearance.css';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft, Plus, Microphone, PaperPlaneRight } from '@phosphor-icons/react';
@@ -10,6 +13,8 @@ import MobileMessageMenu from '../components/MobileMessageMenu';
 import { activityFixtureReaders } from '../components/messageActivityModel';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
+import { shareLink, rememberShareSource, sendShareToChat, removeSharedMessage } from '../utils/sharing';
+import useShareDelivery from '../utils/useShareDelivery';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import AttachSheet from '../components/AttachSheet';
@@ -90,6 +95,7 @@ function AuthorAvatar({ author, onOpen }) {
 }
 
 export default function ChatRoom({ typingPreview, pinPreview } = {}) {
+  const { appearance } = useChatAppearance();
   const navigate = useNavigate();
   const location = useLocation();
   // Профили открываем поверх чата: он остаётся под ними смонтированным
@@ -148,9 +154,9 @@ export default function ChatRoom({ typingPreview, pinPreview } = {}) {
     const msg = menu.msg;
     setMenu(null);
     if (action === 'reply') { setEditing(null); setReply(msg); }
-    if (action === 'copy') { navigator.clipboard?.writeText(msg.text || ''); setToast('Скопировано'); }
+    if (action === 'copy') { navigator.clipboard?.writeText(msg.profile ? shareLink(msg) : (msg.text || '')).then(() => setToast(msg.profile ? 'Ссылка скопирована' : 'Скопировано'), () => setToast('Не удалось скопировать')); }
     if (action === 'edit') { setReply(null); setEditing(msg); setInput(msg.text || ''); }
-    if (action === 'forward') setForward(msg);
+    if (action === 'forward') setForward(rememberShareSource(msg, 'prodev', msg.mine ? 'Вы' : msg.author));
     if (action === 'select') setToast('Режим выбора появится позже');
     if (action === 'pin') {
       const on = pinnedIds.includes(msg.id);
@@ -166,6 +172,7 @@ export default function ChatRoom({ typingPreview, pinPreview } = {}) {
         confirmLabel: 'Удалить',
         danger: true,
         onConfirm: () => {
+          removeSharedMessage(msg.id);
           setMessages((list) => list.filter((m) => m.id !== msg.id));
           setPinnedIds((ids) => ids.filter((x) => x !== msg.id));
           setConfirm(null);
@@ -180,6 +187,7 @@ export default function ChatRoom({ typingPreview, pinPreview } = {}) {
   const [typing, setTyping] = useState(null);
   const [input, setInput] = useState('');
   const startedRef = useRef(false);
+  useShareDelivery(typingPreview || pinPreview ? null : 'prodev', setMessages, setPhase, new URLSearchParams(location.search).get('message'));
   const scrollRef = useRef(null);
   const timersRef = useRef([]);
 
@@ -333,6 +341,8 @@ export default function ChatRoom({ typingPreview, pinPreview } = {}) {
         onOpenList={() => setPinListOpen(true)}
       />
 
+      <div className={`cr-chat-surface ${appearanceClass(appearance)}`} style={appearanceStyle(appearance)}>
+        <ChatWallpaper appearance={appearance} />
       <div className="cr-body" ref={scrollRef}>
         {phase === 'connecting' && <ConnectingSkeleton />}
         {phase === 'chat' && (
@@ -354,6 +364,7 @@ export default function ChatRoom({ typingPreview, pinPreview } = {}) {
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={onLongPress}
                 onSwipeReply={setReply}
+                onOpenProfile={person => navigate('/person', { state: { id: person.id, employee: person, background: location } })}
                 onOpenLink={(url) => setToast(describeLink(url))}
                 />
                 ))}
@@ -364,6 +375,8 @@ export default function ChatRoom({ typingPreview, pinPreview } = {}) {
             ))}
           </div>
         )}
+      </div>
+
       </div>
 
       {(reply || editing) && (
@@ -436,8 +449,10 @@ export default function ChatRoom({ typingPreview, pinPreview } = {}) {
 
       {forward && (
         <ForwardSheet
+          payload={forward}
+          shareUrl={shareLink(forward)}
           onClose={() => setForward(null)}
-          onPick={(chat) => { setForward(null); setToast(`Переслано: ${chat.name}`); }}
+          onPick={recipient => { setForward(null); sendShareToChat(recipient, forward, navigate); }}
         />
       )}
 

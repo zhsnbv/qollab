@@ -1,164 +1,57 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  CaretLeft, CaretRight, BellSimple, DeviceMobile, Translate,
-  ShieldCheck, Question, FileLock, Broom, SignOut, Moon,
-} from '@phosphor-icons/react';
-import {
-  WeatherSunny24Regular, WeatherMoon24Regular, PhoneDesktop24Regular,
-} from '@fluentui/react-icons';
-import ActionSheet from '../components/ActionSheet';
-import ConfirmDialog from '../components/ConfirmDialog';
-import Toast from '../components/Toast';
-import { languages } from '../data/settings';
-import { getThemeMode, setThemeMode } from '../utils/theme';
-import { getLang, setLang } from '../i18n/runtime';
-import { useAuth } from '../context/AuthContext';
-import { settingsGroups } from '../data/profile';
-import './Settings.css';
+import { CaretLeft, CaretRight, BellSimple, Devices, Globe, ShieldCheck, Info, LockSimple, HardDrives, SignOut, CircleHalf } from '@phosphor-icons/react';
+import LanguageSheet from '../components/LanguageSheet';
 import { useScrolled } from '../utils/useScrolled';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { useSettingsPreferences, CACHE_CATEGORIES, formatStorage } from '../utils/settingsPreferences';
+import { getThemeMode } from '../utils/theme';
+import { getLang } from '../i18n/runtime';
+import { useAuth } from '../context/AuthContext';
+import './Settings.css';
 
-const ICONS = { BellSimple, DeviceMobile, Translate, ShieldCheck, Question, FileLock, Broom, Moon };
-
-// Режимы оформления: «автоматически» следует за системной темой устройства
-const THEME_ITEMS = [
-  { id: 'light', label: 'Светлое', Icon: WeatherSunny24Regular },
-  { id: 'dark', label: 'Тёмное', Icon: WeatherMoon24Regular },
-  { id: 'auto', label: 'Автоматически', Icon: PhoneDesktop24Regular },
-];
-const THEME_LABEL = Object.fromEntries(THEME_ITEMS.map((t) => [t.id, t.label]));
-
-// Настройки (Figma node 24313:85954): две группы строк и «Выйти» отдельной
-// красной строкой внизу.
-export default function Settings() {
+export default function Settings({ initialLanguageOpen = false }) {
+  const [langSheet, setLangSheet] = useState(initialLanguageOpen);
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
-  const [closing, setClosing] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const open = path => navigate(path, { state: { background: location } });
+  const prefs = useSettingsPreferences();
+  const cacheSize = CACHE_CATEGORIES.reduce((sum, c) => sum + ((prefs.clearedCache || []).includes(c.id) ? 0 : c.mb), 0);
   const [themeMode, setMode] = useState(getThemeMode);
-  const [themeSheet, setThemeSheet] = useState(false);
-  const [langSheet, setLangSheet] = useState(false);
-  const lang = getLang();
-  const [confirm, setConfirm] = useState(null);
-  const [toast, setToast] = useState('');
-
-  const open = (path) => navigate(path, { state: { background: location } });
-
-  // Каждая строка знает, что делает: подэкран открывается оверлеем, выбор —
-  // листом снизу, разрушающее действие — подтверждением.
-  const ROW_ACTIONS = {
-    notif: () => open('/settings/notifications'),
-    devices: () => open('/settings/devices'),
-    lang: () => setLangSheet(true),
-    theme: () => setThemeSheet(true),
-    perms: () => open('/settings/permissions'),
-    help: () => open('/settings/help'),
-    privacy: () => open('/settings/privacy'),
-    cache: () => setConfirm('cache'),
-  };
-
-  const LANG_LABEL = Object.fromEntries(languages.map((l) => [l.id, l.label]));
-
-  const pickTheme = (mode) => {
-    setThemeMode(mode);
-    setMode(mode);
-    setThemeSheet(false);
-  };
-
-  const close = () => {
-    setClosing(true);
-    setTimeout(() => navigate(-1), 260);
-  };
-
-  const value = (it) => {
-    if (it.id === 'theme') return THEME_LABEL[themeMode];
-    if (it.id === 'lang') return LANG_LABEL[lang];
-    return it.value;
-  };
-
-  return (
-    <div className={`settings ${closing ? 'closing' : ''}`}>
-      <header className={`st-top ${scrolled ? 'hdr-shadow' : ''}`}>
-        <button className="st-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
-        <h1 className="st-title">Настройки</h1>
-        <span className="st-back hdr-spacer" aria-hidden="true" />
-      </header>
-
-      <div className="st-scroll" onScroll={onScroll}>
-        {settingsGroups.map((g) => (
-          <section className="st-group" key={g.title}>
-            <h2 className="st-group-title">{g.title}</h2>
-            <div className="st-card">
-              {g.items.map((it) => {
-                const Icon = ICONS[it.icon];
-                return (
-                  <button className="st-row" key={it.id} onClick={ROW_ACTIONS[it.id]}>
-                    <span className="st-ico">{Icon && <Icon size={20} />}</span>
-                    <span className="st-label">{it.label}</span>
-                    {/* У оформления и языка значение живое — берём из выбранного */}
-                    {value(it) && <span className="st-value">{value(it)}</span>}
-                    <CaretRight size={16} color="var(--color-light)" />
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        ))}
-
-        <div className="st-card st-card--logout">
-          <button className="st-row st-row--logout" onClick={() => setConfirm('logout')}>
-            <span className="st-ico"><SignOut size={20} /></span>
-            <span className="st-label">Выйти</span>
-          </button>
+  useEffect(() => { const sync = () => setMode(getThemeMode()); window.addEventListener('qollab-theme-change', sync); return () => window.removeEventListener('qollab-theme-change', sync); }, []);
+  const themeLabel = { light: 'Светлая', dark: 'Тёмная', auto: 'Системная' }[themeMode];
+  const groups = [
+    { title: 'Приложение', rows: [
+      ['Уведомления', BellSimple, 'coral', 'notifications'],
+      ['Оформление', CircleHalf, 'orange', 'appearance', themeLabel],
+      ['Язык', Globe, 'purple', 'language', getLang() === 'kk' ? 'Қазақша' : 'Русский'],
+      ['Данные и память', HardDrives, 'green', 'storage', formatStorage(cacheSize)],
+    ] },
+    { title: 'Устройство и доступ', rows: [
+      ['Устройства', Devices, 'blue', 'devices', '2'],
+      ['Разрешения', ShieldCheck, 'indigo', 'permissions'],
+      ['Данные устройства', Info, 'cyan', 'device'],
+      ['Конфиденциальность', LockSimple, 'slate', 'privacy'],
+    ] },
+  ];
+  return <div className="settings settings-home">
+    <header className={`st-top ${scrolled ? 'hdr-shadow' : ''}`}><button className="st-back" aria-label="Назад" onClick={() => location.state?.background ? navigate(-1) : navigate('/profile')}><CaretLeft size={24} /></button><h1 className="st-title">Настройки</h1><span className="st-back hdr-spacer" aria-hidden="true" /></header>
+    <div className="st-scroll" onScroll={onScroll}>
+      {groups.map(group => <section className="st-group" key={group.title}>
+        <h2 className="st-group-title">{group.title}</h2><div className="st-card">
+          {group.rows.map(([label, Icon, tone, route, value]) => <button className="st-row" key={route} onClick={() => route === 'language' ? setLangSheet(true) : open(`/settings/${route}`)}>
+            <span className={`st-ico st-ico--${tone}`}><Icon size={21} weight="fill" /></span>
+            <span className="st-label">{label}</span>{value && <span className="st-value">{value}</span>}<CaretRight className="st-chevron" size={15} weight="bold" />
+          </button>)}
         </div>
-
-        <div className="st-bottom-spacer" />
-      </div>
-
-      {themeSheet && (
-        <ActionSheet
-          title="Оформление"
-          items={THEME_ITEMS}
-          selected={themeMode}
-          onClose={() => setThemeSheet(false)}
-          onPick={pickTheme}
-        />
-      )}
-
-      {langSheet && (
-        <ActionSheet
-          title="Язык"
-          items={languages.map((l) => ({ id: l.id, label: `${l.flag}  ${l.label}` }))}
-          selected={lang}
-          onClose={() => setLangSheet(false)}
-          onPick={(id) => {
-            setLangSheet(false);
-            // Смена языка перезагружает приложение: часть текстов вычисляется
-            // один раз при импорте данных, и перерисовкой их не догнать.
-            setLang(id);
-          }}
-        />
-      )}
-
-      {confirm && (
-        <ConfirmDialog
-          title={confirm === 'logout' ? 'Выйти из аккаунта?' : 'Очистить кэш приложения?'}
-          text={confirm === 'logout'
-            ? 'Переписка останется на сервере, но войти придётся заново.'
-            : 'Загруженные файлы и превью удалятся с устройства. Приложение перезапустится.'}
-          confirmLabel={confirm === 'logout' ? 'Выйти' : 'Очистить'}
-          danger={confirm === 'logout'}
-          onConfirm={() => {
-            if (confirm === 'logout') { setConfirm(null); signOut(); return; }
-            setConfirm(null);
-            setToast('Кэш очищен');
-          }}
-          onCancel={() => setConfirm(null)}
-        />
-      )}
-
-      <Toast text={toast} onDone={() => setToast('')} />
+      </section>)}
+      <div className="st-card"><button className="st-row st-row--logout" onClick={() => setConfirm(true)}><span className="st-ico"><SignOut size={21} /></span><span className="st-label">Выйти из аккаунта</span></button></div>
+      <p className="st-version">qollab <span>·</span> 3.1.7.2</p>
     </div>
-  );
+    {langSheet && <LanguageSheet onClose={() => setLangSheet(false)} />}
+    {confirm && <ConfirmDialog title="Выйти из аккаунта?" text="Переписка сохранится. Чтобы вернуться, потребуется войти заново." confirmLabel="Выйти" danger onConfirm={() => { setConfirm(false); signOut(); }} onCancel={() => setConfirm(false)} />}
+  </div>;
 }

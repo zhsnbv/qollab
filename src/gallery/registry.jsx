@@ -1,3 +1,5 @@
+import ProfileShareScene from './profile-share/ProfileShareScene';
+import { SHARE_CASES, shareEntry } from './profile-share/shareCases';
 import ThreadScene from './threads/ThreadScene';
 import { THREAD_CASES } from './threads/threadModel';
 import { MOBILE_CASES } from './publication-screens/cases';
@@ -30,9 +32,10 @@ import Search from '../screens/Search';
 import Notifications from '../screens/Notifications';
 import NotificationGroup from '../screens/NotificationGroup';
 import Settings from '../screens/Settings';
+import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, BubbleColorSettings, WallpaperSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../screens/SettingsExperience';
 import WidgetSettings from '../screens/WidgetSettings';
 import {
-  NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
+  NotificationSettings, Permissions, Devices, Privacy,
 } from '../screens/SettingsPages';
 import BottomNav from '../components/BottomNav';
 import Splash from '../components/Splash';
@@ -240,6 +243,7 @@ export const SCREEN_GROUPS = [
         id: 'forward', title: 'Переслать', note: '«Избранное» первым — туда пересылают чаще',
         route: '/chats/prodev', render: over(ChatRoom, () => <ForwardSheet onClose={noop} onPick={noop} />),
       }),
+      ...SHARE_CASES.map(item => ({ id: `profile-share-${item.id}`, title: `Поделиться · ${item.title}`, note: item.note, interactive: true, route: shareEntry(item, true), render: () => <ProfileShareScene scenario={item.id} capture embedded /> })),
       ...PIN_CASES.map(({ id, title, note, preview }) => ({
         id, title, note, interactive: true, kind: preview.list || preview.menuId ? 'overlay' : undefined,
         route: '/chats/prodev', render: () => <ChatRoom pinPreview={preview} />,
@@ -374,21 +378,16 @@ export const SCREEN_GROUPS = [
     hint: 'Открываются шестерёнкой в профиле. Каркас у подэкранов общий: шапка с «назад», прокрутка и выезд справа.',
     items: [
       { id: 'settings', title: 'Настройки', route: '/settings', render: () => <Settings /> },
-      sheet({
-        id: 'lang', title: 'Выбор языка',
-        route: '/settings',
-        render: over(Settings, () => (
-          <ActionSheet
-            title="Язык"
-            items={[{ id: 'ru', label: '🇷🇺  Русский' }, { id: 'kk', label: '🇰🇿  Қазақ тілі' }]}
-            selected="ru" onClose={noop} onPick={noop}
-          />
-        )),
-      }),
+      { id: 'lang', title: 'Язык', route: '/settings/language', render: () => <LanguageSettings /> },
+      { id: 'set-appearance', title: 'Оформление', route: '/settings/appearance', render: () => <AppearanceSettings /> },
+      { id: 'set-reaction', title: 'Быстрая реакция', route: '/settings/reaction', render: () => <QuickReactionSettings /> },
+      { id: 'set-chat-theme', title: 'Темы чатов', route: '/settings/chat-theme', render: () => <ChatThemeSettings /> },
+      { id: 'set-bubbles', title: 'Цвет сообщений', route: '/settings/bubbles', render: () => <BubbleColorSettings /> },
+      { id: 'set-wallpaper', title: 'Обои для чатов', route: '/settings/wallpaper', render: () => <WallpaperSettings /> },
+      { id: 'set-storage', title: 'Данные и память', route: '/settings/storage', render: () => <StorageSettings /> },
       { id: 'set-devices', title: 'Устройства', route: '/settings/devices', render: () => <Devices /> },
       { id: 'set-perms', title: 'Разрешения', route: '/settings/permissions', render: () => <Permissions /> },
-      { id: 'set-help', title: 'Помощь', route: '/settings/help', render: () => <Help /> },
-      { id: 'set-device-info', title: 'Данные об устройстве', route: '/settings/help/device', render: () => <DeviceInfo /> },
+      { id: 'set-device-info', title: 'Данные устройства', route: '/settings/device', render: () => <DeviceDetailsSettings /> },
       { id: 'set-privacy', title: 'Конфиденциальность', route: '/settings/privacy', render: () => <Privacy /> },
       sheet({
         id: 'logout', title: 'Выход из аккаунта',

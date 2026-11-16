@@ -1,8 +1,10 @@
+import { getSettingsPreferences } from '../utils/settingsPreferences';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Play, Stop, FileText, Check, Checks, Clock } from '@phosphor-icons/react';
 import { ArrowReply20Regular } from '@fluentui/react-icons';
 import MessageReactions from './MessageReactions';
 import LinkPreview from './LinkPreview';
+import ProfileShareCard from './ProfileShareCard';
 import { extractFirstInternalLink } from '../utils/internalLink';
 
 // Псевдослучайная волна для войса (стабильная между рендерами)
@@ -245,7 +247,7 @@ function useSwipeReply(onReply, msg) {
 export default function Message({
   msg, firstOfGroup, lastOfGroup, mine, avatar, authorLabel, authorColor,
   reactions, onToggleReaction, onLongPress, onSwipeReply, onOpenLink,
-  withAvatarSlot = true, bubbleHeader, bubbleFooter,
+  withAvatarSlot = true, bubbleHeader, bubbleFooter, onOpenProfile,
 }) {
   const showAuthor = firstOfGroup && !mine && authorLabel;
   const press = useLongPress(onLongPress, msg);
@@ -274,8 +276,17 @@ export default function Message({
         </span>
       )}
       {!mine && withAvatarSlot && <span className="msg-avatar-slot">{lastOfGroup && avatar}</span>}
-      <div className="msg-col" {...press}>
-        {msg.kind === 'photo' || msg.kind === 'video' ? (
+      <div className="msg-col" {...press} onDoubleClick={event => {
+        if (event.target.closest('button, a, input, video, audio')) return;
+        onToggleReaction?.(getSettingsPreferences().reaction);
+      }}>
+        {msg.kind === 'profile' && msg.profile ? (
+          <div className="msg-bubble msg-bubble--profile">
+            {msg.forwardedFrom && <div className="msg-forwarded-label">Переслано от {msg.forwardedFrom}</div>}
+            <ProfileShareCard person={msg.profile} onOpen={onOpenProfile ? () => onOpenProfile(msg.profile) : undefined} />
+            <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} />
+          </div>
+        ) : msg.kind === 'photo' || msg.kind === 'video' ? (
           <div className="msg-bubble msg-bubble--media">
             {showAuthor && <div className="msg-author-inline" style={{ color: authorColor }}>{authorLabel}</div>}
             <div className="msg-media">
@@ -305,6 +316,7 @@ export default function Message({
         ) : (
           <div className={`msg-bubble ${bubbleFooter ? 'msg-bubble--with-footer' : ''}`}>
             {bubbleHeader}
+            {msg.forwardedFrom && <div className="msg-forwarded-label">Переслано от {msg.forwardedFrom}</div>}
             {showAuthor && <div className="msg-author-inline" style={{ color: authorColor }}>{authorLabel}</div>}
             {msg.quote && (
               <div className="msg-quote" style={{ borderLeftColor: msg.quote.color || 'var(--color-primary)' }}>

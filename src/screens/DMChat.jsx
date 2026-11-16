@@ -1,3 +1,6 @@
+import { useChatAppearance, appearanceClass, appearanceStyle } from '../utils/chatAppearance';
+import ChatWallpaper from '../components/ChatWallpaper';
+import './ChatAppearance.css';
 import { notificationKey } from '../utils/chatNotifications';
 import { chatKey, mergeChatEvents } from '../calls/model';
 import { useCalls, CallHistory } from '../calls/Calls';
@@ -17,6 +20,8 @@ import MobileMessageMenu from '../components/MobileMessageMenu';
 import { activityFixtureReaders } from '../components/messageActivityModel';
 import { PinnedBar, PinnedList } from '../components/PinnedBar';
 import ForwardSheet from '../components/ForwardSheet';
+import { shareLink, rememberShareSource, sendShareToChat, resolveShareChat, recipientChat, sharedChatMessages, shareChatId, sharedSourceMessage, removeSharedMessage } from '../utils/sharing';
+import useShareDelivery from '../utils/useShareDelivery';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Toast from '../components/Toast';
 import AttachSheet from '../components/AttachSheet';
@@ -90,6 +95,7 @@ function isEmptyChat(chat) {
 
 function buildHistory(chat) {
   if (!chat) return [];
+  chat = { ...chat, preview: chat.historyPreview ?? chat.preview, time: chat.historyTime ?? chat.time };
   const attach = attachmentFor(chat);
   if (chat.dismissed) {
     return [
@@ -168,11 +174,14 @@ function AuthorAvatar({ chat, author }) {
   );
 }
 
-export default function DMChat({ typingPreview } = {}) {
+export default function DMChat({ typingPreview, sharePreview } = {}) {
+  const { appearance } = useChatAppearance();
   const calls = useCalls();
   const navigate = useNavigate();
   const { state } = useLocation();
-  const chat = state?.chat;
+  const params = new URLSearchParams(window.location.search);
+  const linkedRecipient = resolveShareChat(params.get('chat'));
+  const chat = state?.chat || (linkedRecipient ? recipientChat(linkedRecipient) : undefined);
   const location = useLocation();
   // Профиль собеседника: у демо-чатов есть свой id, у остальных карточка
   // собирается из строки списка — иначе всем открывался бы один и тот же
@@ -185,8 +194,8 @@ export default function DMChat({ typingPreview } = {}) {
       kind: 'user',
       notificationKey: notificationKey(chat || {}),
       notificationInitialMode: chat?.muted ? 'off' : 'on',
-      employee: chat?.profileId ? undefined : {
-        id: chat?.title,
+      employee: resolveShareChat(shareChatId(chat)) || {
+        id: chat?.profileId || chat?.title,
         name: chat?.title,
         avatar: chat?.avatar,
         initials: chat?.initials,
@@ -208,14 +217,14 @@ export default function DMChat({ typingPreview } = {}) {
   const [pinListOpen, setPinListOpen] = useState(false);
   const [reply, setReply] = useState(null);
   const [editing, setEditing] = useState(null);
-  const [forward, setForward] = useState(null);
+  const [forward, setForward] = useState(sharePreview?.forward || null);
   const [confirm, setConfirm] = useState(null);
   const [notice, setNotice] = useState([]);
   const [toast, setToast] = useState('');
   const [attachOpen, setAttachOpen] = useState(false);
   const [history, setHistory] = useState(false);
-  const [phase, setPhase] = useState(()=>typingPreview ? 'chat' : calls?.showcase?(isEmptyChat(chat)?'empty':'chat'):'connecting'); // connecting | empty | chat
-  const [messages, setMessages] = useState(() => typingPreview?.messages || (chat && !isEmptyChat(chat) ? buildHistory(chat).map(message => {
+  const [phase, setPhase] = useState(()=>typingPreview || sharePreview || state?.shareSent ? 'chat' : calls?.showcase?(isEmptyChat(chat)?'empty':'chat'):'connecting'); // connecting | empty | chat
+  const [messages, setMessages] = useState(() => sharePreview?.messages || typingPreview?.messages || (chat && !isEmptyChat(chat) ? buildHistory(chat).map(message => {
     if (!message.mine || message.status !== 'read') return message;
     const readAt = new Date();
     const historyDate = /^(\d{1,2})\.(\d{1,2})$/.exec(chat.time || '');
@@ -229,13 +238,14 @@ export default function DMChat({ typingPreview } = {}) {
   const scrollRef = useRef(null);
   const timersRef = useRef([]);
   const uidRef = useRef(1000);
+  useShareDelivery(sharePreview?.capture ? null : shareChatId(chat), setMessages, setPhase, params.get('message'));
 
   useEffect(() => {
     if (!chat) navigate('/chats', { replace: true });
   }, [chat, navigate]);
 
   useEffect(() => {
-    if (!chat || calls?.showcase || typingPreview) return;
+    if (!chat || calls?.showcase || typingPreview || sharePreview || state?.shareSent || sharedChatMessages(shareChatId(chat)).length || sharedSourceMessage(shareChatId(chat), params.get('message'))) return;
     const t = setTimeout(() => setPhase(isEmptyChat(chat) ? 'empty' : 'chat'), 900);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -288,9 +298,9 @@ export default function DMChat({ typingPreview } = {}) {
     const msg = menu.msg;
     setMenu(null);
     if (action === 'reply') { setEditing(null); setReply(msg); }
-    if (action === 'copy') { navigator.clipboard?.writeText(msg.text || ''); setToast('Скопировано'); }
+    if (action === 'copy') { navigator.clipboard?.writeText(msg.profile ? shareLink(msg) : (msg.text || '')).then(() => setToast(msg.profile ? 'Ссылка скопирована' : 'Скопировано'), () => setToast('Не удалось скопировать')); }
     if (action === 'edit') { setReply(null); setEditing(msg); setInput(msg.text || ''); }
-    if (action === 'forward') setForward(msg);
+    if (action === 'forward') setForward(rememberShareSource(msg, shareChatId(chat), msg.mine ? 'Вы' : (msg.author || chat.title)));
     if (action === 'select') setToast('Режим выбора появится позже');
     if (action === 'pin') {
       const on = pinnedIds.includes(msg.id);
@@ -306,6 +316,7 @@ export default function DMChat({ typingPreview } = {}) {
         confirmLabel: 'Удалить',
         danger: true,
         onConfirm: () => {
+          removeSharedMessage(msg.id);
           setMessages((list) => list.filter((m) => m.id !== msg.id));
           setPinnedIds((ids) => ids.filter((x) => x !== msg.id));
           setConfirm(null);
@@ -424,6 +435,8 @@ export default function DMChat({ typingPreview } = {}) {
         onOpenList={() => setPinListOpen(true)}
       />
 
+      <div className={`cr-chat-surface ${appearanceClass(appearance)}`} style={appearanceStyle(appearance)}>
+        <ChatWallpaper appearance={appearance} />
       <div className="cr-body" ref={scrollRef}>
         {phase === 'connecting' && <ConnectingSkeleton />}
         {phase === 'empty' && !calls?.history.some(c=>c.chatId===chatKey(chat)) && <EmptyState />}
@@ -445,6 +458,7 @@ export default function DMChat({ typingPreview } = {}) {
                 onToggleReaction={(emoji) => toggleReaction(msg.id, emoji)}
                 onLongPress={chat.dismissed ? undefined : onLongPress}
                 onSwipeReply={chat.dismissed ? undefined : setReply}
+                onOpenProfile={person => navigate('/person', { state: { id: person.id, employee: person, background: location } })}
                 onOpenLink={(url) => setToast(describeLink(url))}
               />
             ))}
@@ -466,7 +480,6 @@ export default function DMChat({ typingPreview } = {}) {
             ))}
             {activeTyping && !chat.kind && !chat.dismissed && (
               <div className="msg msg--their msg--last msg--typing">
-                <span className="msg-avatar-slot"><AuthorAvatar chat={chat} author={chat.title} /></span>
                 <div className="msg-col">
                   <div className="msg-bubble msg-bubble--typing"><span /><span /><span /></div>
                 </div>
@@ -474,6 +487,8 @@ export default function DMChat({ typingPreview } = {}) {
             )}
           </div>
         )}
+      </div>
+
       </div>
 
       {(reply || editing) && (
@@ -557,8 +572,11 @@ export default function DMChat({ typingPreview } = {}) {
 
       {forward && (
         <ForwardSheet
+          payload={forward}
+          preview={{ capture: !!sharePreview?.capture }}
+          shareUrl={shareLink(forward)}
           onClose={() => setForward(null)}
-          onPick={(c) => { setForward(null); setToast(`Переслано: ${c.name}`); }}
+          onPick={recipient => { setForward(null); sendShareToChat(recipient, forward, navigate); }}
         />
       )}
 

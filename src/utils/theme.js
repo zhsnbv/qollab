@@ -40,7 +40,9 @@ export function applyTheme(mode) {
 
 export function setThemeMode(mode) {
   try { localStorage.setItem(THEME_KEY, mode); } catch { /* ignore */ }
-  return applyTheme(mode);
+  const resolved = applyTheme(mode);
+  window.dispatchEvent(new Event('qollab-theme-change'));
+  return resolved;
 }
 
 // Следим за системной темой: нужно только в режиме «автоматически».

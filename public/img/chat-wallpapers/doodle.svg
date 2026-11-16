@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="480" viewBox="0 0 400 480" fill="none">
+  <defs>
+    <g id="spark"><path d="M0-13C1-4 4-1 12 0C4 1 1 5 0 13C-1 5-4 1-12 0C-4-1-1-4 0-13Z"/></g>
+    <g id="leaf"><path d="M-13 13C-23-4-8-17 13-17C17 4 7 19-13 13Z"/><path d="M-17 19C-5 8 0 0 9-12M-10 12L-11 1M-3 4L7 5"/></g>
+    <g id="chat"><path d="M-17-11Q-20-9-20-4V8Q-19 12-14 12H-7L-14 20Q-2 17 2 12H13Q19 11 19 6V-6Q18-12 12-12Z"/><path d="M-10-3L10-4M-10 3L4 3"/></g>
+    <g id="plane"><path d="M-21-2L20-16L7 20L0 6L-21-2ZM0 6L20-16M0 6L-2 17L5 13"/></g>
+    <g id="star"><path d="M0-19L6-6L21-4L10 6L12 21L-1 13L-15 19L-11 5L-22-6L-7-7Z"/></g>
+    <g id="cloud"><path d="M-17 10C-30 8-25-6-15-6C-16-21 9-24 12-9C28-11 30 10 15 11Z"/></g>
+    <g id="flower"><path d="M-3-6C-16-26-26-6-12 0C-32 7-17 24-6 12C-3 32 17 22 11 8C31 14 29-9 14-7C25-23 3-32-3-6Z"/><path d="M6-3C15 2 5 12-2 6C-8 0-1-8 6-3Z"/></g>
+    <g id="heart"><path d="M0 18C-6 12-23 1-20-11C-18-21-3-21 0-10C5-23 21-18 21-8C21 3 9 12 0 18Z"/></g>
+    <g id="orbit"><ellipse rx="17" ry="19" transform="rotate(-18)"/><ellipse rx="29" ry="7" transform="rotate(-28)"/><path d="M4-10L5-9M-7 7L-6 8"/></g>
+    <g id="smile"><path d="M-17-12C-5-24 20-17 20 3C20 20-4 27-17 12C-24 5-22-6-17-12Z"/><path d="M-9-5L-9-2M6-7L7-4M-11 6Q1 18 12 3"/></g>
+    <g id="sun"><path d="M-10-9C2-20 17-9 13 4C10 18-10 19-15 6C-17 0-15-5-10-9Z"/><path d="M-3-22L-3-27M14-18L18-23M23-2L29-3M18 15L23 19M1 23L1 29M-17 18L-21 23M-24 1L-30 2M-21-17L-26-21"/></g>
+  </defs>
+  <g stroke="#344b62" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <use href="#plane" transform="translate(61 46) rotate(-13)"/>
+    <use href="#leaf" transform="translate(157 29) rotate(18)"/>
+    <use href="#spark" transform="translate(243 54) rotate(-11) scale(.78)"/>
+    <use href="#chat" transform="translate(329 32) rotate(12)"/>
+    <use href="#orbit" transform="translate(12 130) rotate(14)"/>
+    <use href="#orbit" transform="translate(412 130) rotate(14)"/>
+    <g transform="translate(107 127) rotate(-14)"><path d="M-15-9L-14 11Q-12 18 1 18Q12 17 14 10L15-9ZM15-5C31-8 31 12 14 9M-16 24Q0 28 17 24M-8-16Q-14-22-7-28M4-16Q-2-24 5-29"/></g>
+    <use href="#heart" transform="translate(206 121) rotate(15) scale(.86)"/>
+    <g transform="translate(307 128) rotate(-9)"><path d="M-19 10V-1C-20-27 19-27 20-1V10M-19-1Q-12-4-12 2V13Q-14 18-20 14ZM20-2Q12-4 12 3V13Q15 18 20 13Z"/></g>
+    <use href="#flower" transform="translate(55 221) rotate(12) scale(.78)"/>
+    <g transform="translate(151 211) rotate(13)"><path d="M-21-12Q-9-18 0-11Q10-16 22-11L20 17Q8 12-1 19Q-11 13-23 18ZM0-11L-1 19M-17-4Q-11-6-5-2M5-3Q11-5 17-3M-17 3L-6 5M5 4L16 4"/></g>
+    <use href="#sun" transform="translate(256 219) rotate(-8) scale(.76)"/>
+    <use href="#cloud" transform="translate(355 211) rotate(12) scale(.84)"/>
+    <g transform="translate(8 312) rotate(-12)"><path d="M-16 10L-12-13L12-13L16 10ZM-21 14L20 14M-9-3L9-3"/></g>
+    <g transform="translate(408 312) rotate(-12)"><path d="M-16 10L-12-13L12-13L16 10ZM-21 14L20 14M-9-3L9-3"/></g>
+    <use href="#smile" transform="translate(103 306) rotate(7) scale(.85)"/>
+    <g transform="translate(204 305) rotate(-13)"><path d="M-19-8L-9-9L-6-16L9-16L13-9L22-8L21 16L-21 15ZM-6-1C6-10 17 7 6 12C-4 17-13 5-6-1Z"/><path d="M15-3L16-3"/></g>
+    <use href="#star" transform="translate(307 314) rotate(15) scale(.83)"/>
+    <g transform="translate(56 406) rotate(12)"><path d="M-12-5C-15-24 15-25 15-8C16 1 7 4 8 13L-5 13C-5 4-11 3-12-5ZM-5 18L8 18M-1 23L5 23M-1 12L-1 0L-6-5M-1 0L5-5"/></g>
+    <use href="#leaf" transform="translate(158 404) rotate(-22) scale(.9)"/>
+    <g transform="translate(256 407) rotate(-11)"><path d="M-22 16L-5-15L3-2L10-12L26 16ZM-11-4L-5 1L0-5M5-3L11 3L14-5"/></g>
+    <use href="#chat" transform="translate(349 402) rotate(-12) scale(.8)"/>
+    <use href="#spark" transform="translate(228 -3) rotate(14) scale(.65)"/>
+    <use href="#spark" transform="translate(228 477) rotate(14) scale(.65)"/>
+    <path d="M34 80Q28 89 19 90M282 77Q291 78 295 86M179 164Q177 171 181 177M83 263L88 269M368 273Q375 280 372 287M128 358L134 361M275 362Q284 356 287 347M15 459Q25 460 31 454M193 451L199 457M325 457L333 453"/>
+  </g>
+</svg>

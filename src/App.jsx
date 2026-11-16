@@ -35,8 +35,9 @@ import GroupProfile from './screens/GroupProfile';
 import NewChat from './screens/NewChat';
 import ChatSearch from './screens/ChatSearch';
 import Settings from './screens/Settings';
+import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, BubbleColorSettings, WallpaperSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from './screens/SettingsExperience';
 import {
-  NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
+  NotificationSettings, Permissions, Devices, Privacy,
 } from './screens/SettingsPages';
 import ProfilePhoto from './screens/ProfilePhoto';
 import ProfileQr from './screens/ProfileQr';
@@ -91,7 +92,7 @@ function OverlayRoutes({ location }) {
     <Routes location={location}>
         <Route path="/calls" element={<CallsLab />} />
         <Route path="/chats/prodev" element={<ChatRoom />} />
-        <Route path="/chats/dm" element={<DMChat />} />
+        <Route path="/chats/dm" element={<DMChat key={location.state?.chat?.profileId || location.state?.chat?.title || location.search} />} />
         <Route path="/article" element={<ArticleView />} />
         {/* Шит с Главной — быстрый доступ, не уходя с экрана. Путь отдельный от
             вкладки /services: каталог тот же, но это разные способы открыть его. */}
@@ -112,11 +113,19 @@ function OverlayRoutes({ location }) {
         <Route path="/new-chat" element={<NewChat />} />
         <Route path="/chat-search" element={<ChatSearch />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/appearance" element={<AppearanceSettings />} />
+        <Route path="/settings/reaction" element={<QuickReactionSettings />} />
+        <Route path="/settings/chat-theme" element={<ChatThemeSettings />} />
+        <Route path="/settings/bubbles" element={<BubbleColorSettings />} />
+        <Route path="/settings/wallpaper" element={<WallpaperSettings />} />
+        <Route path="/settings/language" element={<LanguageSettings />} />
+        <Route path="/settings/storage" element={<StorageSettings />} />
+        <Route path="/settings/device" element={<DeviceDetailsSettings />} />
         <Route path="/settings/notifications" element={<NotificationSettings />} />
         <Route path="/settings/devices" element={<Devices />} />
         <Route path="/settings/permissions" element={<Permissions />} />
-        <Route path="/settings/help" element={<Help />} />
-        <Route path="/settings/help/device" element={<DeviceInfo />} />
+        <Route path="/settings/help" element={<DeviceDetailsSettings />} />
+        <Route path="/settings/help/device" element={<DeviceDetailsSettings />} />
         <Route path="/settings/privacy" element={<Privacy />} />
         <Route path="/profile/photo" element={<ProfilePhoto />} />
         <Route path="/profile/qr" element={<ProfileQr />} />

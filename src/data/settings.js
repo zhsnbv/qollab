@@ -50,6 +50,6 @@ export const deviceInfo = [
 ];
 
 export const languages = [
+  { id: 'kk', label: 'Қазақша', flag: '🇰🇿' },
   { id: 'ru', label: 'Русский', flag: '🇷🇺' },
-  { id: 'kk', label: 'Қазақ тілі', flag: '🇰🇿' },
 ];

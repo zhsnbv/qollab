@@ -1,0 +1,91 @@
+/* One wallpaper definition is shared by real chats, settings previews and tiles. */
+.qa-wall-plain { background: var(--color-white); }
+.qa-wall-sand { background-color: #f3dfcb; background-image: radial-gradient(ellipse at 12% 20%, #fff5df 0, transparent 46%), radial-gradient(ellipse at 87% 13%, #efc8b9 0, transparent 50%), radial-gradient(ellipse at 70% 95%, #e6c8a2 0, transparent 52%), radial-gradient(ellipse at 0 85%, #f8edcf 0, transparent 42%); }
+.qa-wall-sage { background-color: #d9e7db; background-image: radial-gradient(ellipse at 0 5%, #f4eed4 0, transparent 48%), radial-gradient(ellipse at 90% 25%, #bad7cc 0, transparent 48%), radial-gradient(ellipse at 45% 95%, #b4c5ad 0, transparent 46%), radial-gradient(ellipse at 10% 70%, #e5eddb 0, transparent 45%); }
+.qa-wall-sky { background-color: #dbe8f6; background-image: radial-gradient(ellipse at 10% 15%, #eef8ed 0, transparent 48%), radial-gradient(ellipse at 88% 10%, #b8cde9 0, transparent 55%), radial-gradient(ellipse at 70% 85%, #d9cced 0, transparent 52%), radial-gradient(ellipse at 0 85%, #b7dce3 0, transparent 45%); }
+.qa-wall-lilac { background-color: #e4dcec; background-image: radial-gradient(ellipse at 0 8%, #d1d4ef 0, transparent 48%), radial-gradient(ellipse at 85% 15%, #f5dcdd 0, transparent 45%), radial-gradient(ellipse at 85% 95%, #c9bfdf 0, transparent 46%), radial-gradient(ellipse at 10% 70%, #f8e7d1 0, transparent 45%); }
+.qa-wall-mist { background-color: #d8e3e5; background-image: radial-gradient(ellipse at 0 0, #edf4ee 0, transparent 50%), radial-gradient(ellipse at 95% 20%, #b4ced3 0, transparent 52%), radial-gradient(ellipse at 60% 95%, #c3ccd8 0, transparent 55%), radial-gradient(ellipse at 5% 80%, #e9e8e0 0, transparent 40%); }
+.qa-wall-dunes { background: #f3e9dc url('/img/chat-wallpapers/dunes.svg') center / cover no-repeat; }
+.qa-wall-botanical { background: #edf1e9 url('/img/chat-wallpapers/botanical.svg') center / 400px 460px repeat; }
+.qa-wall-orbits { background: #eaf0f6 url('/img/chat-wallpapers/orbits.svg') center / 420px 500px repeat; }
+html[data-theme="dark"] [class*="qa-wall-"]:not(.qa-wall-plain) { background-blend-mode: multiply; background-color: #55565b; }
+
+.qa-wall-paper-garden { background: #F3EFE7 url('/img/chat-wallpapers/paper-garden.svg') center / cover no-repeat; }
+.qa-wall-tidal { background: #E6F0EE url('/img/chat-wallpapers/tidal.svg') center / cover no-repeat; }
+.qa-wallpaper { position: relative; isolation: isolate; }
+.qa-wallpaper-layers { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; border-radius: inherit; }
+html:not([data-theme="dark"]) .qa-wallpaper:not(.qa-wall-plain) > .qa-wallpaper-layers::after { content: ''; position: absolute; inset: 0; background: rgb(43 61 82 / 3.5%); }
+.qa-live-scene, .qa-pattern-layer { position: absolute; inset: 0; }
+.qa-pattern-layer { background: url('/img/chat-wallpapers/doodle.svg') 0 0 / 360px 432px repeat; opacity: .16; mix-blend-mode: multiply; }
+html[data-theme="dark"] .qa-pattern-layer { filter: invert(1); opacity: .14; mix-blend-mode: screen; }
+.cr-chat-surface { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.qa-wall-aurora-live { background: #E1E7F0; --qa-live-fold: #AEC2E580; --qa-live-light: #EDF0F8; --qa-live-shade: #C1AFE170; --qa-live-glow: #DCE8F580; }
+.qa-wall-silk-live { background: #F2E5E4; --qa-live-fold: #E7A9AB80; --qa-live-light: #FAEFE7; --qa-live-shade: #D2B4DF70; --qa-live-glow: #FFF2DCA0; }
+.qa-wall-tide-live { background: #E0EAE3; --qa-live-fold: #AEC7AE80; --qa-live-light: #F0EFDF; --qa-live-shade: #A6CFCC70; --qa-live-glow: #E1EFDA90; }
+/* One diffuse silk motion, three palettes. Overscan keeps every layer edge
+   outside the chat viewport; blur softens the color folds themselves. */
+.qa-live-scene { overflow: hidden; background: radial-gradient(ellipse at 0% 0%, #FFFFFF40, transparent 65%); }
+.qa-live-scene i { position: absolute; width: 170%; height: 150%; left: -35%; top: -25%; border-radius: 0; background: conic-gradient(from 40deg at 40% 60%, transparent 0deg, var(--qa-live-fold) 50deg, var(--qa-live-light) 100deg, var(--qa-live-shade) 160deg, transparent 220deg); filter: blur(22px); will-change: transform; animation: qa-silk-drift 22s ease-in-out infinite; }
+.qa-live-scene i:nth-child(2) { opacity: .6; animation-delay: -11s; }
+.qa-live-scene i:nth-child(3) { background: radial-gradient(ellipse at 70% 30%, var(--qa-live-glow), transparent 65%); animation-delay: -7s; }
+html[data-theme="dark"] .qa-live-scene { filter: brightness(.42) saturate(.78); }
+.qa-wallpaper-layers--mini .qa-live-scene i { animation-play-state: paused; }
+.qa-motion-off .qa-live-scene i { animation-play-state: paused; }
+@keyframes qa-silk-drift { 0%,100% { transform: rotate(-15deg) scale(1.1); } 50% { transform: rotate(38deg) scale(1.35); } }
+@media (prefers-reduced-motion: reduce) { .qa-live-scene i { animation: none; will-change: auto; } }
+
+/* Customize message surfaces only. Application and workspace colors stay intact. */
+.qa-bubbles { --chat-in-bg: var(--chat-in-light, var(--color-background)); --chat-out-bg: var(--chat-out-light, var(--color-primary-bg-hover)); --chat-in-ink: var(--chat-in-ink-light, var(--color-text)); --chat-out-ink: var(--chat-out-ink-light, var(--color-text)); }
+html[data-theme="dark"] .qa-bubbles { --chat-in-bg: var(--chat-in-dark, var(--color-background)); --chat-out-bg: var(--chat-out-dark, var(--color-primary-bg-hover)); --chat-in-ink: var(--chat-in-ink-dark, var(--color-text)); --chat-out-ink: var(--chat-out-ink-dark, var(--color-text)); }
+.qa-bubbles .msg--their { --chat-bubble-color: var(--chat-in-bg); --chat-bubble-ink: var(--chat-in-ink); }
+.qa-bubbles .msg--mine { --chat-bubble-color: var(--chat-out-bg); --chat-bubble-ink: var(--chat-out-ink); }
+.qa-bubbles .msg { --bubble-bg: var(--chat-bubble-color); --chat-bubble-muted: color-mix(in srgb, var(--chat-bubble-ink) 85%, var(--chat-bubble-color)); }
+.qa-bubbles .msg .msg-bubble { --bubble-bg: var(--chat-bubble-color); --chat-surface-fill: var(--chat-bubble-color); background: var(--bubble-bg); color: var(--chat-bubble-ink); }
+.qa-bubbles .msg .msg-document { --chat-surface-fill: var(--color-background); }
+.qa-bubbles .sc-mini-in { --chat-surface-fill: var(--chat-in-bg); }
+.qa-bubbles .sc-mini-out { --chat-surface-fill: var(--chat-out-bg); }
+/* A darker edge follows the actual fill, even for pearl on a white wallpaper.
+   An inset outline costs no content width and preserves the native bubble size. */
+.qa-bubbles .msg :is(.msg-bubble, .msg-document),
+.qa-bubbles :is(.sc-mini-in, .sc-mini-out) {
+  --chat-surface-edge: color-mix(in srgb, var(--chat-surface-fill) 94%, #000);
+  border-color: var(--chat-surface-edge);
+  outline: 1px solid var(--chat-surface-edge);
+  outline-offset: -1px;
+  box-shadow: none;
+}
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-time-row--overlay, :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-time-row--inline { color: color-mix(in srgb, var(--chat-bubble-ink) 55%, transparent); }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-time-row svg { color: inherit; fill: currentColor; }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-link, :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-mention { color: var(--chat-bubble-ink); }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .voice-time { color: color-mix(in srgb, var(--chat-bubble-ink) 68%, transparent); }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .voice-wave i { background: color-mix(in srgb, var(--chat-bubble-ink) 45%, transparent); }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .voice-play { color: var(--chat-bubble-ink); background: color-mix(in srgb, var(--chat-bubble-ink) 12%, transparent); }
+.qa-bubbles .msg-quote, .qa-bubbles .link-preview { color: var(--color-text); }
+
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-document { --chat-surface-fill: var(--chat-bubble-color); background: var(--chat-bubble-color); color: var(--chat-bubble-ink); }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-document-name { color: var(--chat-bubble-ink); }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-document-size { color: color-mix(in srgb, var(--chat-bubble-ink) 68%, transparent); }
+:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .voice-play svg { color: var(--chat-bubble-ink); fill: currentColor; }
+/* Metadata follows the chosen bubble, including rich messages and reactions. */
+.qa-bubbles .msg .msg-bubble :is(.msg-time-row--overlay, .msg-time-row--inline, .voice-time, .msg-forwarded-label),
+.qa-bubbles .msg .msg-document-size { color: var(--chat-bubble-muted); }
+.qa-bubbles .msg .msg-bubble .msg-time-row svg { color: inherit; fill: currentColor; }
+.qa-bubbles .msg .msg-bubble :is(.msg-link, .msg-mention) { color: var(--chat-bubble-ink); }
+.qa-bubbles .msg .msg-bubble .msg-author-inline { color: var(--chat-bubble-ink) !important; }
+.qa-bubbles .msg .msg-bubble .voice-wave i { background: color-mix(in srgb, var(--chat-bubble-ink) 70%, var(--chat-bubble-color)); }
+.qa-bubbles .msg .msg-bubble .voice-play { color: var(--chat-bubble-ink); background: color-mix(in srgb, var(--chat-bubble-ink) 12%, var(--chat-bubble-color)); }
+.qa-bubbles .msg .msg-bubble .voice-play svg { color: inherit; fill: currentColor; }
+.qa-bubbles .msg .share-person-card { color: var(--chat-bubble-ink); }
+.qa-bubbles .msg .share-person-info :is(small, span), .qa-bubbles .msg .share-person-chevron { color: var(--chat-bubble-muted); }
+.qa-bubbles .msg .rx-pill:not(.own) .rx-count { color: var(--chat-bubble-ink); }
+.qa-bubbles { --chat-on-accent: #301907; }
+html[data-company="integra"]:not([data-theme="dark"]) .qa-bubbles { --chat-on-accent: #fff; }
+.qa-bubbles .msg .rx-pill.own .rx-count { color: var(--chat-on-accent); }
+.qa-bubbles .msg .msg-quote-head { color: var(--color-text) !important; }
+.qa-bubbles .msg .msg-quote-text { color: color-mix(in srgb, var(--color-text) 85%, var(--color-white)); }
+.qa-bubbles .msg :is(.msg-document-icon, .share-person-avatar) { color: var(--color-text); }
+.qa-bubbles .msg .msg-document-icon svg { color: inherit; fill: currentColor; }
+.qa-bubbles .msg .lp :is(.lp-kind, .lp-cta, .lp-ico) { color: var(--color-text); }
+.qa-bubbles .msg .lp :is(.lp-sub, .lp-note) { color: color-mix(in srgb, var(--color-text) 85%, var(--color-white)); }
+.qa-bubbles .msg .msg-time-row--static { padding: 2px 6px; border-radius: var(--radius-pill); background: var(--color-white); color: color-mix(in srgb, var(--color-text) 85%, var(--color-white)); }
+.qa-bubbles .msg .msg-time-row--static svg { color: inherit; fill: currentColor; }

@@ -18,6 +18,9 @@ import StatusBubble from '../components/StatusBubble';
 import ErgizAvatar from '../components/ErgizAvatar';
 import ProfileTabs from '../components/ProfileTabs';
 import Toast from '../components/Toast';
+import ForwardSheet from '../components/ForwardSheet';
+import { Share24Filled } from '@fluentui/react-icons';
+import { profilePayload, shareLink, sendShareToChat, resolveShareChat } from '../utils/sharing';
 import './Profile.css';
 import './ChatProfile.css';
 import './PersonProfile.css';
@@ -36,13 +39,14 @@ const TABS = [
   { id: 'groups', label: 'Общие группы', Icon: People16Regular, count: (p) => p.groups.length },
 ];
 
-export default function PersonProfile({ notificationPreview } = {}) {
+export default function PersonProfile({ notificationPreview, sharePreview } = {}) {
   const navigate = useNavigate();
   const calls = useCalls();
   const location = useLocation();
   const [scrolled, onScroll] = useScrolled();
-  const { id, employee, background, online, bot } = location.state || {};
-  const sourcePerson = getPerson(id, employee);
+  const { employee, background, online, bot } = location.state || {};
+  const id = location.state?.id || new URLSearchParams(location.search).get('id');
+  const sourcePerson = getPerson(id, employee || resolveShareChat(id));
   const p = notificationPreview ? { ...sourcePerson, phone: '+7 (000) 000-00-00', email: 'user@example.com', tabNumber: '00000000' } : sourcePerson;
   // «в сети» — не строка из данных, а текущее состояние: оно приходит оттуда,
   // откуда профиль открыли. Без этого шапка чата и профиль расходились.
@@ -59,10 +63,12 @@ export default function PersonProfile({ notificationPreview } = {}) {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [tab, setTab] = useState(bot ? 'files' : 'info');
   const [toast, setToast] = useState('');
+  const [shareOpen, setShareOpen] = useState(!!sharePreview?.open);
+  const payload = profilePayload(p);
 
   const close = () => {
     setClosing(true);
-    setTimeout(() => navigate(-1), 240);
+    setTimeout(() => location.key === 'default' ? navigate('/chats') : navigate(-1), 240);
   };
 
   // Вложения открываем прежним экраном профиля чата: там уже есть вкладки и
@@ -83,8 +89,7 @@ export default function PersonProfile({ notificationPreview } = {}) {
     },
   });
 
-  // «Ещё» больше нет: поиск и звук вынесены в ряд, а «поделиться ссылкой»
-  // живёт в «трёх точках» шапки.
+  // Поделиться профилем — отдельное действие в шапке; меню ведёт в тот же флоу.
   // Ассистенту не звонят и не говорят «рахмет» — это не человек. Остаются
   // действия над самой перепиской.
   const actions = [
@@ -142,10 +147,10 @@ export default function PersonProfile({ notificationPreview } = {}) {
 
   return (
     <div className={`person ${closing ? 'closing' : ''}`}>
-      <header className={`pp-top ${scrolled ? 'hdr-shadow' : ''}`}>
+      <header className={`pp-top pp-top--sharing ${scrolled ? 'hdr-shadow' : ''}`}>
         <button className="pp-back" onClick={close} aria-label="Назад"><CaretLeft size={24} /></button>
         <h1 className="pp-title">Профиль</h1>
-        <button className="pp-back" onClick={() => setScreenMenu(true)} aria-label="Меню"><DotsIcon /></button>
+        <div className="pp-top-actions">{!bot && <button className="pp-back" onClick={() => setShareOpen(true)} aria-label="Поделиться профилем"><Share24Filled /></button>}<button className="pp-back" onClick={() => setScreenMenu(true)} aria-label="Меню"><DotsIcon /></button></div>
       </header>
 
       <div className="pp-scroll" onScroll={onScroll}>
@@ -385,7 +390,8 @@ export default function PersonProfile({ notificationPreview } = {}) {
         </div>
       </div>
 
-      <ScreenMenu open={screenMenu} onClose={() => setScreenMenu(false)} />
+      <ScreenMenu open={screenMenu} onClose={() => setScreenMenu(false)} onShare={bot ? undefined : () => setShareOpen(true)} />
+      {shareOpen && <ForwardSheet payload={payload} shareUrl={shareLink(payload)} preview={sharePreview} onClose={() => setShareOpen(false)} onPick={recipient => { setShareOpen(false); sendShareToChat(recipient, payload, navigate); }} />}
       <Toast text={toast} onDone={() => setToast('')} />
     </div>
   );

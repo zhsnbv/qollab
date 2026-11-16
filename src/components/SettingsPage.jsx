@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { CaretLeft } from '@phosphor-icons/react';
 import { useScrolled } from '../utils/useScrolled';
 import '../screens/Settings.css';
@@ -10,11 +10,12 @@ import '../screens/Settings.css';
 export default function SettingsPage({ title, children }) {
   const [scrolled, onScroll] = useScrolled();
   const navigate = useNavigate();
+  const location = useLocation();
   const [closing, setClosing] = useState(false);
 
   const close = () => {
     setClosing(true);
-    setTimeout(() => navigate(-1), 260);
+    setTimeout(() => location.state?.background || window.history.state?.idx > 0 ? navigate(-1) : navigate('/settings', { replace: true }), 180);
   };
 
   return (

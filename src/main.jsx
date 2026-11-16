@@ -8,7 +8,11 @@ import './styles/companies.css';
 // Web review and state frames must not load the mobile app's global styles.
 // Keeping separate entry graphs also preserves the standalone handoff's CSS order.
 const path = window.location.pathname;
-const App = path === '/handoff/threads'
+const App = path === '/handoff/settings'
+  ? lazy(() => import('./gallery/settings-redesign/SettingsReview'))
+  : path === '/handoff/profile-share'
+  ? lazy(() => import('./gallery/profile-share/ProfileShareReview'))
+  : path === '/handoff/threads'
   ? lazy(() => import('./gallery/threads/ThreadsReview'))
   : path === '/handoff/reaction-details'
   ? lazy(() => import('./gallery/reaction-details/ReactionDetailsReview'))

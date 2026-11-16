@@ -1,7 +1,8 @@
 import Settings from '../Settings';
+import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, BubbleColorSettings, WallpaperSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../SettingsExperience';
 import WidgetSettings from '../WidgetSettings';
 import {
-  NotificationSettings, Permissions, Devices, Help, DeviceInfo, Privacy,
+  NotificationSettings, Permissions, Devices, Privacy,
 } from '../SettingsPages';
 
 export default {
@@ -27,8 +28,7 @@ export const Список = {
     docs: {
       description: {
         story:
-          'Каждая строка знает, что делает: подэкран открывается оверлеем, выбор языка '
-          + 'и оформления — листом снизу, выход и очистка кэша — подтверждением.',
+          'Две группы без профиля. Оформление, память, язык и данные устройства открываются отдельными экранами.',
       },
     },
   },
@@ -90,16 +90,11 @@ export const Разрешения = {
   },
 };
 
-export const Помощь = {
-  render: () => <Help />,
-  parameters: { route: '/settings/help' },
-};
-
 export const ДанныеОбУстройстве = {
   name: 'Данные об устройстве',
-  render: () => <DeviceInfo />,
+  render: () => <DeviceDetailsSettings />,
   parameters: {
-    route: '/settings/help/device',
+    route: '/settings/device',
     docs: { description: { story: 'Карточку копируют целиком и присылают в обращении, поэтому кнопка кладёт в буфер весь список, а не отдельные поля.' } },
   },
 };
@@ -111,3 +106,12 @@ export const Конфиденциальность = {
     docs: { description: { story: 'Текст с qollab.kz/privacy. Он лежит в данных, а экран только рисует заголовки, абзацы и списки.' } },
   },
 };
+
+export const Оформление = { render: () => <AppearanceSettings />, parameters: { route: '/settings/appearance' } };
+export const БыстраяРеакция = { render: () => <QuickReactionSettings />, parameters: { route: '/settings/reaction' } };
+export const Обои = { render: () => <WallpaperSettings />, parameters: { route: '/settings/wallpaper' } };
+export const Язык = { render: () => <LanguageSettings />, parameters: { route: '/settings/language' } };
+export const Память = { render: () => <StorageSettings />, parameters: { route: '/settings/storage' } };
+
+export const ТемыЧатов = { render: () => <ChatThemeSettings />, parameters: { route: '/settings/chat-theme' } };
+export const ЦветСообщений = { render: () => <BubbleColorSettings />, parameters: { route: '/settings/bubbles' } };

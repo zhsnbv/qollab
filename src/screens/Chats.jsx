@@ -1,3 +1,4 @@
+import { readShareStore, subscribeShares, mergeSharedChats } from '../utils/sharing';
 import { baseChats } from '../data/chatList';
 import { notificationKey, notificationMode, useChatNotificationModes } from '../utils/chatNotifications';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -94,7 +95,7 @@ export function Avatar({ chat }) {
     : workStatusOf({ id: chat.profileId, name: chat.title });
   return (
     <div className="chat-avatar">
-      <img src={chat.avatar} alt="" loading="lazy" />
+      <>{chat.avatar ? <img src={chat.avatar} alt="" loading="lazy" /> : <span className="cr-avatar-initials">{chat.initials || chat.title.slice(0, 1)}</span>}</>
       {status ? (
         <span className={`chat-avatar-status tone--${status.tone}`} title={status.short}>
           <status.Icon />
@@ -123,6 +124,8 @@ export default function Chats({ notificationPreview } = {}) {
   const [read, setRead] = useState(() => deviceHost ? [] : loadReadIds());
   const [confirm, setConfirm] = useState(false);
   const [toast, setToast] = useState('');
+  const [shareStore, setShareStore] = useState(readShareStore);
+  useEffect(() => subscribeShares(() => setShareStore(readShareStore())), []);
 
   // Таб-бар живёт в App, поэтому убираем его классом на самом «телефоне»:
   // пробрасывать ради этого состояние наверх пришлось бы через все вкладки.
@@ -179,10 +182,11 @@ export default function Chats({ notificationPreview } = {}) {
     return () => io.disconnect();
   }, [loading]);
 
-  const chats = [...baseChats, ...Array.from({ length: extraCount }, (_, i) => makeChat(i))]
+  const originalChats = [...baseChats, ...Array.from({ length: extraCount }, (_, i) => makeChat(i))]
     .map((c, i) => ({ ...c, id: c.id || `base-${i}` }))
     .filter((c) => !removed.includes(c.id))
     .map((c) => (read.includes(c.id) ? { ...c, unreadCount: undefined, unreadReaction: false } : c));
+  const chats = deviceHost ? originalChats : mergeSharedChats(originalChats, shareStore);
   chatIdsRef.current = chats.filter(selectable).map((c) => c.id);
 
   const openChat = (chat) => {

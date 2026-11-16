@@ -132,3 +132,9 @@
 /* Телефон уволенного — единственная ссылка на экране: подчёркивание браузера
    спорит с остальными значениями в карточках, они его не носят. */
 a.data-value.link { text-decoration: none; }
+
+/* Equal side tracks keep the title centered with two actions on the right. */
+.pp-top--sharing { display:grid; grid-template-columns:88px minmax(0,1fr) 88px; gap:8px; }
+.pp-top-actions { display:flex; gap:8px; justify-content:flex-end; }
+.pp-top-actions svg { width:22px; height:22px; }
+.pp-top--sharing .pp-title { white-space:nowrap; }
