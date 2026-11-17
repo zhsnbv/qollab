@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-11-17T10:24:00.575589+00:00",
+  "uiCommit": "31c566fe462e315ad8a5ed63ee2eb50dc118cddf",
+  "workersBuild": "6d1f9c0d-7afc-4a54-9662-c6c3565fdfdd",
+  "buildConclusion": "success",
+  "observedActiveVersion": "f04eb657-4ae5-443e-b71f-03e979d8d2b5",
+  "versionCreatedAt": "2026-11-17T10:21:35.885Z",
+  "running": {
+    "lightTile": 1,
+    "files": 4,
+    "vortex": 0,
+    "circularProgress": 0,
+    "linearProgressbar": 1,
+    "text": "Очищаем кэш48%"
+  },
+  "complete": {
+    "check": "rgb(155, 216, 184)",
+    "circles": 0,
+    "buttonFill": "rgb(239, 127, 26)",
+    "buttonText": "rgb(255, 255, 255)"
+  },
+  "actualFlowAfterClose": {
+    "empty": "Всё чисто",
+    "focus": "Назад",
+    "overlays": 0,
+    "blurred": 0
+  },
+  "http": {
+    "hub": 200,
+    "v13qa": 200,
+    "storybookIndex": 200,
+    "videoRange": 206,
+    "contentRange": "bytes 0-255/2450356"
+  },
+  "limits": [
+    "Physical device and screen reader acceptance remains separate",
+    "Cache deletion is demo state"
+  ]
+}
