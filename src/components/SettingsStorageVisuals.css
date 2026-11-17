@@ -60,19 +60,12 @@ html[data-theme="dark"] .sv-disk-legend span + span i { background: #515d75; }
 }
 .sv-cleaning-dialog { display: flex; align-items: center; justify-content: center; min-height: 100%; width: 100%; padding: max(30px, env(safe-area-inset-top)) 30px max(30px, env(safe-area-inset-bottom)); outline: none; text-align: center; }
 .sv-clean-content { width: 100%; max-width: 340px; padding: 12px 0; animation: sv-clean-dialog .36s cubic-bezier(.2,.8,.2,1) both; }
-.sv-clean-stage-art { position: relative; width: 248px; height: 236px; max-width: 100%; margin: 0 auto 24px; isolation: isolate; }
-.sv-vortex-halo { position: absolute; inset: 5%; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--sv-clean-accent) 24%, transparent), transparent 66%); filter: blur(10px); animation: sv-vortex-breathe 3.6s ease-in-out infinite; }
-.sv-vortex-plane { position: absolute; inset: 4px 10px; transform: rotate(-24deg) scaleY(.78); }
-.sv-vortex-disk { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 24deg, transparent 0deg, color-mix(in srgb, var(--sv-clean-light) 35%, transparent) 80deg, transparent 145deg, color-mix(in srgb, var(--sv-clean-light) 72%, transparent) 226deg, transparent 290deg, color-mix(in srgb, var(--sv-clean-accent) 45%, transparent) 330deg, transparent); mask-image: radial-gradient(circle, transparent 23%, #000 26%, #000 31%, #0008 40%, transparent 68%); -webkit-mask-image: radial-gradient(circle, transparent 23%, #000 26%, #000 31%, #0008 40%, transparent 68%); filter: blur(3px); animation: sv-vortex-spin 7s linear infinite; }
-.sv-vortex { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.sv-vortex-streams { transform-origin: 120px 120px; animation: sv-vortex-spin 5s linear infinite; }
-.sv-vortex-streams path { fill: none; stroke: var(--sv-clean-light); stroke-width: 3; stroke-linecap: round; opacity: .32; filter: blur(1.15px); }
-.sv-vortex-streams path.is-bright { stroke-width: 4.5; opacity: .62; }
-.sv-vortex-rim-glow { fill: none; stroke: var(--sv-clean-light); stroke-width: 10; filter: blur(5px); opacity: .6; }
-.sv-vortex-center { stroke: none; }
-.sv-vortex-rim { fill: none; stroke: color-mix(in srgb, var(--sv-clean-light) 65%, #fff); stroke-width: 1.1; opacity: .8; }
-.sv-clean-files { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-.sv-clean-files > span { position: absolute; left: calc(50% - 15px); top: calc(50% - 15px); width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: var(--sv-clean-accent); background: var(--sv-clean-soft); border: 1px solid rgb(255 255 255 / 45%); box-shadow: 0 3px 10px rgb(0 0 0 / 10%); animation: sv-vortex-file 2.4s linear infinite; animation-delay: var(--file-delay); }
+/* Decorative files move directly toward the familiar cleaning tile. */
+.sv-clean-stage-art { position: relative; width: 236px; height: 200px; max-width: 100%; margin: 0 auto 24px; isolation: isolate; }
+.sv-clean-core { position: absolute; left: calc(50% - 40px); top: calc(50% - 40px); z-index: 2; width: 80px; height: 80px; display: grid; place-items: center; border-radius: 26px; color: var(--sv-clean-accent); background: linear-gradient(145deg, #fff, var(--sv-clean-soft)); box-shadow: 0 8px 30px color-mix(in srgb, var(--sv-clean-accent) 18%, transparent), inset 0 1px 0 #fff; animation: sv-clean-core 2.4s ease-in-out infinite; }
+.sv-clean-core > svg { animation: sv-clean-sparkle 2.4s ease-in-out infinite; }
+.sv-clean-files { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.sv-clean-files > span { position: absolute; left: calc(50% - 15px); top: calc(50% - 15px); width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: var(--sv-clean-accent); background: var(--sv-clean-soft); border: 1px solid rgb(255 255 255 / 45%); box-shadow: 0 3px 10px rgb(0 0 0 / 10%); animation: sv-clean-file 2.4s cubic-bezier(.4,0,.65,1) infinite; animation-delay: var(--file-delay); }
 .sv-clean-files > span:nth-child(even) { background: #f7f7f8; }
 .sv-cleaning-dialog h2 { margin: 0; font-size: 25px; line-height: 1.2; font-weight: 600; letter-spacing: -.7px; color: #fff; }
 .sv-clean-action { min-height: 86px; display: flex; align-items: center; width: 100%; max-width: 280px; margin: 24px auto 0; }
@@ -88,25 +81,24 @@ html[data-theme="dark"] .sv-disk-legend span + span i { background: #515d75; }
 .sv-clean-done:active { opacity: .85; }
 @keyframes sv-clean-reveal { from { opacity: 0; } to { opacity: 1; } }
 @keyframes sv-clean-dialog { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes sv-vortex-spin { to { transform: rotate(360deg); } }
-@keyframes sv-vortex-breathe { 50% { opacity: .65; transform: scale(.94); } }
-@keyframes sv-vortex-file {
-  0% { opacity: 0; transform: rotate(var(--file-angle)) translateX(110px) rotate(calc(-1 * var(--file-angle))) scale(.92); }
-  12% { opacity: 1; transform: rotate(calc(var(--file-angle) + 12deg)) translateX(106px) rotate(calc(-1 * var(--file-angle) - 3deg)) scale(1); }
-  45% { opacity: 1; transform: rotate(calc(var(--file-angle) + 65deg)) translateX(76px) rotate(calc(-1 * var(--file-angle) + 14deg)) scale(.82); }
-  76% { opacity: .92; transform: rotate(calc(var(--file-angle) + 150deg)) translateX(34px) rotate(calc(-1 * var(--file-angle) + 50deg)) scale(.42); }
-  100% { opacity: 0; transform: rotate(calc(var(--file-angle) + 245deg)) translateX(0) rotate(calc(-1 * var(--file-angle) + 100deg)) scale(.015); }
+@keyframes sv-clean-core { 50% { transform: scale(.97); } }
+@keyframes sv-clean-sparkle { 50% { transform: rotate(7deg) scale(.94); } }
+@keyframes sv-clean-file {
+  0% { opacity: 0; transform: translate(var(--file-x), var(--file-y)) rotate(var(--file-tilt)) scale(.86); }
+  16%, 32% { opacity: 1; transform: translate(var(--file-x), var(--file-y)) rotate(var(--file-tilt)) scale(1); }
+  76% { opacity: .8; }
+  100% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(.08); }
 }
 @keyframes sv-clean-success { from { opacity: .3; transform: scale(.7); } 65% { transform: scale(1.06); } to { opacity: 1; transform: scale(1); } }
 @keyframes sv-clean-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes sv-clean-button { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-height: 620px) {
   .sv-cleaning-dialog { padding-top: 22px; padding-bottom: 22px; }
-  .sv-clean-stage-art { width: 220px; height: 212px; margin-bottom: 16px; }
+  .sv-clean-stage-art { width: 204px; height: 188px; margin-bottom: 16px; }
   .sv-clean-action { margin-top: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sv-ring-reveal, .sv-ring-center, .sv-cleaning-overlay, .sv-clean-content, .sv-vortex-halo, .sv-vortex-disk, .sv-vortex-streams, .sv-clean-check, .sv-clean-check path, .sv-clean-done { animation: none !important; }
+  .sv-ring-reveal, .sv-ring-center, .sv-cleaning-overlay, .sv-clean-content, .sv-clean-core, .sv-clean-core > svg, .sv-clean-check, .sv-clean-check path, .sv-clean-done { animation: none !important; }
   .sv-clean-files { display: none; }
   .sv-clean-progress-track > span, .sv-ring-segment { transition: none; }
 }

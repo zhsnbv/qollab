@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef } from 'react';
-import { Check, FileText, ImageSquare, VideoCamera, MusicNotes } from '@phosphor-icons/react';
+import { Check, FileText, ImageSquare, VideoCamera, MusicNotes, Sparkle } from '@phosphor-icons/react';
 import { formatStorage } from '../utils/settingsPreferences';
 import Portal from './Portal';
 import { pushScrim, popScrim } from '../utils/scrim';
@@ -65,42 +65,14 @@ const FILES = [
   { Icon: MusicNotes, angle: 145, delay: -1.92 },
 ];
 
-// Open spirals, not a progress ring. Their motion is decorative and never
-// drives the cleaning job or its completion state.
-const VORTEX_STREAMS = Array.from({ length: 7 }, (_, arm) => {
-  const points = Array.from({ length: 48 }, (_, index) => {
-    const t = index / 47;
-    const radius = 39 + 72 * t ** 1.25;
-    const angle = arm * TAU / 7 + 3.5 * t;
-    return `${index ? 'L' : 'M'}${point(radius, angle)}`;
-  });
-  return points.join(' ');
-});
-
-function CleaningArtwork({ done, id }) {
+function CleaningArtwork({ done }) {
   if (done) return <div className="sv-clean-stage-art is-complete" aria-hidden="true">
     <svg className="sv-clean-check" viewBox="0 0 64 64"><path d="M14 33l13 13 25-27" fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" pathLength="1" /></svg>
   </div>;
 
   return <div className="sv-clean-stage-art" aria-hidden="true">
-    <div className="sv-vortex-halo" />
-    <div className="sv-vortex-plane">
-      <div className="sv-vortex-disk" />
-      <svg className="sv-vortex" viewBox="0 0 240 240">
-        <defs>
-          <radialGradient id={`${id}-vortex-fade`}><stop offset=".3" stopColor="#fff" /><stop offset=".58" stopColor="#fff" stopOpacity=".64" /><stop offset="1" stopColor="#fff" stopOpacity="0" /></radialGradient>
-          <mask id={`${id}-vortex-mask`}><circle cx="120" cy="120" r="116" fill={`url(#${id}-vortex-fade)`} /></mask>
-          <radialGradient id={`${id}-vortex-center`}><stop stopColor="#070a10" /><stop offset=".84" stopColor="#090c13" /><stop offset="1" stopColor="#131820" /></radialGradient>
-        </defs>
-        <g mask={`url(#${id}-vortex-mask)`}>
-          <g className="sv-vortex-streams">{VORTEX_STREAMS.map((path, index) => <path key={index} d={path} className={index % 3 === 0 ? 'is-bright' : ''} />)}</g>
-        </g>
-        <circle className="sv-vortex-rim-glow" cx="120" cy="120" r="39" />
-        <circle className="sv-vortex-center" cx="120" cy="120" r="37" fill={`url(#${id}-vortex-center)`} />
-        <circle className="sv-vortex-rim" cx="120" cy="120" r="38" />
-      </svg>
-    </div>
-    <div className="sv-clean-files">{FILES.map(({ Icon, angle, delay }, index) => <span key={index} style={{ '--file-angle': `${angle}deg`, '--file-delay': `${delay}s` }}><Icon size={19} weight="duotone" /></span>)}</div>
+    <div className="sv-clean-files">{FILES.map(({ Icon, angle, delay }, index) => <span key={index} style={{ '--file-x': `${Math.cos(angle * Math.PI / 180) * 88}px`, '--file-y': `${Math.sin(angle * Math.PI / 180) * 88}px`, '--file-tilt': `${index % 2 ? 12 : -12}deg`, '--file-delay': `${delay}s` }}><Icon size={19} weight="duotone" /></span>)}</div>
+    <div className="sv-clean-core"><Sparkle size={38} weight="duotone" /></div>
   </div>;
 }
 
@@ -151,7 +123,7 @@ export function CacheCleaning({ job, onClose }) {
       if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); if (done) onClose(); }
     }}>
       <div className="sv-clean-content">
-        <CleaningArtwork done={done} id={id} />
+        <CleaningArtwork done={done} />
         <h2 id={`${id}-title`} role="status" aria-live="polite" aria-atomic="true">{done ? 'Кэш очищен' : 'Очищаем кэш'}</h2>
         <div className="sv-clean-action">{done ? <button className="sv-clean-done" onClick={onClose} ref={doneButton}>Отлично</button> : <div className="sv-clean-progress" role="progressbar" aria-label="Очистка кэша" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} aria-valuetext={`${percent}%`}><strong>{percent}%</strong><div className="sv-clean-progress-track"><span style={{ width: `${percent}%` }} /></div></div>}</div>
       </div>

@@ -1,0 +1,185 @@
+{
+  "version": "v13",
+  "date": "2026-11-17",
+  "scope": "Local verification; public deployment is tracked separately in technical handoff",
+  "design": "Light Sparkle tile with inward moving files; no vortex and no circular progress",
+  "matrix": [
+    {
+      "company": "erg",
+      "theme": "light",
+      "state": "running",
+      "bars": 1,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "core": 1,
+      "files": 4,
+      "inert": true,
+      "text": "Очищаем кэш48%",
+      "vortex": 0
+    },
+    {
+      "company": "erg",
+      "theme": "light",
+      "state": "complete",
+      "bars": 0,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": {
+        "fill": "rgb(239, 127, 26)",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)"
+      },
+      "circularProgress": 0,
+      "core": 0,
+      "files": 0,
+      "inert": true,
+      "text": "Кэш очищенОтлично",
+      "vortex": 0
+    },
+    {
+      "company": "erg",
+      "theme": "dark",
+      "state": "running",
+      "bars": 1,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "core": 1,
+      "files": 4,
+      "inert": true,
+      "text": "Очищаем кэш48%",
+      "vortex": 0
+    },
+    {
+      "company": "erg",
+      "theme": "dark",
+      "state": "complete",
+      "bars": 0,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": {
+        "fill": "rgb(240, 138, 44)",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)"
+      },
+      "circularProgress": 0,
+      "core": 0,
+      "files": 0,
+      "inert": true,
+      "text": "Кэш очищенОтлично",
+      "vortex": 0
+    },
+    {
+      "company": "integra",
+      "theme": "light",
+      "state": "running",
+      "bars": 1,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "core": 1,
+      "files": 4,
+      "inert": true,
+      "text": "Очищаем кэш48%",
+      "vortex": 0
+    },
+    {
+      "company": "integra",
+      "theme": "light",
+      "state": "complete",
+      "bars": 0,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": {
+        "fill": "rgb(10, 33, 79)",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)"
+      },
+      "circularProgress": 0,
+      "core": 0,
+      "files": 0,
+      "inert": true,
+      "text": "Кэш очищенОтлично",
+      "vortex": 0
+    },
+    {
+      "company": "integra",
+      "theme": "dark",
+      "state": "running",
+      "bars": 1,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "core": 1,
+      "files": 4,
+      "inert": true,
+      "text": "Очищаем кэш48%",
+      "vortex": 0
+    },
+    {
+      "company": "integra",
+      "theme": "dark",
+      "state": "complete",
+      "bars": 0,
+      "blur": "blur(18px) saturate(0.7)",
+      "button": {
+        "fill": "rgb(143, 138, 214)",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)"
+      },
+      "circularProgress": 0,
+      "core": 0,
+      "files": 0,
+      "inert": true,
+      "text": "Кэш очищенОтлично",
+      "vortex": 0
+    }
+  ],
+  "flow": {
+    "small": {
+      "bars": 1,
+      "overlay": 320,
+      "scrollWidth": 320,
+      "width": 320
+    },
+    "finished": {
+      "blurred": 0,
+      "empty": "Всё чисто",
+      "focus": "Назад",
+      "overlay": 0
+    }
+  },
+  "keyboard": {
+    "TabInDone": "focus remains on Отлично"
+  },
+  "checks": {
+    "hubTests": "3/3 passed",
+    "targetedLint": "passed",
+    "appAndStorybookBuild": "passed"
+  },
+  "limitations": [
+    "Reduced-motion CSS inspected; physical system preference not exercised",
+    "Cache metrics and deletion remain demo state",
+    "Physical iPhone/Android and screen reader acceptance are separate"
+  ],
+  "screenshots": [
+    "running-erg-light.png",
+    "running-integra-light.png",
+    "running-320.png",
+    "complete-320.png"
+  ]
+}
