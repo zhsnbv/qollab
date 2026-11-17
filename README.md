@@ -92,3 +92,5 @@ Vite + React + react-router-dom. Мобилка Qollab — React в WebView, т�
 - [Правила изменения тем](docs/chat-themes-guide.md)
 - [Передача разработчикам: состояния, проверки и выпуск](docs/chat-themes-handoff.md)
 - [Исходники и промпты для живых фонов](docs/chat-live-wallpaper-prompts.txt)
+
+- [Пакет передачи разработчикам: исходники, оригиналы и QA](artifacts/chat-themes-v8-developer-handoff.zip)

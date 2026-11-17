@@ -149,3 +149,17 @@ npm run build:all
 Минимальный визуальный проход: все пресеты в ERG/Integra × light/dark; системная тема; standard/reset; сохранение после reload; узкая ширина 320 и основная 393; текст, время, 5 состояний доставки, фото, видео, голос, документ, цитата, ссылка, профиль и реакции; long tap с тем же фоном/баблом; keyboard/focus и reduced motion. В actions-стенде пройдите ответ, реакцию, копирование, пересылку, выбор и закрытие меню. Проверяйте обратную навигацию и отсутствие горизонтального overflow.
 
 `npm run build:all` собирает приложение и Storybook и помещает Storybook в dist/storybook. Для разработки: `npm run dev`; компоненты: `npm run storybook`. Авторизованный выпуск направляется в уже существующий Worker `qollab` из `wrangler.jsonc` командой `npx wrangler deploy`. Перед публикацией проверяют точный набор изменений/commit, после — публичные маршруты, загрузку ассетов и консоль. Запишите commit, deployment ID, дату, проверки и реальные ограничения в handoff. Не называйте работу опубликованной по одному успешному build.
+
+Контракт статической раздачи в `wrangler.jsonc` задаётся явно:
+
+```json
+{
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}
+```
+
+Cloudflare описывает auto-trailing-slash как режим, в котором index.html вложенной папки обслуживается по URL с завершающим слешем. См. [официальное описание HTML handling](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/). В v8 после явной настройки проверен `/storybook/` и реальный iframe истории, а SPA deep links сохранены. Ранее `/storybook/` показывал приложение; точная причина поведения без явного значения не установлена. Сохраняйте проверенную конфигурацию и проверяйте обе точки входа после deploy, а не только наличие dist/storybook/index.html.
