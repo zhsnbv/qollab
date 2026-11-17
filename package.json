@@ -8,12 +8,13 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:app && npm run build-storybook && rm -rf dist/storybook && cp -r storybook-static dist/storybook",
     "lint": "oxlint",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
-    "build:all": "npm run build && npm run build-storybook && rm -rf dist/storybook && cp -r storybook-static dist/storybook"
+    "build:all": "npm run build",
+    "build:app": "vite build"
   },
   "dependencies": {
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
