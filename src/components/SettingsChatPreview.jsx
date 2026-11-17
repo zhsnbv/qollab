@@ -11,10 +11,9 @@ const PREVIEW_ME = { id: 'me', avatar: '/img/profile/avatar-photo.png', initials
 
 // Render the production prototype's Message and MessageReactions components.
 // No preview-specific bubble, timestamp or reaction geometry.
-export default function SettingsChatPreview({ reaction = false, wallpaper, compact = false }) {
+export default function SettingsChatPreview({ reaction = false, compact = false }) {
   const prefs = useSettingsPreferences();
-  const { appearance: savedAppearance } = useChatAppearance();
-  const appearance = wallpaper ? { ...savedAppearance, wallpaper } : savedAppearance;
+  const { appearance } = useChatAppearance();
   const [reacted, setReacted] = useState(true);
   useEffect(() => { setReacted(true); }, [prefs.reaction]);
   const incoming = { id: 'settings-preview-in', kind: 'text', text: reaction ? 'Отличная работа! Спасибо 🙌' : 'Привет! Посмотрела макеты — всё отлично 🙌', time: '14:32' };

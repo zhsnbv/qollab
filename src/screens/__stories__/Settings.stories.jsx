@@ -1,5 +1,5 @@
 import Settings from '../Settings';
-import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, BubbleColorSettings, WallpaperSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../SettingsExperience';
+import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../SettingsExperience';
 import WidgetSettings from '../WidgetSettings';
 import {
   NotificationSettings, Permissions, Devices, Privacy,
@@ -109,9 +109,7 @@ export const Конфиденциальность = {
 
 export const Оформление = { render: () => <AppearanceSettings />, parameters: { route: '/settings/appearance' } };
 export const БыстраяРеакция = { render: () => <QuickReactionSettings />, parameters: { route: '/settings/reaction' } };
-export const Обои = { render: () => <WallpaperSettings />, parameters: { route: '/settings/wallpaper' } };
 export const Язык = { render: () => <LanguageSettings />, parameters: { route: '/settings/language' } };
 export const Память = { render: () => <StorageSettings />, parameters: { route: '/settings/storage' } };
 
 export const ТемыЧатов = { render: () => <ChatThemeSettings />, parameters: { route: '/settings/chat-theme' } };
-export const ЦветСообщений = { render: () => <BubbleColorSettings />, parameters: { route: '/settings/bubbles' } };

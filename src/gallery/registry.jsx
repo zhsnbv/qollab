@@ -32,7 +32,7 @@ import Search from '../screens/Search';
 import Notifications from '../screens/Notifications';
 import NotificationGroup from '../screens/NotificationGroup';
 import Settings from '../screens/Settings';
-import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, BubbleColorSettings, WallpaperSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../screens/SettingsExperience';
+import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../screens/SettingsExperience';
 import WidgetSettings from '../screens/WidgetSettings';
 import {
   NotificationSettings, Permissions, Devices, Privacy,
@@ -382,8 +382,6 @@ export const SCREEN_GROUPS = [
       { id: 'set-appearance', title: 'Оформление', route: '/settings/appearance', render: () => <AppearanceSettings /> },
       { id: 'set-reaction', title: 'Быстрая реакция', route: '/settings/reaction', render: () => <QuickReactionSettings /> },
       { id: 'set-chat-theme', title: 'Темы чатов', route: '/settings/chat-theme', render: () => <ChatThemeSettings /> },
-      { id: 'set-bubbles', title: 'Цвет сообщений', route: '/settings/bubbles', render: () => <BubbleColorSettings /> },
-      { id: 'set-wallpaper', title: 'Обои для чатов', route: '/settings/wallpaper', render: () => <WallpaperSettings /> },
       { id: 'set-storage', title: 'Данные и память', route: '/settings/storage', render: () => <StorageSettings /> },
       { id: 'set-devices', title: 'Устройства', route: '/settings/devices', render: () => <Devices /> },
       { id: 'set-perms', title: 'Разрешения', route: '/settings/permissions', render: () => <Permissions /> },

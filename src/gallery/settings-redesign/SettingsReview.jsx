@@ -15,9 +15,7 @@ const SCREENS = [
   { id: 'appearance', title: 'Оформление', route: '/settings/appearance', note: 'Личный характер приложения. Изменения видны сразу.' },
   { id: 'storage', title: 'Данные и память', route: '/settings/storage', note: 'Понятный состав кэша и контроль над местом на устройстве.' },
   { id: 'reaction', title: 'Быстрая реакция', route: '/settings/reaction', note: 'Выберите эмодзи и дважды нажмите на сообщение.' },
-  { id: 'chat-theme', title: 'Тема и цвета', route: '/settings/chat-theme', note: 'Готовая тема меняет фон и цвета вместе. Каждый параметр можно настроить отдельно.' },
-  { id: 'bubbles', title: 'Цвет сообщений', route: '/settings/bubbles', note: 'Свои и входящие сообщения настраиваются независимо.' },
-  { id: 'wallpaper', title: 'Фон и узор', route: '/settings/wallpaper', note: 'Живые фоны, мягкие градиенты, иллюстрации и лёгкий узор поверх фона.' },
+  { id: 'chat-theme', title: 'Темы чатов', route: '/settings/chat-theme', note: 'Готовая тема меняет фон и цвета сообщений вместе.' },
   { id: 'language', title: 'Язык', route: '/settings/language', note: 'Выбор в нижней панели. Қазақша — первый в списке.' },
   { id: 'device', title: 'Данные устройства', route: '/settings/device', note: 'Данные для поддержки доступны прямо из настроек.' },
 ];
@@ -53,7 +51,7 @@ function SettingsReviewContent() {
   const { companyId, setCompanyId } = useCompany();
   const params = new URLSearchParams(window.location.search);
   const [view, setView] = useState(params.get('view') === 'frame' ? 'frame' : params.get('view') === 'prototype' || window.innerWidth < 760 ? 'prototype' : 'board');
-  const [current, setCurrent] = useState(SCREENS.find(s => s.id === params.get('screen')) || SCREENS[0]);
+  const [current, setCurrent] = useState(SCREENS.find(s => s.id === (['bubbles', 'wallpaper'].includes(params.get('screen')) ? 'chat-theme' : params.get('screen'))) || SCREENS[0]);
   const [revision, setRevision] = useState(0);
   useEffect(() => { document.title = 'Настройки · qollab'; applyTheme(getThemeMode()); return watchSystemTheme(getThemeMode); }, []);
   useEffect(() => { const url = new URL(window.location.href); url.searchParams.set('view', view); url.searchParams.set('screen', current.id); window.history.replaceState(null, '', url); }, [view, current]);

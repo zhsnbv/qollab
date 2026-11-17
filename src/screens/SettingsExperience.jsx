@@ -41,7 +41,7 @@ export function AppearanceSettings() {
     </div></section>
     <section className="sx-section"><h2 className="st-group-title">Ваши чаты</h2><div className="st-card sx-appearance-chat">
       <div className="sx-preview-card"><ChatPreview compact /></div>
-      <SettingRow label="Тема и цвета" Icon={ChatsCircle} value={CHAT_PRESETS.find(p => p.id === appearance.preset)?.name || 'Своя тема'} onClick={() => open('/settings/chat-theme')} />
+      <SettingRow label="Темы чатов" Icon={ChatsCircle} value={CHAT_PRESETS.find(p => p.id === appearance.preset)?.name || 'Своя тема'} onClick={() => open('/settings/chat-theme')} />
       <SettingRow label="Быстрая реакция" Icon={Smiley} value={<span className="sx-row-emoji">{prefs.reaction}</span>} onClick={() => open('/settings/reaction')} />
     </div></section>
   </SettingsPage>;

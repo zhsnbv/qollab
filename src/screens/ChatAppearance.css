@@ -1,38 +1,24 @@
-/* One wallpaper definition is shared by real chats, settings previews and tiles. */
+/* One curated background shared by real chats, settings previews and tiles. */
+.qa-wallpaper { position: relative; isolation: isolate; background-color: #e7edf0; }
 .qa-wall-plain { background: var(--color-white); }
-.qa-wall-sand { background-color: #f3dfcb; background-image: radial-gradient(ellipse at 12% 20%, #fff5df 0, transparent 46%), radial-gradient(ellipse at 87% 13%, #efc8b9 0, transparent 50%), radial-gradient(ellipse at 70% 95%, #e6c8a2 0, transparent 52%), radial-gradient(ellipse at 0 85%, #f8edcf 0, transparent 42%); }
-.qa-wall-sage { background-color: #d9e7db; background-image: radial-gradient(ellipse at 0 5%, #f4eed4 0, transparent 48%), radial-gradient(ellipse at 90% 25%, #bad7cc 0, transparent 48%), radial-gradient(ellipse at 45% 95%, #b4c5ad 0, transparent 46%), radial-gradient(ellipse at 10% 70%, #e5eddb 0, transparent 45%); }
-.qa-wall-sky { background-color: #dbe8f6; background-image: radial-gradient(ellipse at 10% 15%, #eef8ed 0, transparent 48%), radial-gradient(ellipse at 88% 10%, #b8cde9 0, transparent 55%), radial-gradient(ellipse at 70% 85%, #d9cced 0, transparent 52%), radial-gradient(ellipse at 0 85%, #b7dce3 0, transparent 45%); }
-.qa-wall-lilac { background-color: #e4dcec; background-image: radial-gradient(ellipse at 0 8%, #d1d4ef 0, transparent 48%), radial-gradient(ellipse at 85% 15%, #f5dcdd 0, transparent 45%), radial-gradient(ellipse at 85% 95%, #c9bfdf 0, transparent 46%), radial-gradient(ellipse at 10% 70%, #f8e7d1 0, transparent 45%); }
-.qa-wall-mist { background-color: #d8e3e5; background-image: radial-gradient(ellipse at 0 0, #edf4ee 0, transparent 50%), radial-gradient(ellipse at 95% 20%, #b4ced3 0, transparent 52%), radial-gradient(ellipse at 60% 95%, #c3ccd8 0, transparent 55%), radial-gradient(ellipse at 5% 80%, #e9e8e0 0, transparent 40%); }
-.qa-wall-dunes { background: #f3e9dc url('/img/chat-wallpapers/dunes.svg') center / cover no-repeat; }
-.qa-wall-botanical { background: #edf1e9 url('/img/chat-wallpapers/botanical.svg') center / 400px 460px repeat; }
-.qa-wall-orbits { background: #eaf0f6 url('/img/chat-wallpapers/orbits.svg') center / 420px 500px repeat; }
-html[data-theme="dark"] [class*="qa-wall-"]:not(.qa-wall-plain) { background-blend-mode: multiply; background-color: #55565b; }
-
-.qa-wall-paper-garden { background: #F3EFE7 url('/img/chat-wallpapers/paper-garden.svg') center / cover no-repeat; }
-.qa-wall-tidal { background: #E6F0EE url('/img/chat-wallpapers/tidal.svg') center / cover no-repeat; }
-.qa-wallpaper { position: relative; isolation: isolate; }
+.qa-wall-grad-horizon { background: linear-gradient(180deg, #182b53 0%, #436e9b 22%, #a9c9db 40%, #f2f0d9 48%, #b4d2df 57%, #76a5c8 78%, #456d99 100%); }
+.qa-wall-grad-sunset { background: linear-gradient(178deg, #66addc 0%, #9ac9df 29%, #d7ded7 48%, #f7d7b3 65%, #eca17e 82%, #95617f 100%); }
+.qa-wall-grad-sage { background: radial-gradient(ellipse at 10% 4%, #fff1c9 0%, transparent 40%), radial-gradient(ellipse at 93% 48%, #fff0c8 0%, transparent 39%), radial-gradient(ellipse at 3% 77%, #72a792 0%, transparent 49%), linear-gradient(145deg, #c8d5b7, #83ad92 47%, #f4eac9); }
+.qa-wall-grad-mint { background: radial-gradient(ellipse at 88% 18%, #cfe8bd 0%, transparent 52%), radial-gradient(ellipse at 5% 54%, #71b7b3 0%, transparent 48%), radial-gradient(ellipse at 55% 91%, #d5edc8 0%, transparent 49%), linear-gradient(140deg, #75c0c7, #c2e3cd 50%, #7cb5bf); }
+.qa-wall-grad-coast { background: radial-gradient(ellipse at 10% 27%, #d5e6ed 0%, transparent 35%), radial-gradient(ellipse at 110% 67%, #4daee2 0%, transparent 48%), radial-gradient(ellipse at 5% 73%, #79b742 0%, transparent 31%), linear-gradient(163deg, #36c9ed 0%, #7ac4ec 38%, #067e9f 64%, #194d30 100%); }
+.qa-wall-pattern-day { background: linear-gradient(145deg, #f7ead7, #e9d7bc); --qa-pattern-image: url('/img/chat-themes/pattern-day.svg'); }
+.qa-wall-pattern-orbit { background: linear-gradient(145deg, #e8e4f5, #cfc9e6); --qa-pattern-image: url('/img/chat-themes/pattern-orbit.svg'); }
+.qa-wall-pattern-garden { background: linear-gradient(145deg, #e8eed8, #c8d8b5); --qa-pattern-image: url('/img/chat-themes/pattern-garden.svg'); }
+.qa-wall-pattern-travel { background: linear-gradient(145deg, #e1eff2, #bfd8e3); --qa-pattern-image: url('/img/chat-themes/pattern-travel.svg'); }
+.qa-wall-pattern-play { background: linear-gradient(145deg, #f3e5eb, #e5ccd9); --qa-pattern-image: url('/img/chat-themes/pattern-play.svg'); }
 .qa-wallpaper-layers { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; border-radius: inherit; }
-html:not([data-theme="dark"]) .qa-wallpaper:not(.qa-wall-plain) > .qa-wallpaper-layers::after { content: ''; position: absolute; inset: 0; background: rgb(43 61 82 / 3.5%); }
-.qa-live-scene, .qa-pattern-layer { position: absolute; inset: 0; }
-.qa-pattern-layer { background: url('/img/chat-wallpapers/doodle.svg') 0 0 / 360px 432px repeat; opacity: .16; mix-blend-mode: multiply; }
-html[data-theme="dark"] .qa-pattern-layer { filter: invert(1); opacity: .14; mix-blend-mode: screen; }
+.qa-wallpaper-photo, .qa-wallpaper-video { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.qa-pattern-layer { position: absolute; inset: 0; background: var(--qa-pattern-image) 0 0 / 288px 336px repeat; opacity: .24; mix-blend-mode: multiply; }
+.qa-wallpaper-layers--mini .qa-pattern-layer { background-size: 144px 168px; }
+.qa-wallpaper-grain { position: absolute; inset: 0; opacity: .15; background: url('/img/chat-themes/grain.svg') 0 0 / 160px 160px repeat; mix-blend-mode: soft-light; }
+.qa-wallpaper:not(.qa-wall-plain) > .qa-wallpaper-layers::after { content: ''; position: absolute; inset: 0; background: rgb(27 43 61 / 4%); }
+html[data-theme="dark"] .qa-wallpaper:not(.qa-wall-plain) > .qa-wallpaper-layers::after { background: rgb(12 20 31 / 57%); }
 .cr-chat-surface { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
-.qa-wall-aurora-live { background: #E1E7F0; --qa-live-fold: #AEC2E580; --qa-live-light: #EDF0F8; --qa-live-shade: #C1AFE170; --qa-live-glow: #DCE8F580; }
-.qa-wall-silk-live { background: #F2E5E4; --qa-live-fold: #E7A9AB80; --qa-live-light: #FAEFE7; --qa-live-shade: #D2B4DF70; --qa-live-glow: #FFF2DCA0; }
-.qa-wall-tide-live { background: #E0EAE3; --qa-live-fold: #AEC7AE80; --qa-live-light: #F0EFDF; --qa-live-shade: #A6CFCC70; --qa-live-glow: #E1EFDA90; }
-/* One diffuse silk motion, three palettes. Overscan keeps every layer edge
-   outside the chat viewport; blur softens the color folds themselves. */
-.qa-live-scene { overflow: hidden; background: radial-gradient(ellipse at 0% 0%, #FFFFFF40, transparent 65%); }
-.qa-live-scene i { position: absolute; width: 170%; height: 150%; left: -35%; top: -25%; border-radius: 0; background: conic-gradient(from 40deg at 40% 60%, transparent 0deg, var(--qa-live-fold) 50deg, var(--qa-live-light) 100deg, var(--qa-live-shade) 160deg, transparent 220deg); filter: blur(22px); will-change: transform; animation: qa-silk-drift 22s ease-in-out infinite; }
-.qa-live-scene i:nth-child(2) { opacity: .6; animation-delay: -11s; }
-.qa-live-scene i:nth-child(3) { background: radial-gradient(ellipse at 70% 30%, var(--qa-live-glow), transparent 65%); animation-delay: -7s; }
-html[data-theme="dark"] .qa-live-scene { filter: brightness(.42) saturate(.78); }
-.qa-wallpaper-layers--mini .qa-live-scene i { animation-play-state: paused; }
-.qa-motion-off .qa-live-scene i { animation-play-state: paused; }
-@keyframes qa-silk-drift { 0%,100% { transform: rotate(-15deg) scale(1.1); } 50% { transform: rotate(38deg) scale(1.35); } }
-@media (prefers-reduced-motion: reduce) { .qa-live-scene i { animation: none; will-change: auto; } }
 
 /* Customize message surfaces only. Application and workspace colors stay intact. */
 .qa-bubbles { --chat-in-bg: var(--chat-in-light, var(--color-background)); --chat-out-bg: var(--chat-out-light, var(--color-primary-bg-hover)); --chat-in-ink: var(--chat-in-ink-light, var(--color-text)); --chat-out-ink: var(--chat-out-ink-light, var(--color-text)); }
