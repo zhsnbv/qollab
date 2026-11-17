@@ -12,13 +12,13 @@ import { CHAT_PRESETS, appearanceClass, appearanceStyle, resolveChatAppearance }
 import { MESSAGE_DELIVERY_STATES, messageDeliveryState } from '../src/utils/messageDelivery.js';
 
 const root = path.resolve(import.meta.dirname, '..');
-const output = path.join(root, process.argv[2] || 'artifacts/settings-redesign-2026-11-17/v8');
+const output = path.join(root, process.argv[2] || 'artifacts/settings-redesign-2026-11-17/v9');
 const sourceFiles = [
   'src/utils/chatAppearance.js', 'src/utils/chatThemeCatalog.js',
   'src/styles/tokens.css', 'src/styles/companies.css', 'src/screens/ChatRoom.css',
   'src/screens/ChatAppearance.css', 'src/screens/SettingsChatThemes.css', 'src/components/ProfileShareCard.css',
   'src/components/MessageReactions.css', 'src/components/LinkPreview.css', 'src/components/MessageDeliveryStatus.css',
-  'src/components/MessageDeliveryStatus.jsx', 'src/utils/messageDelivery.js',
+  'src/components/MessageDeliveryStatus.jsx', 'src/utils/messageDelivery.js', 'src/components/MobileMessageMenu.css',
   'src/components/Message.jsx', 'src/screens/DMChat.jsx',
 ];
 const sources = Object.fromEntries(sourceFiles.map(file => [file, fs.readFileSync(path.join(root, file), 'utf8')]));
@@ -219,14 +219,14 @@ function auditVariant(company, theme, direction, preset) {
   const inlineTime = element('span', 'msg-time-row msg-time-row--inline', element('div', 'msg-footer', bubble));
   add('timestampWithReactions', 'span', 'msg-time', inlineTime);
   const statusColors = [];
-  const statusChecks = (context, parent) => {
+  const statusChecks = (context, parent, scope = 'chat') => {
     for (const status of Object.keys(MESSAGE_DELIVERY_STATES)) {
       const state = messageDeliveryState(status);
-      const wrapper = element('span', 'message-delivery-status', parent, {}, { 'data-delivery-state': state.id, 'data-delivery-tone': state.tone });
+      const wrapper = element('span', 'message-delivery-status', parent, {}, { 'data-delivery-state': state.id, 'data-delivery-tone': state.tone, 'data-delivery-scope': scope });
       const glyph = element('svg', '', wrapper, {}, {}, { fill: 'currentColor' });
       const result = check(`status.${context}.${status}`, glyph, 3);
       records.push(result); statusColors.push({ context, status, foreground: result.foreground });
-      if (status === 'read' && preset.palette) {
+      if (status === 'read' && preset.palette && scope === 'chat') {
         const readTheme = context === 'overMedia' ? 'dark' : theme;
         assert.equal(result.foreground, preset.palette.read[readTheme].toLowerCase(), `${company}/${theme}/${preset.id}/${context} must use the selected read color, not bubble/timestamp ink`);
       }
@@ -244,25 +244,30 @@ function auditVariant(company, theme, direction, preset) {
   for (const author of authorColors) add(`quote.author.${author}`, 'div', 'msg-quote-head', quote, { color: author });
   const voice = element('div', 'msg-bubble msg-bubble--voice', col);
   add('voice.duration', 'span', 'voice-time', voice);
-  statusChecks('voice', element('span', 'msg-time-row msg-time-row--overlay', voice));
+  const voiceFooter = element('div', 'msg-footer', voice);
+  statusChecks('voice', element('span', 'msg-time-row msg-time-row--inline', voiceFooter));
   const play = element('button', 'voice-play', voice); add('voice.playIcon', 'svg', '', play, {}, 3, { color: '#fff' });
   const wave = element('i', '', element('span', 'voice-wave', voice)); records.push(check('voice.waveform', wave, 3, 'background'));
-  const document = element('div', 'msg-document', col);
+  const document = element('div', 'msg-bubble msg-document', col);
   const docBody = element('span', 'msg-document-body', document);
   add('document.name', 'span', 'msg-document-name', docBody); add('document.size', 'span', 'msg-document-size', docBody);
   add('document.icon', 'svg', '', element('span', 'msg-document-icon', document), {}, 3, { color: 'var(--color-primary)' });
-  // File time is outside the message but has its own opaque plate. Verify that
-  // invariant so the contrast remains independent of the selected wallpaper.
-  const staticTime = element('span', 'msg-time-row msg-time-row--static', col);
-  assert.equal(color(resolve(staticTime.props.background, staticTime))[3], 1, 'Document timestamp plate must be opaque');
-  add('document.externalTimeOnPlate', 'span', 'msg-time', staticTime);
-  statusChecks('documentPlate', staticTime);
+  // Documents now share the same opaque bubble and internal footer as text.
+  const documentFooter = element('div', 'msg-footer', document);
+  const documentTime = element('span', 'msg-time-row msg-time-row--inline', documentFooter);
+  add('document.internalTime', 'span', 'msg-time', documentTime);
+  statusChecks('documentFooter', documentTime);
   const mediaBubble = element('div', 'msg-bubble msg-bubble--media', col);
   statusChecks('mediaFooter', element('span', 'msg-time-row msg-time-row--overlay', mediaBubble));
   const profileBubble = element('div', 'msg-bubble msg-bubble--profile', col);
   statusChecks('profileFooter', element('span', 'msg-time-row msg-time-row--overlay', profileBubble));
   const listSurface = element('div', 'chat-list', html, { ...appearanceStyle(selected), background: 'var(--color-white)' });
-  statusChecks('chatList', listSurface);
+  statusChecks('chatList', listSurface, 'app');
+  // Deliberately provide themed vars to test the boundary: app-scoped read
+  // marks must still use the workspace's default accent outside a bubble.
+  const menu = element('div', 'mobile-reaction-menu rp-stage', html, appearanceStyle(selected));
+  statusChecks('readerSummary', element('div', 'mma-summary', menu), 'app');
+  statusChecks('readerList', element('section', 'mma-screen', menu), 'app');
   // The lightest possible photo is the worst background beneath a black plate.
   // Checking white therefore bounds every pixel of a legacy media overlay.
   const photo = element('div', '', surface, { background: '#ffffff' });
@@ -275,9 +280,10 @@ function auditVariant(company, theme, direction, preset) {
     const reaction = element('button', `rx-pill${own ? ' own' : ''}`, element('div', 'rx', bubble));
     add(`reaction.${own ? 'own' : 'other'}.count`, 'span', 'rx-count', reaction);
   }
-  // Reactions on voice/documents are siblings; --bubble-bg may differ here.
-  const siblingReaction = element('button', 'rx-pill', element('div', 'rx', col));
-  add('reaction.sibling.count', 'span', 'rx-count', siblingReaction);
+  for (const [kind, richBubble] of [['voice', voice], ['document', document]]) {
+    const reaction = element('button', 'rx-pill', element('div', 'rx', element('div', 'msg-footer', richBubble)));
+    add(`reaction.${kind}.count`, 'span', 'rx-count', reaction);
+  }
   const preview = element('button', 'lp', bubble); const previewBody = element('span', 'lp-body', preview);
   for (const name of ['kind', 'title', 'sub', 'note']) add(`linkPreview.${name}`, 'span', `lp-${name}`, previewBody);
   add('linkPreview.action', 'span', 'lp-cta', preview);
@@ -292,13 +298,17 @@ for (const company of ['erg', 'integra']) for (const theme of ['light', 'dark'])
 for (const company of ['erg', 'integra']) for (const theme of ['light', 'dark']) {
   const rows = variants.filter(variant => variant.company === company && variant.theme === theme).flatMap(variant => variant.checks);
   const roles = new Set(rows.filter(row => /^status\..+\.(sending|sent|delivered)$/.test(row.role)).map(row => row.role));
+  for (const appRole of ['chatList', 'readerSummary', 'readerList']) {
+    const appRows = rows.filter(row => row.role === `status.${appRole}.read`);
+    assert.equal(new Set(appRows.map(row => row.foreground)).size, 1, `${company}/${theme}/${appRole} must stay in the native workspace palette`);
+  }
   for (const role of roles) assert.equal(new Set(rows.filter(row => row.role === role).map(row => row.foreground)).size, 1, `${company}/${theme}/${role} must remain neutral across all presets and directions`);
 }
 const matrix = [];
 for (const company of ['erg', 'integra']) for (const theme of ['light', 'dark']) for (const preset of CHAT_PRESETS) {
   const ids = [`${company}/${theme}/incoming/${preset.id}`, `${company}/${theme}/outgoing/${preset.id}`];
   const pair = ids.map(id => variants.find(item => item.id === id));
-  matrix.push({ company, theme, preset: preset.id, group: preset.group, incoming: preset.incoming, outgoing: preset.outgoing, wallpaper: preset.wallpaper, pattern: preset.pattern, poster: preset.poster, video: preset.video, variants: ids, opaqueTextPass: pair.every(item => item.checks.filter(check => check.threshold === 4.5).every(check => check.pass)), edgesPass: pair.every(item => item.edges.every(check => check.pass)), wallpaperPixels: 'not rasterized; message and document-time surfaces are opaque' });
+  matrix.push({ company, theme, preset: preset.id, group: preset.group, incoming: preset.incoming, outgoing: preset.outgoing, wallpaper: preset.wallpaper, pattern: preset.pattern, poster: preset.poster, video: preset.video, variants: ids, opaqueTextPass: pair.every(item => item.checks.filter(check => check.threshold === 4.5).every(check => check.pass)), edgesPass: pair.every(item => item.edges.every(check => check.pass)), wallpaperPixels: 'not rasterized; message surfaces and their metadata footers are opaque' });
 }
 const failures = variants.flatMap(item => item.checks.filter(check => !check.pass).map(check => ({ variant: item.id, ...check }))).sort((a, b) => a.ratio - b.ratio);
 const edgeChecks = variants.flatMap(item => item.edges.map(check => ({ variant: item.id, ...check })));
@@ -315,7 +325,7 @@ const report = {
   limitations: [
     'Each canonical preset is audited in both directions for ERG and Integra in light/dark modes. Individual color/wallpaper permutations are not selectable and are not enumerated.',
     'No screenshot, clipping, font rasterization, browser cascade, interaction or reduced-motion validation is claimed.',
-    'Gradients, illustration/poster pixels and pattern pixels are not rasterized. Message surfaces and the external document-time plate are opaque, so those pixels do not affect measured text contrast.',
+    'Gradients, illustration/poster pixels and pattern pixels are not rasterized. Message surfaces, including document footers, are opaque, so those pixels do not affect measured text contrast.',
     'CSS model handles source base rules, descendant/child classes, attributes, :is/:not/:where, inherited variables, inline color and !important. Media queries and transient pseudo states are excluded.',
     'Text uses 4.5:1; meaningful icons/waveform use 3:1. Body text, labels, timestamps and metadata are normal small text.',
     'CSS source order is tokens, company overrides, ChatRoom, ChatAppearance, catalog styles, ProfileShareCard, MessageReactions, LinkPreview, MessageDeliveryStatus. Relevant scoped overrides have higher specificity; verify actual bundle order in browser.',
@@ -323,7 +333,7 @@ const report = {
   ],
   totals: { checks: variants.reduce((sum, item) => sum + item.checks.length, 0), failedChecks: failures.length, matrixOpaqueTextPass: matrix.filter(item => item.opaqueTextPass).length },
   edges: { method: 'Decorative 1px inner outline: exactly 94% actual fill + 6% black, opaque, no shadow, negative offset. It is not a text contrast requirement. Outline does not alter the CSS box dimensions.', checks: edgeChecks.length, failedChecks: edgeChecks.filter(check => !check.pass), minimumEdgeToFillContrast: Math.min(...edgeChecks.map(check => check.ratio)), rows: edgeChecks },
-  delivery: { states: Object.keys(MESSAGE_DELIVERY_STATES), contexts: ['bubble', 'reactionFooter', 'voice', 'documentPlate', 'mediaFooter', 'profileFooter', 'chatList', 'overMedia'], iconThreshold: 3, neutralInvariantAcrossPresets: true, checks: variants.reduce((sum, item) => sum + item.checks.filter(check => check.role.startsWith('status.')).length, 0), source: 'Actual MessageDeliveryStatus wrapper data attributes and CSS, with canonical per-theme read variables.' },
+  delivery: { states: Object.keys(MESSAGE_DELIVERY_STATES), contexts: ['bubble', 'reactionFooter', 'voice', 'documentFooter', 'mediaFooter', 'profileFooter', 'chatList', 'readerSummary', 'readerList', 'overMedia'], iconThreshold: 3, neutralInvariantAcrossPresets: true, appReadInvariantAcrossPresets: true, checks: variants.reduce((sum, item) => sum + item.checks.filter(check => check.role.startsWith('status.')).length, 0), source: 'Actual MessageDeliveryStatus wrapper data attributes and CSS, with canonical per-theme read variables.' },
   roleSummary, failures, variants, matrix,
 };
 fs.mkdirSync(output, { recursive: true });

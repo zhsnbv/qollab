@@ -22,7 +22,7 @@ const READ_COLORS = Object.freeze({
   'pattern-garden': read('#426B3A', '#ADD69E'), 'pattern-travel': read('#37678A', '#99C8EA'), 'pattern-play': read('#954A6C', '#ECAACB'),
   'art-coast': read('#2F6C61', '#97D2BF'), 'art-alpine': read('#3B6191', '#A6C8F4'), 'art-cabin': read('#656327', '#D6D293'),
   'art-lighthouse': read('#3A6678', '#A6CCD9'), 'art-fields': read('#855E22', '#E6C17C'),
-  'live-coast': read('#2C6C75', '#95D3DB'), 'live-lake': read('#426C42', '#ABD3A5'), 'live-earth': read('#3864A2', '#9DC7FF'),
+  'live-coast': read('#2C6C75', '#95D3DB'), 'live-lake': read('#56518E', '#BEBBF4'), 'live-earth': read('#3864A2', '#9DC7FF'),
   'live-prism': read('#74509B', '#CEA9F3'), 'live-poppies': read('#A34450', '#F4A8B3'),
 });
 
@@ -52,7 +52,7 @@ export const CHAT_PRESETS = Object.freeze([
   preset('art-lighthouse', 'Маяк', 'art', palette(swatch('#FCFAF7', '#323235', '#43434A'), swatch('#D8E6EB', '#3A4D58', '#30434D', '#EDF7FB')), '/img/chat-themes/art-lighthouse.webp'),
   preset('art-fields', 'Поля', 'art', palette(swatch('#FFFAF0', '#353127', '#4C412E'), swatch('#F0E2C4', '#574B32', '#4E3F26', '#FFF6E2')), '/img/chat-themes/art-fields.webp'),
   preset('live-coast', 'Прибой', 'live', palette(swatch('#F5FBFA', '#283636', '#2E4648'), swatch('#CFE7E9', '#345054', '#29474A', '#EAFAFC')), '/img/chat-themes/live-coast.webp'),
-  preset('live-lake', 'Озеро', 'live', palette(swatch('#F8FAF5', '#2B342F', '#38483C'), swatch('#D9E6D5', '#3D5140', '#344831', '#EFF9EA')), '/img/chat-themes/live-lake.webp'),
+  preset('live-lake', 'Ночная степь', 'live', palette(swatch('#F5F5FC', '#292D42', '#33384F'), swatch('#DFE0F4', '#414965', '#343956', '#F0EFFF')), '/img/chat-themes/live-steppe.webp'),
   preset('live-earth', 'Планета', 'live', palette(swatch('#F5F8FC', '#26323F', '#304258'), swatch('#D2E1F5', '#344A69', '#2C405D', '#ECF4FF')), '/img/chat-themes/live-earth.webp'),
   preset('live-prism', 'Призма', 'live', palette(swatch('#FAF8FD', '#312D3C', '#42364F'), swatch('#E6DDF5', '#4B3F62', '#443253', '#F6EEFF')), '/img/chat-themes/live-prism.webp'),
   preset('live-poppies', 'Маки', 'live', palette(swatch('#FFF8F5', '#362E2F', '#503B3D'), swatch('#F3D6D8', '#57383E', '#562F36', '#FFF0F2')), '/img/chat-themes/live-poppies.webp'),

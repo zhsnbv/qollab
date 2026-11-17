@@ -1,6 +1,8 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef } from 'react';
 import { Check, FileText, ImageSquare, VideoCamera, Sparkle, MusicNotes } from '@phosphor-icons/react';
 import { formatStorage } from '../utils/settingsPreferences';
+import Portal from './Portal';
+import { pushScrim, popScrim } from '../utils/scrim';
 import './SettingsStorageVisuals.css';
 
 const TAU = Math.PI * 2;
@@ -57,32 +59,59 @@ export function DeviceStorageBar({ cache }) {
 }
 
 const FILES = [
-  { Icon: VideoCamera, color: '#3d7eff', angle: -155, delay: -.1 },
-  { Icon: ImageSquare, color: '#25b986', angle: -45, delay: -.78 },
-  { Icon: FileText, color: '#a064ef', angle: 55, delay: -1.35 },
-  { Icon: MusicNotes, color: '#ed9244', angle: 145, delay: -1.87 },
+  { Icon: VideoCamera, angle: -155, delay: -.1 },
+  { Icon: ImageSquare, angle: -45, delay: -.78 },
+  { Icon: FileText, angle: 55, delay: -1.35 },
+  { Icon: MusicNotes, angle: 145, delay: -1.87 },
 ];
-const BURST_COLORS = ['#3d7eff', '#25c98d', '#9c5af7', '#ffae36', '#f35e86'];
 
 export function CacheCleaning({ job, onClose }) {
-  const dialog = useRef(null), id = useId(), done = job.phase === 'done';
-  useEffect(() => { const previous = document.activeElement; dialog.current?.focus(); return () => previous?.focus?.(); }, []);
-  const current = job.categories[Math.min(job.categories.length - 1, Math.floor(job.progress * job.categories.length))];
-  const percent = Math.round(job.progress * 100);
-  return <div className="sx-cleaning-overlay sv-cleaning-overlay"><div className={`sv-cleaning-dialog ${done ? 'is-done' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} tabIndex={-1} ref={dialog} onKeyDown={event => {
-    if (event.key === 'Tab') { event.preventDefault(); (dialog.current.querySelector('button') || dialog.current).focus(); }
-    if (event.key === 'Escape' && done) onClose();
-  }}>
-    <div className="sv-clean-stage-art" aria-hidden="true">
-      <div className="sv-clean-aura" />
-      <svg className="sv-clean-ring" viewBox="0 0 196 196"><defs><linearGradient id={`${id}-gradient`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#4c8cff" /><stop offset=".55" stopColor="#7b70f8" /><stop offset="1" stopColor="#30cda1" /></linearGradient></defs><circle cx="98" cy="98" r="78" fill="none" className="sv-clean-track" strokeWidth="3" /><circle className="sv-clean-arc" cx="98" cy="98" r="78" fill="none" stroke={done ? '#25bd8c' : `url(#${id}-gradient)`} strokeWidth="3" strokeLinecap="round" pathLength="100" strokeDasharray="100 100" strokeDashoffset={100 - percent} transform="rotate(-90 98 98)" /></svg>
-      {!done && <><div className="sv-clean-satellite"><i /></div><div className="sv-clean-files">{FILES.map(({ Icon, color, angle, delay }, index) => <span key={index} style={{ '--file-color': color, '--file-x': `${Math.cos(angle * Math.PI / 180) * 75}px`, '--file-y': `${Math.sin(angle * Math.PI / 180) * 75}px`, '--file-tilt': `${index % 2 ? 15 : -15}deg`, '--file-delay': `${delay}s` }}><Icon size={20} weight="duotone" /></span>)}</div></>}
-      <div className="sv-clean-core">{done ? <svg className="sv-clean-check" viewBox="0 0 48 48"><path d="M11 24l9 9 18-19" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" pathLength="1" /></svg> : <Sparkle size={35} weight="duotone" />}</div>
-      {done && <div className="sv-clean-burst">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--burst-angle': `${index * 36}deg`, '--burst-color': BURST_COLORS[index % BURST_COLORS.length], '--burst-delay': `${(index % 3) * 30}ms` }} />)}</div>}
+  const overlay = useRef(null), dialog = useRef(null), doneButton = useRef(null);
+  const id = useId(), done = job.phase === 'done';
+  const progress = Math.max(0, Math.min(1, job.progress));
+  const current = job.categories[Math.min(job.categories.length - 1, Math.floor(progress * job.categories.length))];
+  const percent = Math.round(progress * 100);
+
+  useLayoutEffect(() => {
+    // Portal places this layer beside the screen, above its header and scroll
+    // container. Only this DeviceHost becomes inert, never another review phone.
+    const layer = overlay.current;
+    const host = layer.parentElement;
+    const previous = document.activeElement;
+    const siblings = [...host.children].filter(node => node !== layer);
+    const inertBefore = siblings.map(node => node.inert);
+    siblings.forEach(node => { node.inert = true; });
+    dialog.current.focus({ preventScroll: true });
+    pushScrim();
+    return () => {
+      siblings.forEach((node, index) => { node.inert = inertBefore[index]; });
+      popScrim();
+      const target = previous?.isConnected && !previous.disabled && !previous.closest('[inert]')
+        ? previous
+        : siblings.map(node => node.querySelector('button:not([disabled]), [tabindex="0"]')).find(node => node && !node.closest('[inert]'));
+      target?.focus({ preventScroll: true });
+    };
+  }, []);
+  useEffect(() => { if (done) doneButton.current?.focus({ preventScroll: true }); }, [done]);
+
+  return <Portal><div className="sv-cleaning-overlay" ref={overlay}>
+    <div className={`sv-cleaning-dialog ${done ? 'is-done' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`} tabIndex={-1} ref={dialog} onKeyDown={event => {
+      if (event.key === 'Tab') { event.preventDefault(); (doneButton.current || dialog.current).focus({ preventScroll: true }); }
+      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); if (done) onClose(); }
+    }}>
+      <div className="sv-clean-content">
+        <div className="sv-clean-stage-art" aria-hidden="true">
+          <div className="sv-clean-aura" />
+          <svg className="sv-clean-ring" viewBox="0 0 196 196"><defs><linearGradient id={`${id}-gradient`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="var(--sv-clean-accent)" /><stop offset="1" stopColor="var(--sv-clean-light)" /></linearGradient></defs><circle cx="98" cy="98" r="78" fill="none" className="sv-clean-track" strokeWidth="2" /><circle className="sv-clean-arc" cx="98" cy="98" r="78" fill="none" stroke={`url(#${id}-gradient)`} strokeWidth="3" strokeLinecap="round" pathLength="100" strokeDasharray="100 100" strokeDashoffset={100 - percent} transform="rotate(-90 98 98)" /></svg>
+          {!done && <><div className="sv-clean-satellite"><i /></div><div className="sv-clean-files">{FILES.map(({ Icon, angle, delay }, index) => <span key={index} style={{ '--file-x': `${Math.cos(angle * Math.PI / 180) * 88}px`, '--file-y': `${Math.sin(angle * Math.PI / 180) * 88}px`, '--file-tilt': `${index % 2 ? 15 : -15}deg`, '--file-delay': `${delay}s` }}><Icon size={21} weight="duotone" /></span>)}</div></>}
+          <div className="sv-clean-core">{done ? <svg className="sv-clean-check" viewBox="0 0 48 48"><path d="M11 24l9 9 18-19" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" pathLength="1" /></svg> : <Sparkle size={38} weight="duotone" />}</div>
+          {done && <div className="sv-clean-burst">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--burst-angle': `${index * 36}deg`, '--burst-delay': `${(index % 3) * 30}ms` }} />)}</div>}
+        </div>
+        <h2 id={`${id}-title`}>{done ? 'Место освобождено' : 'Наводим порядок'}</h2>
+        <p id={`${id}-description`} className="sv-clean-stage" role="status" aria-live="polite" aria-atomic="true">{done ? 'Сообщения и файлы в чатах сохранены.' : `Очищаем: ${current?.name.toLocaleLowerCase() || 'кэш'}…`}</p>
+        <div className="sv-clean-count"><strong>{formatStorage(Math.round(job.total * progress))}</strong><span>{done ? 'снова в вашем распоряжении' : `из ${formatStorage(job.total)}`}</span></div>
+        <div className="sv-clean-action">{done ? <button className="sv-clean-done" onClick={onClose} ref={doneButton}>Отлично</button> : <div className="sv-clean-progress" role="progressbar" aria-label="Очистка кэша" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} aria-valuetext={`${percent}%`}><span style={{ width: `${percent}%` }} /><small>{percent}%</small></div>}</div>
+      </div>
     </div>
-    <h2 id={`${id}-title`}>{done ? 'Место освобождено' : 'Наводим порядок'}</h2>
-    <p className="sv-clean-stage" role="status">{done ? 'Сообщения и файлы в чатах сохранены.' : `Очищаем: ${current?.name.toLocaleLowerCase() || 'кэш'}…`}</p>
-    <div className="sv-clean-count"><strong>{formatStorage(Math.round(job.total * job.progress))}</strong><span>{done ? 'снова в вашем распоряжении' : `из ${formatStorage(job.total)}`}</span></div>
-    {done ? <button className="sx-primary sv-clean-done" onClick={onClose}>Отлично</button> : <div className="sv-clean-progress" role="progressbar" aria-label="Очистка кэша" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><span style={{ width: `${percent}%` }} /><small>{percent}%</small></div>}
-  </div></div>;
+  </div></Portal>;
 }

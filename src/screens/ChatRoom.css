@@ -173,10 +173,10 @@ html.kb .cr-body { padding-bottom: 56px; }
    серии), цвет закреплён за конкретным собеседником */
 .msg-author-inline { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
 
-/* Время (+ статус прочтения у своих) — на каждом сообщении. overlay лежит
-   внутри бабла в зарезервированном нижнем паддинге; overlay-dark — тёмная
-   плашка поверх фото/видео; static — обычной строкой под баблом (войс/документ) */
-.msg-time-row { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+/* Compact messages reserve 22px inside the bubble for their 15px metadata
+   row plus a 7px bottom inset. Rich/reaction footers participate in layout.
+   overlay-dark/static remain available to legacy TimeRow consumers. */
+.msg-time-row { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; line-height: 15px; white-space: nowrap; }
 .msg-time { font-size: 10px; font-weight: 500; }
 .msg-time-row--overlay,
 .msg-time-row--overlay-dark { position: absolute; right: 10px; bottom: 7px; }
@@ -197,6 +197,8 @@ html.kb .cr-body { padding-bottom: 56px; }
 .msg-bubble {
   position: relative;
   min-width: 64px;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 10px 14px 22px;
   border-radius: 12px;
   font-size: 14px; line-height: 20px;
@@ -255,19 +257,20 @@ html.kb .cr-body { padding-bottom: 56px; }
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Документ-вложение */
+/* File content and metadata share one message surface. */
 .msg-document {
-  display: flex; align-items: center; gap: var(--space-3);
+  display: block;
   width: 248px; max-width: 100%;
   padding: 10px 14px; border-radius: 12px;
   background: var(--color-background); border: 1px solid var(--color-border);
   animation: msg-in 0.2s ease;
 }
+.msg-document-content { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 .msg-document-icon {
   width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--color-primary-bg-hover);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.msg-document-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.msg-document-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .msg-document-name {
   font-size: 14px; font-weight: 500; color: var(--color-text);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -276,17 +279,19 @@ html.kb .cr-body { padding-bottom: 56px; }
 
 /* Голосовое сообщение */
 .msg-bubble--voice {
-  display: flex; align-items: center; gap: var(--space-4);
+  display: block;
   width: 268px; max-width: 100%;
 }
+.voice-content { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.voice-content .voice-time { flex-shrink: 0; }
 .voice-play {
   width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--color-primary);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   transition: opacity 0.12s, transform 0.12s; -webkit-tap-highlight-color: transparent;
 }
 .voice-play:active { transform: scale(0.92); }
-.voice-wave { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 2px; height: 24px; }
-.voice-wave i { width: 2px; border-radius: 2px; background: var(--color-weak); }
+.voice-wave { flex: 1; min-width: 0; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 2px; height: 24px; }
+.voice-wave i { flex: 0 1 2px; min-width: 1px; width: 2px; border-radius: 2px; background: var(--color-weak); }
 .voice-wave.playing i { animation: voice-bounce 0.9s ease-in-out infinite alternate; }
 @keyframes voice-bounce { from { transform: scaleY(0.5); } to { transform: scaleY(1.25); } }
 .voice-time { font-size: 12px; font-weight: 500; color: var(--color-weak); flex-shrink: 0; }
@@ -424,11 +429,13 @@ html.kb .cr-compose { bottom: 54px; }
    Нижний паддинг бабла тут не нужен — время уже в потоке. */
 .msg-bubble:has(.msg-footer) { padding-bottom: 10px; }
 .msg-footer {
+  min-width: 0; max-width: 100%;
   display: flex; align-items: flex-end; flex-wrap: wrap;
   gap: 4px var(--space-2);
   margin-top: 6px;
 }
-.msg-footer .msg-time-row--inline { margin-left: auto; padding-bottom: 2px; color: var(--msg-time); }
+.msg-footer > .rx { min-width: 0; max-width: 100%; }
+.msg-footer .msg-time-row--inline { flex: 0 0 auto; margin-left: auto; padding-bottom: 2px; color: var(--msg-time); }
 
 /* Свайп вправо по сообщению — быстрый ответ. Плашка со стрелкой проявляется
    по мере протяжки, сообщение возвращается на место с анимацией. */
@@ -492,3 +499,7 @@ html.kb .cr-compose { bottom: 54px; }
 .cr-prompt:active { opacity: 0.6; }
 
 .cr-headline .cr-subtitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* A profile card may shrink with the real message column on narrow phones.
+   Its timestamp uses the same footer/overlay bounds as every other bubble. */
+.msg .msg-bubble--profile { min-width: min(255px, 100%); max-width: min(310px, 100%); }

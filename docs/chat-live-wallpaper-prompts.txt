@@ -1,7 +1,7 @@
 ЖИВЫЕ ФОНЫ · ПЯТЬ СЦЕН
 Версия от 17 ноября 2026
 
-Новые исходные изображения созданы по мотивам пяти выбранных референсов: побережье, горное озеро, Земля с орбиты, рифлёное оптическое стекло, маки у снежных гор. Это новые композиции, а не копии приложенных изображений.
+Пять новых исходных изображений: побережье, ночная степь с Млечным Путём, Земля с орбиты, рифлёное оптическое стекло, маки у снежных гор. Референсы использованы как визуальное направление; это новые композиции, а не копии приложенных изображений.
 
 В каждом разделе два самостоятельных англоязычных промпта: для создания картинки и для анимации этой картинки. Для image-to-video загрузите соответствующий PNG из папки originals. Веб-версии WebP предназначены для прототипа; для генерации видео используйте PNG без повторного сжатия.
 
@@ -25,17 +25,28 @@ Use the supplied coastal image as the exact visual source. Create a 10-second ve
 
 
 ============================================================
-02 · Горное озеро
-Исходник: originals/live-lake.png
-Файл для прототипа: public/img/chat-themes/live-lake.webp
+02 · Ночная степь
+Исходник: artifacts/live-wallpapers-v9-2026-11-17/originals/live-steppe.png
+Файл для прототипа: public/img/chat-themes/live-steppe.webp
+Стабильный ID темы: live-lake (сохранение прежнего выбора).
 
 ПРОМПТ ДЛЯ КАРТИНКИ
 
-Use case: photorealistic-natural. Asset type: original premium mobile chat wallpaper and still source for later image-to-video animation. Create a vertical 9:16 natural landscape photograph of a quiet turquoise alpine lake cradled between densely forested mountains, with a distant lightly snowcapped ridge in the upper middle. Original composition viewed from a stable hillside overlook: a dark green pine-covered peninsula curves in from the lower-left, open lucid blue-green water fills the middle and lower-right, several modest conifer tips frame only the bottom corners, the mountain valley recedes asymmetrically into the distance. Pale blue sky and one soft small cloud, cool clear morning light, gentle atmospheric haze, fine forest detail, subtle realistic water ripples without strong reflections or distracting sparkle. Calm spacious editorial photography, natural color, refined contrast, believable scale, not oversaturated, not painterly, not a UI screenshot. No boats, no kayaks, no people, no docks, no houses, no roads, no cable cars, no birds, no text, no logo, no watermark. Full-bleed wallpaper, no border.
+Use case: photorealistic-natural.
+Asset type: original premium vertical 9:16 mobile chat wallpaper and source still for a later ten-second night-sky loop.
+Create a spectacular but believable astrophotograph of the Milky Way above an empty, flat Central Asian steppe at deep night. The horizon is very low, about 25 percent of the image height above the bottom, so the immense sky occupies the upper three quarters. The foreground is a quiet dark blue-black natural grassland with subtle readable dry grass texture and an almost level distant silhouette, no mountains. A richly detailed Milky Way band rises diagonally through the sky: intricate natural dust lanes, a gently luminous warm champagne/taupe galactic core near the lower-middle sky, fading upward into cool deep indigo and restrained blue-violet star clouds. Thousands of fine sharp pin-point stars of naturally varied brightness and density, true photographic scale, no oversized glitter, no long-exposure star trails. The dark surrounding sky should retain elegant blue-purple depth rather than pure empty black.
+Premium professional night landscape photography, clear dry air, extremely restrained natural airglow close to the horizon, no urban light pollution. Refined rich color without neon or fantasy nebula swirls, credible texture and contrast, soft calm shadowed land. The Milky Way is expressive at phone size while the composition remains spacious and contemplative. Full-bleed single photograph, no mockup or collage.
+No people, buildings, tents, trees, mountains, cars, roads, fences, animals, moon, sun, campfire, artificial lights, aurora, meteors, satellites, spacecraft, lens flare, text, symbols, logo, watermark or border. Do not add any new subject. Deliver only the image.
 
 ПРОМПТ ДЛЯ АНИМАЦИИ
 
-Use the supplied alpine lake image as the exact first-frame visual source. Create a 10-second vertical 9:16 image-to-video wallpaper, 24 fps, no audio. The camera is LOCKED to a tripod: preserve the exact framing, perspective, lens, focus, mountain silhouettes, shoreline and forest placement. No camera orbit, pan, zoom, push-in, parallax or continuous directional drift. Bring only the water surface to life with tiny slow cyclic ripples and restrained local changes in reflected light; the lake remains the same calm turquoise color. A few nearest pine tips move by an almost imperceptible amount in one gentle 10-second breeze cycle; distant forest and mountain geometry stay fixed. Keep the small cloud in the same place and shape. Build the water motion as repeating local phases, returning to the same overall state and motion velocity at 10 seconds as at zero, so the intended loop continues smoothly without a stop or reverse-playback look. Hold exposure and focus steady. No boats, people, wakes, birds, new clouds or additional objects. No mountain morphing, shoreline deformation, shimmer flicker, crawling texture, wobbly trunks, artificial sharpening, cuts, fades or text. Calm photorealistic seamless-loop candidate; the actual seam will be checked after generation.
+Use the supplied Milky Way over the steppe photograph as BOTH the exact first-frame and last-frame reference. Create a 10-second vertical 9:16 image-to-video wallpaper, 24 fps, silent. The first and final frames must reproduce the source framing and composition. LOCK the camera to a tripod: no pan, tilt, roll, zoom, dolly, parallax or stabilization drift. Preserve the low, level steppe horizon and every foreground feature.
+
+Aim for the calm feeling of a very slow night-sky timelapse, designed as a restrained cyclic wallpaper rather than a full astronomical rotation. Keep the Milky Way dust lanes and all star relationships rigid and coherent. Move the entire sky together along a slow, smooth closed drift path with a clearly perceptible total excursion of approximately 1-2 percent of the frame width during the ten-second cycle. The motion should be visible at phone size yet calm: a continuous, gently curving drift of one coherent star field, never individual star jitter, twinkling glitter or local morphing. Return to the exact source position and orientation at the ten-second boundary, matching the movement direction and speed on both sides of the seam. Do not pause, snap back, reverse abruptly or visibly swing back and forth. Add only a very gentle periodic variation in existing natural airglow and the faintest coordinated closed breeze cycle in the nearest grass. Keep star positions stable relative to one another, stars sharp and point-like, the galactic core warm-neutral and the sky deep blue-violet. Hold overall exposure, color balance and focus stable.
+
+No independent dancing or crawling stars, no twinkle glitter, no trails, no sky deformation, no cloud generation, no full sky revolution, no new celestial objects, meteors, satellites, aurora, moon, lights, people, structures or text. No camera motion, cuts, fades, dissolves, black frames, mirrored playback or speed ramps. Do not add a pause at the start or end. Deliver a continuous ten-second loop candidate whose seam will be verified after generation.
+
+First/last frame: один и тот же PNG. Однонаправленное астрономическое вращение неба за 10 секунд не замкнётся; здесь предлагается малое художественное циклическое движение. Бесшовность проверяется по готовому ролику. Подробные параметры и запасной вариант с неподвижными звёздами — docs/chat-live-steppe-prompts.txt.
 
 
 ============================================================

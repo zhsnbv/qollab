@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mountMessageMenuClone, messageReadColorStyle } from './messageMenuClone.js';
+import { mountMessageMenuClone } from './messageMenuClone.js';
 
 // Small DOM boundary fixture: source and portal are deliberately disconnected.
 // Guard context isolation, remounts and fractional sizing without a browser
@@ -43,6 +43,7 @@ test('lifted copy keeps palette, workspace and reaction variables inside its own
   assert.equal(host.child.className, 'msgmenu-theme-context qa-bubbles qa-custom-in qa-custom-out');
   for (const [property, value] of Object.entries(values)) assert.equal(host.child.style[property], value);
   assert.equal(host.style['--chat-out-light'], undefined, 'panel host must not acquire the bubble palette');
+  assert.equal(host.style['--chat-status-read-light'], undefined, 'reader panels must not acquire the themed read accent');
   assert.equal(host.child.children[0], clone);
   assert.equal(source.style.visibility, 'hidden', 'the real message stays hidden until the menu restores it');
   assert.equal(clone.style.visibility, 'visible');
@@ -65,10 +66,4 @@ test('moving out of the chat flex layout keeps fractional column width', () => {
   assert.equal(clonedColumn.style.width, '191.625px');
   assert.equal(clonedColumn.style.maxWidth, 'none');
   assert.equal(clonedColumn.style.flex, '0 0 auto');
-});
-
-test('reader panels receive read colors only, never bubble or application fills', () => {
-  const { source } = fixture({ '--chat-status-read-light': ' #15503f ', '--chat-status-read-dark': '#92ecc2', '--chat-out-light': '#506a8f', '--color-white': '#eeeeee' });
-  assert.deepEqual(messageReadColorStyle(source), { '--chat-status-read-light': '#15503f', '--chat-status-read-dark': '#92ecc2' });
-  assert.deepEqual(messageReadColorStyle(null), {});
 });

@@ -1,5 +1,4 @@
 import MessageDeliveryStatus from '../components/MessageDeliveryStatus';
-import { useChatAppearance, appearanceStyle } from '../utils/chatAppearance';
 import { readShareStore, subscribeShares, mergeSharedChats } from '../utils/sharing';
 import { baseChats } from '../data/chatList';
 import { notificationKey, notificationMode, useChatNotificationModes } from '../utils/chatNotifications';
@@ -108,7 +107,6 @@ export function Avatar({ chat }) {
 }
 
 export default function Chats({ notificationPreview } = {}) {
-  const { appearance } = useChatAppearance();
   const deviceHost = useContext(DeviceHost);
   const savedNotificationModes = useChatNotificationModes();
   const notificationModes = notificationPreview || savedNotificationModes;
@@ -247,7 +245,7 @@ export default function Chats({ notificationPreview } = {}) {
           <span>Поиск</span>
         </div>
       </div>
-      <ul className="chat-list" style={appearanceStyle(appearance)}>
+      <ul className="chat-list">
         {chats.map((chat) => (
           <li
             key={chat.id}
@@ -278,7 +276,7 @@ export default function Chats({ notificationPreview } = {}) {
               </div>
               <div className="chat-line2">
                 <span className="chat-preview">
-                  {chat.lastMine && <MessageDeliveryStatus status={chat.lastStatus} size={16} className="chat-receipt" />}
+                  {chat.lastMine && <MessageDeliveryStatus scope="app" status={chat.lastStatus} size={16} className="chat-receipt" />}
                   {chat.sender && <b className="chat-sender">{chat.sender} </b>}
                   {chat.contentIcon && <chat.contentIcon size={14} weight="fill" color="var(--color-weak)" style={{ verticalAlign: 'middle', marginRight: 2 }} />}
                   {chat.preview}

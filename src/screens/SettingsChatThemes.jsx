@@ -18,8 +18,13 @@ function ThemeTile({ preset, active, onPick }) {
 export function ChatThemeSettings() {
   const { appearance, update } = useChatAppearance();
   return <SettingsPage title="Темы чатов">
-    <div className="sc-theme-preview"><div className="sx-preview-card"><ChatPreview compact /></div></div>
-    <div className="sc-theme-grid" role="group" aria-label="Темы чатов">{CHAT_PRESETS.map(preset => <ThemeTile key={preset.id} preset={preset} active={appearance.preset === preset.id} onPick={() => update({ preset: preset.id })} />)}</div>
+    <section className="sc-theme-card st-card">
+      <div className="sc-theme-preview"><ChatPreview compact /></div>
+      <div className="sc-theme-catalog">
+        <div className="sc-catalog-heading"><h2>Выберите тему</h2><span>{CHAT_PRESETS.find(preset => preset.id === appearance.preset)?.name}</span></div>
+        <div className="sc-theme-grid" role="group" aria-label="Темы чатов">{CHAT_PRESETS.map(preset => <ThemeTile key={preset.id} preset={preset} active={appearance.preset === preset.id} onPick={() => update({ preset: preset.id })} />)}</div>
+      </div>
+    </section>
   </SettingsPage>;
 }
 // Existing deep links now lead to the same curated catalog.

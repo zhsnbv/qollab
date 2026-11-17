@@ -6,6 +6,9 @@
   background: transparent;
   box-shadow: none;
   isolation: auto;
+  /* Only the lifted clone receives its chat palette; menu/activity stay native. */
+  --chat-status-read-light: initial;
+  --chat-status-read-dark: initial;
 }
 .mobile-reaction-menu .rp-picker--mobile { height: min(566px, var(--vvh, 100dvh)); }
 .mobile-reaction-menu .rp-picker-position { max-height: 100%; }

@@ -1,35 +1,46 @@
 # Настройки и темы чатов — передача разработчикам
 
-Версия документа: v8, 17 ноября 2026. Долговечный контракт изменения тем — в [руководстве](chat-themes-guide.md); краткие правила для AI — в [AGENTS.md](../AGENTS.md). Этот документ описывает реализуемое поведение, исходники, границы прототипа и доказательства выпуска.
+Версия документа: v9, 17 ноября 2026. Долговечный контракт изменения тем — в [руководстве](chat-themes-guide.md); краткие правила для AI — в [AGENTS.md](../AGENTS.md). Этот документ описывает реализуемое поведение, исходники, границы прототипа и доказательства выпуска.
 
-## Статус выпуска
+## Статус выпуска v9
 
-**v8 опубликована 17 ноября 2026.** Код `c4cf135` находится в `main` (push подтверждён). Cloudflare Worker `qollab`: итоговый успешный deployment `ebdf868d-cfac-4734-af30-87a0e2f50f6e`. UI-код c4cf135 опубликован вместе с явным HTML routing в wrangler.jsonc. Приложение и Storybook собраны в одном dist. Публичный smoke приложения и Storybook пройден: история Settings / «ТемыЧатов» открылась в настоящем iframe и содержит 21 плитку.
+**v9: 21 тест, перечисленные ниже браузерные проверки и итоговая сборка app+Storybook пройдены.** Targeted lint изменённых JS/JSX без замечаний, diff check чистый. Итоговый deployment и публичная проверка ожидают подтверждения основного агента. Публичные адреса прежние, но сама ссылка не доказывает, что на ней уже v9.
 
-Публичная проверка после deploy: 21 плитка и 5 «LIVE · фото», 0 overflow, art-coast сохранён после reload; новый маршрут состояний работает для ERG/Integra. У «Мяты» sending/sent/delivered — RGB(110,116,124), read — RGB(41,109,89); поднятый бабл сохранил RGB(207,234,224), экран прочитавших сохранил тот же read-цвет. У standard ERG read остался оранжевым RGB(182,92,22). В консоли публичной версии 0 ошибок. Промежуточный deploy 5d124449-6483-474b-b429-ff67fd21fcdb проверил приложение; итоговый deploy после явной настройки assets.html_handling также подтвердил публичный Storybook. Причина прежнего поведения без явного значения отдельно не установлена. Отчёт: [published smoke](../artifacts/settings-redesign-2026-11-17/v8/published-smoke.json); [скриншот опубликованной сетки](../artifacts/settings-redesign-2026-11-17/v8/published-theme-grid.png).
+Подтверждённые проверки v9:
 
-Подтверждённая браузерная проверка текущей ревизии:
+- Финальный аналитический аудит: 14 616 проверок цвета и 504 проверки края, 0 ошибок. [Аудит v9](../artifacts/settings-redesign-2026-11-17/v9/color-audit.txt). Это аналитика исходного CSS, отдельно от браузерных измерений ниже.
 
-- 84 конфигурации: 21 тема × ERG/Integra × light/dark. 420 проверок статусов, 0 ошибок; доступные названия и вычисленные SVG-цвета соответствуют состояниям, горизонтального overflow нет. Минимальный фактический контраст статуса 3.4301:1 при пороге 3:1.
-- 84/84 поднятых read-бабла совпали с источником: заливка, текст, край, отсутствие тени, ширина и цвет прочтения.
-- 64 rich-message проверки: 8 типов × 2 направления × 2 режима × 2 пресета. Ошибок палитры нет; максимальная разница округления ширины 0.0078125 px, ниже допуска 0.05 px.
-- Аналитический CSS-аудит: 12 768 проверок и 504 проверки края, 0 ошибок. Это отдельное свидетельство от браузерной проверки; оно не подменяет её.
-- Четыре test entrypoints: суммарно 19/19 тестов пройдены. Targeted oxlint — 0 ошибок и 0 предупреждений. `npm run build:all` успешно собрал приложение и Storybook.
-- Сетка проверена на 393×852 и 320×700: 21 плитка, 5 честных «LIVE · фото», горизонтального overflow нет. Выбор live-prism сохранился после reload.
-- Настоящий личный чат с локальными демоданными: пройдены копирование, ответ с отправкой цитаты, редактирование с сохранением цитаты и темы, закрепление с появлением панели, реакция через полный picker, пересылка в Избранное с новым forwarded-баблом и отмена подтверждения удаления с сохранением сообщения. Подтверждённое удаление этим проходом не заявляется.
-- Групповой чат: dark + live-prism, keyboard long tap сохранил палитру, ширина 393 без overflow. Нижняя панель языка открыта, Қазақша первым. Подтверждённая демоочистка прошла running-анимацию → итог 2,4 ГБ → кнопку «Отлично»; после закрытия все категории 0 МБ, действие «Кэш очищен» disabled. Это проверка сценария, а не реальное освобождение диска.
+- 336 комбинаций: 21 тема × ERG/Integra × light/dark × ширина 320/393 × statuses/rich. Проверены 4368 строк времени/статуса: все целиком внутри `.msg-bubble`, 0 нарушений. [Отчёт границ](../artifacts/settings-redesign-2026-11-17/v9/message-bounds.json).
+- Миниатюры темы приложения имеют 9:16; межколоночный интервал равен боковому полю: 18 px на ширине 393 и 12 px на 320. [Геометрия карточек](../artifacts/settings-redesign-2026-11-17/v9/app-card-geometry.json).
+- Каталог на 320/393: 21 плитка 9:16, пять «LIVE · фото», без горизонтального overflow. [Геометрия каталога](../artifacts/settings-redesign-2026-11-17/v9/catalog-geometry.json).
+- Long tap проверен на «Мяте» Integra/light и «Ночной степи» ERG/light. Поднятая копия сохраняет палитру бабла; summary/list прочитавших используют app-цвета. [Integra/Мята](../artifacts/settings-redesign-2026-11-17/v9/menu-integra-mint.png), [ERG/Ночная степь](../artifacts/settings-redesign-2026-11-17/v9/menu-erg-steppe.png).
+- Полноэкранная очистка проверена в ERG/light и Integra/dark: размеры overlay и DeviceHost совпали — 393×852; blur 26 px, saturate 0.65; акценты #ef7f1a и #8f8ad6 соответственно. После завершения autofocus на «Отлично», фон inert во время открытия и 0 inert-соседей после закрытия. [ERG running](../artifacts/settings-redesign-2026-11-17/v9/cache-erg-running.png), [Integra dark running](../artifacts/settings-redesign-2026-11-17/v9/cache-integra-dark-running.png), [ERG done](../artifacts/settings-redesign-2026-11-17/v9/cache-erg-done.png).
 
-Отчёты текущей ревизии: [browser status summary](../artifacts/settings-redesign-2026-11-17/v8/rendered-status-summary.json), [long tap matrix](../artifacts/settings-redesign-2026-11-17/v8/longtap-matrix.json), [rich-message summary](../artifacts/settings-redesign-2026-11-17/v8/longtap-rich-summary.json), [аналитический аудит](../artifacts/settings-redesign-2026-11-17/v8/color-audit.txt), [действия в настоящем чате](../artifacts/settings-redesign-2026-11-17/v8/real-actions.json).
+- Быстрая реакция: раскрытый набор содержит 40 эмодзи, свёрнутый — 8; поисковых input нет. После выбора 🤭 и сворачивания он остаётся видимым. Chevron при раскрытии поворачивается на 180°; aria-expanded согласован с состоянием. В консоли локального прохода 0 ошибок и предупреждений.
 
-Последний подтверждённый предыдущий выпуск v7: основной код `8f43cda`, запись о проверке `7615d89`; Cloudflare Worker `qollab`, deployment `05fd0ffc-2fdc-46d9-8233-32d31daa81f7`. Это историческое свидетельство, его нельзя переносить на новую ревизию.
+Это браузерные проверки веб-прототипа. Физический iPhone и браузерный проход с включённым reduced motion данным отчётом не подтверждены. Наличие правил reduced motion в исходнике отдельно от факта ручного/браузерного тестирования.
+
+## Предыдущий подтверждённый выпуск v8
+
+v8 опубликована 17 ноября 2026: UI-код `c4cf135` в main, итоговый Cloudflare deployment `ebdf868d-cfac-4734-af30-87a0e2f50f6e`, Worker qollab. App и Storybook были собраны и проверены публично; история «ТемыЧатов» показывала 21 плитку. Явное assets.html_handling=auto-trailing-slash сохранило корректную раздачу Storybook вместе с SPA deep links. Причина предшествующего поведения без явного значения не установлена.
+
+Исторические результаты v8: 19/19 модельных тестов, targeted lint без замечаний, build:all; 84 конфигурации/420 статусов; 84 long tap и 64 rich-message проверки; аналитические 12 768 цветовых и 504 edge-проверки без ошибок. Были пройдены локальные copy/reply/edit/pin/reaction/forward, отмена удаления, язык и демоочистка. Эти результаты не подтверждают новые границы баблов, app-scope меню, макеты, ассеты или очистку v9.
+
+Архивные свидетельства: [published smoke v8](../artifacts/settings-redesign-2026-11-17/v8/published-smoke.json), [сетка v8](../artifacts/settings-redesign-2026-11-17/v8/published-theme-grid.png), [status summary](../artifacts/settings-redesign-2026-11-17/v8/rendered-status-summary.json), [long tap](../artifacts/settings-redesign-2026-11-17/v8/longtap-matrix.json), [rich summary](../artifacts/settings-redesign-2026-11-17/v8/longtap-rich-summary.json), [аналитический аудит](../artifacts/settings-redesign-2026-11-17/v8/color-audit.txt), [действия](../artifacts/settings-redesign-2026-11-17/v8/real-actions.json). Старые утверждения о переносе тематического read-цвета в панели меню/прочитавших и допустимости внешнего времени отменены контрактом v9 и не являются инструкцией для реализации.
 
 ## Что передаётся
 
 Настройки сохраняют существующий top bar и фон, без повторения информации профиля. В корне цветные квадратные иконки с белыми залитыми символами. «Данные устройства» доступны сразу; «Данные и память» объединяют состав кэша, выбор очистки и параметры хранения. Язык выбирается в нижней панели, Қазақша первым. Залитые основные действия имеют полную pill-форму.
 
-«Оформление» содержит тему приложения, живой предпросмотр текущего чата, каталог тем и быструю реакцию. Каталог — единая вертикальная сетка из 21 пресета; горизонтальных лент и отдельных карточек-секций нет. Каждый пресет меняет согласованную пару баблов и фон целиком, включая тематический цвет прочитанного статуса. ERG и Integra сохраняют выбор независимо. Два устаревших адреса настройки цветов/обоев приводят в общий каталог.
+«Оформление» содержит три равные миниатюры приложения 9:16 (light/dark/system), предпросмотр чата, каталог и быструю реакцию. В каталоге единая белая секция объединяет preview и непрерывную вертикальную сетку 21 пресета; все плитки 9:16. Горизонтальных лент и отдельных групповых карточек нет. ERG/Integra сохраняют выбор независимо, старые адреса цветов/обоев ведут в каталог.
 
-5 live-тем пока показывают настоящие подготовленные постеры с бейджем «LIVE · фото». Видео не сгенерированы и не подменены CSS-анимацией. Все 5 исходников и промпты готовы для передачи пользователю в image-to-video.
+Время и receipt находятся внутри **всех** баблов, включая медиа, документ и профиль. Пресет задаёт read-цвет только внутри сообщения и его точной поднятой копии. Панели меню, activity/readers и список чатов остаются в app-scope и используют брендовые значения. Широкого переноса read-переменных на меню нет.
+
+Быстрая реакция: 40 курируемых эмодзи, без поиска; свёрнуто 8, включая текущий выбор. Toggle содержит aria-expanded/controls и шеврон вниз/вверх. [Unicode Emoji Frequency](https://www.unicode.org/emoji/frequency.html) использована как открытый ориентир агрегированной частотности; рабочие дополнения и порядок отобраны вручную. Это не статистика ERG/Integra и не рейтинг 2026 года.
+
+Пять градиентов получили разные grain SVG. «Ночная степь» с новым PNG/WebP заменила озеро, сохранив ID live-lake. Пять live-тем по-прежнему имеют video=null и честный бейдж «LIVE · фото»; реальное видео ещё не получено.
+
+Очистка — полноэкранный Portal в DeviceHost: blur 26 px, сильное затемнение, без центральной карточки. Все эффекты/итоговая галочка используют --color-primary выбранного пространства; диаграмма категорий сохраняет свою палитру. Есть inert-фон, ограничение/восстановление фокуса, доступный прогресс и reduced motion. Работа job остаётся локальной демонстрацией.
 
 ## Публичные точки входа
 
@@ -51,20 +62,21 @@
 |---|---|---|
 | Корневые настройки, язык | `src/screens/Settings.jsx`, `src/components/LanguageSheet.jsx`, `src/data/settings.js` | Сохранить порядок и bottom sheet, не добавлять профиль |
 | Общая шапка подэкранов | `src/components/SettingsPage.jsx`, `src/screens/SettingsExperience.css` | Фон/отступы/закрытие соответствуют прототипу |
-| Тема приложения и миниатюра System | `src/screens/SettingsExperience.jsx`, `src/components/SettingsChatPreview.jsx`, `src/utils/theme.js` | auto следует matchMedia; миниатюра клипуется единым SVG |
-| Каталог и выбор | `src/screens/SettingsChatThemes.jsx`, `.css` | Одна сетка; одна обводка; selected определяется ID |
+| Тема приложения и миниатюра System | `src/screens/SettingsExperience.jsx`, `src/components/SettingsChatPreview.jsx`, `src/utils/theme.js` | auto следует matchMedia; три миниатюры 9:16 с одинаковыми полями/интервалами |
+| Каталог и выбор | `src/screens/SettingsChatThemes.jsx`, `.css` | Одна белая секция preview+grid; плитки 9:16; одна обводка; selected по ID |
 | Пресет и миграция | `src/utils/chatThemeCatalog.js`, `chatAppearance.js` | Сохранять ID, а не произвольный объект палитры |
 | Persistence | `src/utils/settingsPreferences.js`, `src/context/CompanyContext.jsx` | Различать localStorage настроек и sessionStorage пространства |
 | Фон везде | `src/components/ChatWallpaper.jsx`, `src/screens/ChatAppearance.css` | Один renderer для tile/preview/реального чата |
-| Бабл/доставка/время | `src/components/Message.jsx`, `src/screens/ChatRoom.css`, `ChatAppearance.css` | 5 статусов, тематический read, непрозрачная поверхность |
-| Семантика доставки | `src/utils/messageDelivery.js`, `src/components/MessageDeliveryStatus.jsx`, `.css` | Общие нейтральный/read/error цвета, доступные названия |
+| Бабл/доставка/время | `src/components/Message.jsx`, `src/screens/ChatRoom.css`, `ChatAppearance.css` | 5 статусов; время/receipt внутри любого бабла, непрозрачная поверхность |
+| Семантика доставки | `src/utils/messageDelivery.js`, `src/components/MessageDeliveryStatus.jsx`, `.css` | Общие neutral/error; read темы только в chat-scope, фирменный read в app-scope |
 | Доступность действий | `src/components/messageMenuActions.js` | Edit только для своих текста/ссылки; Copy для текста, подписи или профиля |
-| Контекст long tap | `src/components/messageMenuClone.js` | Вычисленные переменные темы, изоляция клона, точная дробная ширина |
+| Контекст long tap | `src/components/messageMenuClone.js` | Вычисленная тема только внутри клона бабла, точная дробная ширина; меню её не наследует |
+| Быстрая реакция | `QuickReactionSettings` в `src/screens/SettingsExperience.jsx` | 40/8 эмодзи, выбранная всегда видна, без поиска, aria-expanded/controls |
 | Реакции | `src/components/MessageReactions.jsx`, `.css` | Настоящая геометрия, состояние своей/чужой реакции |
-| Long tap и полный picker | `src/components/MobileMessageMenu.jsx`, `src/gallery/reaction-picker/ReviewMessageMenu.jsx`, `EmojiPicker.jsx` | Вынесенный в portal бабл сохраняет контекст темы |
+| Long tap и полный picker | `src/components/MobileMessageMenu.jsx`, `src/gallery/reaction-picker/ReviewMessageMenu.jsx`, `EmojiPicker.jsx` | Поднятый бабл сохраняет тему; панели/прочитавшие/список чатов используют scope="app" |
 | Настоящие чаты | `src/screens/ChatRoom.jsx`, `DMChat.jsx` | Reply/edit/delete/forward и локальные состояния сообщений |
 | Кэш и параметры | `src/screens/SettingsExperience.jsx`, `src/utils/settingsPreferences.js` | Демоданные; после очистки изменяется только localStorage |
-| Чарт/диск/процесс | `src/components/SettingsStorageVisuals.jsx`, `.css` | Раздельные скруглённые сектора, короткий reveal, доступные переключатели |
+| Чарт/диск/процесс | `src/components/SettingsStorageVisuals.jsx`, `.css` | Чарт с коротким reveal; очистка — полноэкранный брендовый Portal, inert/focus/reduced motion |
 | Данные устройства | `DeviceDetailsSettings` в `src/screens/SettingsExperience.jsx` | Значения макетные; clipboard реальный и может отказать |
 | Обзор настроек | `src/gallery/settings-redesign/SettingsReview.jsx`, `.css` | MemoryRouter, DeviceHost, reset демокэша |
 | Матрица rich-message | `src/gallery/settings-redesign/ChatThemeStates.jsx`, `.css` | Визуальные fixtures и общий long tap; без фиктивного backend |
@@ -76,16 +88,18 @@
 | Семейство | ID | Материал |
 |---|---|---|
 | Стандарт | standard | Нативные токены текущего пространства |
-| Градиенты | grad-horizon, grad-sunset, grad-sage, grad-mint, grad-coast | CSS с несколькими цветовыми зонами и grain |
+| Градиенты | grad-horizon, grad-sunset, grad-sage, grad-mint, grad-coast | CSS и отдельные grain-horizon/sunset/sage/mint/coast.svg |
 | Паттерны | pattern-day, pattern-orbit, pattern-garden, pattern-travel, pattern-play | Пять seamless SVG с тонкими Phosphor-мотивами |
 | Иллюстрации | art-coast, art-alpine, art-cabin, art-lighthouse, art-fields | Пять оригинальных PNG → WebP |
-| Будущие live | live-coast, live-lake, live-earth, live-prism, live-poppies | Пять новых PNG → WebP-постеры; video=null |
+| Будущие live | live-coast, live-lake, live-earth, live-prism, live-poppies | Постеры: Прибой, Ночная степь (live-lake), Планета, Призма, Маки; video=null |
 
-Runtime-ассеты лежат в `public/img/chat-themes/`. Имена файлов связаны со стабильными ID.
+Runtime-ассеты лежат в `public/img/chat-themes/`. Путь читается из канонического poster: ID live-lake намеренно указывает на live-steppe.webp. Сохранённый выбор не сбрасывается. Новый оригинал — artifacts/live-wallpapers-v9-2026-11-17/originals/live-steppe.png, manifest — рядом; старое озеро хранится только для истории/совместимости.
 
-[Полный developer handoff ZIP](../artifacts/chat-themes-v8-developer-handoff.zip) объединяет исходный проект, 10 оригинальных PNG (5 иллюстраций + 5 live-источников), документацию и отчёты QA v8. Пакет содержит исходники, а не обещание production backend или готовых live-видео.
+[Предыдущий developer handoff ZIP v8](../artifacts/chat-themes-v8-developer-handoff.zip) объединяет исходный проект, 10 оригинальных PNG (5 иллюстраций + 5 live-источников), документацию и отчёты QA v8. Это исторический пакет v8, не обновлённая поставка v9. Ссылка сохраняется до отдельного решения о пересборке. Backend и готовые live-видео в пакет не входят.
 
-- [10 промптов: 5 изображений + 5 анимаций](chat-live-wallpaper-prompts.txt).
+- [Ночная степь v9: новый исходник и 10-секундный animation prompt](chat-live-steppe-prompts.txt).
+- [Manifest Ночной степи](../artifacts/live-wallpapers-v9-2026-11-17/manifest.json).
+- [Актуальные 10 промптов для пяти сцен](chat-live-wallpaper-prompts.txt): общий документ уже обновлён, второй раздел — Ночная степь.
 - [Пакет PNG и промптов, ZIP](../artifacts/live-wallpapers-v7-2026-11-17/chat-live-wallpaper-sources-and-prompts.zip).
 - [Manifest исходников live](../artifacts/live-wallpapers-v7-2026-11-17/manifest.json); PNG — рядом в originals.
 - [Происхождение иллюстраций](../artifacts/settings-redesign-2026-11-17/v7/art-generation/generation.json); оригиналы — рядом в originals.
@@ -102,9 +116,13 @@ Runtime-ассеты лежат в `public/img/chat-themes/`. Имена фай�
 | Тема | Выбор → смена экрана → reload | Один selected ID, тот же preview/реальный чат |
 | Изоляция | Выбрать разные темы ERG/Integra и вернуться | Каждое пространство хранит свою тему |
 | Миграция | Старый wallpaper/custom/неизвестный ID | Детерминированный ближайший пресет или standard |
-| Каталог | 320×640 и 393×852, длинные названия | Нет horizontal overflow, все варианты доступны вертикально |
+| Каталог | Узкий/основной экран, длинные названия | Одна белая секция preview+grid, плитки 9:16, все доступны вертикально, без overflow |
+| Тема приложения | Light/dark/system | Три равные миниатюры 9:16, одинаковые padding/gap, system без белых полос |
+| Ассеты | Пять градиентов и ID live-lake | Пять разных grain SVG; Ночная степь и новый poster, сохранённый ID не сброшен |
 | Статус | sending, sent, delivered, read, failed | Нейтральные промежуточные; read в цвете темы; ошибка не имитирует успешную доставку |
-| Rich content | Фото, видео, voice, document, quote, profile, link | Время/иконки/подписи читаемы; свои и чужие поверхности корректны |
+| Rich content | Фото/видео с подписью и без, voice, document, quote, profile, link | Время и receipt геометрически внутри бабла, без внешней строки; текст/иконки/подписи читаемы |
+| Read-scope | Смена пресета → bubble / menu / readers / Chats | В бабле read меняется с темой; вне бабла остаётся брендовый app-read, в обоих режимах |
+| Быстрая реакция | Раскрыть → выбрать эмодзи вне первых 8 → свернуть | 40 в expanded / 8 в collapsed, выбранная видна; нет поиска; chevron и aria-expanded согласованы |
 | Реакции | Поставить/снять; своя/чужая; много реакций | Геометрия настоящего MessageReactions, доступный счётчик |
 | Long tap | Touch hold, мышь contextmenu, Shift+F10 | Выбранный бабл не теряет заливку, текст, outline и read-цвет |
 | Reply | Ответить → composer → отправить → отменить | Цитата соответствует сообщению; отмена очищает draft reply |
@@ -116,7 +134,8 @@ Runtime-ассеты лежат в `public/img/chat-themes/`. Имена фай�
 | Закрытие | Back/Escape/наружное нажатие/close | Меню и picker закрываются; тема и исходный экран сохранены |
 | Язык | Открыть sheet, Қазақша первым, выбрать/отмена | Текущий язык отмечен, панель закрывается, строки обновляются |
 | Кэш | Снять всё, выбрать часть, подтвердить/отменить | Нулевой выбор disabled; очищается выбранный демообъём |
-| Очистка | Running → done → Готово; повторный вход | Прогресс + итог, выбранные категории нулевые, пустое состояние корректно |
+| Очистка | ERG/Integra × light/dark; running → done → Отлично | Overlay совпадает с DeviceHost и закрывает шапку; blur/dark; брендовые эффекты, прогресс и нулевые категории после demo job |
+| Доступность очистки | Tab/Shift+Tab, Escape, закрытие, reduced motion | Фон inert, фокус в диалоге; Escape только done; фокус восстановлен; без орбит/частиц/переходов при reduced motion |
 | Данные устройства | Копирование → успех/ошибка | Копируется отображаемый список; toast отражает фактический результат |
 | Motion | Reduced motion, hidden tab, video load error | Читаемый неподвижный UI/постер; чат доступен |
 | Keyboard | Focus/Enter/Space, labels/pressed/checked | Выбор доступен без мыши; focus видим; цвет не единственный сигнал |
@@ -144,16 +163,21 @@ Runtime-ассеты лежат в `public/img/chat-themes/`. Имена фай�
 
 Команды полностью перечислены в [руководстве](chat-themes-guide.md#9-проверки-и-выпуск). Ключевые шаги: Node model tests → аналитический CSS audit с хешами → targeted oxlint → браузерные сценарии → `npm run build:all` → авторизованный deploy существующего Worker `qollab` → публичная проверка.
 
-Проверка контраста вычисляет CSS-цвета непрозрачных поверхностей; она не оценивает реальный видеокадр, браузерный layout или reader semantics. Storybook и приложение собираются в одном dist; не публикуйте только vite build, если обещана актуальная библиотека компонентов. Предыдущие v7-артефакты хранятся в `artifacts/settings-redesign-2026-11-17/v7/`, текущие v8 следует хранить отдельно.
+Проверка контраста вычисляет CSS-цвета непрозрачных поверхностей; она не оценивает реальный видеокадр, браузерный layout или reader semantics. Storybook и приложение собираются в одном dist; не публикуйте только vite build, если обещана актуальная библиотека компонентов. v7/v8-артефакты исторические. Текущие отчёты v9 сохраняются отдельно в artifacts/settings-redesign-2026-11-17/v9; проверка должна соответствовать хешам текущих исходников.
 
-Приёмка релиза:
+Приёмка v9 (отмечены только подтверждённые проверки):
 
-- [x] Модель/миграция/изолированное сохранение подтверждены тестом текущего исходника; всего 19/19 тестов в четырёх entrypoints.
-- [x] Контрасты и тематические read-статусы проверены во всех комбинациях; аналитический отчёт содержит хеши, браузерный — фактически вычисленные цвета.
-- [x] Сетка, long tap и перечисленные действия настоящего чата проверены в браузере по матрице и отчётам выше.
-- [x] Перечисленные действия проверены на локальных демоданных; известный gap «Выбрать» сохранён в ограничениях. Неисполненные строки общей матрицы не объявлены пройденными.
-- [x] App и Storybook собраны через build:all; targeted lint — 0 ошибок/предупреждений. Публичная история «ТемыЧатов» загружена и содержит 21 плитку.
-- [x] Код c4cf135 находится в main, опубликован в существующий Worker и проверен публично; deployment и smoke приведены выше.
-- [x] В release-блок внесены commit, deployment ID, результаты и ограничения.
+- [x] 21 тест текущего кода пройден.
+- [x] 336 браузерных комбинаций / 4368 внутренних timestamp/receipt — 0 нарушений границ бабла.
+- [x] Catalog 21×9:16, пять LIVE · фото, миниатюры приложения 9:16 и равные поля/интервалы подтверждены на 320/393.
+- [x] Long tap сохраняет бабл, app-read вне бабла подтверждён на двух комбинациях, перечисленных выше.
+- [x] Fullscreen cache ERG/light и Integra/dark: размер, брендовый акцент, завершение, autofocus/inert и восстановление фона проверены.
+- [x] Быстрая реакция: 40/8, отсутствие поиска, поворот шеврона и видимость выбранного 🤭 после сворачивания проверены.
+- [x] Финальный аналитический аудит: 14 616 цветовых и 504 edge-проверки, 0 ошибок; отчёт соответствует текущим исходникам.
+- [x] Финальный build:all app+Storybook пройден; targeted lint без замечаний, diff check чистый. Long tap проверен в комбинациях выше; другие v8 action-сценарии этим проходом повторно не заявляются.
+- [ ] Точная ревизия в main, deployment подтверждён; публичные app и Storybook проверены.
+- [ ] В release-блок v9 внесены commit, deployment и окончательные ограничения.
+
+Reduced motion реализован в стилях/компонентах, но браузерная проверка этого режима отдельно не заявляется.
 
 Физический iPhone/WebView, VoiceOver, аппаратная клавиатура, low-power mode, реальная сеть/диск и декодирование будущих видео требуют отдельного device QA. Браузерная проверка и screen mirror референса не являются подтверждением этой матрицы.

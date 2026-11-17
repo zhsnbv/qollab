@@ -1,0 +1,33 @@
+НОЧНАЯ СТЕПЬ · МЛЕЧНЫЙ ПУТЬ
+Версия v9 · 17 ноября 2026
+
+Исходник: artifacts/live-wallpapers-v9-2026-11-17/originals/live-steppe.png
+WebP для прототипа: public/img/chat-themes/live-steppe.webp
+Стабильный ID темы: live-lake — сохранён, чтобы существующий выбор пользователя не сбросился.
+Постер создан встроенной генерацией изображения. Видео ещё не создано и не подключено.
+
+ПРОМПТ ДЛЯ КАРТИНКИ
+
+Use case: photorealistic-natural.
+Asset type: original premium vertical 9:16 mobile chat wallpaper and source still for a later ten-second night-sky loop.
+Create a spectacular but believable astrophotograph of the Milky Way above an empty, flat Central Asian steppe at deep night. The horizon is very low, about 25 percent of the image height above the bottom, so the immense sky occupies the upper three quarters. The foreground is a quiet dark blue-black natural grassland with subtle readable dry grass texture and an almost level distant silhouette, no mountains. A richly detailed Milky Way band rises diagonally through the sky: intricate natural dust lanes, a gently luminous warm champagne/taupe galactic core near the lower-middle sky, fading upward into cool deep indigo and restrained blue-violet star clouds. Thousands of fine sharp pin-point stars of naturally varied brightness and density, true photographic scale, no oversized glitter, no long-exposure star trails. The dark surrounding sky should retain elegant blue-purple depth rather than pure empty black.
+Premium professional night landscape photography, clear dry air, extremely restrained natural airglow close to the horizon, no urban light pollution. Refined rich color without neon or fantasy nebula swirls, credible texture and contrast, soft calm shadowed land. The Milky Way is expressive at phone size while the composition remains spacious and contemplative. Full-bleed single photograph, no mockup or collage.
+No people, buildings, tents, trees, mountains, cars, roads, fences, animals, moon, sun, campfire, artificial lights, aurora, meteors, satellites, spacecraft, lens flare, text, symbols, logo, watermark or border. Do not add any new subject. Deliver only the image.
+
+ПРОМПТ ДЛЯ АНИМАЦИИ · 10 СЕКУНД
+
+Use the supplied Milky Way over the steppe photograph as BOTH the exact first-frame and last-frame reference. Create a 10-second vertical 9:16 image-to-video wallpaper, 24 fps, silent. The first and final frames must reproduce the source framing and composition. LOCK the camera to a tripod: no pan, tilt, roll, zoom, dolly, parallax or stabilization drift. Preserve the low, level steppe horizon and every foreground feature.
+
+Aim for the calm feeling of a very slow night-sky timelapse, designed as a restrained cyclic wallpaper rather than a full astronomical rotation. Keep the Milky Way dust lanes and all star relationships rigid and coherent. Move the entire sky together along a slow, smooth closed drift path with a clearly perceptible total excursion of approximately 1-2 percent of the frame width during the ten-second cycle. The motion should be visible at phone size yet calm: a continuous, gently curving drift of one coherent star field, never individual star jitter, twinkling glitter or local morphing. Return to the exact source position and orientation at the ten-second boundary, matching the movement direction and speed on both sides of the seam. Do not pause, snap back, reverse abruptly or visibly swing back and forth. Add only a very gentle periodic variation in existing natural airglow and the faintest coordinated closed breeze cycle in the nearest grass. Keep star positions stable relative to one another, stars sharp and point-like, the galactic core warm-neutral and the sky deep blue-violet. Hold overall exposure, color balance and focus stable.
+
+No independent dancing or crawling stars, no twinkle glitter, no trails, no sky deformation, no cloud generation, no full sky revolution, no new celestial objects, meteors, satellites, aurora, moon, lights, people, structures or text. No camera motion, cuts, fades, dissolves, black frames, mirrored playback or speed ramps. Do not add a pause at the start or end. Deliver a continuous ten-second loop candidate whose seam will be verified after generation.
+
+НАСТРОЙКИ И ПРОВЕРКА
+
+Загрузите исходный PNG в image-to-video; если есть отдельные first/last frame, назначьте один и тот же PNG в оба поля. 9:16, 10 секунд, 24 fps, без звука, низкая сила движения, неподвижная камера.
+
+Однонаправленное реальное вращение неба за 10 секунд не вернёт звёзды в исходное положение. Для условия first=last здесь предложено небольшое замкнутое движение с ощущением медленного таймлапса; это художественный цикл, не физическая симуляция вращения Земли. Если модель деформирует или раскачивает небо, оставьте звёздное поле неподвижным и анимируйте только мягкое периодическое свечение у горизонта и траву.
+
+Промпт и одинаковые крайние кадры не гарантируют бесшовность. Проверьте минимум три повторения: точность звёзд, неподвижность горизонта, экспозицию и скорость на стыке. После получения ролика можно выбрать удачный участок и аккуратно свести стык; не используйте механический reverse, если заметно меняется направление звёзд.
+
+Сохраните оригинальный ролик. Для прототипа подготовьте отдельный MP4/H.264, yuv420p, faststart, без аудио, ширина 720–768; оцените качество и размер на телефоне. Подключайте video только после проверки файла, fallback, reduced motion и паузы в скрытой вкладке. Пока остаётся LIVE · фото.

@@ -3,7 +3,6 @@ import ReviewMessageMenu from '../gallery/reaction-picker/ReviewMessageMenu';
 import EmojiPicker from '../gallery/reaction-picker/EmojiPicker';
 import { MobileActivityScreen, MobileActivitySummary } from './MobileMessageActivity';
 import { normalizeMessageActivity } from './messageActivityModel';
-import { MESSAGE_READ_COLOR_PROPERTIES, messageReadColorStyle } from './messageMenuClone';
 import '../gallery/reaction-picker/ReactionPickerReview.css';
 import './MobileMessageMenu.css';
 
@@ -18,15 +17,6 @@ export default function MobileMessageMenu({ selected, onClose, onReact, activity
   const canOpenActivity = activity.people.length > 0;
   const activityKey = [activity.label, activity.personalReadAt || '', activityOpen].join('|');
 
-  useLayoutEffect(() => {
-    const colors = messageReadColorStyle(menu.node);
-    // Read receipts use the selected chat's read color without inheriting its
-    // bubble fills or changing the normal app colors of menus and picker.
-    for (const property of MESSAGE_READ_COLOR_PROPERTIES) {
-      if (colors[property]) root.current.style.setProperty(property, colors[property]);
-      else root.current.style.removeProperty(property);
-    }
-  }, [menu.node]);
 
   useLayoutEffect(() => {
     const siblings = [...root.current.parentElement.children].filter(el => el !== root.current);

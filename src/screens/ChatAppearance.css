@@ -15,7 +15,14 @@
 .qa-wallpaper-photo, .qa-wallpaper-video { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .qa-pattern-layer { position: absolute; inset: 0; background: var(--qa-pattern-image) 0 0 / 288px 336px repeat; opacity: .24; mix-blend-mode: multiply; }
 .qa-wallpaper-layers--mini .qa-pattern-layer { background-size: 144px 168px; }
-.qa-wallpaper-grain { position: absolute; inset: 0; opacity: .15; background: url('/img/chat-themes/grain.svg') 0 0 / 160px 160px repeat; mix-blend-mode: soft-light; }
+/* Different frequencies, octaves and contrast keep each mesh's grain distinct. */
+.qa-wall-grad-horizon { --qa-grain-image: url('/img/chat-themes/grain-horizon.svg'); --qa-grain-size: 160px; --qa-grain-opacity: .36; }
+.qa-wall-grad-sunset { --qa-grain-image: url('/img/chat-themes/grain-sunset.svg'); --qa-grain-size: 192px; --qa-grain-opacity: .34; }
+.qa-wall-grad-sage { --qa-grain-image: url('/img/chat-themes/grain-sage.svg'); --qa-grain-size: 176px; --qa-grain-opacity: .42; }
+.qa-wall-grad-mint { --qa-grain-image: url('/img/chat-themes/grain-mint.svg'); --qa-grain-size: 144px; --qa-grain-opacity: .40; }
+.qa-wall-grad-coast { --qa-grain-image: url('/img/chat-themes/grain-coast.svg'); --qa-grain-size: 208px; --qa-grain-opacity: .38; }
+.qa-wallpaper-grain { position: absolute; inset: 0; opacity: var(--qa-grain-opacity, .36); background: var(--qa-grain-image) 0 0 / var(--qa-grain-size, 160px) repeat; mix-blend-mode: soft-light; }
+.qa-wallpaper-layers--mini .qa-wallpaper-grain { background-size: calc(var(--qa-grain-size, 160px) * .7); }
 .qa-wallpaper:not(.qa-wall-plain) > .qa-wallpaper-layers::after { content: ''; position: absolute; inset: 0; background: rgb(27 43 61 / 4%); }
 html[data-theme="dark"] .qa-wallpaper:not(.qa-wall-plain) > .qa-wallpaper-layers::after { background: rgb(12 20 31 / 57%); }
 .cr-chat-surface { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
@@ -27,7 +34,7 @@ html[data-theme="dark"] .qa-bubbles { --chat-in-bg: var(--chat-in-dark, var(--co
 .qa-bubbles .msg--mine { --chat-bubble-color: var(--chat-out-bg); --chat-bubble-ink: var(--chat-out-ink); }
 .qa-bubbles .msg { --bubble-bg: var(--chat-bubble-color); --chat-bubble-muted: color-mix(in srgb, var(--chat-bubble-ink) 85%, var(--chat-bubble-color)); }
 .qa-bubbles .msg .msg-bubble { --bubble-bg: var(--chat-bubble-color); --chat-surface-fill: var(--chat-bubble-color); background: var(--bubble-bg); color: var(--chat-bubble-ink); }
-.qa-bubbles .msg .msg-document { --chat-surface-fill: var(--color-background); }
+.qa-bubbles .msg .msg-document { --chat-surface-fill: var(--chat-bubble-color); }
 .qa-bubbles .sc-mini-in { --chat-surface-fill: var(--chat-in-bg); }
 .qa-bubbles .sc-mini-out { --chat-surface-fill: var(--chat-out-bg); }
 /* A darker edge follows the actual fill, even for pearl on a white wallpaper.

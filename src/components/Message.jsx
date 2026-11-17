@@ -24,7 +24,8 @@ function formatDuration(total) {
 
 // Плеер голосового: по тапу — таймер идёт с 0:00, иконка меняется на «стоп»;
 // повторный тап или конец записи возвращают исходную длительность и «плей».
-function VoiceBubble({ duration, mine, time, status }) {
+function VoiceBubble({ msg, mine, reactions, onToggleReaction }) {
+  const { duration } = msg;
   const [playing, setPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const totalRef = useRef(parseDuration(duration));
@@ -55,14 +56,16 @@ function VoiceBubble({ duration, mine, time, status }) {
 
   return (
     <div className="msg-bubble msg-bubble--voice">
-      <button className="voice-play" onClick={toggle} aria-label={playing ? 'Стоп' : 'Слушать'}>
-        {playing ? <Stop size={16} weight="fill" color="#fff" /> : <Play size={18} weight="fill" color="#fff" />}
-      </button>
-      <span className={`voice-wave ${playing ? 'playing' : ''}`}>
-        {WAVE.map((h, i) => <i key={i} style={{ height: h, animationDelay: `${i * 0.06}s` }} />)}
-      </span>
-      <span className="voice-time">{playing ? formatDuration(elapsed) : duration}</span>
-      <TimeRow time={time} mine={mine} status={status} />
+      <div className="voice-content">
+        <button className="voice-play" onClick={toggle} aria-label={playing ? 'Стоп' : 'Слушать'}>
+          {playing ? <Stop size={16} weight="fill" color="#fff" /> : <Play size={18} weight="fill" color="#fff" />}
+        </button>
+        <span className={`voice-wave ${playing ? 'playing' : ''}`}>
+          {WAVE.map((h, i) => <i key={i} style={{ height: h, animationDelay: `${i * 0.06}s` }} />)}
+        </span>
+        <span className="voice-time">{playing ? formatDuration(elapsed) : duration}</span>
+      </div>
+      <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} inFlow />
     </div>
   );
 }
@@ -288,22 +291,18 @@ export default function Message({
             <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} />
           </div>
         ) : msg.kind === 'voice' ? (
-          <>
-            <VoiceBubble duration={msg.duration} mine={mine} time={msg.time} status={msg.status} />
-            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
-          </>
+          <VoiceBubble msg={msg} mine={mine} reactions={reactions} onToggleReaction={onToggleReaction} />
         ) : msg.kind === 'document' ? (
-          <>
-            <div className="msg-document">
+          <div className="msg-bubble msg-document">
+            <div className="msg-document-content">
               <span className="msg-document-icon"><FileText size={20} weight="fill" color="var(--color-primary)" /></span>
               <span className="msg-document-body">
                 <span className="msg-document-name">{msg.name}</span>
                 <span className="msg-document-size">{msg.size}</span>
               </span>
             </div>
-            <TimeRow time={msg.time} mine={mine} status={msg.status} variant="static" />
-            <MessageReactions groups={reactions} mine={mine} onToggle={onToggleReaction} />
-          </>
+            <BubbleFooter reactions={reactions} mine={mine} msg={msg} onToggleReaction={onToggleReaction} inFlow />
+          </div>
         ) : (
           <div className={`msg-bubble ${bubbleFooter ? 'msg-bubble--with-footer' : ''}`}>
             {bubbleHeader}

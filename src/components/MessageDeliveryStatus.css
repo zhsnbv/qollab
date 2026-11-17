@@ -5,6 +5,7 @@
   --delivery-read-default-light: #B65C16;
   --delivery-read-default-dark: #F08A2C;
   --delivery-read: var(--chat-status-read-light, var(--delivery-read-default-light));
+  --delivery-read-app: var(--delivery-read-default-light);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -26,8 +27,10 @@ html[data-theme="dark"] .message-delivery-status,
   --delivery-neutral: #B6BCC5;
   --delivery-failed: #FFAAA2;
   --delivery-read: var(--chat-status-read-dark, var(--delivery-read-default-dark));
+  --delivery-read-app: var(--delivery-read-default-dark);
 }
 .message-delivery-status[data-delivery-tone="read"] { color: var(--delivery-read); }
+.message-delivery-status[data-delivery-tone="read"][data-delivery-scope="app"] { color: var(--delivery-read-app); }
 .message-delivery-status[data-delivery-tone="failed"] { color: var(--delivery-failed); }
 .message-delivery-status > svg { display: block; flex: none; color: inherit; fill: currentColor; }
 /* The legacy over-media timestamp needs a dark enough plate for colored read

@@ -19,11 +19,26 @@ async function loadComponent(file) {
   });
   return import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString('base64')}`);
 }
-const [{ default: Message, TimeRow }, { default: MessageDeliveryStatus }] = await Promise.all([
-  loadComponent('./Message.jsx'), loadComponent('./MessageDeliveryStatus.jsx'),
+const [{ default: Message, TimeRow }, { default: MessageDeliveryStatus }, { MobileActivitySummary, MobileActivityScreen }] = await Promise.all([
+  loadComponent('./Message.jsx'), loadComponent('./MessageDeliveryStatus.jsx'), loadComponent('./MobileMessageActivity.jsx'),
 ]);
 const render = (Component, props) => renderToStaticMarkup(createElement(Component, props));
 const labels = { sending: 'Отправляется', sent: 'Отправлено', delivered: 'Доставлено', read: 'Прочитано', failed: 'Не отправлено' };
+
+// Inspect the rendered nesting, not source-string patterns. Layout dimensions
+// still require the browser pass; this catches metadata moved outside a bubble.
+function renderedNodes(html) {
+  const stack = [], nodes = [];
+  const voidTags = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+  for (const [, close, tag, attributes] of html.matchAll(/<(\/?)([a-z][\w-]*)([^>]*)>/gi)) {
+    if (close) { stack.pop(); continue; }
+    const classes = attributes.match(/\bclass="([^"]*)"/)?.[1].split(/\s+/) || [];
+    const node = { tag, classes, attributes, ancestors: [...stack] };
+    nodes.push(node);
+    if (!voidTags.has(tag) && !attributes.endsWith('/')) stack.push(node);
+  }
+  return nodes;
+}
 
 test('delivery states distinguish pending, sent, delivered, read and failed semantics', () => {
   const state = messageDeliveryState;
@@ -103,4 +118,48 @@ test('reactions, embedded content and every timestamp variant keep a single stat
       assert.match(html, /01:23/);
     }
   }
+});
+
+test('every actual message keeps metadata and reactions inside its own bubble', () => {
+  const samples = [
+    { kind: 'text', text: 'Ок' },
+    { kind: 'photo', img: '/test-photo.webp' },
+    { kind: 'video', img: '/test-poster.webp', text: 'Подпись' },
+    { kind: 'voice', duration: '12:34' },
+    { kind: 'document', name: 'Очень длинное название документа для узкого экрана.pdf', size: '2 МБ' },
+    { kind: 'profile', profile: { name: 'Алия Серикова', initials: 'АС', role: 'Дизайнер' } },
+    { kind: 'link', text: 'https://example.com/very-long-path' },
+  ];
+  for (const sample of samples) for (const mine of [false, true]) for (const status of Object.keys(labels)) for (const reacted of [false, true]) {
+    const msg = { ...sample, id: sample.kind, status, time: '12:34' };
+    const reactions = reacted ? { '❤️': [{ id: 'me', initials: 'Я' }] } : undefined;
+    const nodes = renderedNodes(render(Message, { msg, mine, reactions }));
+    const metadata = nodes.filter(node => node.classes.includes('msg-time-row'));
+    assert.equal(metadata.length, 1);
+    const bubbles = metadata[0].ancestors.filter(node => node.classes.includes('msg-bubble'));
+    assert.equal(bubbles.length, 1, `${sample.kind}: time must belong to one bubble`);
+    const inFlow = reacted || ['voice', 'document'].includes(sample.kind);
+    assert.equal(metadata[0].classes.includes('msg-time-row--inline'), inFlow, `${sample.kind}: rich/reaction footer participates in bubble height`);
+    for (const reaction of nodes.filter(node => node.classes.includes('rx'))) {
+      assert.equal(reaction.ancestors.filter(node => node.classes.includes('msg-bubble')).length, 1, `${sample.kind}: reactions share the bubble footer`);
+    }
+  }
+});
+
+test('reader summaries and reader lists explicitly retain app-scoped status colors', () => {
+  const activity = {
+    personal: true, personalReadAt: '2026-11-17T12:00:00+05:00', label: 'Прочитано',
+    title: 'Прочитали', readCount: 1, reactionCount: 0,
+    now: '2026-11-17T13:00:00+05:00', timeZone: 'Asia/Almaty',
+    people: [{ userId: 'reader', name: 'Алия Серикова', readAt: '2026-11-17T12:00:00+05:00' }],
+  };
+  for (const Component of [MobileActivitySummary, MobileActivityScreen]) {
+    const marks = renderedNodes(render(Component, { activity, capture: true })).filter(node => node.classes.includes('message-delivery-status'));
+    assert.ok(marks.length > 0);
+    for (const mark of marks) {
+      assert.match(mark.attributes, /data-delivery-scope="app"/);
+      assert.match(mark.attributes, /data-delivery-state="read"/);
+    }
+  }
+  assert.match(render(MessageDeliveryStatus, { status: 'read' }), /data-delivery-scope="chat"/, 'bubble receipts retain their own palette');
 });

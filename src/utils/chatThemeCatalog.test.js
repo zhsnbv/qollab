@@ -11,7 +11,7 @@ test('catalog has one standard theme and twenty complete, selectable presets', (
     assert.equal(theme.wallpaper, theme.id === 'standard' ? 'plain' : theme.id);
     assert.equal(theme.pattern, theme.group === 'pattern');
     assert.equal(theme.video, null);
-    if (['art', 'live'].includes(theme.group)) assert.equal(theme.poster, `/img/chat-themes/${theme.id}.webp`);
+    if (['art', 'live'].includes(theme.group)) assert.equal(theme.poster, `/img/chat-themes/${theme.id === 'live-lake' ? 'live-steppe' : theme.id}.webp`);
     else assert.equal(theme.poster, null);
     const selected = patchChatAppearance({}, 'erg', { preset: theme.id });
     assert.equal(resolveChatAppearance(selected, 'erg').preset, theme.id);
@@ -150,4 +150,20 @@ test('each themed read accent is canonical and contrasts with both message direc
     assert.equal(appearanceStyle(stale)[`--chat-status-read-${mode}`], preset.palette.read[mode]);
   }
   t.diagnostic(`80 custom-theme surfaces; minimum read-icon contrast ${minimum.toFixed(3)}. Standard workspace accents are checked from component CSS in check-settings-colors.mjs.`);
+});
+
+
+test('saved lake selections resolve to the requested night steppe without losing workspace state', () => {
+  const saved = { preset: 'live-lake', name: 'Озеро', poster: '/img/chat-themes/live-lake.webp', palette: { read: { light: '#426C42', dark: '#ABD3A5' } } };
+  for (const company of ['erg', 'integra']) {
+    const appearance = resolveChatAppearance({ chatAppearance: { [company]: saved } }, company);
+    assert.equal(appearance.preset, 'live-lake');
+    assert.equal(appearance.name, 'Ночная степь');
+    assert.equal(appearance.poster, '/img/chat-themes/live-steppe.webp');
+    assert.equal(appearance.video, null);
+    assert.equal(appearance.motion, false);
+    assert.deepEqual(appearance.palette, getChatPreset('live-lake').palette);
+  }
+  assert.equal(saved.poster, '/img/chat-themes/live-lake.webp');
+  assert.deepEqual([...readFileSync(new URL('../../public/img/chat-themes/live-steppe.webp', import.meta.url)).subarray(0, 4)], [82, 73, 70, 70]);
 });

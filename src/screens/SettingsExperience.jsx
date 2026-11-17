@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CaretRight, Check, CircleHalf, Sun, Moon, Smiley, Copy, DeviceMobile, MagnifyingGlass, X, ChatsCircle } from '@phosphor-icons/react';
+import { CaretDown, CaretRight, Check, CircleHalf, Sun, Moon, Smiley, Copy, DeviceMobile, ChatsCircle } from '@phosphor-icons/react';
 import Settings from './Settings';
 import ChatPreview, { ThemeThumbnail } from '../components/SettingsChatPreview';
 import { StorageRing, DeviceStorageBar, CacheCleaning } from '../components/SettingsStorageVisuals';
@@ -15,13 +15,19 @@ export { ChatThemeSettings, BubbleColorSettings, WallpaperSettings } from './Set
 import './SettingsExperience.css';
 
 const THEMES = [{ id: 'light', name: 'Светлая', Icon: Sun }, { id: 'dark', name: 'Тёмная', Icon: Moon }, { id: 'auto', name: 'Системная', Icon: CircleHalf }];
+// Common faces/gestures informed by https://www.unicode.org/emoji/frequency.html.
+// Work-friendly additions are curated; this is not a workspace usage ranking.
 const REACTIONS = [
-  ['❤️', 'Сердце любовь'], ['👍', 'Палец вверх нравится'], ['🔥', 'Огонь'], ['👏', 'Аплодисменты'],
-  ['😁', 'Улыбка'], ['🎉', 'Праздник'], ['🤝', 'Рукопожатие'], ['💯', 'Сто'],
-  ['😍', 'Влюблённость'], ['😂', 'Смех'], ['🥰', 'Любовь'], ['😎', 'Круто'],
-  ['🙏', 'Спасибо'], ['💪', 'Сила'], ['🚀', 'Ракета'], ['✨', 'Искры'],
+  ['❤️', 'Сердце любовь'], ['👍', 'Палец вверх нравится'], ['😂', 'Смех'], ['🙏', 'Спасибо'],
+  ['🔥', 'Огонь'], ['👏', 'Аплодисменты'], ['🥰', 'Любовь'], ['😊', 'Радостная улыбка'],
+  ['😍', 'Влюблённость'], ['🤣', 'Сильный смех'], ['😭', 'Плач'], ['😘', 'Поцелуй'],
+  ['😅', 'Неловкая улыбка'], ['😁', 'Улыбка'], ['😆', 'Веселье'], ['😉', 'Подмигивание'],
   ['👌', 'Окей'], ['🤔', 'Думаю'], ['😮', 'Удивление'], ['😢', 'Грусть'],
-  ['🙌', 'Ура'], ['💡', 'Идея'], ['✅', 'Готово'], ['👀', 'Глаза'],
+  ['😎', 'Круто'], ['🤗', 'Объятия'], ['😇', 'Ангел'], ['🤩', 'Восторг'],
+  ['🎉', 'Праздник'], ['🙌', 'Ура'], ['💪', 'Сила'], ['🤝', 'Рукопожатие'],
+  ['💯', 'Сто'], ['✨', 'Искры'], ['✅', 'Готово'], ['👀', 'Глаза'],
+  ['💙', 'Синее сердце'], ['💕', 'Два сердца'], ['💔', 'Разбитое сердце'], ['🙈', 'Смущение'],
+  ['😌', 'Облегчение'], ['🤭', 'Хихиканье'], ['🚀', 'Ракета'], ['💡', 'Идея'],
 ];
 function SettingRow({ label, value, onClick, Icon }) {
   return <button className="st-row sx-row" onClick={onClick}>{Icon && <Icon size={21} className="sx-row-icon" />}<span className="st-label">{label}</span><span className="st-value">{value}</span><CaretRight size={15} className="st-chevron" weight="bold" /></button>;
@@ -48,16 +54,17 @@ export function AppearanceSettings() {
 }
 export function QuickReactionSettings() {
   const prefs = useSettingsPreferences();
-  const [expanded, setExpanded] = useState(false), [query, setQuery] = useState('');
-  const reactions = (expanded ? REACTIONS : REACTIONS.slice(0, 8)).filter(([emoji, name]) => `${emoji} ${name}`.toLocaleLowerCase().includes(query.toLocaleLowerCase().trim()));
+  const [expanded, setExpanded] = useState(false);
+  const gridId = useId();
+  const compact = REACTIONS.slice(0, 8);
+  if (!compact.some(([emoji]) => emoji === prefs.reaction)) compact[7] = REACTIONS.find(([emoji]) => emoji === prefs.reaction) || [prefs.reaction, prefs.reaction];
+  const reactions = expanded ? REACTIONS : compact;
   return <SettingsPage title="Быстрая реакция">
     <div className="sx-preview-card"><ChatPreview reaction /></div>
     <p className="sx-description">Нажмите на сообщение дважды,<br />чтобы отправить выбранную реакцию.</p>
     <section className="sx-section"><h2 className="st-group-title">Ваша реакция</h2><div className="st-card sx-reaction-card">
-      {expanded && <label className="sx-search"><MagnifyingGlass size={19} /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Поиск эмодзи" aria-label="Поиск эмодзи" />{query && <button aria-label="Очистить поиск" onClick={() => setQuery('')}><X size={16} /></button>}</label>}
-      <div className="sx-emojis">{reactions.map(([emoji, name]) => <button aria-label={name} aria-pressed={prefs.reaction === emoji} className={prefs.reaction === emoji ? 'is-selected' : ''} key={emoji} onClick={() => updateSettingsPreferences({ reaction: emoji })}>{emoji}</button>)}</div>
-      {!reactions.length && <p className="sx-hint">Ничего не найдено</p>}
-      <button className="sx-text-button" onClick={() => { setExpanded(v => !v); setQuery(''); }}>{expanded ? 'Свернуть' : 'Больше эмодзи'}<CaretRight size={15} /></button>
+      <div className="sx-emojis" id={gridId}>{reactions.map(([emoji, name]) => <button aria-label={name} aria-pressed={prefs.reaction === emoji} className={prefs.reaction === emoji ? 'is-selected' : ''} key={emoji} onClick={() => updateSettingsPreferences({ reaction: emoji })}>{emoji}</button>)}</div>
+      <button className="sx-text-button sx-reaction-toggle" aria-expanded={expanded} aria-controls={gridId} onClick={() => setExpanded(v => !v)}>{expanded ? 'Свернуть' : 'Больше эмодзи'}<CaretDown size={16} weight="bold" /></button>
     </div></section>
   </SettingsPage>;
 }

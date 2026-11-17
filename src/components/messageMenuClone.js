@@ -3,17 +3,8 @@
 // inside the copy only; the action panels and emoji picker remain app-colored.
 const BUBBLE_CLASSES = ['qa-bubbles', 'qa-custom-in', 'qa-custom-out'];
 const INHERITED_TEXT = ['color', 'font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing'];
-export const MESSAGE_READ_COLOR_PROPERTIES = ['--chat-status-read-light', '--chat-status-read-dark'];
 
 const computedStyle = node => node.ownerDocument.defaultView.getComputedStyle(node);
-
-export function messageReadColorStyle(source) {
-  if (!source) return {};
-  const computed = computedStyle(source);
-  return Object.fromEntries(MESSAGE_READ_COLOR_PROPERTIES
-    .map(property => [property, computed.getPropertyValue(property).trim()])
-    .filter(([, value]) => value));
-}
 
 export function mountMessageMenuClone(source, host) {
   const context = source.ownerDocument.createElement('div');
