@@ -27,3 +27,6 @@ dist-ssr
 .netlify
 storybook-static
 public/storybook
+
+# Local Cloudflare development state
+.wrangler/

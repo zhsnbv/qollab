@@ -13,7 +13,7 @@
 
 Подтверждённая локальная проверка v11:
 
-- **52/52 теста** каталога, assets, SSR, playback policy, delivery, меню и навигации; targeted lint и diff check чистые. Полный `npm run build` собрал app + Storybook.
+- **85/85 тестов**: 52 каталога, assets, SSR, playback policy, delivery, меню и навигации + 33 Response-теста video worker; targeted lint и diff check чистые. Полный `npm run build` собрал app + Storybook.
 - **22 968 проверок цвета и 792 проверки края, 0 ошибок**: [аналитический отчёт](../artifacts/settings-redesign-2026-11-17/v11/color-audit.txt).
 - **264 браузерные конфигурации / 3432 строки времени и статуса**, 0 выходов за бабл. 33 темы × ERG/Integra × light/dark × statuses/rich; реальный Message в стенде шириной 402 px: [границы](../artifacts/settings-redesign-2026-11-17/v11/message-bounds.json).
 - **15/15 видео декодируются и воспроизводятся** в предпросмотре: 720×1280, readyState=4, muted/loop, currentTime > 0; миниатюры не создают video. [Playback](../artifacts/settings-redesign-2026-11-17/v11/video-playback.json).
@@ -21,9 +21,13 @@
 - В настоящем групповом чате фон «Прибой» воспроизводится; открытие профиля переводит retained chat в data-active=false и pause, Back возобновляет его с прежнего времени. Настройки обоих пространств независимы: ERG=live-mesh-blue, Integra=live-aurora-mint. [Состояния пространств](../artifacts/settings-redesign-2026-11-17/v11/workspace-isolation.json).
 - Все 15 MP4 без звуковой дорожки, с faststart. Три исходных ролика уменьшены с **23 556 592 до 5 636 074 байт (−76%)**. Новые 12 роликов — **13 343 859 байт**; все 15 — **18 979 933 байт**. Сжатые файлы не заявляются lossless. Проверки исходных и декодированных стыков разделены в manifests.
 
-UI v11 из `8874616` опубликован: Workers Builds `cac4b199-e5e2-4b35-a5f8-743b5c734dc8` success, deployment `4ea8110e-fb9c-4e4b-b750-1bccf132081d` от 2026-11-17T08:41:15.241Z. В публичном каталоге 33 темы / 15 LIVE / 2 photo без LIVE; видео Небесного шёлка декодируется и играет, выбранное сохраняется после reload. В настоящем Storybook iframe видео Северного сияния также играет. [Public smoke](../artifacts/settings-redesign-2026-11-17/v11/published-smoke.json), [скриншот](../artifacts/settings-redesign-2026-11-17/v11/published-video.png).
+Первая публикация UI v11 из `8874616`: Workers Builds `cac4b199-e5e2-4b35-a5f8-743b5c734dc8` success, deployment `4ea8110e-fb9c-4e4b-b750-1bccf132081d` от 2026-11-17T08:41:15.241Z. В публичном каталоге 33 темы / 15 LIVE / 2 photo без LIVE; видео Небесного шёлка декодируется и играет, выбранное сохраняется после reload. В настоящем Storybook iframe видео Северного сияния также играет. [Public smoke](../artifacts/settings-redesign-2026-11-17/v11/published-smoke.json), [скриншот](../artifacts/settings-redesign-2026-11-17/v11/published-video.png).
 
-На этой публикации выявлено ограничение Static Assets: Range получал полный 200. Исправление доставки в `worker/video-assets.js` проверено локально: **33/33 Response-теста**, все 15 реальных файлов в `wrangler dev` дают правильные HEAD/206 и байты; suffix/middle/416/If-Range/404 пройдены. [Локальный HTTP-отчёт](../artifacts/settings-redesign-2026-11-17/v11/local-media-http.json). Финальная публичная проверка исправленного Range обязательна и будет отмечена в public smoke отдельно. История v10 ниже не подменяет новые результаты. Reduced motion/saveData/hidden-tab/autoplay-error проверены модельными тестами, а не настройками физического устройства. Физический iPhone/WebView, Low Power Mode и энергопотребление требуют отдельной приёмки командой разработки.
+На первой публикации Static Assets отвечал полным 200 на Range. **Исправление опубликовано и проверено публично** из commit `91dd64f06527f6862bcbf6ec8a574e84ec407e83`: Workers build `64ad8502-8588-479e-b4e2-acdd64925d89` завершён успешно; подтверждённый активный deployment — `88710b23-93d5-4bb7-a7e8-d60e3d585055`, созданный `2026-11-17T08:56:45.295Z`. Обработчик `worker/video-assets.js` ограничен video-prefix; остальные маршруты приложения и Storybook обслуживаются прежним способом.
+
+Публичный HTTP-проход от `2026-11-17T08:59:21.290810Z`: **15/15 файлов** возвращают корректный HEAD и `206` с точными `Content-Range` и байтами. Отдельно пройдены suffix/middle ranges, `416` для выхода за размер, полный `200` при несовпадающем If-Range и `404` для отсутствующего MP4 без SPA-подмены. [Публичный HTTP-отчёт](../artifacts/settings-redesign-2026-11-17/v11/published-media-http.json). Локальный `wrangler dev` и **33/33 Response-теста** покрыли тот же контракт: [локальный HTTP-отчёт](../artifacts/settings-redesign-2026-11-17/v11/local-media-http.json).
+
+История v10 ниже не подменяет результаты v11. Reduced motion/saveData/hidden-tab/autoplay-error проверены модельными тестами, а не настройками физического устройства. Физический iPhone/WebView, Low Power Mode и энергопотребление требуют отдельной приёмки командой разработки.
 
 ## История v10 — опубликовано, публичная проверка пройдена
 
@@ -57,7 +61,7 @@ UI v11 из `8874616` опубликован: Workers Builds `cac4b199-e5e2-4b35
 
 Машиночитаемое свидетельство — [public smoke v10](../artifacts/settings-redesign-2026-11-17/v10/published-smoke.json). Физический iPhone и переключение reduced motion в браузере остаются непроверенными.
 
-[Developer handoff ZIP v10](../artifacts/chat-themes-v10-developer-handoff.zip) сохранён как историческая поставка из ef6df80; его manifest описывает точный состав. Текущая поставка — v11.
+[Developer handoff ZIP v10](../artifacts/chat-themes-v10-developer-handoff.zip) сохранён как историческая поставка из `ef6df8076c3f9139b450416e96a8ac039d738df1`: **168 923 182 байта**. Внутренний HANDOFF-MANIFEST.json описывает 22 runtime-ассета и 11 оригинальных PNG. Размер и SHA-256 архива повторно сверены с sidecar manifest; CRC и SHA-256 всех вложений были проверены при его создании. Это отдельный исторический архив, не поставка новых видео v11.
 
 ## История: подтверждённый выпуск v9
 
@@ -177,22 +181,22 @@ v8 опубликована 17 ноября 2026: UI-код `c4cf135` в main, �
 
 Постеры и SVG лежат в `public/img/chat-themes/`, 15 MP4 — в `public/video/chat-themes/`. Путь читается из канонического poster: ID live-lake намеренно указывает на live-steppe.webp. Сохранённый выбор не сбрасывается. Новый оригинал — artifacts/live-wallpapers-v9-2026-11-17/originals/live-steppe.png, manifest — рядом; старое озеро хранится только для истории/совместимости.
 
-[Пакет v10](../artifacts/chat-themes-v10-developer-handoff.zip) сохранён как предыдущая поставка; текущие видео и правила v11 находятся в новом пакете. Исторический [Developer handoff ZIP v9](../artifacts/chat-themes-v9-developer-handoff.zip): исходный проект, документация, QA v9, 22 runtime-ассета и 11 оригинальных PNG — 5 актуальных live-источников, 5 иллюстраций и архивное озеро. Backend и готовые live-видео в пакет не входят.
+[Пакет v10](../artifacts/chat-themes-v10-developer-handoff.zip) сохранён как предыдущая поставка. Исторический [Developer handoff ZIP v9](../artifacts/chat-themes-v9-developer-handoff.zip) содержит исходный проект, документацию, QA v9, 22 runtime-ассета и 11 оригинальных PNG — пять исходников сцен v9, пять иллюстраций и архивное озеро. Именно архив v9 не содержит backend и готовых live-видео; состав v11 приведён отдельно ниже.
 
-- [Немые видео и постеры v11](../artifacts/chat-live-videos-v11.zip): компактная поставка 15 роликов; без исходных тяжёлых master/candidate файлов.
-- [Developer handoff v11](../artifacts/chat-themes-v11-developer-handoff.zip): точный source commit, проект, исходные PNG/пользовательские MP4, runtime, renderer, документы и QA.
+- [Немые видео и постеры v11](../artifacts/chat-live-videos-v11.zip): готовая компактная поставка **15 MP4 + 15 poster WebP**, без оригиналов и тяжёлых master/candidate файлов. Размер — **19 476 409 байт**; SHA-256 — `f66a6d31a7d44c138516a8ac2ef4945a7edbc310643ff73a78b82845b54160ee`. CRC, SHA-256 всех вложений и соответствие runtime-файлам проверены; размер и SHA-256 всего ZIP сверены повторно.
+- [Developer handoff v11](../artifacts/chat-themes-v11-developer-handoff.zip): полный проект из точного согласованного commit, включая video worker, его тесты и wrangler.jsonc; 37 runtime image/SVG-ассетов, 15 MP4, 11 исходных PNG, 3 неизменённых пользовательских MP4, переносимый renderer, документы и QA. Относительные пути сохранены; node_modules, dist, секреты и вложенные исторические ZIP исключены. Точный source commit, состав и SHA-256 файлов фиксирует HANDOFF-MANIFEST.json; результат проверки архива — в sidecar manifest.
 - [Supplied media manifest](../artifacts/live-wallpapers-v11-2026-11-17/supplied-manifest.json), [rendered media manifest](../artifacts/live-wallpapers-v11-2026-11-17/runtime-manifest.json).
 - [Переносимый renderer и происхождение](../scripts/chat-wallpapers-v11/README.txt), [повторное сжатие пользовательских клипов](../scripts/chat-wallpapers-v11/supplied/README.md).
 
-- [Ночная степь v9: новый исходник и 10-секундный animation prompt](chat-live-steppe-prompts.txt).
+- [Ночная степь v9: исторический исходник и animation prompt](chat-live-steppe-prompts.txt); тема v11 остаётся статичной.
 - [Manifest Ночной степи](../artifacts/live-wallpapers-v9-2026-11-17/manifest.json).
-- [Актуальные 10 промптов для пяти сцен](chat-live-wallpaper-prompts.txt): общий документ уже обновлён, второй раздел — Ночная степь.
+- [Исторические 10 промптов для пяти сцен v7–v9](chat-live-wallpaper-prompts.txt); второй раздел — Ночная степь. Их прежнее условие 10 секунд не ограничивает лупы v11 длительностью 9/24 секунды.
 - [Пакет PNG и промптов, ZIP](../artifacts/live-wallpapers-v7-2026-11-17/chat-live-wallpaper-sources-and-prompts.zip).
 - [Manifest исходников live](../artifacts/live-wallpapers-v7-2026-11-17/manifest.json); PNG — рядом в originals.
 - [Происхождение иллюстраций](../artifacts/settings-redesign-2026-11-17/v7/art-generation/generation.json); оригиналы — рядом в originals.
 - [Генератор seamless-паттернов](../scripts/assets/create-chat-patterns.mjs).
 
-Изображения созданы встроенной генерацией как новые композиции по визуальному направлению референсов. Оригиналы не заменять сжатыми WebP. Иконки и мотивы — Phosphor, MIT; при переносе файлов сохранить copyright и permission notice из лицензии зависимости. Дополнительные ограничения происхождения и pipeline клипов описаны в руководстве.
+Иллюстрации и исторические PNG v7–v9 созданы генерацией как новые композиции по визуальному направлению референсов. Постеры 15 live-тем извлечены из финальных MP4; происхождение пользовательских клипов и процедурных 12 лупов отдельно описано в manifests и переносимом renderer. Оригиналы не заменять сжатыми WebP. Иконки и мотивы — Phosphor, MIT; при переносе файлов сохранить copyright и permission notice из лицензии зависимости. Дополнительные ограничения происхождения и pipeline клипов описаны в руководстве.
 
 ## Состояния и действия: матрица приёмки
 
@@ -269,7 +273,7 @@ v8 опубликована 17 ноября 2026: UI-код `c4cf135` в main, �
 - [ ] Browser reduced motion: навигация и очистка; наличие кода не считать ручной приёмкой.
 - [ ] Быстрые повторные переходы и клавиатурные сценарии вне перечисленных локальных проходов app/review/Storybook.
 - [x] UI commit 3035bb2 в main; Workers Builds 54ce3aec-6edb-4869-a5ab-bcb52bf72da7 success; deployment 3b2205c0-c31e-46ae-ac24-930446a577cf и публичный smoke app+Storybook подтверждены.
-- [ ] ZIP v10: исходный commit, актуальные документы/оригиналы/QA, контроль целостности и manifest. Старые архивы сохранены.
+- [x] ZIP v10 существует: source `ef6df8076c3f9139b450416e96a8ac039d738df1`, **168 923 182 байта**, внутренний manifest и sidecar с результатами CRC/SHA-256. Размер и SHA-256 повторно совпали с sidecar. Старые архивы сохранены; это исторический результат v10.
 
 Архив приёмки v9 (ниже — только подтверждённая история, не проверки v10):
 
@@ -286,4 +290,4 @@ v8 опубликована 17 ноября 2026: UI-код `c4cf135` в main, �
 
 В v9 reduced motion присутствовал в стилях/компонентах, но отдельная браузерная проверка не заявлялась. Для изменённых переходов и очистки v10 проверка этого режима ожидается.
 
-Физический iPhone/WebView, VoiceOver, аппаратная клавиатура, low-power mode, реальная сеть/диск и декодирование будущих видео требуют отдельного device QA. Браузерная проверка и screen mirror референса не являются подтверждением этой матрицы.
+Физический iPhone/WebView, VoiceOver, аппаратная клавиатура, low-power mode, реальная сеть/диск и декодирование видео на целевых устройствах требуют отдельного device QA. Браузерная проверка и screen mirror референса не являются подтверждением этой матрицы.
