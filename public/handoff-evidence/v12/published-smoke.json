@@ -1,0 +1,60 @@
+{
+  "checkedAt": "2026-11-17T09:49:31.892035+00:00",
+  "uiCommit": "a76c6c6cdebbf2d7fa09fed06f07aa56901c454c",
+  "workersBuild": "9afaf49c-c333-4f27-ae40-465cdc7b990f",
+  "workersBuildConclusion": "success",
+  "observedActiveVersion": "729c7293-83bd-4902-8336-a0e79131d00a",
+  "versionCreatedAt": "2026-11-17T09:45:46.614Z",
+  "entry": "https://qollab.admirably08.workers.dev/handoff/developers",
+  "hub": {
+    "title": "qollab · Разработчикам",
+    "themes": 33,
+    "videosBeforePlay": 0,
+    "liveAuroraMint": {
+      "readyState": 4,
+      "paused": false,
+      "muted": true,
+      "loop": true
+    }
+  },
+  "runningStory": {
+    "vortex": true,
+    "fileIcons": 4,
+    "progressbars": 1,
+    "oldProgressRing": 0,
+    "backgroundFilter": "blur(18px) saturate(0.7)"
+  },
+  "completeStoryIntegraDark": {
+    "button": "rgb(143, 138, 214)",
+    "text": "rgb(255, 255, 255)",
+    "check": "rgb(155, 216, 184)",
+    "circles": 0
+  },
+  "actualStorageFlow": {
+    "result": "Всё чисто",
+    "remainingOverlays": 0,
+    "remainingBlur": 0,
+    "focusAfterClose": "Назад"
+  },
+  "http": {
+    "hub": 200,
+    "storageReview": 200,
+    "storybookIndex": 200,
+    "qaReport": 200,
+    "liveCoastRange": {
+      "status": 206,
+      "contentRange": "bytes 0-255/2450356",
+      "bytes": 256
+    }
+  },
+  "sourceAndAssetLinks": {
+    "sourceDocs": 31,
+    "media": 47,
+    "storybookIds": 8,
+    "result": "all available"
+  },
+  "limits": [
+    "Physical device and screen reader acceptance remains separate",
+    "Cache metrics and deletion are demo state"
+  ]
+}
