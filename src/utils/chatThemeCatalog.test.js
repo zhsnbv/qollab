@@ -3,19 +3,20 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { CHAT_PRESETS, BUBBLE_COLORS, getChatPreset, resolveChatAppearance, patchChatAppearance, appearanceClass, appearanceStyle } from './chatThemeCatalog.js';
 
-test('catalog has one standard theme and twenty complete, selectable presets', () => {
-  assert.equal(CHAT_PRESETS.length, 21);
-  assert.equal(new Set(CHAT_PRESETS.map(theme => theme.id)).size, 21);
-  assert.deepEqual(Object.fromEntries(['standard', 'gradient', 'pattern', 'art', 'live'].map(group => [group, CHAT_PRESETS.filter(theme => theme.group === group).length])), { standard: 1, gradient: 5, pattern: 5, art: 5, live: 5 });
+test('catalog has 33 complete presets, with 15 actual videos and two preserved static photos', () => {
+  assert.equal(CHAT_PRESETS.length, 33);
+  assert.equal(new Set(CHAT_PRESETS.map(theme => theme.id)).size, 33);
+  assert.deepEqual(Object.fromEntries(['standard', 'gradient', 'pattern', 'art', 'photo', 'live'].map(group => [group, CHAT_PRESETS.filter(theme => theme.group === group).length])), { standard: 1, gradient: 5, pattern: 5, art: 5, photo: 2, live: 15 });
   for (const theme of CHAT_PRESETS) {
     assert.equal(theme.wallpaper, theme.id === 'standard' ? 'plain' : theme.id);
     assert.equal(theme.pattern, theme.group === 'pattern');
-    assert.equal(theme.video, null);
-    if (['art', 'live'].includes(theme.group)) assert.equal(theme.poster, `/img/chat-themes/${theme.id === 'live-lake' ? 'live-steppe' : theme.id}.webp`);
+    assert.equal(theme.video, theme.group === 'live' ? `/video/chat-themes/${theme.id}.mp4` : null);
+    const posterId = theme.id === 'live-lake' ? 'live-steppe' : ['live-coast', 'live-prism', 'live-poppies'].includes(theme.id) ? `${theme.id}-v11` : theme.id;
+    if (['art', 'photo', 'live'].includes(theme.group)) assert.equal(theme.poster, `/img/chat-themes/${posterId}.webp`);
     else assert.equal(theme.poster, null);
     const selected = patchChatAppearance({}, 'erg', { preset: theme.id });
     assert.equal(resolveChatAppearance(selected, 'erg').preset, theme.id);
-    assert.equal(resolveChatAppearance(selected, 'erg').motion, false, 'posters remain static until a video is supplied');
+    assert.equal(resolveChatAppearance(selected, 'erg').motion, theme.group === 'live', 'only actual canonical videos enable motion');
   }
   assert.equal(BUBBLE_COLORS.length, 8, 'legacy exports remain available, but are not the selectable catalog');
 });
@@ -115,7 +116,7 @@ const mix = (a, b, weight) => a.map((value, index) => value * weight + b[index] 
 const luminance = rgb => rgb.map(value => { const c = value / 255; return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; }).reduce((sum, value, index) => sum + value * [.2126, .7152, .0722][index], 0);
 const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + .05) / (Math.min(luminance(a), luminance(b)) + .05);
 
-test('all 21 presets retain readable bodies, metadata, voice bars, reactions and darker edges in both brands/themes', t => {
+test('all 33 presets retain readable bodies, metadata, voice bars, reactions and darker edges in both brands/themes', t => {
   let surfaces = 0;
   const minima = { body: Infinity, metadata: Infinity, waveform: Infinity, reaction: Infinity };
   for (const preset of CHAT_PRESETS) for (const company of ['erg', 'integra']) for (const mode of ['light', 'dark']) for (const direction of ['incoming', 'outgoing']) {
@@ -131,8 +132,8 @@ test('all 21 presets retain readable bodies, metadata, voice bars, reactions and
     assert.ok(luminance(mix(bg, [0, 0, 0], .94)) < luminance(bg), `${preset.id}: edge must be darker than its own surface`);
     surfaces++;
   }
-  assert.equal(surfaces, 168);
-  t.diagnostic(`168 opaque surfaces; minimum contrast ${Object.entries(minima).map(([key, value]) => `${key}=${value.toFixed(3)}`).join(', ')}. Includes current native ERG/Integra standard colors.`);
+  assert.equal(surfaces, 264);
+  t.diagnostic(`264 opaque surfaces; minimum contrast ${Object.entries(minima).map(([key, value]) => `${key}=${value.toFixed(3)}`).join(', ')}. Includes current native ERG/Integra standard colors.`);
 });
 
 
@@ -149,7 +150,7 @@ test('each themed read accent is canonical and contrasts with both message direc
     const stale = { preset: preset.id, palette: { read: { light: '#ffffff', dark: '#000000' } } };
     assert.equal(appearanceStyle(stale)[`--chat-status-read-${mode}`], preset.palette.read[mode]);
   }
-  t.diagnostic(`80 custom-theme surfaces; minimum read-icon contrast ${minimum.toFixed(3)}. Standard workspace accents are checked from component CSS in check-settings-colors.mjs.`);
+  t.diagnostic(`128 custom-theme surfaces; minimum read-icon contrast ${minimum.toFixed(3)}. Standard workspace accents are checked from component CSS in check-settings-colors.mjs.`);
 });
 
 
@@ -166,4 +167,39 @@ test('saved lake selections resolve to the requested night steppe without losing
   }
   assert.equal(saved.poster, '/img/chat-themes/live-lake.webp');
   assert.deepEqual([...readFileSync(new URL('../../public/img/chat-themes/live-steppe.webp', import.meta.url)).subarray(0, 4)], [82, 73, 70, 70]);
+});
+
+
+test('all canonical poster and video assets exist with the correct file signature', () => {
+  for (const theme of CHAT_PRESETS) for (const [kind, asset] of [['poster', theme.poster], ['video', theme.video]]) {
+    if (!asset) continue;
+    const data = readFileSync(new URL(`../../public${asset}`, import.meta.url));
+    assert.ok(data.byteLength > 128, `${theme.id}: ${kind} is not an empty placeholder`);
+    if (kind === 'poster') {
+      assert.equal(data.subarray(0, 4).toString('ascii'), 'RIFF', asset);
+      assert.equal(data.subarray(8, 12).toString('ascii'), 'WEBP', asset);
+    } else assert.equal(data.subarray(4, 8).toString('ascii'), 'ftyp', asset);
+  }
+});
+
+test('photo reclassification preserves both old selections and exact static palettes', () => {
+  for (const [id, name, poster] of [['live-lake', 'Ночная степь', 'live-steppe'], ['live-earth', 'Планета', 'live-earth']]) {
+    const expected = getChatPreset(id);
+    for (const company of ['erg', 'integra']) {
+      const saved = { preset: id, group: 'live', video: '/old-arbitrary.mp4', motion: true };
+      const actual = resolveChatAppearance({ chatAppearance: { [company]: saved } }, company);
+      assert.equal(actual.preset, id);
+      assert.equal(actual.name, name);
+      assert.equal(actual.group, 'photo');
+      assert.equal(actual.poster, `/img/chat-themes/${poster}.webp`);
+      assert.equal(actual.video, null);
+      assert.equal(actual.motion, false);
+      assert.deepEqual(actual.palette, expected.palette);
+      assert.ok(appearanceClass(actual).includes('qa-motion-off'));
+    }
+  }
+  assert.equal(getChatPreset('live-lake').palette.outgoing.light, '#DFE0F4');
+  assert.equal(getChatPreset('live-lake').palette.outgoing.dark, '#414965');
+  assert.equal(getChatPreset('live-earth').palette.outgoing.light, '#D2E1F5');
+  assert.equal(getChatPreset('live-earth').palette.outgoing.dark, '#344A69');
 });

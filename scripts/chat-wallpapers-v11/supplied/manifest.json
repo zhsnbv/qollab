@@ -1,0 +1,69 @@
+{
+  "version": 11,
+  "input": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24,
+    "frames": 240
+  },
+  "output": {
+    "width": 720,
+    "height": 1280,
+    "fps": 24,
+    "frames": 216,
+    "duration_seconds": 9,
+    "audio": false,
+    "forced_keyframes": [
+      0,
+      215
+    ]
+  },
+  "loop": "forward-only24-frame smoothstep overlap; source24..215 then blend216..239 with0..23",
+  "assets": [
+    {
+      "key": "coast",
+      "id": "live-coast",
+      "name": "Прибой",
+      "source_filename": "Coastal_image_loop_video_generation_c24cc2f6_1080p.mp4",
+      "source_sha256": "c6893eb30684d3534ec9776fd64cc32affa1f76d6cd45f0e0437524b80b49223",
+      "source_bytes": 11748218,
+      "runtime_url": "/video/chat-themes/live-coast.mp4",
+      "poster_url": "/img/chat-themes/live-coast-v11.webp",
+      "crf": 26,
+      "runtime_sha256": "d1c487f1ec4cee8e3114a3b17bd79ec845cb6e13047cf43e18579e1d2e4f5cd7",
+      "runtime_bytes": 2450356,
+      "poster_sha256": "3a5d2f4ba34c44560392ffa168260483c2815724c0d62ddb0eb304b35ad823f8",
+      "poster_bytes": 189712
+    },
+    {
+      "key": "prism",
+      "id": "live-prism",
+      "name": "Призма",
+      "source_filename": "Animate_glass_lighting_loop_b51ec53b_1080p.mp4",
+      "source_sha256": "7685530e4830c39bd0255c33668a15664d0fa827fe3a95505742693f9024cd4f",
+      "source_bytes": 2466968,
+      "runtime_url": "/video/chat-themes/live-prism.mp4",
+      "poster_url": "/img/chat-themes/live-prism-v11.webp",
+      "crf": 21,
+      "runtime_sha256": "0938f554a902e52ad7903df54c4224190b60d1ee7fdcd7294a6ea2dc772d2db2",
+      "runtime_bytes": 874743,
+      "poster_sha256": "1c9f3b33970c18492553d5ddd74310c9d8c205c4b8745c8e89c1c29f957973f2",
+      "poster_bytes": 34016
+    },
+    {
+      "key": "poppies",
+      "id": "live-poppies",
+      "name": "Маки",
+      "source_filename": "Poppy_meadow_and_snowy_mountain_f8acb21e_1080p.mp4",
+      "source_sha256": "cc8a348f16abe88d7d361e5b1924076788734231528ca85cb228f0d8a9a666bd",
+      "source_bytes": 9341406,
+      "runtime_url": "/video/chat-themes/live-poppies.mp4",
+      "poster_url": "/img/chat-themes/live-poppies-v11.webp",
+      "crf": 26,
+      "runtime_sha256": "95357111299d14daf41950ff26a153736c51e4c5b75ff58b712a07d983b449b0",
+      "runtime_bytes": 2310975,
+      "poster_sha256": "64c7f6f7315217b1ab1035f5ce5f9367528f451b12e3dcb3bf71609b6ce56877",
+      "poster_bytes": 175560
+    }
+  ]
+}

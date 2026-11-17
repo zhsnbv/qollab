@@ -24,15 +24,30 @@ const READ_COLORS = Object.freeze({
   'art-lighthouse': read('#3A6678', '#A6CCD9'), 'art-fields': read('#855E22', '#E6C17C'),
   'live-coast': read('#2C6C75', '#95D3DB'), 'live-lake': read('#56518E', '#BEBBF4'), 'live-earth': read('#3864A2', '#9DC7FF'),
   'live-prism': read('#74509B', '#CEA9F3'), 'live-poppies': read('#A34450', '#F4A8B3'),
+  'live-sky-blue': read('#3658A0', '#9FBFFF'), 'live-sky-mint': read('#296D59', '#8AD5B9'), 'live-sky-lilac': read('#74509B', '#CEA9F3'),
+  'live-mesh-blue': read('#3658A0', '#9FBFFF'), 'live-mesh-peach': read('#A95A28', '#FFB47E'), 'live-mesh-lilac': read('#74509B', '#CEA9F3'),
+  'live-aurora-mint': read('#296D59', '#8AD5B9'), 'live-aurora-violet': read('#74509B', '#CEA9F3'), 'live-aurora-ice': read('#276684', '#8ACFEB'),
+  'live-prism-blue': read('#3658A0', '#9FBFFF'), 'live-prism-mint': read('#296D59', '#8AD5B9'), 'live-prism-peach': read('#A95A28', '#FFB47E'),
 });
 
-function preset(id, name, group, colors, poster = null) {
+function preset(id, name, group, colors, poster = null, video = null) {
   return Object.freeze({
     id, name, group, wallpaper: id === 'standard' ? 'plain' : id,
     incoming: colors ? `${id}-in` : 'default', outgoing: colors ? `${id}-out` : 'default',
-    palette: colors ? Object.freeze({ ...colors, read: READ_COLORS[id] }) : null, pattern: group === 'pattern', poster, video: null,
+    palette: colors ? Object.freeze({ ...colors, read: READ_COLORS[id] }) : null, pattern: group === 'pattern', poster, video,
   });
 }
+
+// Live families reuse the already audited blue/mint/lilac/peach/ice surfaces.
+// The backdrop varies within a family; body and receipt contrast stays stable.
+const LIVE_PALETTES = Object.freeze({
+  blue: palette(swatch('#F7F8FC', '#2B303D', '#303A50'), swatch('#DDE4F7', '#3D4966', '#2D3955', '#EDF2FF')),
+  mint: palette(swatch('#F2FAF7', '#263431', '#2C4540'), swatch('#CFEAE0', '#315248', '#24473E', '#EAF9F3')),
+  lilac: palette(swatch('#FAF8FD', '#312D3C', '#42364F'), swatch('#E6DDF5', '#4B3F62', '#443253', '#F6EEFF')),
+  peach: palette(swatch('#FFF8F3', '#332D2B', '#4D3930'), swatch('#F8DDCB', '#594035', '#543629', '#FFF1E7')),
+  ice: palette(swatch('#F4FAFC', '#29343B', '#2E424E'), swatch('#D0E5EE', '#354F60', '#284350', '#EAF5FC')),
+});
+const livePreset = (id, name, family) => preset(id, name, 'live', LIVE_PALETTES[family], `/img/chat-themes/${id}.webp`, `/video/chat-themes/${id}.mp4`);
 
 export const CHAT_PRESETS = Object.freeze([
   preset('standard', 'Стандартная', 'standard', null),
@@ -51,11 +66,23 @@ export const CHAT_PRESETS = Object.freeze([
   preset('art-cabin', 'Домик', 'art', palette(swatch('#FAF8EF', '#323329', '#434332'), swatch('#E6E4CC', '#494D35', '#42442A', '#F6F7E5')), '/img/chat-themes/art-cabin.webp'),
   preset('art-lighthouse', 'Маяк', 'art', palette(swatch('#FCFAF7', '#323235', '#43434A'), swatch('#D8E6EB', '#3A4D58', '#30434D', '#EDF7FB')), '/img/chat-themes/art-lighthouse.webp'),
   preset('art-fields', 'Поля', 'art', palette(swatch('#FFFAF0', '#353127', '#4C412E'), swatch('#F0E2C4', '#574B32', '#4E3F26', '#FFF6E2')), '/img/chat-themes/art-fields.webp'),
-  preset('live-coast', 'Прибой', 'live', palette(swatch('#F5FBFA', '#283636', '#2E4648'), swatch('#CFE7E9', '#345054', '#29474A', '#EAFAFC')), '/img/chat-themes/live-coast.webp'),
-  preset('live-lake', 'Ночная степь', 'live', palette(swatch('#F5F5FC', '#292D42', '#33384F'), swatch('#DFE0F4', '#414965', '#343956', '#F0EFFF')), '/img/chat-themes/live-steppe.webp'),
-  preset('live-earth', 'Планета', 'live', palette(swatch('#F5F8FC', '#26323F', '#304258'), swatch('#D2E1F5', '#344A69', '#2C405D', '#ECF4FF')), '/img/chat-themes/live-earth.webp'),
-  preset('live-prism', 'Призма', 'live', palette(swatch('#FAF8FD', '#312D3C', '#42364F'), swatch('#E6DDF5', '#4B3F62', '#443253', '#F6EEFF')), '/img/chat-themes/live-prism.webp'),
-  preset('live-poppies', 'Маки', 'live', palette(swatch('#FFF8F5', '#362E2F', '#503B3D'), swatch('#F3D6D8', '#57383E', '#562F36', '#FFF0F2')), '/img/chat-themes/live-poppies.webp'),
+  preset('live-coast', 'Прибой', 'live', palette(swatch('#F5FBFA', '#283636', '#2E4648'), swatch('#CFE7E9', '#345054', '#29474A', '#EAFAFC')), '/img/chat-themes/live-coast-v11.webp', '/video/chat-themes/live-coast.mp4'),
+  preset('live-lake', 'Ночная степь', 'photo', palette(swatch('#F5F5FC', '#292D42', '#33384F'), swatch('#DFE0F4', '#414965', '#343956', '#F0EFFF')), '/img/chat-themes/live-steppe.webp'),
+  preset('live-earth', 'Планета', 'photo', palette(swatch('#F5F8FC', '#26323F', '#304258'), swatch('#D2E1F5', '#344A69', '#2C405D', '#ECF4FF')), '/img/chat-themes/live-earth.webp'),
+  preset('live-prism', 'Призма', 'live', palette(swatch('#FAF8FD', '#312D3C', '#42364F'), swatch('#E6DDF5', '#4B3F62', '#443253', '#F6EEFF')), '/img/chat-themes/live-prism-v11.webp', '/video/chat-themes/live-prism.mp4'),
+  preset('live-poppies', 'Маки', 'live', palette(swatch('#FFF8F5', '#362E2F', '#503B3D'), swatch('#F3D6D8', '#57383E', '#562F36', '#FFF0F2')), '/img/chat-themes/live-poppies-v11.webp', '/video/chat-themes/live-poppies.mp4'),
+  livePreset('live-sky-blue', 'Небесный шёлк', 'blue'),
+  livePreset('live-sky-mint', 'Мятное облако', 'mint'),
+  livePreset('live-sky-lilac', 'Сиреневый туман', 'lilac'),
+  livePreset('live-mesh-blue', 'Голубой поток', 'blue'),
+  livePreset('live-mesh-peach', 'Персиковый поток', 'peach'),
+  livePreset('live-mesh-lilac', 'Лавандовый поток', 'lilac'),
+  livePreset('live-aurora-mint', 'Северное сияние', 'mint'),
+  livePreset('live-aurora-violet', 'Лиловое сияние', 'lilac'),
+  livePreset('live-aurora-ice', 'Ледяное сияние', 'ice'),
+  livePreset('live-prism-blue', 'Ледяная призма', 'blue'),
+  livePreset('live-prism-mint', 'Мятная призма', 'mint'),
+  livePreset('live-prism-peach', 'Рассветная призма', 'peach'),
 ]);
 
 const BY_ID = new Map(CHAT_PRESETS.map(theme => [theme.id, theme]));

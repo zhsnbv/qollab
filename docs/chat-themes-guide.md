@@ -1,12 +1,14 @@
 # Темы чатов qollab: руководство по изменению
 
-Актуальный целевой контракт редизайна v10, 17 ноября 2026. Локальные автоматические проверки и описанная в handoff часть браузерной приёмки v10 подтверждены. UI-коммит 3035bb2 опубликован через успешный Workers Builds; публичный app+Storybook smoke пройден. Точные deployment ID, время и доказательства находятся в handoff. Локальные проходы включают review, основное приложение после demo login и production-сборку Storybook; точные сценарии и ограничения перечислены в handoff. Reduced motion в браузере отдельно не проверен. Подтверждённая история v9 сохранена отдельно в handoff. Документ предназначен разработчикам и AI-агентам. Статус проверки и публикации вынесен в [handoff](chat-themes-handoff.md): описание целевого поведения само по себе не означает, что оно проверено на устройстве.
+Текущая рабочая редакция — v11, 17 ноября 2026: каталог 33 тем, 15 live-видео и 2 сохранённые статичные фотографии; тонкое grain-зерно и строгая policy воспроизведения. Наличие полного набора ассетов, браузерная приёмка и статус публикации v11 отражаются в [handoff](chat-themes-handoff.md). Описание ниже не является заявлением о выпуске v11.
+
+История v10 (сохраняется отдельно от текущей работы). Локальные автоматические проверки и описанная в handoff часть браузерной приёмки v10 подтверждены. UI-коммит 3035bb2 опубликован через успешный Workers Builds; публичный app+Storybook smoke пройден. Точные deployment ID, время и доказательства находятся в handoff. Локальные проходы включают review, основное приложение после demo login и production-сборку Storybook; точные сценарии и ограничения перечислены в handoff. Reduced motion в браузере отдельно не проверен. Подтверждённая история v9 сохранена отдельно в handoff. Документ предназначен разработчикам и AI-агентам. Статус проверки и публикации вынесен в [handoff](chat-themes-handoff.md): описание целевого поведения само по себе не означает, что оно проверено на устройстве.
 
 ## 1. Продуктовый контракт
 
 Тема чата — готовая согласованная композиция: фон, цвет входящего и исходящего сообщения, цвет текста и прочитанного статуса внутри бабла в двух режимах. Панели меню, экран прочитавших и список чатов используют фирменные цвета приложения и не наследуют read-цвет пресета. Пользователь выбирает целый пресет; изменение применяется сразу. Свободного смешивания фона и баблов нет.
 
-В каталоге 21 вариант: стандартная тема и 20 авторских. Предпросмотр, заголовок и каталог объединены в одну белую секцию. В v10 предпросмотр и заголовок закреплены в экране; собственная область прокрутки есть только у списка тем. В ней — одна непрерывная вертикальная сетка из трёх адаптивных колонок, включая стандартную; все плитки имеют пропорции 9:16. Логические группы в данных нужны для типа фона, а не для отдельных карточек-разделов или горизонтальной прокрутки. Предпросмотр сверху использует реальные компоненты сообщений: время и receipt находятся внутри каждого бабла. Выделение плитки — одна обводка и галочка. На live-плитках слева сверху находится компактный бейдж: `LIVE · фото`, пока есть только постер; `LIVE`, когда есть настоящий видеоклип.
+В каталоге 33 варианта: 1 стандартный, 5 градиентов, 5 паттернов, 5 иллюстраций, 2 статичных фото и 15 live-тем. Предпросмотр, заголовок и каталог объединены в одну белую секцию. В v10 предпросмотр и заголовок закреплены в экране; собственная область прокрутки есть только у списка тем. В ней — одна непрерывная вертикальная сетка из трёх адаптивных колонок, включая стандартную; все плитки имеют пропорции 9:16. Логические группы в данных нужны для типа фона, а не для отдельных карточек-разделов или горизонтальной прокрутки. Предпросмотр сверху использует реальные компоненты сообщений: время и receipt находятся внутри каждого бабла. Выделение плитки — одна обводка и галочка. На 15 live-плитках слева сверху находится компактный бейдж `LIVE`. «Ночная степь» и «Планета» — group `photo`, video `null`; у них нет LIVE/LIVE · фото, несмотря на исторический префикс ID `live-`. Все миниатюры статичны: видео запускается только в выбранном видимом preview или настоящем чате.
 
 Общая тема приложения (`light`/`dark`/`auto`) и тема чата — разные настройки. Системная тема следует настройке ОС. Стандартные чаты наследуют брендовые токены ERG/Integra; кастомный пресет меняет только поверхности сообщений и фон. Шапка и базовый фон настроек сохраняют принятый вид прототипа. Карточка профиля здесь не добавляется.
 
@@ -36,6 +38,7 @@
 | Текущее пространство | `src/context/CompanyContext.jsx` | `companyId`, атрибут `data-company`, sessionStorage |
 | Цвета/фон в чате | `src/screens/ChatAppearance.css` | Локальные CSS-переменные, все виды сообщений |
 | Слои фона | `src/components/ChatWallpaper.jsx` | Постер, видео, паттерн, grain; единый рендерер |
+| Playback policy v11 | `src/utils/chatWallpaperPlayback.js` | Visibility/inert, reduced motion/saveData, play/error lifecycle, cleanup; poster fallback |
 | Навигация настроек v10 | `src/components/SettingsRouteStack.jsx`, `src/utils/settingsNavigation.js`, `src/components/SettingsFlow.jsx` | Слои push/pop, сохранение экземпляров/scroll; router владеет историей |
 | Каталог UI | `src/screens/SettingsChatThemes.jsx`, `.css` | Сетка, плитки, выбор, старые redirects |
 | Превью настроек | `src/components/SettingsChatPreview.jsx` | Настоящий `Message`, реакции, тема пространства |
@@ -57,7 +60,7 @@
 |---|---|
 | `id` | Стабильный уникальный ID, например `art-coast`; не зависит от локализованного названия |
 | `name` | Человекочитаемое имя |
-| `group` | `standard`, `gradient`, `pattern`, `art`, `live` — тип рендеринга |
+| `group` | `standard`, `gradient`, `pattern`, `art`, `photo`, `live` — тип рендеринга |
 | `wallpaper` | ID пресета; только у `standard` — `plain` |
 | `incoming`, `outgoing` | Производные ID вида `<id>-in/out`; у standard — `default` |
 | `palette` | Для standard — `null`; для остальных — пара баблов и тематический read-цвет |
@@ -101,7 +104,7 @@ const theme = getChatPreset('art-coast');
 5. Неизвестное или повреждённое значение даёт standard. Явно выбранный standard побеждает старый глобальный фон.
 6. `patchChatAppearance()` принимает только известный ID и корректный companyId; изменения независимых цветов/движения игнорируются. Объекты входных данных не мутируются.
 
-Примеры: `sand → grad-sunset`, `botanical → pattern-garden`, `dunes → art-fields`, `aurora-live → live-prism`, `silk-live → live-poppies`, `tide-live → live-coast`. Полная таблица живёт в коде. При переименовании/удалении ID сначала добавьте детерминированную миграцию и тест. В v9 у `live-lake` изменены название на «Ночная степь», постер на `/img/chat-themes/live-steppe.webp` и согласованная палитра; ID сохранён, поэтому уже выбранная тема обновляется без сброса. Старые lake-файлы остаются историческими/совместимыми, но каталог их больше не выбирает.
+Примеры: `sand → grad-sunset`, `botanical → pattern-garden`, `dunes → art-fields`, `aurora-live → live-prism`, `silk-live → live-poppies`, `tide-live → live-coast`. Полная таблица живёт в коде. При переименовании/удалении ID сначала добавьте детерминированную миграцию и тест. В v9 у `live-lake` изменены название на «Ночная степь», постер на `/img/chat-themes/live-steppe.webp` и согласованная палитра; ID сохранён, поэтому уже выбранная тема обновляется без сброса. Старые lake-файлы остаются историческими/совместимыми, но каталог их больше не выбирает. В v11 `live-lake` и `live-earth` переведены в group `photo` без изменения ID, названия, палитры или текущего poster; `video` остаётся null. Старые сохранённые group/video/motion не могут переопределить каноническое статичное состояние.
 
 Старые маршруты `/settings/bubbles` и `/settings/wallpaper` перенаправляются на `/settings/chat-theme`.
 
@@ -129,28 +132,52 @@ const theme = getChatPreset('art-coast');
 
 При исправлении существующей темы сохраняйте ID, если пользовательский выбор должен остаться прежним. Новый путь ассета задавайте атомарно через канонический poster; live-lake → live-steppe.webp — намеренный пример такого обновления. Не меняйте текущую тему всем пользователям через случайный новый default.
 
-## 7. Ассеты и живые фоны
+## 7. Ассеты и живые фоны v11
 
-Градиенты реализованы в CSS и используют **пять разных** SVG-текстур: `grain-horizon.svg`, `grain-sunset.svg`, `grain-sage.svg`, `grain-mint.svg`, `grain-coast.svg`. Частота/октавы/контраст и размеры отличаются; выбор задают `--qa-grain-image/size/opacity` у каждой темы. Не заменяйте их одной общей текстурой. В миниатюре применяется тот же файл с масштабом 0.7.
+Градиенты остаются CSS-градиентами с прежними цветовыми переходами. Пять разных SVG-текстур — `grain-horizon/sunset/sage/mint/coast.svg` — используют мелкое монохромное fractalNoise, разные seed и частоты, `stitchTiles="stitch"`, явный `color-interpolation-filters="sRGB"` и непрозрачный alpha. Линейная коррекция сохраняет нейтральную середину 0.5; это исключает светлую пелену от прежнего implicit linearRGB при soft-light. Не возвращайте усиление ×1.4–1.9, opacity 0.34–0.42 или крупную низкочастотную основу.
 
-Пять doodle-паттернов — `pattern-day/orbit/garden/travel/play.svg`; это отдельный тип фона. Иллюстрации — `art-coast/alpine/cabin/lighthouse/fields.webp`. Текущие live-постеры — `live-coast.webp`, **`live-steppe.webp` для ID live-lake**, `live-earth.webp`, `live-prism.webp`, `live-poppies.webp`. Все runtime-пути находятся в public/img/chat-themes.
+| Grain | Частота X/Y | Октавы | Seed | Slope | Opacity | Размер CSS |
+|---|---|---:|---:|---:|---:|---:|
+| horizon | .82/.82 | 1 | 7 | .70 | .14 | 160 px |
+| sunset | .74/.96 | 1 | 19 | .72 | .13 | 192 px |
+| sage | .70/.78 | 2 | 31 | .64 | .12 | 176 px |
+| mint | .96/.84 | 1 | 43 | .66 | .12 | 144 px |
+| coast | .88/.74 | 2 | 59 | .70 | .13 | 208 px |
 
-«Ночная степь» — новый оригинальный кадр Млечного Пути над равнинной степью. PNG: `artifacts/live-wallpapers-v9-2026-11-17/originals/live-steppe.png`; manifest в той же папке хранит prompts, размеры и хеши. Постер 768×1365, 253 868 байт. Актуальные image и 10-second image-to-video prompts — [chat-live-steppe-prompts.txt](chat-live-steppe-prompts.txt). Для остальных четырёх live-сцен сохраняются v7-оригиналы. [Общий набор из 10 промптов](chat-live-wallpaper-prompts.txt) уже обновлён под v9: во втором разделе находится Ночная степь вместо озера. Отдельный steppe-документ содержит подробные параметры и запасной вариант с неподвижными звёздами.
+Intercept каждого RGB-канала равен `(1 - slope) / 2`. В миниатюре тот же файл масштабируется ×0.7 и имеет opacity ещё ×0.65; это не отдельная текстура. Все изменения зерна находятся в его SVG и небольшом grain-блоке ChatAppearance.css, не в баблах/палитрах. Параметры и исходники «до» сохранены в `artifacts/settings-redesign-2026-11-17/v11/grain/`; `comparison.html` запускается через dev-сервер и использует настоящие ChatWallpaper/Message. Сравнение light/dark подтверждено root локально; изображения — comparison-light.png и comparison-dark.png. Это не отдельная приёмка всех live-видео.
 
-Исходники иллюстраций — artifacts/settings-redesign-2026-11-17/v7/art-generation. ZIP с пятью v7 live-PNG остаётся историческим пакетом и содержит прежнее озеро. Не заменяйте исходный PNG сжатым WebP при генерации видео. Новый итоговый пакет выпуска описывается только после фактической сборки.
+Пять doodle-паттернов — `pattern-day/orbit/garden/travel/play.svg`; пять иллюстраций — `art-coast/alpine/cabin/lighthouse/fields.webp`. Статичные фото: `live-lake` → `live-steppe.webp` и `live-earth` → `live-earth.webp`. Их прежние палитры и ID сохраняются.
 
-Сейчас все пять live-тем — статичные постеры, `video: null`. Не обещайте движение и не имитируйте его CSS-зумом. Общий ChatWallpaper готов принять реальный клип: muted, loop, playsInline, metadata preload; в миниатюре остаётся картинка. При reduced motion и скрытой вкладке видео приостанавливается; ошибка загрузки оставляет постер. Отказ autoplay не должен блокировать чат.
+Пути видео: `/video/chat-themes/{id}.mp4`. Для `live-coast`, `live-prism`, `live-poppies` новые постеры имеют путь `/img/chat-themes/{id}-v11.webp`. Для 12 новых тем постер — `/img/chat-themes/{id}.webp`:
 
-Пайплайн подключения видео:
+- Небесные: `live-sky-blue`, `live-sky-mint`, `live-sky-lilac`.
+- Потоки: `live-mesh-blue`, `live-mesh-peach`, `live-mesh-lilac`.
+- Сияния: `live-aurora-mint`, `live-aurora-violet`, `live-aurora-ice`.
+- Призмы: `live-prism-blue`, `live-prism-mint`, `live-prism-peach`.
 
-1. Пользователь генерирует 10-секундный вертикальный 9:16 клип из исходного PNG, 24 fps, без звука, с неподвижной камерой. Движение локальное и спокойное: вода, трава, свет. Промпты даны отдельно для каждой сцены.
-2. Получите исходный файл; проверьте длительность, частоту кадров, ориентацию, отсутствие аудио, артефактов, morphing, мерцания и смены экспозиции. Совпадение первого/последнего кадра не гарантирует совпадение скорости.
-3. Подберите циклический участок/стык без рывка. Не используйте механический reverse для волн. Посмотрите минимум три повтора на телефоне; отдельно оцените границу цикла и скорость объектов.
-4. Сожмите копию, сохранив оригинал: совместимый MP4/H.264, yuv420p, faststart, без аудио, разумная ширина 720–768. Размер выбирайте по визуальному качеству и устройствам; ориентир нескольких МБ не заменяет измерение.
-5. Запишите реальный путь в `video`, сохраните прежний poster и ID. Обновите тест, который сейчас намеренно ожидает `video: null` у всего каталога. Проверьте fallback, reduced motion, hidden/resume, autoplay, несколько переходов между темами и потребление памяти.
-6. Зафиксируйте длительность, размер, кодек, проверку стыка и устройства в manifest/handoff. Только после этого бейдж становится `LIVE`.
+В каталоге video-пути этих 15 тем канонические, но публикация допускается только после наличия и проверки всех соответствующих файлов. Старые 9-секундные предоставленные клипы и новые 24-секундные сгенерированные лупы входят в контракт v11. Не растягивайте или обрезайте их ради прежнего требования ровно 10 секунд. Реальную длительность, кодек, fps, размеры и проверку стыка фиксируйте в manifest/handoff.
 
-Обещание промпта «loop» не является проверкой готового клипа. Сеть, декодер, low-power mode и реальный WebView требуют отдельной проверки; браузерный прототип их не сертифицирует.
+### Воспроизведение и fallback
+
+ChatWallpaper оставляет `<img>` настоящего poster под видео. Video имеет muted, loop, playsInline и preload="none"; безусловного autoPlay нет. Он прозрачен до события `playing`, а разрешение на `play()` выдаёт общая policy. Миниатюры не создают video вообще.
+
+Для воспроизведения одновременно нужны: видимость вкладки, отсутствие reduced motion/saveData, минимум 1% пересечения viewport и видимые активные предки. IntersectionObserver не заменяет проверку сохранённых экранов: MutationObserver следит за inert/hidden/aria-hidden/data-active/data-visible/class/style всей цепочки предков. Собственный декоративный aria-hidden слоя не считается скрытым экраном. CSS-завершение reveal также пересчитывает доступность. Неактивный родительский route, даже оставшийся смонтированным после push, не проигрывает видео. Общие overlay-обёртки App.jsx также передают data-active для текущего route: это останавливает настоящий ChatRoom под экраном профиля, а не только retained previews настроек.
+
+При исчезновении любого разрешения видео приостанавливается и виден poster. Media error или отказ `play()` оставляет poster без цикла повторных попыток; выбор другой темы и возврат создаёт новую попытку. Устаревшие promise после смены темы/скрытия игнорируются; cleanup удаляет слушатели/observers и останавливает декодер. Краткий `waiting` на границе лупа при наличии готового кадра сохраняет этот кадр, чтобы не мигал poster; при readyState < 2 или emptied poster возвращается. Это поведение проверяется чистыми lifecycle-тестами, а бесшовность и WebView — отдельным реальным просмотром.
+
+### Подготовка и выпуск видео
+
+1. Сохраните полученный оригинал и источник. Для процедурно сгенерированных лупов сохраняйте renderer/manifest; для предоставленных клипов — исходные файлы. Формат кадра вертикальный 9:16, без аудио; движение спокойное, без морфинга, мерцания и скачков экспозиции.
+2. Проверьте фактическую длительность, fps, ориентацию и декодирование. Совпадение первого/последнего кадра не гарантирует совпадение скорости. Посмотрите минимум три повтора, отдельно оценивая границу цикла. Не применяйте механический reverse к волнам.
+3. Подготовьте совместимый MP4/H.264, yuv420p, faststart, без аудио. Выберите разрешение и размер по качеству и устройствам; несколько МБ — ориентир, не доказательство качества.
+4. Сделайте настоящий poster из согласованного результата. Запишите пути в канонический каталог, сохраните существующий ID. Тест наличия и сигнатуры ассетов должен пройти для всех poster/video; не отключайте его ради отсутствующего файла.
+5. Проверьте воспроизведение выбранного preview и реального чата, статичность всех плиток, hidden/inert/offscreen, reduced motion/saveData, error/autoplay fallback, быстрые переключения и cleanup. Сохраните результаты и ограничения в handoff перед публикацией.
+
+Обещание генератора «loop» не является проверкой готового клипа. Реальные iOS/Android WebView, low-power mode и сеть проверяются отдельно; браузерный прототип их не сертифицирует.
+
+### Исторические исходники v7–v9
+
+«Ночная степь» была создана в v9: PNG `artifacts/live-wallpapers-v9-2026-11-17/originals/live-steppe.png`, poster 768×1365, 253 868 байт. Исторические image/10-second image-to-video prompts сохраняются в [chat-live-steppe-prompts.txt](chat-live-steppe-prompts.txt) и [chat-live-wallpaper-prompts.txt](chat-live-wallpaper-prompts.txt); они больше не задают длительность v11 и не означают запрос оживить статичную Ночную степь. Источники иллюстраций — `artifacts/settings-redesign-2026-11-17/v7/art-generation`. ZIP с пятью v7 live-PNG — исторический пакет с прежним озером. Не заменяйте исходный PNG сжатым WebP.
 
 ## 8. Происхождение и лицензии
 
@@ -163,15 +190,17 @@ const theme = getChatPreset('art-coast');
 Из корня checkout с установленными зависимостями (Node ^20.19 или >=22.12):
 
 ```sh
-node --test src/utils/chatThemeCatalog.test.js src/components/MessageDeliveryStatus.test.mjs src/components/messageMenuClone.test.js src/components/messageMenuActions.test.js src/utils/settingsNavigation.test.js src/components/SettingsRouteStack.test.mjs
-node scripts/check-settings-colors.mjs artifacts/settings-redesign-2026-11-17/v10
-npx oxlint src/utils/chatThemeCatalog.js src/utils/chatThemeCatalog.test.js src/utils/chatAppearance.js src/components/ChatWallpaper.jsx src/components/Message.jsx src/components/MessageDeliveryStatus.jsx src/utils/messageDelivery.js src/components/messageMenuClone.js src/components/messageMenuActions.js src/components/MobileMessageMenu.jsx src/components/SettingsChatPreview.jsx src/screens/SettingsChatThemes.jsx src/screens/ChatRoom.jsx src/screens/DMChat.jsx src/components/SettingsRouteStack.jsx src/components/SettingsFlow.jsx src/utils/settingsNavigation.js
+node --test src/utils/chatThemeCatalog.test.js src/components/MessageDeliveryStatus.test.mjs src/components/messageMenuClone.test.js src/components/messageMenuActions.test.js src/utils/settingsNavigation.test.js src/components/SettingsRouteStack.test.mjs src/utils/chatWallpaperPlayback.test.js src/components/ChatWallpaper.test.mjs
+node scripts/check-settings-colors.mjs artifacts/settings-redesign-2026-11-17/v11
+npx oxlint src/utils/chatThemeCatalog.js src/utils/chatThemeCatalog.test.js src/utils/chatAppearance.js src/components/ChatWallpaper.jsx src/components/Message.jsx src/components/MessageDeliveryStatus.jsx src/utils/messageDelivery.js src/components/messageMenuClone.js src/components/messageMenuActions.js src/components/MobileMessageMenu.jsx src/components/SettingsChatPreview.jsx src/screens/SettingsChatThemes.jsx src/screens/ChatRoom.jsx src/screens/DMChat.jsx src/components/SettingsRouteStack.jsx src/components/SettingsFlow.jsx src/utils/settingsNavigation.js src/utils/chatWallpaperPlayback.js src/utils/chatWallpaperPlayback.test.js src/components/ChatWallpaper.test.mjs
 npm run build
 ```
 
-Модельные тесты проверяют каталог, миграцию, базовые контрасты, семантику доставки, перенос темы в portal-копию доступность действий меню, модель push/pop и SSR слоёв стека. Скрипт check-settings-colors выполняет аналитический аудит CSS и сохраняет результаты с хешами исходников. Это не screenshot-тест и не проверка браузерного layout. При изменении версии укажите новую папку вывода: default старого скрипта может указывать на v7. При расширении каталога обновите ожидаемое количество вариантов, а не удаляйте проверки.
+Модельные тесты проверяют каталог, миграцию, базовые контрасты, семантику доставки, перенос темы в portal-копию доступность действий меню, модель push/pop и SSR слоёв стека. Проверки v11 дополнительно охватывают 33 пресета/15 video-путей/2 статичных фото, наличие и сигнатуры ассетов, все lifecycle-гейты playback, race/cleanup и отсутствие video в миниатюрах. Скрипт check-settings-colors выполняет аналитический аудит CSS и сохраняет результаты с хешами исходников. Это не screenshot-тест и не проверка браузерного layout. При изменении версии укажите новую папку вывода: default старого скрипта может указывать на v7. При расширении каталога обновите ожидаемое количество вариантов, а не удаляйте проверки.
 
-Дополнительно для v10: preview и заголовок остаются на месте при прокрутке всей сетки на 320/393; последняя плитка доступна; hint реакции 12 px над preview, выбранный круг в списке — бледно-оранжевый (14% #ef7f1a + фон приложения), без обводки в ERG/Integra; реальный экран виден через blur очистки, прогресс только в %, белый текст кнопки на brand-fill; контрастное «Всё чисто»; общий push/pop работает вперёд/назад и сохраняет состояние. Сохраните отдельные свидетельства в artifacts/settings-redesign-2026-11-17/v10. Результаты v9 не заменяют этот проход.
+Для v11 отдельно: 15 реальных видео и все poster загружаются, 2 photo не имеют LIVE-бейджа, 33 плитки остаются статичными; неактивные экраны не проигрывают видео; все policy/fallback проверяются в браузере; grain остаётся мелким и чистым в light/dark. Сохраните свидетельства в artifacts/settings-redesign-2026-11-17/v11.
+
+Сохранённые требования v10: preview и заголовок остаются на месте при прокрутке всей сетки на 320/393; последняя плитка доступна; hint реакции 12 px над preview, выбранный круг в списке — бледно-оранжевый (14% #ef7f1a + фон приложения), без обводки в ERG/Integra; реальный экран виден через blur очистки, прогресс только в %, белый текст кнопки на brand-fill; контрастное «Всё чисто»; общий push/pop работает вперёд/назад и сохраняет состояние. Сохраните отдельные свидетельства в artifacts/settings-redesign-2026-11-17/v10. Результаты v9 не заменяют этот проход.
 
 Минимальный визуальный проход: все пресеты в ERG/Integra × light/dark; системная тема; standard/reset; сохранение после reload; узкая ширина 320 и основная 393; текст, внутреннее время/receipt во всех 5 состояниях доставки, фото, видео, голос, документ, цитата, ссылка, профиль и реакции; long tap с тем же фоном/баблом; разделение chat/app read-scope, 40/12 реакций и 6 колонок и сохранение выбора в свёрнутом наборе, fullscreen-кэш в обоих брендах, keyboard/focus и reduced motion. В actions-стенде пройдите ответ, реакцию, копирование, пересылку, выбор и закрытие меню. Проверяйте обратную навигацию и отсутствие горизонтального overflow.
 

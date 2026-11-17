@@ -178,7 +178,7 @@ function AppRoutes() {
           входа заново — иначе при «назад» он въезжает как новый. */}
       <SettingsRouteStack location={location} renderLocation={loc => <OverlayRoutes location={loc} />} />
       {[...underOverlays, location].filter(loc => !isSettingsLocation(loc)).map((loc) => (
-        <div className="publication-app-stack" key={loc.pathname === '/article' || loc.pathname.startsWith('/channel/') ? loc.key || loc.pathname : loc.pathname} inert={settingsOverlay || (loc !== location && publicationOverlay)} aria-hidden={settingsOverlay || (loc !== location && publicationOverlay)}><OverlayRoutes location={loc} /></div>
+        <div className="publication-app-stack" key={loc.pathname === '/article' || loc.pathname.startsWith('/channel/') ? loc.key || loc.pathname : loc.pathname} data-active={loc === location} inert={settingsOverlay || (loc !== location && publicationOverlay)} aria-hidden={settingsOverlay || (loc !== location && publicationOverlay)}><OverlayRoutes location={loc} /></div>
       ))}
       {showNav && <div className="publication-app-stack" inert={settingsOverlay || (!!background && publicationOverlay)} aria-hidden={settingsOverlay || (!!background && publicationOverlay)}><BottomNav /></div>}
       </div>

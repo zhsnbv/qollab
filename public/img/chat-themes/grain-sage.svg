@@ -1,1 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="176" height="176" viewBox="0 0 176 176"><filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".34" numOctaves="3" seed="31" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="linear" slope="1.6" intercept="-0.3"/><feFuncG type="linear" slope="1.6" intercept="-0.3"/><feFuncB type="linear" slope="1.6" intercept="-0.3"/></feComponentTransfer></filter><path d="M0 0h176v176H0z" filter="url(#grain)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="176" height="176" viewBox="0 0 176 176">
+  <filter id="grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency=".70 .78" numOctaves="2" seed="31" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer>
+      <feFuncR type="linear" slope="0.64" intercept="0.18"/>
+      <feFuncG type="linear" slope="0.64" intercept="0.18"/>
+      <feFuncB type="linear" slope="0.64" intercept="0.18"/>
+      <feFuncA type="table" tableValues="1 1"/>
+    </feComponentTransfer>
+  </filter>
+  <path d="M0 0h176v176H0z" filter="url(#grain)"/>
+</svg>

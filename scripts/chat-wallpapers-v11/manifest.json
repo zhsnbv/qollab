@@ -1,0 +1,178 @@
+{
+  "width": 720,
+  "height": 1280,
+  "fps": 24,
+  "seconds": 24,
+  "frames": 576,
+  "bitrate": 4000000,
+  "jobs": [
+    {
+      "id": "live-sky-blue",
+      "name": "Sky blue",
+      "family": "sky",
+      "colors": [
+        "#b3d9ff",
+        "#6699e6",
+        "#80b3ff",
+        "#e6f2ff"
+      ],
+      "output": "live-sky-blue.mp4"
+    },
+    {
+      "id": "live-sky-mint",
+      "name": "Mint cloud",
+      "family": "sky",
+      "colors": [
+        "#bfffd9",
+        "#66cc99",
+        "#80e6b3",
+        "#e6fff2"
+      ],
+      "output": "live-sky-mint.mp4"
+    },
+    {
+      "id": "live-sky-lilac",
+      "name": "Lilac mist",
+      "family": "sky",
+      "colors": [
+        "#e6bfff",
+        "#9973e6",
+        "#b38cff",
+        "#f2e6ff"
+      ],
+      "output": "live-sky-lilac.mp4"
+    },
+    {
+      "id": "live-mesh-blue",
+      "name": "Blue flow",
+      "family": "mesh",
+      "colors": [
+        "#D9E8F4",
+        "#6E91B6",
+        "#93B9C6",
+        "#B6C7DF"
+      ],
+      "output": "live-mesh-blue.mp4"
+    },
+    {
+      "id": "live-mesh-peach",
+      "name": "Peach flow",
+      "family": "mesh",
+      "colors": [
+        "#F1DBCB",
+        "#C79D95",
+        "#E6BAAA",
+        "#D2C4D8"
+      ],
+      "output": "live-mesh-peach.mp4"
+    },
+    {
+      "id": "live-mesh-lilac",
+      "name": "Lavender flow",
+      "family": "mesh",
+      "colors": [
+        "#E3DDEC",
+        "#8A8EB7",
+        "#B8A7CE",
+        "#B8D2DD"
+      ],
+      "output": "live-mesh-lilac.mp4"
+    },
+    {
+      "id": "live-aurora-mint",
+      "name": "Northern lights",
+      "family": "aurora",
+      "colors": [
+        "#EAFFF4",
+        "#4BE8A0",
+        "#2E6E80",
+        "#16224D"
+      ],
+      "output": "live-aurora-mint.mp4"
+    },
+    {
+      "id": "live-aurora-violet",
+      "name": "Violet crown",
+      "family": "aurora",
+      "colors": [
+        "#F4E6FF",
+        "#C08BF5",
+        "#5A4A9E",
+        "#241A4D"
+      ],
+      "output": "live-aurora-violet.mp4"
+    },
+    {
+      "id": "live-aurora-ice",
+      "name": "Ice dome",
+      "family": "aurora",
+      "colors": [
+        "#EAFBFF",
+        "#7ADCF0",
+        "#4A6EA8",
+        "#1C2A52"
+      ],
+      "output": "live-aurora-ice.mp4"
+    },
+    {
+      "id": "live-prism-blue",
+      "name": "Ice prism",
+      "family": "prism",
+      "colors": [
+        "#183F60",
+        "#277EA3",
+        "#65BED0",
+        "#B9E3DF",
+        "#EAF4E6"
+      ],
+      "output": "live-prism-blue.mp4"
+    },
+    {
+      "id": "live-prism-mint",
+      "name": "Mint prism",
+      "family": "prism",
+      "colors": [
+        "#173E36",
+        "#247465",
+        "#55B895",
+        "#ACDDB5",
+        "#E5F1CD"
+      ],
+      "output": "live-prism-mint.mp4"
+    },
+    {
+      "id": "live-prism-peach",
+      "name": "Dawn prism",
+      "family": "prism",
+      "colors": [
+        "#34325A",
+        "#69628B",
+        "#B09DBB",
+        "#E3BFC8",
+        "#F5DCC6"
+      ],
+      "output": "live-prism-peach.mp4"
+    }
+  ],
+  "sourceUrls": {
+    "sky": "https://skyflowpro.framer.website/",
+    "mesh": "https://mesh-gradient.framer.website/",
+    "effects": "https://new-domain-587305.framer.app/"
+  },
+  "sourceSHA256": {
+    "sky-shared.mjs": "25d7440cd2eeab202d0d680d3a8305c145eda740a9714f82eb269d24f68063e9",
+    "mesh-shared.mjs": "687517256af6e21f2c971183f785f1e70a351a2071e6e5237f335faafd0ac53f",
+    "effects-shared.mjs": "ee12b98270755a7f21135ecfac8db35f7bfd8402de4851ea566971b2f50bae9b"
+  },
+  "adaptation": [
+    "Original rendering math; no reference UI, logos or text.",
+    "Original Sky palettes; calm custom Mesh palettes; Aurora northern/violet/ice and Prism glacier/mint-tonic/velvet-peach palettes.",
+    "Uniform time maps to periodic sine trajectory, with mathematical matching position and velocity at the seam; deterministic seeded Sky texture.",
+    "Grain disabled. Aurora star twinkle and fast individual ray flicker suppressed.",
+    "576 frames at t=k/24, k=0..575; endpoint at frame 576 equals frame 0. No duplicated endpoint frame or frozen hold.",
+    "H264 Annex B encoded using WebCodecs; ffmpeg remuxes without audio to faststart MP4.",
+    "Public reference source is recorded for provenance; no claim of ownership of original effect math."
+  ],
+  "referenceLicenseStatus": "unknown: no verified license in downloaded public Framer reference snapshots; not claimed MIT",
+  "runtimeNetworkDependencies": []
+}
