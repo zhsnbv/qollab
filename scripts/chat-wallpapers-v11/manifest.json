@@ -174,5 +174,24 @@
     "Public reference source is recorded for provenance; no claim of ownership of original effect math."
   ],
   "referenceLicenseStatus": "unknown: no verified license in downloaded public Framer reference snapshots; not claimed MIT",
-  "runtimeNetworkDependencies": []
+  "runtimeNetworkDependencies": [],
+  "verifiedRuntimeFormatSummary": {
+    "yuvj420pFullRange": [
+      "live-prism-blue",
+      "live-prism-mint",
+      "live-prism-peach"
+    ],
+    "yuv420p": [
+      "live-sky-blue",
+      "live-sky-mint",
+      "live-sky-lilac",
+      "live-mesh-blue",
+      "live-mesh-peach",
+      "live-mesh-lilac",
+      "live-aurora-mint",
+      "live-aurora-violet",
+      "live-aurora-ice"
+    ],
+    "note": "Requested encoding flag and actual decoded pixel format/range are separate. Runtime files preserved unchanged."
+  }
 }

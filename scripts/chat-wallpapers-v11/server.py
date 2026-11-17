@@ -5,7 +5,7 @@ from pathlib import Path
 import json,subprocess,hashlib,sys,shutil
 ROOT=Path(__file__).resolve().parent
 REPO=next(p for p in ROOT.parents if (p/'package.json').is_file())
-OUT=REPO/'artifacts/live-wallpapers-v11-2026-11-17/renders';OUT.mkdir(exist_ok=True)
+OUT=REPO/'artifacts/live-wallpapers-v11-2026-11-17/renders';OUT.mkdir(parents=True,exist_ok=True)
 JOBS={j['id'] for j in json.loads((ROOT/'manifest.json').read_text())['jobs']}
 class Handler(SimpleHTTPRequestHandler):
  def __init__(self,*a,**kw):super().__init__(*a,directory=str(ROOT),**kw)

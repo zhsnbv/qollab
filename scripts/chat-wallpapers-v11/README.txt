@@ -24,7 +24,13 @@ Each job also saves its frame-zero WebP poster and a JSON QA report.
 only after all jobs finish. The renderer does not change production files.
 After export, python3 compress_runtime.py compresses the 12 known jobs into
 public/video/chat-themes and copies their posters into public/img/chat-themes.
-It uses libx264 slow / CRF20 / animation / AQ3, silent yuv420p High3.1, GOP48.
+It uses libx264 slow / CRF20 / animation / AQ3, silent H.264 High3.1, GOP48.
+The command requests -pix_fmt yuv420p; actual ffprobe output is authoritative.
+The three procedural Prism videos (blue/mint/peach) decode as yuvj420p with
+color_range=pc (full range). The other nine procedural videos decode as
+yuv420p. The separate three supplied clips also decode as yuv420p. No range
+conversion was forced after QA. Runtime manifest records requestedPixelFormat
+separately from decodedPixelFormat and colorRange; absent tags remain unknown.
 python3 verify_exports.py verifies the master exports and exact source-endpoint metadata, and writes
 artifact reports. The original raw reference bundles are not needed to render;
 all required extracted effect math is checked in here.
@@ -98,3 +104,9 @@ above/in manifest.json identify the source used. This offline adaptation has
 no remote JavaScript imports, external assets, fonts, analytics or runtime
 network dependencies; its browser fetch calls read only local exporter files
 and send completed known jobs to its local save endpoint.
+
+ACTUAL DECODED FORMATS
+ffprobe reports yuvj420p/full-range (pc) for live-prism-blue, live-prism-mint
+and live-prism-peach. The other nine procedural clips report yuv420p.
+The requested encoding flag -pix_fmt yuv420p is not a claim that every output
+has identical range signalling. Runtime manifests record the actual metadata.

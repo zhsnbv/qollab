@@ -155,7 +155,7 @@ Intercept каждого RGB-канала равен `(1 - slope) / 2`. В ми�
 - Сияния: `live-aurora-mint`, `live-aurora-violet`, `live-aurora-ice`.
 - Призмы: `live-prism-blue`, `live-prism-mint`, `live-prism-peach`.
 
-В каталоге video-пути этих 15 тем канонические, но публикация допускается только после наличия и проверки всех соответствующих файлов. Старые 9-секундные предоставленные клипы и новые 24-секундные сгенерированные лупы входят в контракт v11. Не растягивайте или обрезайте их ради прежнего требования ровно 10 секунд. Реальную длительность, кодек, fps, размеры и проверку стыка фиксируйте в manifest/handoff.
+В каталоге video-пути этих 15 тем канонические, но публикация допускается только после наличия и проверки всех соответствующих файлов. Обработанные 9-секундные пользовательские клипы и новые 24-секундные сгенерированные лупы входят в контракт v11. Не растягивайте или обрезайте их ради прежнего требования ровно 10 секунд. Реальную длительность, кодек, fps, размеры и проверку стыка фиксируйте в manifest/handoff.
 
 ### Воспроизведение и fallback
 
@@ -179,6 +179,12 @@ ChatWallpaper оставляет `<img>` настоящего poster под ви
 
 «Ночная степь» была создана в v9: PNG `artifacts/live-wallpapers-v9-2026-11-17/originals/live-steppe.png`, poster 768×1365, 253 868 байт. Исторические image/10-second image-to-video prompts сохраняются в [chat-live-steppe-prompts.txt](chat-live-steppe-prompts.txt) и [chat-live-wallpaper-prompts.txt](chat-live-wallpaper-prompts.txt); они больше не задают длительность v11 и не означают запрос оживить статичную Ночную степь. Источники иллюстраций — `artifacts/settings-redesign-2026-11-17/v7/art-generation`. ZIP с пятью v7 live-PNG — исторический пакет с прежним озером. Не заменяйте исходный PNG сжатым WebP.
 
+### Доставка MP4 на опубликованном прототипе
+
+`worker/video-assets.js` обслуживает только `/video/chat-themes/*`: `ASSETS` binding + scoped `run_worker_first` в wrangler.jsonc. Обычная статическая раздача Workers возвращала полный `200` на Range — это [документированное ограничение Static Assets](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/#range-requests). Поэтому для MP4 добавлены реальные single-range `206`, `Content-Range`/`Content-Length`/`Accept-Ranges`, GET/HEAD, If-Range и `416`; неверный видеоадрес даёт `404`, а не HTML SPA. Маршруты приложения и Storybook не перенаправляются через обработку видео. Конфигурация selective routing — [Cloudflare binding](https://developers.cloudflare.com/workers/static-assets/binding/).
+
+Обработчик буферизует только собственный ассет, максимум 8 MiB, без глобального кэша. При добавлении более крупного видео пересмотрите доставку и guard осознанно. Перед выпуском: `node --test worker/video-assets.test.js`, локальный `wrangler dev`, затем фактический публичный запрос Range с проверкой статуса **206** и совпадения полученных байтов. Наличие атрибута loop и воспроизведение в Chromium не заменяют проверку Range или физического iPhone.
+
 ## 8. Происхождение и лицензии
 
 Иллюстрации и постеры — новые сгенерированные композиции; пользовательские референсы использовались как визуальное направление. Не описывайте их как загруженные стоковые фото, копии конкретных снимков или гарантированно эксклюзивные изображения. Сохраняйте prompt/manifest и оригиналы при передаче.
@@ -190,7 +196,7 @@ ChatWallpaper оставляет `<img>` настоящего poster под ви
 Из корня checkout с установленными зависимостями (Node ^20.19 или >=22.12):
 
 ```sh
-node --test src/utils/chatThemeCatalog.test.js src/components/MessageDeliveryStatus.test.mjs src/components/messageMenuClone.test.js src/components/messageMenuActions.test.js src/utils/settingsNavigation.test.js src/components/SettingsRouteStack.test.mjs src/utils/chatWallpaperPlayback.test.js src/components/ChatWallpaper.test.mjs
+node --test worker/video-assets.test.js src/utils/chatThemeCatalog.test.js src/components/MessageDeliveryStatus.test.mjs src/components/messageMenuClone.test.js src/components/messageMenuActions.test.js src/utils/settingsNavigation.test.js src/components/SettingsRouteStack.test.mjs src/utils/chatWallpaperPlayback.test.js src/components/ChatWallpaper.test.mjs
 node scripts/check-settings-colors.mjs artifacts/settings-redesign-2026-11-17/v11
 npx oxlint src/utils/chatThemeCatalog.js src/utils/chatThemeCatalog.test.js src/utils/chatAppearance.js src/components/ChatWallpaper.jsx src/components/Message.jsx src/components/MessageDeliveryStatus.jsx src/utils/messageDelivery.js src/components/messageMenuClone.js src/components/messageMenuActions.js src/components/MobileMessageMenu.jsx src/components/SettingsChatPreview.jsx src/screens/SettingsChatThemes.jsx src/screens/ChatRoom.jsx src/screens/DMChat.jsx src/components/SettingsRouteStack.jsx src/components/SettingsFlow.jsx src/utils/settingsNavigation.js src/utils/chatWallpaperPlayback.js src/utils/chatWallpaperPlayback.test.js src/components/ChatWallpaper.test.mjs
 npm run build

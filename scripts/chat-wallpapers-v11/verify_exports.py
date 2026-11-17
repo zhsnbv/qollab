@@ -24,6 +24,7 @@ for j in M['jobs']:
  def mad(a,b):return sum(abs(x-y) for x,y in zip(a,b))/len(a)
  first=mad(frames[0],frames[1]);last=mad(frames[-2],frames[-1]);seam=mad(frames[-1],frames[0]);quarter=mad(frames[0],frames[2])
  row={'id':j['id'],'complete':True,'width':v['width'],'height':v['height'],'fps':v['avg_frame_rate'],'frames':n,'seconds':duration,'audioStreams':len(audio),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'posterBytes':poster.stat().st_size,'posterSHA256':hashlib.sha256(poster.read_bytes()).hexdigest(),'sourceEndpointMaxDifference':qa['endpoint']['maxDifference'],'decoded':{'firstStepMAD':first,'lastStepMAD':last,'seamMAD':seam,'quarterMotionMAD':quarter,'seamToAdjacentRatio':seam/max((first+last)/2,1e-6)}}
+ row.update({'decodedPixelFormat':v['pix_fmt'],'colorRange':v.get('color_range','unknown'),'colorSpace':v.get('color_space','unknown'),'colorTransfer':v.get('color_transfer','unknown'),'colorPrimaries':v.get('color_primaries','unknown')})
  row['relativeSeamOutlier']=row['decoded']['seamToAdjacentRatio']>=3
  row['pass']=v['width']==720 and v['height']==1280 and v['avg_frame_rate']=='24/1' and n==576 and abs(duration-24)<.06 and not audio and row['sourceEndpointMaxDifference']==0 and quarter>0.5 and row['decoded']['seamMAD']<=1.5
  rows.append(row);print(json.dumps(row),flush=True)
