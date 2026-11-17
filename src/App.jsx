@@ -61,6 +61,7 @@ import { usePublications } from './components/publications/usePublications';
 import PublicationOverlays from './components/publications/PublicationOverlays';
 import './App.css';
 
+const DeveloperHandoff = lazy(() => import('./gallery/developer-handoff/DeveloperHandoff'));
 const PublicationStateFrame = lazy(() => import('./gallery/publication-screens/PublicationStateFrame'));
 const PublicationsWeb = lazy(() => import('./gallery/publications-web/PublicationsWeb'));
 const PublicationsMobile = lazy(() => import('./gallery/publications-mobile/PublicationsMobile'));
@@ -227,7 +228,7 @@ export default function App() {
   const widgetFigma = window.location.pathname === '/widgets-figma';
 
   return (
-    window.location.pathname === '/handoff/publication-state' ? <Suspense fallback={null}><PublicationStateFrame /></Suspense> : publicationsMobile ? <Suspense fallback={null}><PublicationsMobile /></Suspense> : publicationsWeb ? <Suspense fallback={null}><PublicationsWeb /></Suspense> : reactionPickerReview ? <ReactionPickerReview /> : reactionUnreadReview ? <ReactionUnreadReview /> : authDeliveryReview ? <AuthDeliveryReview /> : <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><PublicationsProvider><WidgetsProvider>
+    window.location.pathname === '/handoff/developers' ? <Suspense fallback={null}><DeveloperHandoff /></Suspense> : window.location.pathname === '/handoff/publication-state' ? <Suspense fallback={null}><PublicationStateFrame /></Suspense> : publicationsMobile ? <Suspense fallback={null}><PublicationsMobile /></Suspense> : publicationsWeb ? <Suspense fallback={null}><PublicationsWeb /></Suspense> : reactionPickerReview ? <ReactionPickerReview /> : reactionUnreadReview ? <ReactionUnreadReview /> : authDeliveryReview ? <AuthDeliveryReview /> : <CompanyProvider><AuthProvider><FavoritesProvider><ChannelsProvider><PublicationsProvider><WidgetsProvider>
       {categoryHandoff ? <CategoryHandoff /> : typingHandoff ? <TypingHandoff /> : notificationHandoff ? <NotificationHandoff /> : gallery ? <AllScreens /> : chatInteractionFlow ? <ChatInteractionFlow /> : callFlow ? <PersonalCallFlow /> : widgetFigma ? <WidgetFigma /> : (
         <BrowserRouter>
           <CallsProvider><Device exiting={exiting} splashDone={splashDone} /></CallsProvider>

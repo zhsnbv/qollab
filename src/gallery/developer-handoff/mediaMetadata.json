@@ -1,0 +1,152 @@
+{
+  "live-coast": {
+    "width": 720,
+    "height": 1280,
+    "duration": 9,
+    "bytes": 2450356,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-prism": {
+    "width": 720,
+    "height": 1280,
+    "duration": 9,
+    "bytes": 874743,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-poppies": {
+    "width": 720,
+    "height": 1280,
+    "duration": 9,
+    "bytes": 2310975,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-sky-blue": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1415976,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-sky-mint": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1298849,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-sky-lilac": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1449864,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-mesh-blue": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1270704,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-mesh-peach": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1260474,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-mesh-lilac": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1323631,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-aurora-mint": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 606405,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-aurora-violet": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 632820,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-aurora-ice": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 342592,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "audio": false
+  },
+  "live-prism-blue": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1310906,
+    "codec": "h264",
+    "pixelFormat": "yuvj420p",
+    "colorRange": "pc",
+    "audio": false
+  },
+  "live-prism-mint": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1267289,
+    "codec": "h264",
+    "pixelFormat": "yuvj420p",
+    "colorRange": "pc",
+    "audio": false
+  },
+  "live-prism-peach": {
+    "width": 720,
+    "height": 1280,
+    "duration": 24,
+    "bytes": 1164349,
+    "codec": "h264",
+    "pixelFormat": "yuvj420p",
+    "colorRange": "pc",
+    "audio": false
+  }
+}

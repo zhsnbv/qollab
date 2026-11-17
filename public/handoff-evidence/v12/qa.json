@@ -1,0 +1,268 @@
+{
+  "version": "v12",
+  "date": "2026-11-17",
+  "scope": "Local browser QA of cache vortex and developer hub; public deployment verified separately in the technical handoff",
+  "cleaningMatrix": [
+    {
+      "artBounds": {
+        "height": 236.00001525878903,
+        "width": 248,
+        "x": 72.5,
+        "y": 190.0778045654297
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 1,
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "company": "erg",
+      "done": false,
+      "files": 4,
+      "theme": "light"
+    },
+    {
+      "artBounds": {
+        "height": 96,
+        "width": 248,
+        "x": 72.5,
+        "y": 260.07940673828125
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 0,
+      "button": {
+        "border": "0px",
+        "fill": "rgb(239, 127, 26)",
+        "primary": "#ef7f1a",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)",
+        "fill": "rgba(0, 0, 0, 0)"
+      },
+      "circularProgress": 0,
+      "company": "erg",
+      "done": true,
+      "files": 0,
+      "theme": "light"
+    },
+    {
+      "artBounds": {
+        "height": 235.99998474121097,
+        "width": 248,
+        "x": 72.5,
+        "y": 190.06056213378903
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 1,
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "company": "erg",
+      "done": false,
+      "files": 4,
+      "theme": "dark"
+    },
+    {
+      "artBounds": {
+        "height": 96,
+        "width": 248,
+        "x": 72.5,
+        "y": 260.06121826171875
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 0,
+      "button": {
+        "border": "0px",
+        "fill": "rgb(240, 138, 44)",
+        "primary": "#f08a2c",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)",
+        "fill": "rgba(0, 0, 0, 0)"
+      },
+      "circularProgress": 0,
+      "company": "erg",
+      "done": true,
+      "files": 0,
+      "theme": "dark"
+    },
+    {
+      "artBounds": {
+        "height": 236.00001525878903,
+        "width": 248,
+        "x": 72.5,
+        "y": 190.0604705810547
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 1,
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "company": "integra",
+      "done": false,
+      "files": 4,
+      "theme": "light"
+    },
+    {
+      "artBounds": {
+        "height": 96,
+        "width": 248,
+        "x": 72.5,
+        "y": 260.07818603515625
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 0,
+      "button": {
+        "border": "0px",
+        "fill": "rgb(10, 33, 79)",
+        "primary": "#0A214F",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)",
+        "fill": "rgba(0, 0, 0, 0)"
+      },
+      "circularProgress": 0,
+      "company": "integra",
+      "done": true,
+      "files": 0,
+      "theme": "light"
+    },
+    {
+      "artBounds": {
+        "height": 236.00001525878903,
+        "width": 248,
+        "x": 72.5,
+        "y": 190.07859802246097
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 1,
+      "button": null,
+      "check": null,
+      "circularProgress": 0,
+      "company": "integra",
+      "done": false,
+      "files": 4,
+      "theme": "dark"
+    },
+    {
+      "artBounds": {
+        "height": 96,
+        "width": 248,
+        "x": 72.5,
+        "y": 260.07843017578125
+      },
+      "background": [
+        {
+          "filter": "blur(18px) saturate(0.7)",
+          "inert": true
+        }
+      ],
+      "bars": 0,
+      "button": {
+        "border": "0px",
+        "fill": "rgb(143, 138, 214)",
+        "primary": "#8f8ad6",
+        "text": "rgb(255, 255, 255)"
+      },
+      "check": {
+        "circles": 0,
+        "color": "rgb(155, 216, 184)",
+        "fill": "rgba(0, 0, 0, 0)"
+      },
+      "circularProgress": 0,
+      "company": "integra",
+      "done": true,
+      "files": 0,
+      "theme": "dark"
+    }
+  ],
+  "focusAfterClose": {
+    "blurred": 0,
+    "label": "Назад",
+    "overlays": 0,
+    "tag": "BUTTON",
+    "text": ""
+  },
+  "smallScreen": {
+    "viewport": [
+      320,
+      568
+    ],
+    "overlayWidth": 320,
+    "scrollWidth": 320,
+    "overflowX": "hidden"
+  },
+  "hub": {
+    "mobileWidth": 320,
+    "mobileScrollWidth": 320,
+    "desktopWidth": 1280,
+    "desktopScrollWidth": 1280,
+    "presets": 33,
+    "videosInitially": 0,
+    "manualVideo": {
+      "readyState": 4,
+      "muted": true,
+      "loop": true
+    },
+    "videosAfterClose": 0,
+    "archiveLinks": 0,
+    "searchById": "passed",
+    "brandAndModePalette": "passed",
+    "navigationAnchors": "passed"
+  },
+  "checks": {
+    "nodeTests": 18,
+    "targetedLint": "passed",
+    "appAndStorybookBuild": "passed"
+  },
+  "limits": [
+    "Reduced motion CSS inspected; physical OS setting not exercised in v12",
+    "iPhone / Android / WebView / screen reader acceptance remains separate",
+    "Cache job is local demo state, not device-file deletion"
+  ],
+  "screenshots": [
+    "cleaning-running.png",
+    "cleaning-done.png",
+    "handoff-desktop.png"
+  ]
+}
