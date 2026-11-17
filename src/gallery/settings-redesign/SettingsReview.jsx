@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { ArrowUpRight, ArrowCounterClockwise, SquaresFour, DeviceMobile } from '@phosphor-icons/react';
 import { DeviceHost } from '../../components/Portal';
-import Settings from '../../screens/Settings';
-import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, BubbleColorSettings, WallpaperSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../../screens/SettingsExperience';
-import { NotificationSettings, Devices, Permissions, Privacy } from '../../screens/SettingsPages';
+import SettingsFlow from '../../components/SettingsFlow';
+import { settingsHistoryEntries } from '../../utils/settingsNavigation';
 import { updateSettingsPreferences } from '../../utils/settingsPreferences';
 import { applyTheme, getThemeMode, watchSystemTheme } from '../../utils/theme';
 import { CompanyProvider, useCompany } from '../../context/CompanyContext';
@@ -19,30 +18,10 @@ const SCREENS = [
   { id: 'language', title: 'Язык', route: '/settings/language', note: 'Выбор в нижней панели. Қазақша — первый в списке.' },
   { id: 'device', title: 'Данные устройства', route: '/settings/device', note: 'Данные для поддержки доступны прямо из настроек.' },
 ];
-function ReviewRoutes({ onRoute }) {
-  const location = useLocation();
-  useEffect(() => { onRoute?.(location.pathname); }, [location.pathname, onRoute]);
-  return <Routes>
-    <Route path="/settings/appearance" element={<AppearanceSettings />} />
-    <Route path="/settings/reaction" element={<QuickReactionSettings />} />
-    <Route path="/settings/chat-theme" element={<ChatThemeSettings />} />
-    <Route path="/settings/bubbles" element={<BubbleColorSettings />} />
-    <Route path="/settings/wallpaper" element={<WallpaperSettings />} />
-    <Route path="/settings/language" element={<LanguageSettings />} />
-    <Route path="/settings/storage" element={<StorageSettings />} />
-    <Route path="/settings/device" element={<DeviceDetailsSettings />} />
-    <Route path="/settings/notifications" element={<NotificationSettings />} />
-    <Route path="/settings/devices" element={<Devices />} />
-    <Route path="/settings/permissions" element={<Permissions />} />
-    <Route path="/settings/privacy" element={<Privacy />} />
-    <Route path="*" element={<Settings />} />
-  </Routes>;
-}
 function Phone({ screen, onRoute }) {
   const [host, setHost] = useState(null);
-  const parents = ['/settings/wallpaper', '/settings/bubbles'].includes(screen.route) ? ['/settings', '/settings/appearance', '/settings/chat-theme'] : ['/settings/reaction', '/settings/chat-theme'].includes(screen.route) ? ['/settings', '/settings/appearance'] : ['/settings'];
-  const entries = screen.route === '/settings' ? ['/settings'] : [...parents, { pathname: screen.route, state: { background: { pathname: parents.at(-1) } } }];
-  return <div className="sr-phone"><div className="sr-viewport" ref={setHost}>{host && <DeviceHost.Provider value={host}><MemoryRouter initialEntries={entries}><ReviewRoutes onRoute={onRoute} /></MemoryRouter></DeviceHost.Provider>}</div></div>;
+  const entries = settingsHistoryEntries(screen.route);
+  return <div className="sr-phone"><div className="sr-viewport" ref={setHost}>{host && <DeviceHost.Provider value={host}><MemoryRouter initialEntries={entries}><SettingsFlow onRoute={onRoute} /></MemoryRouter></DeviceHost.Provider>}</div></div>;
 }
 export default function SettingsReview() {
   return <CompanyProvider><SettingsReviewContent /></CompanyProvider>;

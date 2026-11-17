@@ -10,8 +10,13 @@
 .sv-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; pointer-events: none; animation: sv-ring-center .4s ease-out .1s both; }
 .sv-ring-center strong { font-size: 29px; line-height: 1.1; letter-spacing: -1.2px; font-weight: 650; }
 .sv-ring-center span { font-size: 10px; color: var(--st-muted); }
-.sv-ring-empty { stroke: color-mix(in srgb, #25c98d 12%, var(--color-white)); }
-.sv-ring.is-empty strong { color: #25b986; }
+/* A finished empty state retains the donut silhouette without faded categories.
+   Mixing toward the theme's text token keeps the brand mark legible in both modes. */
+.sv-ring.is-empty { --sv-empty-accent: color-mix(in srgb, var(--color-primary) 80%, var(--color-text)); }
+.sv-ring-empty { stroke: var(--sv-empty-accent); }
+.sv-ring.is-empty .sv-ring-center { gap: 8px; }
+.sv-ring-success-mark { color: var(--sv-empty-accent); flex-shrink: 0; }
+.sv-ring-center .sv-ring-success-title { color: var(--st-ink, var(--color-text)); font-size: 18px; line-height: 1.25; letter-spacing: -.4px; font-weight: 600; }
 @keyframes sv-ring-reveal { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes sv-ring-center { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -32,18 +37,22 @@
 html[data-theme="dark"] .sv-disk-bar > b { background: #515d75; }
 html[data-theme="dark"] .sv-disk-legend span + span i { background: #515d75; }
 
+/* Portal siblings are the real screen/route stack, never the overlay itself.
+   Direct filtering is the baseline; WebKit backdrop sampling is only additive. */
+.sv-cleaning-background { filter: blur(18px) saturate(.7) !important; -webkit-filter: blur(18px) saturate(.7) !important; will-change: filter; }
 /* The process uses workspace colors; media-category colors above stay semantic. */
 .sv-cleaning-overlay {
   --sv-clean-accent: var(--color-primary);
   --sv-clean-light: color-mix(in srgb, var(--color-primary) 60%, #fff);
   --sv-clean-soft: color-mix(in srgb, var(--color-primary) 14%, #fff);
+  --sv-clean-button-fill: color-mix(in srgb, var(--color-primary) 65%, #000);
   position: absolute;
   inset: 0;
   z-index: 1200;
   overflow: auto;
   overscroll-behavior: contain;
   color: #fff;
-  background: rgb(6 10 18 / 78%);
+  background: rgb(6 10 18 / 60%);
   backdrop-filter: blur(26px) saturate(.65);
   -webkit-backdrop-filter: blur(26px) saturate(.65);
   animation: sv-clean-reveal .22s ease-out both;
@@ -63,14 +72,11 @@ html[data-theme="dark"] .sv-disk-legend span + span i { background: #515d75; }
 .sv-clean-satellite { position: absolute; inset: 10.2%; border-radius: 50%; animation: sv-clean-orbit 2.7s linear infinite; }
 .sv-clean-satellite i { position: absolute; top: -3px; left: calc(50% - 3px); width: 6px; height: 6px; border-radius: 50%; background: var(--sv-clean-light); box-shadow: 0 0 0 5px color-mix(in srgb, var(--sv-clean-accent) 14%, transparent), 0 0 17px var(--sv-clean-accent); }
 .sv-cleaning-dialog h2 { margin: 0; font-size: 25px; line-height: 1.2; font-weight: 600; letter-spacing: -.7px; color: #fff; }
-.sv-clean-stage { min-height: 38px; margin: 11px 0 0; font-size: 13px; line-height: 1.5; color: rgb(255 255 255 / 76%); }
-.sv-clean-count { display: flex; flex-direction: column; align-items: center; gap: 7px; margin: 24px 0 29px; }
-.sv-clean-count strong { font-size: 37px; line-height: 1.15; font-weight: 550; font-variant-numeric: tabular-nums; letter-spacing: -1px; color: #fff; }
-.sv-clean-count > span { font-size: 12px; color: rgb(255 255 255 / 67%); }
-.sv-clean-action { min-height: 52px; display: flex; align-items: center; width: 100%; max-width: 280px; margin: auto; }
-.sv-clean-progress { position: relative; width: 100%; height: 4px; margin: 0 16px 22px; border-radius: var(--radius-pill); background: rgb(255 255 255 / 14%); }
-.sv-clean-progress > span { height: 100%; display: block; background: var(--sv-clean-light); border-radius: inherit; box-shadow: 0 0 16px color-mix(in srgb, var(--sv-clean-accent) 32%, transparent); transition: width .12s linear; }
-.sv-clean-progress small { position: absolute; top: 14px; left: 0; width: 100%; font-size: 11px; font-variant-numeric: tabular-nums; color: rgb(255 255 255 / 76%); }
+.sv-clean-action { min-height: 86px; display: flex; align-items: center; width: 100%; max-width: 280px; margin: 24px auto 0; }
+.sv-clean-progress { width: 100%; padding: 0 16px; }
+.sv-clean-progress > strong { display: block; margin-bottom: 20px; font-size: 34px; line-height: 1; font-weight: 550; font-variant-numeric: tabular-nums; letter-spacing: -.8px; color: #fff; }
+.sv-clean-progress-track { height: 4px; width: 100%; overflow: hidden; border-radius: var(--radius-pill); background: rgb(255 255 255 / 14%); }
+.sv-clean-progress-track > span { height: 100%; display: block; background: var(--sv-clean-light); border-radius: inherit; box-shadow: 0 0 16px color-mix(in srgb, var(--sv-clean-accent) 32%, transparent); transition: width .12s linear; }
 .sv-cleaning-dialog.is-done .sv-clean-core { animation: sv-clean-success .45s cubic-bezier(.16,1,.3,1) both; }
 .sv-cleaning-dialog.is-done .sv-clean-aura { animation: none; }
 .sv-clean-core > .sv-clean-check { width: 46px; height: 46px; animation: none; }
@@ -78,9 +84,7 @@ html[data-theme="dark"] .sv-disk-legend span + span i { background: #515d75; }
 .sv-clean-burst { position: absolute; inset: 0; pointer-events: none; }
 .sv-clean-burst > i { position: absolute; width: 4px; height: 7px; border-radius: 2px; left: calc(50% - 2px); top: calc(50% - 3px); background: var(--sv-clean-light); transform: rotate(var(--burst-angle)) translateY(-44px); animation: sv-clean-burst .75s cubic-bezier(.15,.65,.25,1) both; animation-delay: var(--burst-delay); }
 .sv-clean-burst > i:nth-child(even) { background: var(--sv-clean-accent); }
-.sv-clean-done { width: 100%; min-height: 50px; border-radius: var(--radius-pill); background: var(--sv-clean-accent); color: #15191e; font-size: 15px; font-weight: 600; animation: sv-clean-button .3s ease-out .12s both; }
-html[data-company="integra"]:not([data-theme="dark"]) .sv-clean-done,
-html[data-company="bts"]:not([data-theme="dark"]) .sv-clean-done { color: #fff; }
+.sv-clean-done { width: 100%; min-height: 50px; border-radius: var(--radius-pill); background: var(--sv-clean-button-fill); color: #fff; border: 1px solid color-mix(in srgb, var(--sv-clean-accent) 70%, #fff); font-size: 15px; font-weight: 600; animation: sv-clean-button .3s ease-out .12s both; }
 .sv-clean-done:focus-visible { outline: 2px solid #fff; outline-offset: 5px; }
 .sv-clean-done:active { opacity: .85; }
 @keyframes sv-clean-reveal { from { opacity: 0; } to { opacity: 1; } }
@@ -97,10 +101,10 @@ html[data-company="bts"]:not([data-theme="dark"]) .sv-clean-done { color: #fff; 
 @media (max-height: 620px) {
   .sv-cleaning-dialog { padding-top: 22px; padding-bottom: 22px; }
   .sv-clean-stage-art { width: 196px; height: 196px; margin-bottom: 16px; }
-  .sv-clean-count { margin-top: 17px; margin-bottom: 20px; }
+  .sv-clean-action { margin-top: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sv-ring-reveal, .sv-ring-center, .sv-cleaning-overlay, .sv-clean-content, .sv-clean-aura, .sv-clean-core, .sv-clean-core > svg, .sv-cleaning-dialog.is-done .sv-clean-core, .sv-clean-check path, .sv-clean-done { animation: none !important; }
   .sv-clean-files, .sv-clean-satellite, .sv-clean-burst { display: none; }
-  .sv-clean-arc, .sv-clean-progress > span, .sv-ring-segment { transition: none; }
+  .sv-clean-arc, .sv-clean-progress-track > span, .sv-ring-segment { transition: none; }
 }

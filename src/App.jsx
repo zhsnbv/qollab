@@ -35,6 +35,8 @@ import GroupProfile from './screens/GroupProfile';
 import NewChat from './screens/NewChat';
 import ChatSearch from './screens/ChatSearch';
 import Settings from './screens/Settings';
+import SettingsRouteStack from './components/SettingsRouteStack';
+import { isSettingsLocation } from './utils/settingsNavigation';
 import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, BubbleColorSettings, WallpaperSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from './screens/SettingsExperience';
 import {
   NotificationSettings, Permissions, Devices, Privacy,
@@ -141,6 +143,7 @@ function AppRoutes() {
   const { sheet } = usePublications();
   const location = useLocation();
   const background = location.state?.background;
+  const settingsOverlay = isSettingsLocation(location);
   const publicationOverlay = location.pathname === '/article' || location.pathname.startsWith('/channel/');
   // Таб-бар рендерим здесь, а не внутри TabLayout: так он переживает смену
   // роута и плашка успевает доехать до нового таба, а не создаётся заново.
@@ -161,7 +164,7 @@ function AppRoutes() {
   return (
     <>
       <div className="publication-app-stack" inert={!!sheet}>
-      <div className="publication-app-stack" inert={!!background && publicationOverlay} aria-hidden={!!background && publicationOverlay}>
+      <div className="publication-app-stack" inert={settingsOverlay || (!!background && publicationOverlay)} aria-hidden={settingsOverlay || (!!background && publicationOverlay)}>
       <Routes location={tabLocation}>
         <Route path="/" element={<Home />} />
         <Route path="/posts" element={<Posts />} />
@@ -173,10 +176,11 @@ function AppRoutes() {
       {/* Слои рендерим одним списком: при закрытии верхнего
           экрана нижний остаётся тем же инстансом и не проигрывает анимацию
           входа заново — иначе при «назад» он въезжает как новый. */}
-      {[...underOverlays, location].map((loc) => (
-        <div className="publication-app-stack" key={loc.pathname === '/article' || loc.pathname.startsWith('/channel/') ? loc.key || loc.pathname : loc.pathname} inert={loc !== location && publicationOverlay} aria-hidden={loc !== location && publicationOverlay}><OverlayRoutes location={loc} /></div>
+      <SettingsRouteStack location={location} renderLocation={loc => <OverlayRoutes location={loc} />} />
+      {[...underOverlays, location].filter(loc => !isSettingsLocation(loc)).map((loc) => (
+        <div className="publication-app-stack" key={loc.pathname === '/article' || loc.pathname.startsWith('/channel/') ? loc.key || loc.pathname : loc.pathname} inert={settingsOverlay || (loc !== location && publicationOverlay)} aria-hidden={settingsOverlay || (loc !== location && publicationOverlay)}><OverlayRoutes location={loc} /></div>
       ))}
-      {showNav && <div className="publication-app-stack" inert={!!background && publicationOverlay} aria-hidden={!!background && publicationOverlay}><BottomNav /></div>}
+      {showNav && <div className="publication-app-stack" inert={settingsOverlay || (!!background && publicationOverlay)} aria-hidden={settingsOverlay || (!!background && publicationOverlay)}><BottomNav /></div>}
       </div>
       <PublicationOverlays />
     </>

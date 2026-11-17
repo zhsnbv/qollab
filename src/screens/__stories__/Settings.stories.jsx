@@ -1,4 +1,5 @@
 import Settings from '../Settings';
+import SettingsFlow from '../../components/SettingsFlow';
 import { AppearanceSettings, QuickReactionSettings, ChatThemeSettings, LanguageSettings, StorageSettings, DeviceDetailsSettings } from '../SettingsExperience';
 import WidgetSettings from '../WidgetSettings';
 import {
@@ -7,6 +8,7 @@ import {
 
 export default {
   title: 'Экраны/Настройки',
+  decorators: [(Story, context) => context.parameters.route?.startsWith('/settings') ? <SettingsFlow /> : <Story />],
   parameters: {
     layout: 'fullscreen',
     device: 'full',
@@ -14,8 +16,8 @@ export default {
       description: {
         component:
           'Настройки и их подэкраны. Каркас у всех общий — SettingsPage: шапка с «назад», '
-          + 'заголовок, прокрутка и выезд справа. Шесть копий этой обвязки разошлись бы на первой '
-          + 'же правке высоты шапки.',
+          + 'заголовок и прокрутка. Общий стек сохраняет предыдущий экран и его прокрутку '
+          + 'при открытии подэкрана и возврате.',
       },
     },
   },

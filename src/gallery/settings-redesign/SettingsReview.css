@@ -20,7 +20,6 @@ body:has(.sr-review) { padding: 0; display: block; background: #f8f8f7; }
 .sr-board-title > svg { color: #a6a7ac; }
 .sr-phone { width: 100%; max-width: 390px; height: 817px; margin: auto; border: 5px solid #fff; box-shadow: 0 0 0 1px #e3e3e3, 0 12px 35px #25252505; border-radius: 40px; background: var(--page-bg); overflow: hidden; display: flex; flex-direction: column; position: relative; isolation: isolate; }
 .sr-viewport { flex: 1; min-height: 0; position: relative; overflow: hidden; }
-.sr-phone .settings { animation: none; }
 .sr-phone .st-top { padding-top: 10px; }
 .sr-phone .st-home-top { padding-top: 7px; }
 .sr-screen-note { font-size: 11px; line-height: 1.7; color: var(--sr-muted); margin: 18px 8px 0; max-width: 270px; }

@@ -56,12 +56,12 @@ export function QuickReactionSettings() {
   const prefs = useSettingsPreferences();
   const [expanded, setExpanded] = useState(false);
   const gridId = useId();
-  const compact = REACTIONS.slice(0, 8);
-  if (!compact.some(([emoji]) => emoji === prefs.reaction)) compact[7] = REACTIONS.find(([emoji]) => emoji === prefs.reaction) || [prefs.reaction, prefs.reaction];
+  const compact = REACTIONS.slice(0, 12);
+  if (!compact.some(([emoji]) => emoji === prefs.reaction)) compact[11] = REACTIONS.find(([emoji]) => emoji === prefs.reaction) || [prefs.reaction, prefs.reaction];
   const reactions = expanded ? REACTIONS : compact;
   return <SettingsPage title="Быстрая реакция">
+    <p className="sx-reaction-hint">Дважды нажмите на сообщение, чтобы отправить реакцию.</p>
     <div className="sx-preview-card"><ChatPreview reaction /></div>
-    <p className="sx-description">Нажмите на сообщение дважды,<br />чтобы отправить выбранную реакцию.</p>
     <section className="sx-section"><h2 className="st-group-title">Ваша реакция</h2><div className="st-card sx-reaction-card">
       <div className="sx-emojis" id={gridId}>{reactions.map(([emoji, name]) => <button aria-label={name} aria-pressed={prefs.reaction === emoji} className={prefs.reaction === emoji ? 'is-selected' : ''} key={emoji} onClick={() => updateSettingsPreferences({ reaction: emoji })}>{emoji}</button>)}</div>
       <button className="sx-text-button sx-reaction-toggle" aria-expanded={expanded} aria-controls={gridId} onClick={() => setExpanded(v => !v)}>{expanded ? 'Свернуть' : 'Больше эмодзи'}<CaretDown size={16} weight="bold" /></button>
@@ -105,7 +105,7 @@ export function StorageSettings() {
     return () => clearInterval(timer);
   }, [cleaningJob]);
   return <SettingsPage title="Данные и память">
-    <section className="sx-storage-summary"><StorageRing categories={categories} selected={selected} onToggle={toggleCategory} /><p>{total ? 'Больше места для важного' : 'На устройстве стало свободнее'}</p></section>
+    <section className="sx-storage-summary"><StorageRing categories={categories} selected={selected} onToggle={toggleCategory} />{total > 0 && <p>Больше места для важного</p>}</section>
     <DeviceStorageBar cache={total} />
     <section className="sx-section"><div className="st-card sx-cache-card">
       {categories.map(c => <button key={c.id} role="checkbox" aria-checked={selected.includes(c.id) && c.mb > 0} disabled={!c.mb} className="sx-cache-row" onClick={() => toggleCategory(c.id)}><span className={`sx-cache-check ${selected.includes(c.id) && c.mb ? 'is-checked' : ''}`} style={{ '--category-color': c.color }}>{selected.includes(c.id) && c.mb > 0 && <Check size={13} weight="bold" />}</span><span>{c.name}</span><small>{formatStorage(c.mb)}</small></button>)}

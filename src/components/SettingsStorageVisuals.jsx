@@ -41,15 +41,15 @@ export function StorageRing({ categories, selected, onToggle }) {
     return segment;
   });
   return <div className={`sv-ring ${total ? '' : 'is-empty'}`}>
-    <svg viewBox="0 0 240 240" role="group" aria-label="Состав кэша">
+    <svg viewBox="0 0 240 240" role={total ? 'group' : undefined} aria-label={total ? 'Состав кэша' : undefined} aria-hidden={!total || undefined}>
       <defs><mask id={`${id}-reveal`} maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="240">
         <circle className="sv-ring-reveal" cx="120" cy="120" r="86.5" fill="none" stroke="#fff" strokeWidth="43" pathLength="1" strokeDasharray="1 1" transform="rotate(-90 120 120)" />
       </mask></defs>
       {total ? <g mask={`url(#${id}-reveal)`}>{segments.map(segment => <g key={segment.id} role="button" tabIndex={0} aria-label={`${segment.name}: ${formatStorage(segment.mb)}`} aria-pressed={selected.includes(segment.id)} onClick={() => onToggle(segment.id)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onToggle(segment.id); } }} className={`sv-ring-segment ${selected.includes(segment.id) ? 'is-selected' : ''}`}>
         <path d={segment.path} fill={segment.color} />
-      </g>)}</g> : <circle className="sv-ring-empty" cx="120" cy="120" r="86.5" fill="none" strokeWidth="23" />}
+      </g>)}</g> : <circle className="sv-ring-empty" cx="120" cy="120" r="92" fill="none" strokeWidth="24" />}
     </svg>
-    <div className="sv-ring-center"><strong>{total ? formatStorage(total) : <Check size={35} weight="bold" />}</strong><span>{total ? 'занято кэшем' : 'Всё чисто'}</span></div>
+    <div className="sv-ring-center" role={total ? undefined : 'status'} aria-live={total ? undefined : 'polite'} aria-atomic={total ? undefined : true}>{total ? <><strong>{formatStorage(total)}</strong><span>занято кэшем</span></> : <><Check className="sv-ring-success-mark" size={40} weight="bold" aria-hidden="true" /><strong className="sv-ring-success-title">Всё чисто</strong></>}</div>
   </div>;
 }
 
@@ -69,7 +69,6 @@ export function CacheCleaning({ job, onClose }) {
   const overlay = useRef(null), dialog = useRef(null), doneButton = useRef(null);
   const id = useId(), done = job.phase === 'done';
   const progress = Math.max(0, Math.min(1, job.progress));
-  const current = job.categories[Math.min(job.categories.length - 1, Math.floor(progress * job.categories.length))];
   const percent = Math.round(progress * 100);
 
   useLayoutEffect(() => {
@@ -80,11 +79,17 @@ export function CacheCleaning({ job, onClose }) {
     const previous = document.activeElement;
     const siblings = [...host.children].filter(node => node !== layer);
     const inertBefore = siblings.map(node => node.inert);
-    siblings.forEach(node => { node.inert = true; });
+    const blurredBefore = siblings.map(node => node.classList.contains('sv-cleaning-background'));
+    // Blur the actual screen pixels as well as the backdrop. This remains visible
+    // when the device's transformed/isolated layers prevent backdrop sampling.
+    siblings.forEach(node => { node.inert = true; node.classList.add('sv-cleaning-background'); });
     dialog.current.focus({ preventScroll: true });
     pushScrim();
     return () => {
-      siblings.forEach((node, index) => { node.inert = inertBefore[index]; });
+      siblings.forEach((node, index) => {
+        node.inert = inertBefore[index];
+        if (!blurredBefore[index]) node.classList.remove('sv-cleaning-background');
+      });
       popScrim();
       const target = previous?.isConnected && !previous.disabled && !previous.closest('[inert]')
         ? previous
@@ -95,7 +100,7 @@ export function CacheCleaning({ job, onClose }) {
   useEffect(() => { if (done) doneButton.current?.focus({ preventScroll: true }); }, [done]);
 
   return <Portal><div className="sv-cleaning-overlay" ref={overlay}>
-    <div className={`sv-cleaning-dialog ${done ? 'is-done' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`} tabIndex={-1} ref={dialog} onKeyDown={event => {
+    <div className={`sv-cleaning-dialog ${done ? 'is-done' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} tabIndex={-1} ref={dialog} onKeyDown={event => {
       if (event.key === 'Tab') { event.preventDefault(); (doneButton.current || dialog.current).focus({ preventScroll: true }); }
       if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); if (done) onClose(); }
     }}>
@@ -107,10 +112,8 @@ export function CacheCleaning({ job, onClose }) {
           <div className="sv-clean-core">{done ? <svg className="sv-clean-check" viewBox="0 0 48 48"><path d="M11 24l9 9 18-19" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" pathLength="1" /></svg> : <Sparkle size={38} weight="duotone" />}</div>
           {done && <div className="sv-clean-burst">{Array.from({ length: 10 }, (_, index) => <i key={index} style={{ '--burst-angle': `${index * 36}deg`, '--burst-delay': `${(index % 3) * 30}ms` }} />)}</div>}
         </div>
-        <h2 id={`${id}-title`}>{done ? 'Место освобождено' : 'Наводим порядок'}</h2>
-        <p id={`${id}-description`} className="sv-clean-stage" role="status" aria-live="polite" aria-atomic="true">{done ? 'Сообщения и файлы в чатах сохранены.' : `Очищаем: ${current?.name.toLocaleLowerCase() || 'кэш'}…`}</p>
-        <div className="sv-clean-count"><strong>{formatStorage(Math.round(job.total * progress))}</strong><span>{done ? 'снова в вашем распоряжении' : `из ${formatStorage(job.total)}`}</span></div>
-        <div className="sv-clean-action">{done ? <button className="sv-clean-done" onClick={onClose} ref={doneButton}>Отлично</button> : <div className="sv-clean-progress" role="progressbar" aria-label="Очистка кэша" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} aria-valuetext={`${percent}%`}><span style={{ width: `${percent}%` }} /><small>{percent}%</small></div>}</div>
+        <h2 id={`${id}-title`} role="status" aria-live="polite" aria-atomic="true">{done ? 'Кэш очищен' : 'Очищаем кэш'}</h2>
+        <div className="sv-clean-action">{done ? <button className="sv-clean-done" onClick={onClose} ref={doneButton}>Отлично</button> : <div className="sv-clean-progress" role="progressbar" aria-label="Очистка кэша" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} aria-valuetext={`${percent}%`}><strong>{percent}%</strong><div className="sv-clean-progress-track"><span style={{ width: `${percent}%` }} /></div></div>}</div>
       </div>
     </div>
   </div></Portal>;

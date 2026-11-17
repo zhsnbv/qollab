@@ -1,7 +1,12 @@
-.sc-theme-card { overflow: clip; }
-.sc-theme-preview { position: sticky; top: -14px; z-index: 3; background: var(--st-bg); border-bottom: 1px solid var(--color-border); }
-.sc-theme-catalog { padding: 18px 14px 20px; }
-.sc-catalog-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 0 2px 17px; }
+.st-scroll.sc-theme-layout { display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+.sc-theme-layout > .st-bottom-spacer { display: none; }
+.sc-theme-card { display: flex; flex: 1; flex-direction: column; min-height: 0; overflow: hidden; }
+.sc-theme-preview { flex: none; background: var(--st-bg); border-bottom: 1px solid var(--color-border); }
+.sc-theme-catalog { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.sc-catalog-heading { display: flex; flex: none; align-items: baseline; justify-content: space-between; gap: 10px; padding: 18px 16px 17px; }
+.sc-theme-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0 14px 20px; }
+.sc-theme-scroll::-webkit-scrollbar { display: none; }
+.sc-theme-scroll:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -2px; }
 .sc-catalog-heading h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .sc-catalog-heading > span { font-size: 12px; color: var(--st-muted); text-align: right; }
 .sc-theme-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 12px; padding: 2px; }
@@ -17,4 +22,4 @@
 .sc-live-badge { display: flex; align-items: center; gap: 3px; position: absolute; top: 7px; left: 7px; font-size: 8px; font-weight: 650; line-height: 1.2; padding: 4px 5px; border-radius: 6px; background: #ffffffeb; color: #344752; }
 .sc-live-badge, .sc-selection { z-index: 1; }
 html[data-theme="dark"] .sc-live-badge { background: #1e2939eb; color: #DBE5EA; }
-@media (max-width: 350px) { .sc-theme-catalog { padding: 16px 10px; } .sc-theme-grid { gap: 18px 9px; } .sc-mini-in, .sc-mini-out { height: 19px; } .sc-live-badge { font-size: 7px; top: 6px; left: 5px; padding: 4px; } }
+@media (max-width: 350px) { .sc-catalog-heading { padding: 16px 12px; } .sc-theme-scroll { padding: 0 10px 16px; } .sc-theme-grid { gap: 18px 9px; } .sc-mini-in, .sc-mini-out { height: 19px; } .sc-live-badge { font-size: 7px; top: 6px; left: 5px; padding: 4px; } }

@@ -1,14 +1,11 @@
 /* Shared settings surfaces: quiet neutral cards, Qollab accent. */
-.settings { --st-bg: var(--page-bg); --st-muted: var(--color-weak); --st-ink: var(--color-text); position: absolute; inset: 0; z-index: 50; background: var(--st-bg); color: var(--st-ink); display: flex; flex-direction: column; animation: st-in .24s cubic-bezier(.32,.72,0,1); }
-.settings.closing { animation: st-out .2s ease forwards; }
-@keyframes st-in { from { opacity: .5; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes st-out { to { opacity: 0; transform: translateX(30px); } }
+.settings { --st-bg: var(--page-bg); --st-muted: var(--color-weak); --st-ink: var(--color-text); position: absolute; inset: 0; z-index: 50; background: var(--st-bg); color: var(--st-ink); display: flex; flex-direction: column; }
 .st-top { min-height: 66px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); background: var(--color-white); }
 .st-back { width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--color-weak); border-radius: 50%; background: var(--color-background); }
 .st-back:active { opacity: .55; }
 .st-title { flex: 1; min-width: 0; text-align: center; font-size: 17px; font-weight: 650; color: var(--st-ink); letter-spacing: -.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .st-top .hdr-spacer { visibility: hidden; }
-.st-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 14px 16px 20px; }
+.st-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 14px 16px 20px; }
 .st-scroll::-webkit-scrollbar { display: none; }
 .st-bottom-spacer { height: max(20px, env(safe-area-inset-bottom)); }
 .st-group { margin-bottom: 24px; }
@@ -32,7 +29,7 @@
 .st-version span { padding: 0 6px; }
 .settings button:focus-visible, .settings input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -3px; }
 .settings button { touch-action: manipulation; }
-@media (prefers-reduced-motion: reduce) { .settings, .settings.closing { animation: none; } }
+
 
 .settings-home .st-scroll { padding-top: 24px; padding-bottom: 10px; }
 .settings-home .st-group { margin-bottom: 20px; }
@@ -41,3 +38,21 @@
  .st-ico--purple { background: #9B6BEA; color: #fff; }
 .st-ico--cyan { background: #42B6CF; color: #fff; }
 .st-ico--indigo { background: #6D7AE0; color: #fff; }
+
+/* One shared navigation animation for app and isolated settings prototypes. */
+.st-route-stack { position: absolute; inset: 0; z-index: 50; overflow: hidden; pointer-events: none; }
+.st-route-layer { position: absolute; inset: 0; overflow: hidden; background: var(--page-bg); pointer-events: none; }
+.st-route-layer[data-active="true"] { pointer-events: auto; }
+.st-route-layer[data-visible="false"] { visibility: hidden; }
+.st-route-layer[data-motion]:not([data-motion="none"]) { animation-duration: .3s; animation-timing-function: cubic-bezier(.32,.72,0,1); animation-fill-mode: both; will-change: transform; }
+.st-route-layer[data-motion="push-in"] { animation-name: st-push-in; }
+.st-route-layer[data-motion="push-under"] { animation-name: st-push-under; }
+.st-route-layer[data-motion="pop-out"] { animation-name: st-pop-out; }
+.st-route-layer[data-motion="pop-under"] { animation-name: st-pop-under; }
+@keyframes st-push-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes st-push-under { from { transform: translateX(0); } to { transform: translateX(-25%); } }
+@keyframes st-pop-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+@keyframes st-pop-under { from { transform: translateX(-25%); } to { transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .st-route-layer[data-motion]:not([data-motion="none"]) { animation: none; will-change: auto; }
+}
