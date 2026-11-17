@@ -86,3 +86,9 @@ npm run dev
 Vite + React + react-router-dom. Мобилка Qollab — React в WebView, так что этот
 код архитектурно совпадает с продом. Платформенные различия iOS/Android
 подключаются через `data-platform` на корне + оверрайды токенов (следующий этап).
+
+## Настройки и темы чатов
+
+- [Правила изменения тем](docs/chat-themes-guide.md)
+- [Передача разработчикам: состояния, проверки и выпуск](docs/chat-themes-handoff.md)
+- [Исходники и промпты для живых фонов](docs/chat-live-wallpaper-prompts.txt)

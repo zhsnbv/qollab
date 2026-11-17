@@ -9,14 +9,16 @@ import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import postcss from 'postcss';
 import { CHAT_PRESETS, appearanceClass, appearanceStyle, resolveChatAppearance } from '../src/utils/chatThemeCatalog.js';
+import { MESSAGE_DELIVERY_STATES, messageDeliveryState } from '../src/utils/messageDelivery.js';
 
 const root = path.resolve(import.meta.dirname, '..');
-const output = path.join(root, process.argv[2] || 'artifacts/settings-redesign-2026-11-17/v7');
+const output = path.join(root, process.argv[2] || 'artifacts/settings-redesign-2026-11-17/v8');
 const sourceFiles = [
   'src/utils/chatAppearance.js', 'src/utils/chatThemeCatalog.js',
   'src/styles/tokens.css', 'src/styles/companies.css', 'src/screens/ChatRoom.css',
   'src/screens/ChatAppearance.css', 'src/screens/SettingsChatThemes.css', 'src/components/ProfileShareCard.css',
-  'src/components/MessageReactions.css', 'src/components/LinkPreview.css',
+  'src/components/MessageReactions.css', 'src/components/LinkPreview.css', 'src/components/MessageDeliveryStatus.css',
+  'src/components/MessageDeliveryStatus.jsx', 'src/utils/messageDelivery.js',
   'src/components/Message.jsx', 'src/screens/DMChat.jsx',
 ];
 const sources = Object.fromEntries(sourceFiles.map(file => [file, fs.readFileSync(path.join(root, file), 'utf8')]));
@@ -129,7 +131,11 @@ function color(value) {
     let hex = value.slice(1); if (hex.length <= 4) hex = [...hex].map(char => char + char).join('');
     return [0, 2, 4].map(index => parseInt(hex.slice(index, index + 2), 16)).concat(hex.length === 8 ? parseInt(hex.slice(6), 16) / 255 : 1);
   }
-  if (/^rgba?\(/.test(value)) return value.match(/[\d.]+/g).map(Number).concat(value.startsWith('rgba') ? [] : [1]);
+  if (/^rgba?\(/.test(value)) {
+    const parts = value.slice(value.indexOf('(') + 1, -1).split(/[\s, /]+/).filter(Boolean);
+    return parts.slice(0, 3).map(channel => parseFloat(channel) * (channel.endsWith('%') ? 2.55 : 1))
+      .concat(parts[3] == null ? 1 : parseFloat(parts[3]) / (parts[3].endsWith('%') ? 100 : 1));
+  }
   if (value.startsWith('color(srgb ')) {
     const [channels, alpha = '1'] = value.slice(11, -1).split('/');
     return channels.trim().split(/\s+/).map(Number).map(channel => channel * 255).concat(Number(alpha));
@@ -173,6 +179,7 @@ const hex = rgb => '#' + rgb.slice(0, 3).map(channel => Math.round(channel).toSt
 assert.equal(contrast(color('#000'), color('#fff')), 21, 'WCAG black/white reference');
 assert.equal(contrast(color('#fff'), color('#fff')), 1, 'WCAG identical colors reference');
 assert.equal(hex(over(color('rgba(0, 0, 0, 0.5)'), color('#fff'))), '#808080', 'sRGB alpha composition');
+assert.equal(hex(over(color('rgb(0 0 0 / 78%)'), color('#fff'))), '#383838', 'Modern rgb alpha composition');
 assert.equal(hex(color('color-mix(in srgb, #ffffff 50%, #000000)')), '#808080', 'opaque sRGB mix');
 assert.equal(hex(over(color('color-mix(in srgb, #000000 50%, transparent)'), color('#fff'))), '#808080', 'premultiplied transparent mix');
 assert.equal(hex(color('oklab(1 0 0)')), '#ffffff', 'OKLab white reference');
@@ -211,7 +218,25 @@ function auditVariant(company, theme, direction, preset) {
   add('timestamp', 'span', 'msg-time', time);
   const inlineTime = element('span', 'msg-time-row msg-time-row--inline', element('div', 'msg-footer', bubble));
   add('timestampWithReactions', 'span', 'msg-time', inlineTime);
-  for (const status of ['delivered', 'read']) add(`status.${status}`, 'svg', '', time, {}, 3, { color: `var(--color-${status === 'read' ? 'primary' : 'weak'})` });
+  const statusColors = [];
+  const statusChecks = (context, parent) => {
+    for (const status of Object.keys(MESSAGE_DELIVERY_STATES)) {
+      const state = messageDeliveryState(status);
+      const wrapper = element('span', 'message-delivery-status', parent, {}, { 'data-delivery-state': state.id, 'data-delivery-tone': state.tone });
+      const glyph = element('svg', '', wrapper, {}, {}, { fill: 'currentColor' });
+      const result = check(`status.${context}.${status}`, glyph, 3);
+      records.push(result); statusColors.push({ context, status, foreground: result.foreground });
+      if (status === 'read' && preset.palette) {
+        const readTheme = context === 'overMedia' ? 'dark' : theme;
+        assert.equal(result.foreground, preset.palette.read[readTheme].toLowerCase(), `${company}/${theme}/${preset.id}/${context} must use the selected read color, not bubble/timestamp ink`);
+      }
+    }
+    const contextColors = statusColors.filter(row => row.context === context);
+    assert.equal(new Set(contextColors.filter(row => ['sending', 'sent', 'delivered'].includes(row.status)).map(row => row.foreground)).size, 1, 'Unconfirmed delivery states remain neutral');
+    assert.notEqual(contextColors.find(row => row.status === 'read').foreground, contextColors.find(row => row.status === 'delivered').foreground, 'Read status is visually distinct');
+  };
+  statusChecks('bubble', time);
+  statusChecks('reactionFooter', inlineTime);
   add('link', 'a', 'msg-link'); add('mention', 'span', 'msg-mention'); add('forwarded', 'div', 'msg-forwarded-label');
   if (direction === 'incoming') for (const author of authorColors) add(`author.${author}`, 'div', 'msg-author-inline', bubble, { color: author });
   const quote = element('div', 'msg-quote', bubble);
@@ -219,6 +244,7 @@ function auditVariant(company, theme, direction, preset) {
   for (const author of authorColors) add(`quote.author.${author}`, 'div', 'msg-quote-head', quote, { color: author });
   const voice = element('div', 'msg-bubble msg-bubble--voice', col);
   add('voice.duration', 'span', 'voice-time', voice);
+  statusChecks('voice', element('span', 'msg-time-row msg-time-row--overlay', voice));
   const play = element('button', 'voice-play', voice); add('voice.playIcon', 'svg', '', play, {}, 3, { color: '#fff' });
   const wave = element('i', '', element('span', 'voice-wave', voice)); records.push(check('voice.waveform', wave, 3, 'background'));
   const document = element('div', 'msg-document', col);
@@ -230,6 +256,17 @@ function auditVariant(company, theme, direction, preset) {
   const staticTime = element('span', 'msg-time-row msg-time-row--static', col);
   assert.equal(color(resolve(staticTime.props.background, staticTime))[3], 1, 'Document timestamp plate must be opaque');
   add('document.externalTimeOnPlate', 'span', 'msg-time', staticTime);
+  statusChecks('documentPlate', staticTime);
+  const mediaBubble = element('div', 'msg-bubble msg-bubble--media', col);
+  statusChecks('mediaFooter', element('span', 'msg-time-row msg-time-row--overlay', mediaBubble));
+  const profileBubble = element('div', 'msg-bubble msg-bubble--profile', col);
+  statusChecks('profileFooter', element('span', 'msg-time-row msg-time-row--overlay', profileBubble));
+  const listSurface = element('div', 'chat-list', html, { ...appearanceStyle(selected), background: 'var(--color-white)' });
+  statusChecks('chatList', listSurface);
+  // The lightest possible photo is the worst background beneath a black plate.
+  // Checking white therefore bounds every pixel of a legacy media overlay.
+  const photo = element('div', '', surface, { background: '#ffffff' });
+  statusChecks('overMedia', element('span', 'msg-time-row msg-time-row--overlay-dark', photo));
   const profile = element('button', 'share-person-card', bubble); const info = element('span', 'share-person-info', profile);
   add('profile.name', 'strong', '', info); add('profile.role', 'span', '', info); add('profile.label', 'small', '', info);
   add('profile.chevron', 'svg', 'share-person-chevron', profile, {}, 3);
@@ -251,6 +288,12 @@ function auditVariant(company, theme, direction, preset) {
 
 const variants = [];
 for (const company of ['erg', 'integra']) for (const theme of ['light', 'dark']) for (const direction of ['incoming', 'outgoing']) for (const preset of CHAT_PRESETS) variants.push(auditVariant(company, theme, direction, preset));
+// Neutral states cannot pick up a palette-dependent bubble/timestamp color.
+for (const company of ['erg', 'integra']) for (const theme of ['light', 'dark']) {
+  const rows = variants.filter(variant => variant.company === company && variant.theme === theme).flatMap(variant => variant.checks);
+  const roles = new Set(rows.filter(row => /^status\..+\.(sending|sent|delivered)$/.test(row.role)).map(row => row.role));
+  for (const role of roles) assert.equal(new Set(rows.filter(row => row.role === role).map(row => row.foreground)).size, 1, `${company}/${theme}/${role} must remain neutral across all presets and directions`);
+}
 const matrix = [];
 for (const company of ['erg', 'integra']) for (const theme of ['light', 'dark']) for (const preset of CHAT_PRESETS) {
   const ids = [`${company}/${theme}/incoming/${preset.id}`, `${company}/${theme}/outgoing/${preset.id}`];
@@ -275,11 +318,12 @@ const report = {
     'Gradients, illustration/poster pixels and pattern pixels are not rasterized. Message surfaces and the external document-time plate are opaque, so those pixels do not affect measured text contrast.',
     'CSS model handles source base rules, descendant/child classes, attributes, :is/:not/:where, inherited variables, inline color and !important. Media queries and transient pseudo states are excluded.',
     'Text uses 4.5:1; meaningful icons/waveform use 3:1. Body text, labels, timestamps and metadata are normal small text.',
-    'CSS source order is tokens, company overrides, ChatRoom, ChatAppearance, ProfileShareCard, MessageReactions, LinkPreview. Relevant scoped overrides have higher specificity; verify actual bundle order in browser.',
+    'CSS source order is tokens, company overrides, ChatRoom, ChatAppearance, catalog styles, ProfileShareCard, MessageReactions, LinkPreview, MessageDeliveryStatus. Relevant scoped overrides have higher specificity; verify actual bundle order in browser.',
     'Avatar photos, raster logos and emoji glyph pixels are not numeric text samples. Avatar initials and their authored surfaces are checked.',
   ],
   totals: { checks: variants.reduce((sum, item) => sum + item.checks.length, 0), failedChecks: failures.length, matrixOpaqueTextPass: matrix.filter(item => item.opaqueTextPass).length },
   edges: { method: 'Decorative 1px inner outline: exactly 94% actual fill + 6% black, opaque, no shadow, negative offset. It is not a text contrast requirement. Outline does not alter the CSS box dimensions.', checks: edgeChecks.length, failedChecks: edgeChecks.filter(check => !check.pass), minimumEdgeToFillContrast: Math.min(...edgeChecks.map(check => check.ratio)), rows: edgeChecks },
+  delivery: { states: Object.keys(MESSAGE_DELIVERY_STATES), contexts: ['bubble', 'reactionFooter', 'voice', 'documentPlate', 'mediaFooter', 'profileFooter', 'chatList', 'overMedia'], iconThreshold: 3, neutralInvariantAcrossPresets: true, checks: variants.reduce((sum, item) => sum + item.checks.filter(check => check.role.startsWith('status.')).length, 0), source: 'Actual MessageDeliveryStatus wrapper data attributes and CSS, with canonical per-theme read variables.' },
   roleSummary, failures, variants, matrix,
 };
 fs.mkdirSync(output, { recursive: true });
@@ -346,7 +390,7 @@ if (fs.existsSync(richFile)) {
     // pixel from the outermost surface inward with normal source-over alpha.
     const bg = item.backgrounds.toReversed().reduce((behind, raw) => over(color(raw), behind), [255, 255, 255, 1]);
     const ratio = contrast(color(item.ink), bg);
-    const threshold = item.class === 'msg-document-icon' ? 3 : 4.5;
+    const threshold = /msg-document-icon|message-delivery-status/.test(item.class) ? 3 : 4.5;
     assert.ok(CHAT_PRESETS.some(preset => preset.id === row.preset), `Unknown rich-message preset ${row.preset}`);
     checks.push({ company: state.company, theme: state.theme, preset: row.preset, direction: item.mine ? 'outgoing' : 'incoming', role: item.class, text: item.text, foreground: hex(over(color(item.ink), bg)), background: hex(bg), ratio, threshold, pass: ratio >= threshold });
   }

@@ -14,11 +14,23 @@ export const BUBBLE_COLORS = Object.freeze([
   { id: 'white', name: 'Жемчуг', light: '#FFFFFF', dark: '#30343B', ink: '#333940', darkInk: '#ECEEF3' },
 ].map(Object.freeze));
 
+const read = (light, dark) => Object.freeze({ light, dark });
+const READ_COLORS = Object.freeze({
+  'grad-horizon': read('#3658A0', '#9FBFFF'), 'grad-sunset': read('#A95A28', '#FFB47E'),
+  'grad-sage': read('#556A2F', '#B8D68E'), 'grad-mint': read('#296D59', '#8AD5B9'), 'grad-coast': read('#276684', '#8ACFEB'),
+  'pattern-day': read('#8A6023', '#E8C381'), 'pattern-orbit': read('#6C4C9B', '#C5A8F1'),
+  'pattern-garden': read('#426B3A', '#ADD69E'), 'pattern-travel': read('#37678A', '#99C8EA'), 'pattern-play': read('#954A6C', '#ECAACB'),
+  'art-coast': read('#2F6C61', '#97D2BF'), 'art-alpine': read('#3B6191', '#A6C8F4'), 'art-cabin': read('#656327', '#D6D293'),
+  'art-lighthouse': read('#3A6678', '#A6CCD9'), 'art-fields': read('#855E22', '#E6C17C'),
+  'live-coast': read('#2C6C75', '#95D3DB'), 'live-lake': read('#426C42', '#ABD3A5'), 'live-earth': read('#3864A2', '#9DC7FF'),
+  'live-prism': read('#74509B', '#CEA9F3'), 'live-poppies': read('#A34450', '#F4A8B3'),
+});
+
 function preset(id, name, group, colors, poster = null) {
   return Object.freeze({
     id, name, group, wallpaper: id === 'standard' ? 'plain' : id,
     incoming: colors ? `${id}-in` : 'default', outgoing: colors ? `${id}-out` : 'default',
-    palette: colors, pattern: group === 'pattern', poster, video: null,
+    palette: colors ? Object.freeze({ ...colors, read: READ_COLORS[id] }) : null, pattern: group === 'pattern', poster, video: null,
   });
 }
 
@@ -94,7 +106,7 @@ export function appearanceClass(appearance) {
 export function appearanceStyle(appearance) {
   const colors = selectedTheme(appearance).palette;
   if (!colors) return {};
-  const style = {};
+  const style = { '--chat-status-read-light': colors.read.light, '--chat-status-read-dark': colors.read.dark };
   for (const [direction, key] of [['in', 'incoming'], ['out', 'outgoing']]) {
     const color = colors[key];
     style[`--chat-${direction}-light`] = color.light;

@@ -244,7 +244,7 @@ function ChatInteractionFlow() {
   const link = (chat, theme = dark ? 'dark' : 'light') => `/handoff/chat-interactions?chat=${chat}&theme=${theme}`;
   return <main style={{ height: '100dvh', overflow: 'auto', padding: frame ? 0 : 24, background: 'var(--color-background)', color: 'var(--color-text)' }}>
     {!frame && <header style={{ maxWidth: 740, margin: '0 auto 20px', display: 'grid', gap: 12 }}><h1 style={{ fontSize: 22 }}>Чат · реакции и просмотры</h1><p>Удерживай своё или чужое сообщение. «+» открывает полный пикер; строка реакций и просмотров — общий список.</p><nav style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}><a href={link('group')}>Группа</a><a href={link('personal')}>Личный чат</a><a href={link(personal ? 'personal' : 'group', dark ? 'light' : 'dark')}>{dark ? 'Светлая тема' : 'Тёмная тема'}</a><a href="/handoff/reaction-picker">Пикер</a><a href="/handoff/read-receipts">Состояния просмотров</a></nav></header>}
-    <div className="device" ref={setHost} style={{ position: 'relative', width: 402, minWidth: 402, maxWidth: 402, height: 820, minHeight: 820, maxHeight: 820, margin: frame ? 0 : '0 auto', transform: 'none', '--vvh': '820px' }}>
+    <div className="device" ref={setHost} style={{ position: 'relative', width: frame ? '100%' : 402, minWidth: frame ? 0 : 402, maxWidth: 402, height: frame ? '100dvh' : 820, minHeight: frame ? 0 : 820, maxHeight: frame ? 'none' : 820, margin: frame ? 0 : '0 auto', transform: 'none', '--vvh': frame ? '100dvh' : '820px' }}>
       {host && <DeviceHost.Provider value={host}><MemoryRouter initialEntries={[entry]}><CallsProvider mediaMode="scenario"><AppRoutes /></CallsProvider></MemoryRouter></DeviceHost.Provider>}
     </div>
   </main>;

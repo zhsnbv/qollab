@@ -41,7 +41,6 @@ html[data-theme="dark"] .qa-bubbles { --chat-in-bg: var(--chat-in-dark, var(--co
   box-shadow: none;
 }
 :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-time-row--overlay, :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-time-row--inline { color: color-mix(in srgb, var(--chat-bubble-ink) 55%, transparent); }
-:is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-time-row svg { color: inherit; fill: currentColor; }
 :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-link, :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .msg-mention { color: var(--chat-bubble-ink); }
 :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .voice-time { color: color-mix(in srgb, var(--chat-bubble-ink) 68%, transparent); }
 :is(.qa-custom-in .msg--their, .qa-custom-out .msg--mine) .msg-bubble .voice-wave i { background: color-mix(in srgb, var(--chat-bubble-ink) 45%, transparent); }
@@ -55,7 +54,6 @@ html[data-theme="dark"] .qa-bubbles { --chat-in-bg: var(--chat-in-dark, var(--co
 /* Metadata follows the chosen bubble, including rich messages and reactions. */
 .qa-bubbles .msg .msg-bubble :is(.msg-time-row--overlay, .msg-time-row--inline, .voice-time, .msg-forwarded-label),
 .qa-bubbles .msg .msg-document-size { color: var(--chat-bubble-muted); }
-.qa-bubbles .msg .msg-bubble .msg-time-row svg { color: inherit; fill: currentColor; }
 .qa-bubbles .msg .msg-bubble :is(.msg-link, .msg-mention) { color: var(--chat-bubble-ink); }
 .qa-bubbles .msg .msg-bubble .msg-author-inline { color: var(--chat-bubble-ink) !important; }
 .qa-bubbles .msg .msg-bubble .voice-wave i { background: color-mix(in srgb, var(--chat-bubble-ink) 70%, var(--chat-bubble-color)); }
@@ -74,4 +72,3 @@ html[data-company="integra"]:not([data-theme="dark"]) .qa-bubbles { --chat-on-ac
 .qa-bubbles .msg .lp :is(.lp-kind, .lp-cta, .lp-ico) { color: var(--color-text); }
 .qa-bubbles .msg .lp :is(.lp-sub, .lp-note) { color: color-mix(in srgb, var(--color-text) 85%, var(--color-white)); }
 .qa-bubbles .msg .msg-time-row--static { padding: 2px 6px; border-radius: var(--radius-pill); background: var(--color-white); color: color-mix(in srgb, var(--color-text) 85%, var(--color-white)); }
-.qa-bubbles .msg .msg-time-row--static svg { color: inherit; fill: currentColor; }

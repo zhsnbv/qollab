@@ -80,10 +80,12 @@ test('styles use the canonical preset in actual chat and catalog preview without
     const fromResolved = appearanceStyle(resolveChatAppearance({ chatAppearance: { erg: { preset: preset.id } } }, 'erg'));
     const fromTile = appearanceStyle(preset);
     assert.deepEqual(fromResolved, fromTile);
-    assert.equal(Object.keys(fromTile).length, 8);
+    assert.equal(Object.keys(fromTile).length, 10);
     assert.ok(Object.keys(fromTile).every(key => key.startsWith('--chat-')));
     assert.equal(fromTile['--chat-in-light'], preset.palette.incoming.light);
     assert.equal(fromTile['--chat-out-dark'], preset.palette.outgoing.dark);
+    assert.equal(fromTile['--chat-status-read-light'], preset.palette.read.light);
+    assert.equal(fromTile['--chat-status-read-dark'], preset.palette.read.dark);
     assert.ok(appearanceClass(preset).includes('qa-custom-in qa-custom-out'));
   }
   assert.deepEqual(appearanceStyle({ preset: 'missing', palette: { incoming: { light: '#000000' } } }), {});
@@ -131,4 +133,21 @@ test('all 21 presets retain readable bodies, metadata, voice bars, reactions and
   }
   assert.equal(surfaces, 168);
   t.diagnostic(`168 opaque surfaces; minimum contrast ${Object.entries(minima).map(([key, value]) => `${key}=${value.toFixed(3)}`).join(', ')}. Includes current native ERG/Integra standard colors.`);
+});
+
+
+test('each themed read accent is canonical and contrasts with both message directions', t => {
+  let minimum = Infinity;
+  for (const preset of CHAT_PRESETS.slice(1)) for (const mode of ['light', 'dark']) {
+    const accent = rgb(preset.palette.read[mode]);
+    assert.ok(Object.isFrozen(preset.palette.read));
+    for (const direction of ['incoming', 'outgoing']) {
+      const ratio = contrast(accent, rgb(preset.palette[direction][mode]));
+      assert.ok(ratio >= 3, `${preset.id}/${mode}/${direction}: read icon ${ratio.toFixed(3)} < 3`);
+      minimum = Math.min(minimum, ratio);
+    }
+    const stale = { preset: preset.id, palette: { read: { light: '#ffffff', dark: '#000000' } } };
+    assert.equal(appearanceStyle(stale)[`--chat-status-read-${mode}`], preset.palette.read[mode]);
+  }
+  t.diagnostic(`80 custom-theme surfaces; minimum read-icon contrast ${minimum.toFixed(3)}. Standard workspace accents are checked from component CSS in check-settings-colors.mjs.`);
 });

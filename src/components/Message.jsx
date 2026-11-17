@@ -1,8 +1,10 @@
 import { getSettingsPreferences } from '../utils/settingsPreferences';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Play, Stop, FileText, Check, Checks, Clock } from '@phosphor-icons/react';
+import { Play, Stop, FileText } from '@phosphor-icons/react';
 import { ArrowReply20Regular } from '@fluentui/react-icons';
 import MessageReactions from './MessageReactions';
+import MessageDeliveryStatus from './MessageDeliveryStatus';
+import { messageDeliveryState } from '../utils/messageDelivery';
 import LinkPreview from './LinkPreview';
 import ProfileShareCard from './ProfileShareCard';
 import { extractFirstInternalLink } from '../utils/internalLink';
@@ -113,22 +115,11 @@ function renderText(text, onLink) {
   });
 }
 
-// Галочки прочтения — аналог WhatsApp: часы (отправляется) → одна серая
-// (отправлено) → две серые (доставлено) → две оранжевые (прочитано, только
-// личные чаты — в групповых прочтение не отслеживаем, максимум серые).
-function StatusTicks({ status }) {
-  if (status === 'failed') return null;
-  if (status === 'sending') return <Clock size={12} color="var(--color-weak)" aria-label="Отправляется" />;
-  if (status === 'sent') return <Check size={13} color="var(--color-weak)" aria-label="Отправлено" />;
-  if (status === 'read') return <Checks size={15} color="var(--color-primary)" />;
-  return <Checks size={15} color="var(--color-weak)" />; // delivered — дефолт
-}
-
 export function TimeRow({ time, mine, status, variant = 'overlay' }) {
   return (
     <span className={`msg-time-row msg-time-row--${variant}`}>
       <span className="msg-time">{time}</span>
-      {mine && <StatusTicks status={status} />}
+      {mine && <MessageDeliveryStatus status={status} />}
     </span>
   );
 }
@@ -259,7 +250,7 @@ export default function Message({
     <div
       className={`msg ${mine ? 'msg--mine' : 'msg--their'} ${firstOfGroup ? 'msg--first' : ''} ${lastOfGroup ? 'msg--last' : ''} ${swipe.snap ? 'msg--snap' : ''}`}
       data-message-id={msg.id}
-      data-status={mine ? (msg.status || 'delivered') : undefined}
+      data-status={mine ? messageDeliveryState(msg.status).id : undefined}
       style={swipe.dx ? { transform: `translateX(${swipe.dx}px)` } : undefined}
       tabIndex={onLongPress ? 0 : undefined}
       onKeyDown={event => {

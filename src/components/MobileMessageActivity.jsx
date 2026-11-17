@@ -1,14 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { CaretLeft, CaretRight, Checks, HeartStraight } from '@phosphor-icons/react';
+import { CaretLeft, CaretRight, HeartStraight } from '@phosphor-icons/react';
 import { compactActivityTime } from './messageActivityModel';
+import MessageDeliveryStatus from './MessageDeliveryStatus';
 
 const formatTime = (value, activity) => compactActivityTime(value, activity.now, activity.timeZone);
 
 export function MobileActivitySummary({ activity, onOpen }) {
   return <>
-    {activity.personalReadAt && <div className="mma-summary mma-summary--static" aria-label={'Прочитано: ' + formatTime(activity.personalReadAt, activity)}><Checks size={18} aria-hidden="true" /><span>{formatTime(activity.personalReadAt, activity)}</span></div>}
+    {activity.personalReadAt && <div className="mma-summary mma-summary--static" aria-label={'Прочитано: ' + formatTime(activity.personalReadAt, activity)}><MessageDeliveryStatus status="read" size={18} decorative /><span>{formatTime(activity.personalReadAt, activity)}</span></div>}
     {activity.label && <button className="mma-summary" onClick={onOpen} aria-label={activity.label}>
-      {activity.reactionCount ? <HeartStraight size={18} aria-hidden="true" /> : <Checks size={18} aria-hidden="true" />}
+      {activity.reactionCount ? <HeartStraight size={18} aria-hidden="true" /> : <MessageDeliveryStatus status="read" size={18} decorative />}
       <span>{activity.label}</span><CaretRight size={14} aria-hidden="true" />
     </button>}
   </>;
@@ -28,7 +29,7 @@ export function MobileActivityScreen({ activity, onBack, capture = false }) {
           {person.readAt && <time dateTime={person.readAt}>{combined ? 'Прочитано · ' : ''}{formatTime(person.readAt, activity)}</time>}
           {person.reactedAt && <time dateTime={person.reactedAt}>{combined ? 'Реакция · ' : ''}{formatTime(person.reactedAt, activity)}</time>}
         </div>
-        {person.emoji ? <span className="mma-emoji" aria-label={'Реакция ' + person.emoji}>{person.emoji}</span> : <Checks size={18} className="mma-read-icon" aria-label="Прочитано" />}
+        {person.emoji ? <span className="mma-emoji" aria-label={'Реакция ' + person.emoji}>{person.emoji}</span> : <MessageDeliveryStatus status="read" size={18} className="mma-read-icon" />}
       </li>)}</ul>
     </div>
   </section>;

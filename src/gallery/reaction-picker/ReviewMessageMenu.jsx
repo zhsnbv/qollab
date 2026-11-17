@@ -7,6 +7,8 @@ import '../../components/MessageMenu.css';
 import { Plus } from '@phosphor-icons/react';
 import { REACTIONS } from '../../components/MessageMenu';
 import { mobileMenuGeometry } from './menuGeometry';
+import { mountMessageMenuClone } from '../../components/messageMenuClone';
+import { messageMenuCapabilities } from '../../components/messageMenuActions';
 
 // Mobile moves a copy only as far as needed to fit both panels.
 // Desktop anchors the panels to the cursor and leaves the message in place.
@@ -26,14 +28,13 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
   const [box, setBox] = useState(null);
 
   const side = mine ? 'right' : 'left';
+  const capabilities = messageMenuCapabilities(msg, mine);
 
   const items = actionItems ?? [
     ...extraItems,
     { id: 'reply', label: 'Ответить', Icon: ArrowReply24Regular },
-    { id: 'copy', label: 'Копировать', Icon: Copy24Regular },
-    // Правим только текст: у своих отправленных сообщений kind === 'text',
-    // поэтому проверка «нет kind» прятала «Изменить» как раз там, где оно нужно
-    ...(mine && msg.kind !== 'photo' && msg.kind !== 'video'
+    ...(capabilities.copy ? [{ id: 'copy', label: 'Копировать', Icon: Copy24Regular }] : []),
+    ...(capabilities.edit
       ? [{ id: 'edit', label: 'Изменить', Icon: Edit24Regular }] : []),
     {
       id: 'pin',
@@ -47,21 +48,7 @@ export default function ReviewMessageMenu({ msg, mine, rect, node, onClose, onAc
 
   useLayoutEffect(() => {
     if (platform !== 'mobile' || !node || !cloneRef.current) return;
-    const clone = node.cloneNode(true);
-    clone.style.visibility = 'visible';
-    clone.style.transform = 'none';
-    clone.style.margin = '0';
-    clone.inert = true;
-    // Preserve the actual text wrap when the copy leaves the chat's flex layout.
-    const column = node.querySelector('.msg-col');
-    const clonedColumn = clone.querySelector('.msg-col');
-    if (column && clonedColumn) {
-      // offsetWidth rounds down fractional pixels and can wrap one more line.
-      clonedColumn.style.width = getComputedStyle(column).width;
-      clonedColumn.style.maxWidth = 'none';
-      clonedColumn.style.flex = '0 0 auto';
-    }
-    cloneRef.current.replaceChildren(clone);
+    mountMessageMenuClone(node, cloneRef.current);
   }, [node, platform]);
 
   useLayoutEffect(() => {

@@ -1,0 +1,40 @@
+/* Delivery semantics are independent of bubble ink, wallpaper and timestamps. */
+.message-delivery-status {
+  --delivery-neutral: #6E747C;
+  --delivery-failed: #BD3C32;
+  --delivery-read-default-light: #B65C16;
+  --delivery-read-default-dark: #F08A2C;
+  --delivery-read: var(--chat-status-read-light, var(--delivery-read-default-light));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  line-height: 1;
+  vertical-align: middle;
+  color: var(--delivery-neutral);
+}
+html[data-company="integra"] .message-delivery-status {
+  --delivery-read-default-light: #0A214F;
+  --delivery-read-default-dark: #8F8AD6;
+}
+html[data-company="bts"] .message-delivery-status {
+  --delivery-read-default-light: #0B6B53;
+  --delivery-read-default-dark: #4FBF9D;
+}
+html[data-theme="dark"] .message-delivery-status,
+.ru-board-frame[data-theme="dark"] .message-delivery-status {
+  --delivery-neutral: #B6BCC5;
+  --delivery-failed: #FFAAA2;
+  --delivery-read: var(--chat-status-read-dark, var(--delivery-read-default-dark));
+}
+.message-delivery-status[data-delivery-tone="read"] { color: var(--delivery-read); }
+.message-delivery-status[data-delivery-tone="failed"] { color: var(--delivery-failed); }
+.message-delivery-status > svg { display: block; flex: none; color: inherit; fill: currentColor; }
+/* The legacy over-media timestamp needs a dark enough plate for colored read
+   marks even above a white photograph. Regular media footers use the bubble. */
+.msg-time-row.msg-time-row--overlay-dark { background: rgb(0 0 0 / 78%); }
+.msg-time-row--overlay-dark .message-delivery-status {
+  --delivery-neutral: #B6BCC5;
+  --delivery-failed: #FFAAA2;
+  --delivery-read: var(--chat-status-read-dark, var(--delivery-read-default-dark));
+}

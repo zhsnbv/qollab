@@ -4,6 +4,8 @@ import {
   Share24Regular, Delete24Regular, CheckmarkCircle24Regular,
 } from '@fluentui/react-icons';
 import './MessageMenu.css';
+import { mountMessageMenuClone } from './messageMenuClone';
+import { messageMenuCapabilities } from './messageMenuActions';
 
 // Меню сообщения по долгому нажатию. Само сообщение остаётся на своём месте,
 // но поднимается над размытым фоном — сразу видно, на что нажали. Реакции
@@ -23,13 +25,12 @@ export default function MessageMenu({ msg, mine, rect, node, onClose, onAction, 
   const [box, setBox] = useState(null);
 
   const side = mine ? 'right' : 'left';
+  const capabilities = messageMenuCapabilities(msg, mine);
 
   const items = [
     { id: 'reply', label: 'Ответить', Icon: ArrowReply24Regular },
-    { id: 'copy', label: 'Скопировать', Icon: Copy24Regular },
-    // Правим только текст: у своих отправленных сообщений kind === 'text',
-    // поэтому проверка «нет kind» прятала «Изменить» как раз там, где оно нужно
-    ...(mine && msg.kind !== 'photo' && msg.kind !== 'video'
+    ...(capabilities.copy ? [{ id: 'copy', label: 'Скопировать', Icon: Copy24Regular }] : []),
+    ...(capabilities.edit
       ? [{ id: 'edit', label: 'Изменить', Icon: Edit24Regular }] : []),
     {
       id: 'pin',
@@ -43,7 +44,7 @@ export default function MessageMenu({ msg, mine, rect, node, onClose, onAction, 
 
   // Копия сообщения: точная, потому что снимается с самого узла в ленте
   useLayoutEffect(() => {
-    if (node && cloneRef.current) cloneRef.current.replaceChildren(node.cloneNode(true));
+    if (node && cloneRef.current) mountMessageMenuClone(node, cloneRef.current);
   }, [node]);
 
   useLayoutEffect(() => {

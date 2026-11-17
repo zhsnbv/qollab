@@ -1,6 +1,7 @@
+import MessageDeliveryStatus from '../../components/MessageDeliveryStatus';
 import { useEffect, useState } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, BellSlash, CaretLeft, Checks, MagnifyingGlass, Monitor, PencilSimple, Plus, PushPin, Smiley } from '@phosphor-icons/react';
+import { ArrowRight, BellSlash, CaretLeft, MagnifyingGlass, Monitor, PencilSimple, Plus, PushPin, Smiley } from '@phosphor-icons/react';
 import { Avatar } from '../../screens/Chats';
 import { baseChats } from '../../data/chatList';
 import TopBar from '../../components/TopBar';
@@ -40,7 +41,7 @@ function ChatRow({ chat, onOpen }) {
       </div>
       <div className="chat-line2">
         <span className="chat-preview">
-          {chat.lastMine && <Checks className="chat-receipt" size={16} color="var(--color-primary)" />}
+          {chat.lastMine && <MessageDeliveryStatus className="chat-receipt" size={16} status={chat.lastStatus} />}
           {chat.sender && <b className="chat-sender">{chat.sender} </b>}
           {chat.contentIcon && <chat.contentIcon size={14} weight="fill" style={{ verticalAlign: 'middle', marginRight: 2 }} />}
           {chat.preview}

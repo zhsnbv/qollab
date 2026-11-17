@@ -47,6 +47,6 @@ button.mma-summary:hover, button.mma-summary:active { background:var(--color-pri
 .mma-person { flex:1; min-width:0; }
 .mma-person strong { display:block; font-size:14px; font-weight:500; line-height:20px; overflow-wrap:anywhere; }
 .mma-person time { display:block; margin-top:2px; color:var(--color-weak); font-size:11px; line-height:16px; }
-.mma-read-icon { flex-shrink:0; color:var(--color-primary); }
+.mma-read-icon { flex-shrink:0; }
 .mma-emoji { flex:0 0 24px; font-size:20px; line-height:24px; text-align:center; }
 .mobile-reaction-menu[data-capture] *, .mobile-reaction-menu[data-capture] *::before, .mobile-reaction-menu[data-capture] *::after { animation:none !important; transition:none !important; }
